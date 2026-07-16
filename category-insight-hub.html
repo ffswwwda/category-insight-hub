@@ -261,9 +261,14 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 /* Workspace body - dual panel layout */
 .ws-body{display:flex;flex:1;min-height:0;overflow:hidden}
 
-/* Structured mode panel */
-.struct-panel{width:392px;flex:0 0 392px;overflow-y:auto;padding:16px 20px 30px;border-right:1px solid var(--border);
-  background:var(--bg);scrollbar-width:thin}
+/* Structured mode panel - 3 column layout (left: data source | center: framework | right: results) */
+.struct-panel{display:flex;flex:1;gap:0;overflow:hidden;background:var(--bg)}
+.struct-col{flex:1;min-width:0;overflow-y:auto;padding:16px 18px 30px;border-right:1px solid var(--border);
+  scrollbar-width:thin;background:var(--bg)}
+.struct-col:last-child{border-right:none}
+.col-header{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.8px;text-transform:uppercase;
+  padding-bottom:10px;margin-bottom:12px;border-bottom:2px solid var(--rad-grad);display:flex;align-items:center;gap:6px;
+  background:linear-gradient(90deg,var(--rad-grad),transparent);background-size:100% 2px;background-repeat:no-repeat}
 .struct-section{margin-bottom:18px}
 .ss-head{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px;
   display:flex;align-items:center;gap:8px}
@@ -1514,7 +1519,13 @@ function renderStructPanel(p){
     '<button class="export-ai" style="margin-top:8px" onclick="runVocTagger()">运行规则引擎</button>'+
   '</div></div>';
 
-  sp.innerHTML=srcHtml+insHtml+mcHtml+actHtml+nlHtml+sugHtml+anHtml+expHtml+taggerHtml;
+  sp.innerHTML=
+    /* ===== 左栏：数据源 + 洞察 ===== */
+    '<div class="struct-col struct-col-left"><div class="col-header">数据源</div>'+srcHtml+insHtml+'</div>'+
+    /* ===== 中栏：分析逻辑框架 ===== */
+    '<div class="struct-col struct-col-center"><div class="col-header">分析框架</div>'+mcHtml+nlHtml+sugHtml+taggerHtml+'</div>'+
+    /* ===== 右栏：分析结果 + 导出 ===== */
+    '<div class="struct-col struct-col-right"><div class="col-header">结果与导出</div>'+anHtml+actHtml+expHtml+'</div>';
 
   // 渲染动态部分
   renderSuggestions(p);
@@ -2012,9 +2023,9 @@ function applyMode(mode, p){
     ca.style.display='flex';
     if(p)renderCanvasArea(p);
   }else{
-    // 默认结构化：画布区完全不出现，结构化面板占满
+    // 默认结构化：三栏布局（左数据源 / 中分析框架 / 右结果+导出）
     ca.style.display='none';
-    sp.style.display='block';
+    sp.style.display='flex';
     sp.style.flex='1';
     sp.style.width='auto';
   }
