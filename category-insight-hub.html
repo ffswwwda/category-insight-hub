@@ -141,6 +141,8 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ni-dot.off{background:var(--muted);opacity:.5}
 .ni-ico{width:18px;text-align:center;font-size:13px;flex-shrink:0}
 .ni-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-idx{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:7px;border:1px solid var(--line);font-size:11px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.3px;flex-shrink:0}
+.gal-idx{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;flex-shrink:0}
 .ni-sub{font-size:10px;color:var(--muted);flex-shrink:0}
 
 /* Source / Framework detail views */
@@ -580,17 +582,17 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
   <aside class="sidebar">
     <div class="brand"><div class="brand-mark">研</div><div><div class="brand-name">类目用户研究座</div><div class="brand-sub">CATEGORY INSIGHT HUB</div></div></div>
     <div class="ws-tabs" id="wsTabs">
-      <button class="ws-tab active" data-ws="insight"><span class="wsi">🌱</span> 用户洞察·创意</button>
-      <button class="ws-tab" data-ws="ops"><span class="wsi">🎯</span> 运营目的·解题</button>
+      <button class="ws-tab active" data-ws="insight">用户洞察 · 创意</button>
+      <button class="ws-tab" data-ws="ops">运营目的 · 解题</button>
     </div>
 
     <nav class="nav-tree" id="navTree">
       <section class="nav-sec">
-        <div class="nav-sec-head"><span class="nsh-ico">&#x25A4;</span>源数据 / 逻辑<span class="nav-sec-tag shared">共享</span></div>
+        <div class="nav-sec-head">源数据 / 逻辑<span class="nav-sec-tag shared">共享</span></div>
         <div class="nav-sec-body" id="navShared"></div>
       </section>
       <section class="nav-sec nav-sec-dyn">
-        <div class="nav-sec-head"><span class="nsh-ico">&#x2B21;</span><span id="navPurposeTitle">目的工作区</span><span class="nav-sec-tag dyn" id="navPurposeTag">洞察</span></div>
+        <div class="nav-sec-head"><span id="navPurposeTitle">目的工作区</span><span class="nav-sec-tag dyn" id="navPurposeTag">洞察</span></div>
         <div class="nav-sec-body" id="navPurpose"></div>
       </section>
     </nav>
@@ -604,7 +606,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
     <header class="topbar" id="topbar">
       <h1 id="topbarTitle">数据源</h1>
       <div class="topbar-right">
-        <div class="tb-search"><span class="ico">&#x2318;</span><input type="text" placeholder="搜索数据源 / 洞察 / 工具..." id="globalSearch"></input></div>
+        <div class="tb-search"><input type="text" placeholder="搜索数据源 / 洞察 / 工具..." id="globalSearch"></input></div>
         <button class="tb-btn" onclick="toast('筛选功能待接入')">筛选</button>
         <button class="tb-btn tb-primary" onclick="openExportModal()">导出到智能体</button>
         <button class="theme-toggle ripple-host" id="themeToggle" title="切换明暗主题">🌓</button>
@@ -630,7 +632,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
           <span class="ws-title" id="wsPurposeTitle">新品打造</span>
           <span class="ws-tag" id="wsWsTag">B · 运营目的</span>
           <div style="margin-left:auto;display:flex;gap:6px">
-            <button class="ct-btn primary" onclick="openExportModal()">&#x1F916; 导出到智能体</button>
+            <button class="ct-btn primary" onclick="openExportModal()">导出到智能体</button>
           </div>
         </div>
 
@@ -652,7 +654,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
               <button class="ct-btn" onclick="zoomCanvas(.8)">- 缩小</button>
               <button class="ct-btn" onclick="fitCanvas()">适应</button>
               <button class="ct-btn" onclick="clearCanvas()">清空</button>
-              <button class="ct-btn primary" onclick="openExportModal()">&#x1F916; 导出画布到智能体</button>
+              <button class="ct-btn primary" onclick="openExportModal()">导出画布到智能体</button>
             </div>
             <svg class="canvas-svg" id="canvasSvg"></svg>
             <div class="material-drawer" id="matDrawer">
@@ -702,7 +704,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 <!-- Export Modal -->
 <div class="modal-overlay" id="exportModal">
   <div class="modal-box">
-    <div class="mb-title">&#x1F916; 导出到智能体</div>
+    <div class="mb-title">导出到智能体</div>
     <div class="mb-sub">生成包含当前上下文的提示词，复制后粘贴给智能体使用</div>
     <div class="mb-field">
       <div class="mb-label">我的问题 / 推导方向</div>
@@ -714,7 +716,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
     </div>
     <div class="mb-actions">
       <button class="mb-close" onclick="closeExportModal()">关闭</button>
-      <button class="mb-copy" onclick="copyPrompt()">&#x1F4CB; 复制提示词</button>
+      <button class="mb-copy" onclick="copyPrompt()">复制提示词</button>
     </div>
   </div>
 </div>
@@ -770,16 +772,16 @@ var DATA = {
       color:'#0891B2',
       dotClass:'a',
       purposes:[
-        {id:'market-seg',name:'市场细分',icon:'&#x1F4CA;',
+        {id:'market-seg',name:'市场细分',
          sources:['s2','s5','s9','s11'],methods:'动机编码 / 场景聚类',tools:'语料',
          desc:'从购买动机、用户画像、使用场景切分市场，识别高价值细分群体及其规模。'},
-        {id:'user-problem',name:'用户问题研究',icon:'&#x2753;',
+        {id:'user-problem',name:'用户问题研究',
          sources:['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11'],methods:'JTBD / 问题归类',tools:'语料',
          desc:'从用户视角出发，识别真实待解决的问题（Jobs to Be Done），按严重度/频次排序。'},
-        {id:'category-opp',name:'品类机会发现',icon:'&#x1F680;',
+        {id:'category-opp',name:'品类机会发现',
          sources:['s1','s3','s8','s9'],methods:'需求矩阵 / 空白识别',tools:'VOC',
          desc:'在需求四象限中定位空白机会点——高重要低满意度 = 创新突破口。'},
-        {id:'new-concept',name:'新品概念孵化',icon:'&#x1F4A1;',
+        {id:'new-concept',name:'新品概念孵化',
          sources:['s1','s2','s6','s8'],methods:'机会→概念卡',tools:'VOC',
          desc:'将机会点转化为可验证的产品概念卡（痛点→解决方案→差异化主张）。'}
       ]
@@ -789,29 +791,41 @@ var DATA = {
       color:'#16A34A',
       dotClass:'b',
       purposes:[
-        {id:'product-opt',name:'产品优化',icon:'&#x1F697;',
+        {id:'category-plan',name:'类目规划',
+         sources:['s9','s7','s8','s3'],methods:'类目树 / 缺口识别',tools:'社媒',
+         desc:'梳理类目结构与发展脉络，识别供给缺口与高潜细分，指导长期选品与资源倾斜。'},
+        {id:'product-opt',name:'产品优化',
          sources:['s1','s3','s7'],methods:'差评归因 / 优先级',tools:'VOC',
          desc:'从差评中提取归因维度（尺寸/质量/材质/噪音…），按影响面×严重度排优先级。'},
-        {id:'marketing',name:'营销建议',icon:'&#x1F4E2;',
+        {id:'marketing',name:'营销建议',
          sources:['s5','s10','s4'],methods:'情感词 / 场景内容',tools:'社媒',
          desc:'从社媒和搜索中提炼用户情感关键词和使用场景，反推营销话术与内容方向。'},
-        {id:'new-plan',name:'新品规划',icon:'&#x1F4CB;',
+        {id:'price-strategy',name:'价格策略',
+         sources:['s7','s3','s10','s1'],methods:'价格带 / 弹性',tools:'VOC',
+         desc:'结合销量、竞品价位与投放成本，定位最优价格带与促销节奏，提升毛利与转化。'},
+        {id:'campaign',name:'活动运营',
+         sources:['s10','s11','s5','s2'],methods:'节奏 / 触点',tools:'社媒',
+         desc:'围绕大促与节日窗口规划活动节奏、素材与渠道触点，放大流量转化效率。'},
+        {id:'new-plan',name:'新品规划',
          sources:['s8','s6','s2'],methods:'SKU梯度 / 排期',tools:'VOC',
          desc:'基于现有 SKU 表现和市场需求缺口，规划新品线梯度（入门/进阶/旗舰）和上市节奏。'},
-        {id:'new-build',name:'新品打造',icon:'&#x1F527;',
+        {id:'new-build',name:'新品打造',
          sources:['s1','s8','s11'],methods:'痛点→卖点',tools:'VOC',
-         desc:'从核心痛点出发反向推导产品卖点组合，形成 FABE 文案和差异化定位。'}
+         desc:'从核心痛点出发反向推导产品卖点组合，形成 FABE 文案和差异化定位。'},
+        {id:'competitor',name:'竞品对标',
+         sources:['s3','s8','s1','s7'],methods:'卖点矩阵 / 差距',tools:'VOC',
+         desc:'系统拆解竞品功能、卖点与价格，定位自身差距与可攻击的薄弱点。'}
       ]
     }
   },
 
   // ---- 共享分析框架（板块2：分析框架板块，两个工作区通用）----
   frameworks:[
-    {id:'quad',name:'需求四象限',icon:'&#x25A6;',desc:'将需求点按「重要度 × 满意度」定位：高重要低满意 = 创新突破口，高重要高满意 = 护城河，低重要低满意 = 暂不投入。'},
-    {id:'jtbd',name:'JTBD 待办任务',icon:'&#x2316;',desc:'从「用户雇用产品来完成什么任务」出发，识别真实待解决问题，避免被表面功能需求误导。'},
-    {id:'journey',name:'购买旅程',icon:'&#x279B;',desc:'覆盖认知 → 考虑 → 购买 → 使用 → 忠诚全链路，定位每个触点的体验断点与优化机会。'},
-    {id:'motivation',name:'动机编码',icon:'&#x274B;',desc:'对语料做动机 / 场景 / 人群编码，聚类出高价值细分群体及其规模与特征。'},
-    {id:'voc',name:'VOC 标签体系',icon:'&#x1F3F7;',desc:'评论 / 访谈文本的结构化打标（尺寸 / 质量 / 材质 / 噪音等 15 维），支撑所有下游分析。'}
+    {id:'quad',name:'需求四象限',desc:'将需求点按「重要度 × 满意度」定位：高重要低满意 = 创新突破口，高重要高满意 = 护城河，低重要低满意 = 暂不投入。'},
+    {id:'jtbd',name:'JTBD 待办任务',desc:'从「用户雇用产品来完成什么任务」出发，识别真实待解决问题，避免被表面功能需求误导。'},
+    {id:'journey',name:'购买旅程',desc:'覆盖认知 → 考虑 → 购买 → 使用 → 忠诚全链路，定位每个触点的体验断点与优化机会。'},
+    {id:'motivation',name:'动机编码',desc:'对语料做动机 / 场景 / 人群编码，聚类出高价值细分群体及其规模与特征。'},
+    {id:'voc',name:'VOC 标签体系',desc:'评论 / 访谈文本的结构化打标（尺寸 / 质量 / 材质 / 噪音等 15 维），支撑所有下游分析。'}
   ],
 
   // ---- 种子洞察（每个目的的示例洞察卡片）----
@@ -855,6 +869,26 @@ var DATA = {
       {title:'核心卖点：真·静音',body:'实测分贝数据 + 对比竞品图表 + 第三方认证背书，建立可信度。',tags:['卖点','信任']},
       {title:'差异化：一机三模',body:'同一产品覆盖居家/出差/送礼三个场景，通过配件切换实现。',tags:['差异化','场景']},
       {title:'FABE 主张',body:'Feature: 双层隔音结构 → Advantage: 图书馆级安静 → Benefit: 随时用不扰邻 → Evidence: 用户实测视频',tags:['FABE']}
+    ],
+    'category-plan':[
+      {title:'供给缺口在便携场景',body:'现有类目中便携 / 旅行场景 SKU 稀疏，而搜索与社媒声量持续走高，是明确的选品空白。',tags:['缺口','机会']},
+      {title:'高端线竞争稀疏',body:'40 欧以上区间在售 SKU 数量仅为入门线的 1/5，但客单与毛利空间更优。',tags:['定价','结构']},
+      {title:'类目增速领先大盘',body:'近 4 个季度类目整体增速高于站点大盘 8pct，值得倾斜流量与备货资源。',tags:['趋势','优先级']}
+    ],
+    'price-strategy':[
+      {title:'中端价格带转化最优',body:'25-40 欧区间加购率最高，但当前供给不足，存在提价与扩品空间。',tags:['定价','转化']},
+      {title:'促销弹性显著',body:'大促期间价格下调 15% 可带来约 2.3 倍销量弹性，适合用于清库与拉新。',tags:['促销','弹性']},
+      {title:'竞品低价卡位',body:'头部竞品在 15 欧以下密集卡位，应以差异化而非价格战应对。',tags:['竞品','防守']}
+    ],
+    'campaign':[
+      {title:'Q4 是绝对峰值',body:'黑五至圣诞贡献全年约 38% 销量，需提前 60 天锁定素材与库存。',tags:['节奏','Q4']},
+      {title:'UGC 种草效率高',body:'用户自发场景内容带来的点击成本显著低于投放均值，应建立激励复用机制。',tags:['UGC','素材']},
+      {title:'社媒声量前置',body:'声量高峰通常领先销量高峰约 2 周，可作为活动预热的前置指标。',tags:['声量','预热']}
+    ],
+    'competitor':[
+      {title:'竞品静音卖点偏弱',body:'头部竞品多未提供实测分贝，静音维度是可直接攻击的薄弱点。',tags:['攻击点','静音']},
+      {title:'功能堆叠无重点',body:'竞品常堆砌功能导致认知混乱，聚焦 1-2 个核心卖点更易突围。',tags:['差异化','聚焦']},
+      {title:'价格梯度单一',body:'竞品价格梯度集中在两端，中段存在可切入的结构性机会。',tags:['定价','机会']}
     ]
   }
 };
@@ -921,6 +955,12 @@ function switchWorkspace(wsKey){
 }
 
 function enterPurpose(purposeId){
+  // 目的 id 跨工作区唯一，自动定位所属工作区（网格同时展示两工作区，卡片只传 p.id）
+  var found=null;
+  Object.keys(DATA.workspaces).forEach(function(wk){
+    if(DATA.workspaces[wk].purposes.some(function(p){return p.id===purposeId;}))found=wk;
+  });
+  if(found)state.ws=found;
   state.purposeId=purposeId;
   state.mode='struct';
   setActiveNav('pw-'+purposeId);
@@ -952,11 +992,11 @@ function renderNavShared(){
   var fwN=DATA.frameworks.length;
   var html=
     '<div class="nav-item" data-nav="nav-src" onclick="openSourceGallery()">'+
-      '<span class="ni-ico">&#x1F4E6;</span><span class="ni-name">数据源</span><span class="ni-sub">'+srcN+' 个</span></div>'+
+      '<span class="ni-name">数据源</span><span class="ni-sub">'+srcN+' 个</span></div>'+
     '<div class="nav-item" data-nav="nav-fw" onclick="openFrameworkGallery()">'+
-      '<span class="ni-ico">&#x1F4CA;</span><span class="ni-name">分析框架</span><span class="ni-sub">'+fwN+' 个</span></div>'+
+      '<span class="ni-name">分析框架</span><span class="ni-sub">'+fwN+' 个</span></div>'+
     '<div class="nav-item" data-nav="nav-ai" onclick="openAITools()">'+
-      '<span class="ni-ico">&#x1F916;</span><span class="ni-name">AI 简化工具</span><span class="ni-sub">2 个</span></div>';
+      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">2 个</span></div>';
   $('#navShared').innerHTML=html;
 }
 
@@ -964,9 +1004,9 @@ function renderNavPurpose(){
   var ws=DATA.workspaces[state.ws];
   $('#navPurposeTitle').textContent='目的工作区';
   $('#navPurposeTag').textContent = state.ws==='insight'?'洞察':'运营';
-  $('#navPurpose').innerHTML=ws.purposes.map(function(p){
+  $('#navPurpose').innerHTML=ws.purposes.map(function(p,i){
     return '<div class="nav-item" data-nav="pw-'+p.id+'" onclick="enterPurpose(\''+p.id+'\')">'+
-           '<span class="ni-ico">'+p.icon+'</span>'+
+           '<span class="mini-idx">'+(i+1)+'</span>'+
            '<span class="ni-name">'+escHtml(p.name)+'</span></div>';
   }).join('');
 }
@@ -1053,8 +1093,8 @@ function renderSourceExplorer(srcId){
       '<span class="ws-title">'+escHtml(s.name)+'</span>'+
       '<span class="ws-tag">'+(s.status==='ready'?'已接入':'样本数据')+'</span>'+
       '<div style="margin-left:auto;display:flex;gap:6px">'+
-        '<button class="ct-btn" onclick="genSourceReport(\''+srcId+'\')">&#x1F4CA; 综合报告</button>'+
-        '<button class="ct-btn primary" onclick="exportSourceData(\''+srcId+'\')">&#x2B73; 导出 CSV</button>'+
+        '<button class="ct-btn" onclick="genSourceReport(\''+srcId+'\')">综合报告</button>'+
+        '<button class="ct-btn primary" onclick="exportSourceData(\''+srcId+'\')">导出 CSV</button>'+
       '</div>'+
     '</div>'+
     '<div class="src-explorer">'+
@@ -1134,7 +1174,7 @@ function genSourceReport(srcId){
     return '<div class="rep-bar-row"><span class="rbl">'+d+'</span><span class="rb-track"><span class="rb-fill" style="width:'+pct+'%"></span></span><span class="rbv">'+pct+'%</span></div>';
   }).join('');
   box.style.display='block';
-  box.innerHTML='<div class="rep-title">&#x1F4CA; '+escHtml(s.name)+' · 数据源综合报告</div>'+
+  box.innerHTML='<div class="rep-title">'+escHtml(s.name)+' · 数据源综合报告</div>'+
     '<div class="rep-grid">'+
       '<div class="rep-kpi"><b>'+st.n+'</b><span>样本量</span></div>'+
       '<div class="rep-kpi"><b>'+st.avg+'</b><span>平均评分</span></div>'+
@@ -1200,9 +1240,9 @@ function openFrameworkGallery(){
   setActiveNav('nav-fw');
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent='分析框架 · 全景';
-  var cards=DATA.frameworks.map(function(f){
+  var cards=DATA.frameworks.map(function(f,i){
     return '<div class="gal-card" onclick="openFramework(\''+f.id+'\')">'+
-      '<div class="gal-top"><span class="gal-ico">'+f.icon+'</span><span class="gal-name">'+escHtml(f.name)+'</span></div>'+
+      '<div class="gal-top"><span class="gal-idx">'+(i+1)+'</span><span class="gal-name">'+escHtml(f.name)+'</span></div>'+
       '<div class="gal-desc">'+escHtml(f.desc)+'</div>'+
       '<div class="gal-foot"><span class="gal-rec">共享框架</span><span class="gal-go">查看 &#8594;</span></div>'+
     '</div>';
@@ -1221,13 +1261,13 @@ function openAITools(){
   $('#topbarTitle').textContent='AI 简化工具';
   var cards=
     '<div class="ai-card" onclick="openVocTool()">'+
-      '<div class="ai-ico">&#x1F9EC;</div>'+
+      '<div class="ai-ico">01</div>'+
       '<div class="ai-name">VOC 打标签工具</div>'+
       '<div class="ai-desc">基于本地规则引擎（含否定保护），对单条用户评论/社媒内容实时打维度标签并给出判断。零依赖、可离线。</div>'+
       '<div class="ai-go">打开工具 &#8594;</div>'+
     '</div>'+
     '<div class="ai-card" onclick="openCorpusTool()">'+
-      '<div class="ai-ico">&#x1F4DD;</div>'+
+      '<div class="ai-ico">02</div>'+
       '<div class="ai-name">用户语料分析工具</div>'+
       '<div class="ai-desc">粘贴多行用户语料，批量运行 VOC 规则，输出维度标签频率、负面占比、高频问题 TOP 列表，辅助发现机会点。</div>'+
       '<div class="ai-go">打开工具 &#8594;</div>'+
@@ -1274,7 +1314,7 @@ function openCorpusTool(){
       '<div class="tagger-panel">'+
         '<textarea class="tp-input" id="corpusInput" style="min-height:160px" placeholder="每行一条用户语料，例如：&#10;尺寸偏小，希望更大一点&#10;静音效果很好，放在卧室不吵&#10;价格偏高，性价比一般&#10;材质塑料感强，不够高级"></textarea>'+
         '<div class="tp-tip">将逐行运行 VOC 规则引擎，汇总维度标签频率、负面占比与高频问题 TOP5。</div>'+
-        '<button class="export-ai" style="margin-top:10px" onclick="renderCorpusAnalysis()">&#x1F4CA; 分析语料</button>'+
+        '<button class="export-ai" style="margin-top:10px" onclick="renderCorpusAnalysis()">分析语料</button>'+
       '</div>'+
       '<div class="tool-result" id="corpusResult"></div>'+
     '</div>';
@@ -1340,10 +1380,10 @@ function renderPurposeGrid(){
     var isCur=(state.ws===wsk);
     cols+='<div class="pc-col">';
     cols+='<div class="pc-col-header col-'+w.dotClass+'">'+escHtml(w.label)+'</div>';
-    w.purposes.forEach(function(p){
+    w.purposes.forEach(function(p,i){
       var srcTags=p.sources.map(function(s){return '<span class="pm-tag src">'+escHtml(getSource(s)?getSource(s).name:s)+'</span>'}).join('');
       cols+='<div class="p-card" data-purpose="'+p.id+'" data-ws="'+wsk+'" onclick="enterPurpose(\''+p.id+'\')">';
-      cols+='<div class="pcard-name">'+p.icon+' '+escHtml(p.name)+'</div>';
+      cols+='<div class="pcard-name"><span class="mini-idx">'+(i+1)+'</span> '+escHtml(p.name)+'</div>';
       cols+='<div class="pcard-meta">';
       cols+='调用：<span class="pm-tag">'+p.sources.join('·')+'</span>';
       cols+='<span class="pm-tag mtd">'+escHtml(p.methods)+'</span>';
@@ -1378,17 +1418,15 @@ function renderPurposeWorkspace(){
   $('#wsPurposeTitle').textContent=p.name+' ';
   $('#wsWsTag').textContent=DATA.workspaces[state.ws].label.split('·')[0];
 
-  // Mode toggle reset
+  // Mode toggle reset → 默认结构化（不渲染画布）
   state.mode='struct';
   $$('#modeToggle .mode-opt').forEach(function(el){
     el.classList.toggle('active',el.getAttribute('data-mode')==='struct');
   });
 
-  // Render structured panel
+  // Render structured panel only；画布默认不渲染，切换「无限画布模式」后才生成
   renderStructPanel(p);
-
-  // Render canvas
-  renderCanvasArea(p);
+  applyMode('struct', p);
 
   // Show subnav
   $('#subnav').classList.add('show');
@@ -1476,7 +1514,7 @@ function renderStructPanel(p){
       '<div class="an-card"><div class="an-h">购买旅程</div><div id="journeyBox" class="an-body"></div></div>'+
     '</div></div>';
 
-  var expHtml='<div class="struct-section"><button class="export-ai" onclick="openExportModal()">&#x1F916; 导出到智能体</button></div>';
+  var expHtml='<div class="struct-section"><button class="export-ai" onclick="openExportModal()">导出到智能体</button></div>';
 
   // VOC Tagger
   var taggerHtml='<div class="struct-section"><div class="ss-head">VOC 规则引擎（本地运行）</div><div class="tagger-panel">'+
@@ -1508,7 +1546,11 @@ var PURPOSE_FW={
   'product-opt':['voc','quad'],
   'marketing':['journey','motivation'],
   'new-plan':['quad','jtbd'],
-  'new-build':['voc','journey']
+  'new-build':['voc','journey'],
+  'category-plan':['quad','journey'],
+  'price-strategy':['quad','voc'],
+  'campaign':['journey','motivation'],
+  'competitor':['voc','quad']
 };
 
 function matchSourcesByNL(text){
@@ -1590,7 +1632,7 @@ function renderSuggestions(p){
   $('#suggestFrameworks').innerHTML=fwIds.map(function(fid){
     var f=DATA.frameworks.find(function(x){return x.id===fid;});
     if(!f)return '';
-    return '<span class="sg-chip fw" data-fw="'+fid+'" onclick="toggleFramework(\''+fid+'\')">'+f.icon+' '+escHtml(f.name)+'</span>';
+    return '<span class="sg-chip fw" data-fw="'+fid+'" onclick="toggleFramework(\''+fid+'\')">'+escHtml(f.name)+'</span>';
   }).join('');
 }
 
@@ -1970,20 +2012,30 @@ canvasEl&&(canvasEl.addEventListener('drop',function(e){
 // ============================================================
 // MODE TOGGLE (截图2)
 // ============================================================
+function applyMode(mode, p){
+  state.mode=mode;
+  var sp=$('#structPanel'), ca=$('.canvas-area');
+  $$('#modeToggle .mode-opt').forEach(function(el){
+    el.classList.toggle('active',el.getAttribute('data-mode')===mode);
+  });
+  if(mode==='canvas'){
+    // 仅在此刻才生成 / 显示无限画布
+    sp.style.display='none';
+    ca.style.display='flex';
+    if(p)renderCanvasArea(p);
+  }else{
+    // 默认结构化：画布区完全不出现，结构化面板占满
+    ca.style.display='none';
+    sp.style.display='block';
+    sp.style.flex='1';
+    sp.style.width='auto';
+  }
+}
+
 $$('#modeToggle .mode-opt').forEach(function(el){
   el.addEventListener('click',function(){
-    $$('#modeToggle .mode-opt').forEach(function(x){x.classList.remove('active')});
-    el.classList.add('active');
-    state.mode=el.getAttribute('data-mode');
-    // Toggle visibility
-    $('#structPanel').style.display=state.mode==='struct'?'block':'none';
-    $('.canvas-area').style.flex=state.mode==='struct'?'1':'1';
-    if(state.mode==='canvas'){
-      $('#structPanel').style.display='none';
-      renderCanvas();
-    }else{
-      $('#structPanel').style.display='';
-    }
+    var p=getPurpose(state.ws,state.purposeId);
+    applyMode(el.getAttribute('data-mode'), p);
   });
 });
 
