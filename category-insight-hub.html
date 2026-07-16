@@ -147,6 +147,40 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 
 /* Source / Framework detail views */
 .src-detail,.fw-detail{padding:26px 28px;max-width:920px}
+/* ——VOC 标签体系页面—— */
+.voc-page{display:flex;gap:16px;padding:10px 24px 40px}
+.voc-col{flex:0 0 380px;min-width:0;overflow-y:auto;max-height:calc(100vh-200px)}
+.voc-col-right{flex:1;border-left:1px solid var(--border);padding-left:16px}
+.voc-psh{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.voc-psh::before{content:'';width:3px;height:12px;border-radius:2px;background:var(--rad-grad)}
+.voc-mods{display:grid;gap:4px}
+.voc-mod{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.voc-mhead{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;transition:background .15s;user-select:none}
+.voc-mhead:hover{background:rgba(0,212,255,.04)}
+.voc-mn{width:22px;height:22px;border-radius:6px;background:var(--vmc,#0891B2);color:#fff;font-size:9px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
+.voc-mt{font-size:11.5px;font-weight:800;color:var(--ink);flex:1}
+.voc-note{font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;background:rgba(245,158,11,.12);color:#b45309}
+.voc-arw{font-size:10px;color:var(--muted);transition:transform .2s}
+.voc-mbody{display:flex;flex-wrap:wrap;gap:4px;padding:6px 10px 8px;border-top:1px solid var(--border)}
+.voc-sub{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:rgba(128,140,164,.08);color:var(--ink-2)}
+.voc-base{background:rgba(8,145,178,.08);color:var(--accent);font-weight:700}
+.voc-bases{display:flex;gap:4px;flex-wrap:wrap}
+.voc-cats{display:flex;gap:6px;margin-bottom:10px}
+.voc-cat{font-size:11px;font-weight:800;padding:5px 14px;border-radius:8px;border:1px solid var(--border);background:var(--glass-bg);color:var(--ink-2);cursor:pointer;transition:all .15s;font-family:inherit}
+.voc-cat.on,.voc-cat:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.06)}
+.voc-cases{display:grid;grid-template-columns:1fr;gap:10px}
+.voc-ucards{display:grid;gap:10px}
+.voc-ucard{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;position:relative;overflow:hidden}
+.voc-ucard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--rad-grad)}
+.voc-utop{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.voc-utype{font-size:10px;font-weight:800;padding:2px 9px;border-radius:6px;color:#fff}
+.voc-udims{font-size:11px;color:var(--muted);margin-left:auto}
+.voc-udims b{color:var(--ink)}
+.voc-udesc{font-size:11px;color:var(--ink-2);line-height:1.5;margin-bottom:6px}
+.voc-uhits{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}
+.voc-hit{font-size:9px;font-weight:600;padding:1px 6px;border-radius:4px;background:rgba(139,92,246,.1);color:#7c3aed}
+.voc-uaim{font-size:10.5px;color:var(--ink-2);line-height:1.5}
 .sd-kpis{display:flex;gap:14px;margin:18px 0 22px;flex-wrap:wrap}
 .sd-kpi{flex:1;min-width:150px;background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--border);
   border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm)}
@@ -1619,6 +1653,7 @@ function openFramework(fwId){
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent=f.name;
   setView('Framework');
+  if(fwId==='voc'){ renderVocTagPage(); return; }
   $('#viewFramework').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openFrameworkGallery()">返回分析框架</button>'+
       '<span class="ws-title">'+escHtml(f.name)+'</span>'+
@@ -1630,8 +1665,93 @@ function openFramework(fwId){
 }
 
 // ============================================================
-// GALLERIES + AI TOOLS (左侧 源数据/逻辑 三大板块 → 右侧内容)
+// VOC 标签体系（分析框架专用页）
 // ============================================================
+var VOC_MODULES = [
+  {id:1, name:'用户画像', subs:['人口统计（年龄/性别/地域/收入）','心理特征（性格/价值观/生活方式）','使用经验（新手/进阶/资深）','社群归属（产品讨论/身体讨论/幻想投射）'], color:'#0891B2'},
+  {id:2, name:'购买动机', subs:['功能驱动','情感驱动','促销刺激'], color:'#10B981'},
+  {id:3, name:'购买目的', subs:['社交性目的','时间场景','空间场景','情境场景'], color:'#A855F7'},
+  {id:4, name:'使用场景（待细化）', subs:['产品本身','使用场景','心理状态'], color:'#F59E0B', note:'颗粒度将在打标签过程中细化'},
+  {id:5, name:'不满&障碍（全购物&使用流程）', subs:['产品设计不满','功能体验障碍','使用流程阻碍','售后/服务障碍'], color:'#EC4899', note:'原"使用阻碍"扩展覆盖全流程'},
+  {id:6, name:'克服方式', subs:['产品改进','心理调适','复购行为','品牌粘性'], color:'#14B8A6'},
+  {id:7, name:'用户忠诚度', subs:['高忠诚（复购/推荐/关注新品）','低忠诚（尝试竞品/转向）'], color:'#8B5CF6'},
+  {id:8, name:'产品改进建议', subs:['产品设计','功能增强','用户强烈需要','考虑/可选'], color:'#F97316'},
+  {id:9, name:'十三种需求（深层驱动）', subs:['身份层（主宰/审美/目的/刺激/道德）','体验层（认可/亲密/胜任/影响）','功能层（安全/归属/舒适）','必买层（健康）'], color:'#0EA5E9'}
+];
+var VOC_CASES = {
+  '倒模类': [
+    {type:'画像缺乏', hit:['购买动机-情感驱动','不满&障碍-产品设计不满','十三种需求-亲密/安全'], dims:3, aim:'用于细分市场：定位情感需求型用户群体', desc:'以情感诉求为主，对产品外观/质感关注度高，缺少完整使用流程讨论。'},
+    {type:'画像完整', hit:['用户画像-人口统计+心理特征','购买动机-功能+情感','不满&障碍-产品设计+体验','克服方式-产品改进','十三种需求-安全+舒适+审美'], dims:5, aim:'用于新品开发：针对性解决清洗/材质痛点', desc:'完整讨论了从购买动机到使用阻碍全流程，情感+清洗两方面突出。'},
+    {type:'话多用户', hit:['用户画像-全维度','购买动机-全维度','不满&障碍-全流程','克服方式-多方案','改进建议-设计+功能','十三种需求-全层次'], dims:7, aim:'用于用户洞察：全面理解倒模类用户需求层次', desc:'深度参与产品讨论全链，从动机到改进建议均有高质量表达。'}
+  ],
+  '飞机杯类': [
+    {type:'画像缺乏', hit:['购买动机-功能驱动','不满&障碍-功能体验障碍','十三种需求-刺激/舒适'], dims:3, aim:'用于产品优化：聚焦功能性能提升', desc:'集中于功能层面讨论，关注震动/加热等参数，情感表达较少。'},
+    {type:'画像完整', hit:['用户画像-使用经验+社群','购买动机-功能+情感','不满&障碍-噪音+尺寸+清洗','改进建议-功能增强','十三种需求-刺激+安全+舒适'], dims:5, aim:'用于新品开发+产品优化：功能+体验双线改进', desc:'从参数对比到使用体验均有讨论，功能+体验+价格是核心关注。'},
+    {type:'话多用户', hit:['用户画像-全维度','购买动机-全维度','不满&障碍-全流程','克服方式-多种DIY','改进建议-设计+功能+强烈','忠诚度-高+低','十三种需求-全层次'], dims:8, aim:'用于竞品分析+市场趋势：了解用户对竞品的对比和迁移路径', desc:'多平台比价+多品牌对比+深度DIY，是行业关键信息源。'}
+  ]
+};
+// VOC 基础维度标签（数据源）
+var VOC_BASE = ['类目','品牌','是否产品强相关'];
+function renderVocTagPage(){
+  // 标签体系 HTML
+  var modHtml = VOC_MODULES.map(function(m){
+    var subs = m.subs.map(function(s){ return '<span class="voc-sub">'+escHtml(s)+'</span>'; }).join('');
+    var note = m.note ? '<span class="voc-note">'+escHtml(m.note)+'</span>' : '';
+    return '<div class="voc-mod"><div class="voc-mhead" onclick="vocToggle(this)" style="--vmc:'+m.color+'">'+
+      '<span class="voc-mn">'+(m.id<10?'0'+m.id:m.id)+'</span>'+
+      '<span class="voc-mt">'+escHtml(m.name)+'</span>'+note+
+      '<span class="voc-arw">▾</span></div><div class="voc-mbody">'+subs+'</div></div>';
+  }).join('');
+  // 基础维度
+  var baseHtml = VOC_BASE.map(function(b){ return '<span class="voc-sub voc-base">'+escHtml(b)+'</span>'; }).join('');
+  // 案例 tab（默认倒模类）
+  var catsHtml = Object.keys(VOC_CASES).map(function(k){
+    return '<button class="voc-cat'+(k==='倒模类'?' on':'')+'" onclick="vocSwitchCat(\''+k+'\',this)">'+escHtml(k)+'</button>';
+  }).join('');
+  var caseHtml = renderVocCases('倒模类');
+  // 完整页面
+  $('#viewFramework').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="openFrameworkGallery()">返回分析框架</button>'+
+      '<span class="ws-title">VOC 标签体系</span>'+
+      '<span class="ws-tag">9 大模块 · '+VOC_MODULES.reduce(function(a,m){return a+m.subs.length;},0)+' 子维度 · '+Object.keys(VOC_CASES).length+' 类目案例</span></div>'+
+    '<div class="voc-page">'+
+      '<div class="voc-col"><div class="voc-psh">标签体系</div>'+
+        '<div class="voc-mods">'+modHtml+'</div>'+
+        '<div class="voc-base-bar"><span class="voc-psh" style="margin:8px 0 4px">基础维度标签</span><div class="voc-bases">'+baseHtml+'</div></div>'+
+      '</div>'+
+      '<div class="voc-col voc-col-right"><div class="voc-psh">类目用户案例 · 帮助理解标签体系</div>'+
+        '<div class="voc-cats">'+catsHtml+'</div>'+
+        '<div id="vocCases" class="voc-cases">'+caseHtml+'</div>'+
+      '</div>'+
+    '</div>';
+}
+function renderVocCases(cat){
+  var users=VOC_CASES[cat];
+  if(!users) return '';
+  return '<div class="voc-ucards">'+users.map(function(u){
+    var hits = u.hit.map(function(h){ return '<span class="voc-hit">'+escHtml(h)+'</span>'; }).join('');
+    var pct = Math.round(u.dims/8*100);
+    return '<div class="voc-ucard"><div class="voc-utop"><span class="voc-utype" style="background:'+({3:'#94A3B8',5:'#F59E0B',7:'#10B981',8:'#0891B2'}[u.dims]||'#94A3B8')+'">'+escHtml(u.type)+'</span>'+
+      '<span class="voc-udims">命中 <b style="font-size:16px">'+u.dims+'</b> 标签维度 · '+pct+'%</span></div>'+
+      '<div class="voc-udesc">'+escHtml(u.desc)+'</div>'+
+      '<div class="voc-uhits">'+hits+'</div>'+
+      '<div class="voc-uaim"><span style="font-weight:700;color:var(--accent);font-size:10px">分析目的：</span>'+escHtml(u.aim)+'</div>'+
+    '</div>';
+  }).join('')+'</div>';
+}
+function vocToggle(el){
+  var body=el.nextElementSibling;
+  var arrow=el.querySelector('.voc-arw');
+  if(body){
+    body.style.display=(body.style.display==='none'?'':'none');
+    if(arrow) arrow.textContent=(body.style.display==='none'?'▸':'▾');
+  }
+}
+function vocSwitchCat(cat, btn){
+  document.querySelectorAll('.voc-cat').forEach(function(b){b.classList.remove('on');});
+  if(btn) btn.classList.add('on');
+  document.getElementById('vocCases').innerHTML=renderVocCases(cat);
+}
 
 // ---- 板块1：数据源画廊（点击进入单个数据源看板）----
 function openSourceGallery(){
