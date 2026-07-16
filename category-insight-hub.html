@@ -161,8 +161,11 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .voc-mt{font-size:11.5px;font-weight:800;color:var(--ink);flex:1}
 .voc-note{font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;background:rgba(245,158,11,.12);color:#b45309}
 .voc-arw{font-size:10px;color:var(--muted);transition:transform .2s}
-.voc-mbody{display:flex;flex-wrap:wrap;gap:4px;padding:6px 10px 8px;border-top:1px solid var(--border)}
-.voc-sub{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:rgba(128,140,164,.08);color:var(--ink-2)}
+.voc-mbody{display:grid;gap:6px;padding:8px 10px 10px;border-top:1px solid var(--border)}
+.voc-subsec{display:grid;gap:3px}
+.voc-subhead{font-size:10.5px;font-weight:700;color:var(--ink);letter-spacing:.2px}
+.voc-tags{display:flex;flex-wrap:wrap;gap:3px}
+.voc-tag{font-size:9px;font-weight:600;padding:1px 6px;border-radius:4px;background:rgba(128,140,164,.1);color:var(--ink-2)}
 .voc-base{background:rgba(8,145,178,.08);color:var(--accent);font-weight:700}
 .voc-bases{display:flex;gap:4px;flex-wrap:wrap}
 .voc-cats{display:flex;gap:6px;margin-bottom:10px}
@@ -1715,15 +1718,56 @@ function openFramework(fwId){
 // VOC 标签体系（分析框架专用页）
 // ============================================================
 var VOC_MODULES = [
-  {id:1, name:'用户画像', subs:['人口统计（年龄/性别/地域/收入）','心理特征（性格/价值观/生活方式）','使用经验（新手/进阶/资深）','社群归属（产品讨论/身体讨论/幻想投射）'], color:'#0891B2'},
-  {id:2, name:'购买动机', subs:['功能驱动','情感驱动','促销刺激'], color:'#10B981'},
-  {id:3, name:'购买目的', subs:['社交性目的','时间场景','空间场景','情境场景'], color:'#A855F7'},
-  {id:4, name:'使用场景（待细化）', subs:['产品本身','使用场景','心理状态'], color:'#F59E0B', note:'颗粒度将在打标签过程中细化'},
-  {id:5, name:'不满&障碍（全购物&使用流程）', subs:['产品设计不满','功能体验障碍','使用流程阻碍','售后/服务障碍'], color:'#EC4899', note:'原"使用阻碍"扩展覆盖全流程'},
-  {id:6, name:'克服方式', subs:['产品改进','心理调适','复购行为','品牌粘性'], color:'#14B8A6'},
-  {id:7, name:'用户忠诚度', subs:['高忠诚（复购/推荐/关注新品）','低忠诚（尝试竞品/转向）'], color:'#8B5CF6'},
-  {id:8, name:'产品改进建议', subs:['产品设计','功能增强','用户强烈需要','考虑/可选'], color:'#F97316'},
-  {id:9, name:'十三种需求（深层驱动）', subs:['身份层（主宰/审美/目的/刺激/道德）','体验层（认可/亲密/胜任/影响）','功能层（安全/归属/舒适）','必买层（健康）'], color:'#0EA5E9'}
+  {id:1, name:'用户画像', color:'#0891B2', subs:[
+    {n:'人口统计', tags:['年龄段','性别','地域','收入水平']},
+    {n:'心理特征', tags:['性格类型','价值观','生活方式']},
+    {n:'使用经验', tags:['新手','进阶','资深']},
+    {n:'社群归属', tags:['产品讨论','身体讨论','幻想投射']}
+  ]},
+  {id:2, name:'购买动机', color:'#10B981', subs:[
+    {n:'功能驱动', tags:['性能参数','功能需求','实用性']},
+    {n:'情感驱动', tags:['情绪安慰','陪伴感','自我奖励']},
+    {n:'促销刺激', tags:['折扣','限时','赠品']}
+  ]},
+  {id:3, name:'购买目的', color:'#A855F7', subs:[
+    {n:'时间场景', tags:['日常使用','特殊时刻','周期性']},
+    {n:'空间场景', tags:['居家','外出','私密空间']},
+    {n:'情境场景', tags:['解压','助眠','社交准备']},
+    {n:'社交性目的', tags:['送礼','分享','共同使用']}
+  ]},
+  {id:4, name:'使用场景（待细化）', color:'#F59E0B', subs:[
+    {n:'产品本身', tags:['功能场景','使用方式','搭配']},
+    {n:'使用场景', tags:['单人','双人','辅助']},
+    {n:'心理状态', tags:['放松','期待','满足']}
+  ], note:'颗粒度将在打标签过程中细化'},
+  {id:5, name:'不满&障碍（全购物&使用流程）', color:'#EC4899', subs:[
+    {n:'产品设计不满', tags:['外观','材质','尺寸','包装']},
+    {n:'功能体验障碍', tags:['噪音','清洁','操作','耐用']},
+    {n:'使用流程阻碍', tags:['安装','收纳','维护']},
+    {n:'售后/服务障碍', tags:['退换货','维修','客服']}
+  ], note:'原"使用阻碍"扩展覆盖全流程'},
+  {id:6, name:'克服方式', color:'#14B8A6', subs:[
+    {n:'产品改进', tags:['更换配件','改装DIY','升级']},
+    {n:'心理调适', tags:['降低预期','适应','习惯']},
+    {n:'复购行为', tags:['同品牌复购','升级换代']},
+    {n:'品牌粘性', tags:['忠实','推荐','社群']}
+  ]},
+  {id:7, name:'用户忠诚度', color:'#8B5CF6', subs:[
+    {n:'高忠诚', tags:['复购','推荐','关注新品']},
+    {n:'低忠诚', tags:['尝试竞品','转向','弃用']}
+  ]},
+  {id:8, name:'产品改进建议', color:'#F97316', subs:[
+    {n:'产品设计', tags:['外观优化','材质升级','尺寸调整']},
+    {n:'功能增强', tags:['新增功能','性能提升','智能化']},
+    {n:'用户强烈需要', tags:['刚需功能','痛点解决','基础改善']},
+    {n:'考虑/可选', tags:['增值功能','差异化','创新']}
+  ]},
+  {id:9, name:'十三种需求（深层驱动）', color:'#0EA5E9', subs:[
+    {n:'身份层', tags:['主宰','审美','目的','刺激','道德']},
+    {n:'体验层', tags:['认可','亲密','胜任','影响']},
+    {n:'功能层', tags:['安全','归属','舒适']},
+    {n:'必买层', tags:['健康']}
+  ]}
 ];
 var VOC_CASES = {
   '倒模类': [
@@ -1742,7 +1786,10 @@ var VOC_BASE = ['类目','品牌','是否产品强相关'];
 function renderVocTagPage(){
   // 标签体系 HTML
   var modHtml = VOC_MODULES.map(function(m){
-    var subs = m.subs.map(function(s){ return '<span class="voc-sub">'+escHtml(s)+'</span>'; }).join('');
+    var subs = m.subs.map(function(s){
+      var tags = s.tags.map(function(t){ return '<span class="voc-tag">'+escHtml(t)+'</span>'; }).join('');
+      return '<div class="voc-subsec"><div class="voc-subhead">'+escHtml(s.n)+'</div><div class="voc-tags">'+tags+'</div></div>';
+    }).join('');
     var note = m.note ? '<span class="voc-note">'+escHtml(m.note)+'</span>' : '';
     return '<div class="voc-mod"><div class="voc-mhead" onclick="vocToggle(this)" style="--vmc:'+m.color+'">'+
       '<span class="voc-mn">'+(m.id<10?'0'+m.id:m.id)+'</span>'+
