@@ -712,9 +712,10 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ir-item-k{font-size:10.5px;font-weight:700;color:var(--accent);white-space:nowrap;width:100px;flex-shrink:0}
 .ir-item-v{font-size:11px;color:var(--ink-2);line-height:1.5}
 /* ——领新详情弹窗（modal）—— */
-.lfm-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:9999;display:none;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
-.lfm-overlay.show{display:flex}
-.lfm-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);width:640px;max-width:92vw;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.25);animation:fadeInUp .25s both;position:relative;z-index:10000;pointer-events:auto}
+.lfm-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:9999;display:none;backdrop-filter:blur(4px);cursor:pointer}
+.lfm-overlay.show{display:block}
+.lfm-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);width:640px;max-width:92vw;max-height:84vh;display:none;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.25);animation:fadeInUp .25s both;z-index:10000}
+.lfm-box.show{display:flex}
 .lfm-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rad-grad);z-index:1}
 .lfm-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
 .lfm-title{font-size:15px;font-weight:800;color:var(--ink);flex:1}
@@ -1690,10 +1691,10 @@ function openLfZone(){
   setView('LfZone');
   $('#viewLfZone').innerHTML=
     '<div class="gal-head"><div><div class="gal-h-title">领新用户反馈专区</div>'+
-      '<div class="gal-h-sub">基于领先用户理论：从 VOC 小众长评与访谈特别反馈中识别超前需求与创意信号。可切换「用户身份卡」与「领先需求评估」。</div></div></div>'+
+      '<div class="gal-h-sub">基于领先用户理论：从 VOC 小众长评与访谈特别反馈中识别超前需求与创意信号。可切换「领先用户身份卡」与「领先需求评估」。</div></div></div>'+
     '<div class="lf-zone lf-page"><div class="ss-head">领新用户反馈</div>'+
       '<div class="lf-tabs">'+
-        '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户身份卡</div>'+
+        '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">领先用户身份卡</div>'+
         '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">领先需求评估</div>'+
       '</div>'+
       '<div class="lf-body"></div>'+
@@ -2813,25 +2814,26 @@ function lfSetFilter(type,val,el){
 // ---- 领新用户详情弹窗（modal + 导出）----
 function ensureLfModal(){
   if(document.getElementById('lfModal')) return;
-  var div=document.createElement('div');
-  div.id='lfModal'; div.className='lfm-overlay';
-  div.innerHTML='<div class="lfm-box"><div class="lfm-head">'+
-    '<span class="lfm-title" id="lfmTitle"></span><div class="lfm-actions">'+
+  // overlay（独立）
+  var ov=document.createElement('div');
+  ov.id='lfModal'; ov.className='lfm-overlay';
+  ov.addEventListener('click', function(e){ if(e.target===e.currentTarget) closeLfModal(); });
+  document.body.appendChild(ov);
+  // box（独立兄弟节点）
+  var bx=document.createElement('div');
+  bx.className='lfm-box'; bx.id='lfmBox';
+  bx.innerHTML='<div class="lfm-head"><span class="lfm-title" id="lfmTitle"></span><div class="lfm-actions">'+
     '<button class="lfm-btn" id="lfmExportBtn">导出图片</button>'+
     '<button class="lfm-btn" id="lfmCopyBtn">复制文本</button>'+
     '<button class="lfm-close" id="lfmCloseBtn">&times;</button></div></div>'+
-    '<div class="lfm-body" id="lfmBody"></div></div>';
-  // 用 addEventListener 绑定所有事件，避免 HTML onclick 的 event 变量问题
-  div.addEventListener('click', function(e){ if(e.target===e.currentTarget) closeLfModal(); });
-  var box=div.querySelector('.lfm-box');
-  if(box) box.addEventListener('click', function(e){ e.stopPropagation(); });
-  var expBtn=div.querySelector('#lfmExportBtn');
+    '<div class="lfm-body" id="lfmBody"></div>';
+  var expBtn=bx.querySelector('#lfmExportBtn');
   if(expBtn) expBtn.addEventListener('click', exportLfCard);
-  var cpyBtn=div.querySelector('#lfmCopyBtn');
+  var cpyBtn=bx.querySelector('#lfmCopyBtn');
   if(cpyBtn) cpyBtn.addEventListener('click', copyLfCard);
-  var clsBtn=div.querySelector('#lfmCloseBtn');
+  var clsBtn=bx.querySelector('#lfmCloseBtn');
   if(clsBtn) clsBtn.addEventListener('click', closeLfModal);
-  document.body.appendChild(div);
+  document.body.appendChild(bx);
   document.addEventListener('keydown', function lfmKd(e){ if(e.key==='Escape') closeLfModal(); });
 }
 function openLfModal(id, type){
@@ -2839,10 +2841,15 @@ function openLfModal(id, type){
   var data=type==='portrait'?LF_PORTRAITS.find(function(u){return u.id===id;}):FEEDBACK_RAW.find(function(f){return f.id===id;});
   if(!data) return;
   document.getElementById('lfModal').classList.add('show');
+  var bx=document.getElementById('lfmBox');
+  if(bx) bx.classList.add('show');
   document.getElementById('lfmTitle').textContent=type==='portrait'?data.name:'反馈 #'+data.id;
   document.getElementById('lfmBody').innerHTML=type==='portrait'?renderLfPortraitDetail(data):renderLfFeedbackDetail(data);
 }
-function closeLfModal(){ var m=document.getElementById('lfModal'); if(m) m.classList.remove('show'); }
+function closeLfModal(){
+  var ov=document.getElementById('lfModal'); if(ov) ov.classList.remove('show');
+  var bx=document.getElementById('lfmBox'); if(bx) bx.classList.remove('show');
+}
 function copyLfCard(){
   var body=document.getElementById('lfmBody'); if(!body) return;
   var t=body.textContent||'';
@@ -3409,7 +3416,7 @@ function renderStructPanel(p){
     '<div class="struct-col struct-col-left"><div class="col-header">数据源</div>'+srcHtml+insHtml+
     '<div class="struct-section lf-zone"><div class="ss-head">领新用户反馈专区</div>'+
     '<div class="lf-tabs">'+
-      '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户身份卡</div>'+
+      '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">领先用户身份卡</div>'+
       '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">领先需求评估</div>'+
     '</div>'+
     '<div class="lf-body"></div>'+
