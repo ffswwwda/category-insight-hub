@@ -987,6 +987,9 @@ function openDeDashboard(){
   state.purposeId=null;
   setActiveNav('src-s8');
   $('#viewDe').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.querySelector('#viewDe .de-frame');
+  if(f) f.src='de-dashboard.html?theme='+th;
 }
 
 // ============================================================
@@ -1290,8 +1293,9 @@ function openVocTool(){
   setActiveNav('nav-ai');
   $('#topbarTitle').textContent='VOC 打标签工具';
   setView('VocTool');
+  var th=document.body.classList.contains('dark')?'dark':'light';
   $('#viewVocTool').innerHTML=
-    '<iframe class="voc-frame" src="voc-tagging.html" title="VOC 智能打标工具"></iframe>';
+    '<iframe class="voc-frame" src="voc-tagging.html?theme='+th+'" title="VOC 智能打标工具"></iframe>';
 }
 
 // ---- 用户语料分析工具（批量）----
@@ -2233,6 +2237,10 @@ init();
       document.body.className = next;
       store.set('cih-theme', next);
       if(window.toast) toast(next==='dark' ? '已切换至暗色模式' : '已切换至亮色模式');
+      // 同步主题给所有内嵌 iframe（德国看板 / VOC 工具）
+      document.querySelectorAll('iframe').forEach(function(f){
+        try{ if(f.contentWindow) f.contentWindow.postMessage({type:'cih-theme', value:next}, '*'); }catch(e){}
+      });
     });
   }
 

@@ -16,6 +16,29 @@
     --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
   }
+  /* ===== Dark theme (跟随主站) ===== */
+  body.dark{
+    --bg:#0a0e1a; --panel:rgba(20,28,48,.6); --panel-2:rgba(30,40,66,.45); --border:rgba(255,255,255,.1);
+    --ink:#e6ebf5; --ink-2:#aab4c8; --muted:#8893a8; --line:rgba(255,255,255,.08);
+    --accent-weak:rgba(0,195,243,.14);
+    --shadow:0 1px 3px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.4);
+    background-image:
+      radial-gradient(circle at 18% 82%, rgba(0,195,243,.14) 0%, transparent 45%),
+      radial-gradient(circle at 82% 18%, rgba(168,85,247,.12) 0%, transparent 45%),
+      radial-gradient(circle at 55% 55%, rgba(219,179,96,.06) 0%, transparent 60%),
+      linear-gradient(rgba(0,195,243,.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,195,243,.06) 1px,transparent 1px);
+  }
+  body.dark .src-card .tag{background:rgba(219,179,96,.18);}
+  body.dark .chip:hover{border-color:rgba(255,255,255,.22);}
+  body.dark .ls-item:hover{border-color:rgba(255,255,255,.22);}
+  body.dark .pill.ok{background:rgba(31,157,107,.18);color:#5fd6a8;}
+  body.dark .pill.no{background:rgba(224,86,86,.18);color:#ff8e8e;}
+  body.dark .pill.fba{background:rgba(59,91,219,.20);color:#9db4ff;}
+  body.dark .pill.cn{background:rgba(219,179,96,.18);color:#e6b563;}
+  body.dark .pill.de{background:rgba(31,157,107,.18);color:#5fd6a8;}
+  body.dark ::-webkit-scrollbar-thumb{background:#2a3550;}
+  body.dark ::-webkit-scrollbar-thumb:hover{background:#3a4768;}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{margin:0;background-color:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;
@@ -152,6 +175,21 @@
 </style>
 </head>
 <body>
+<script>
+/* 主题跟随主站：URL参数 > localStorage > 亮色；并监听主站 postMessage 实时切换 */
+(function(){
+  function applyTheme(t){
+    t = (t==='dark') ? 'dark' : 'light';
+    document.body.classList.toggle('dark', t==='dark');
+    document.body.classList.toggle('light', t!=='dark');
+    try{ localStorage.setItem('cih-theme', t); }catch(e){}
+  }
+  var q=new URLSearchParams(location.search).get('theme');
+  var s=null; try{ s=localStorage.getItem('cih-theme'); }catch(e){}
+  applyTheme(q||s||'light');
+  window.addEventListener('message', function(e){ if(e.data&&e.data.type==='cih-theme') applyTheme(e.data.value); });
+})();
+</script>
 <div class="app">
   <aside class="sidebar">
     <div class="brand">

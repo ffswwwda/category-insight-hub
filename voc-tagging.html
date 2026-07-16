@@ -18,6 +18,24 @@
   --glass-blur:blur(18px);
   --shadow:0 8px 30px rgba(31,38,72,.08);
 }
+  /* ===== Dark theme (跟随主站) ===== */
+  body.dark{
+    --bg:#0a0e1a; --glass:rgba(20,28,48,.6); --glass-2:rgba(30,40,66,.5); --line:rgba(255,255,255,.1);
+    --ink:#e6ebf5; --muted:#9aa6bd; --accent:#9b6cf0;
+    --shadow:0 8px 30px rgba(0,0,0,.45);
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(0,212,255,.18), transparent 42%),
+      radial-gradient(circle at 88% 12%, rgba(168,85,247,.18), transparent 40%),
+      radial-gradient(circle at 78% 88%, rgba(255,107,157,.16), transparent 44%),
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  }
+  body.dark .vt-select, body.dark .vt-ghost:hover, body.dark .vt-textarea, body.dark .mod-chip,
+  body.dark .file-drop:hover, body.dark .file-drop.has-file, body.dark .csv-chip, body.dark .cmt-card{
+    background:rgba(255,255,255,.06); color:var(--ink);
+  }
+  body.dark .file-drop.has-file{ border-color:rgba(124,58,237,.5); }
+  body.dark .jm-emo-bar{ background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.12); }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
@@ -200,6 +218,21 @@ body{
 </style>
 </head>
 <body>
+<script>
+/* 主题跟随主站：URL参数 > localStorage > 亮色；并监听主站 postMessage 实时切换 */
+(function(){
+  function applyTheme(t){
+    t = (t==='dark') ? 'dark' : 'light';
+    document.body.classList.toggle('dark', t==='dark');
+    document.body.classList.toggle('light', t!=='dark');
+    try{ localStorage.setItem('cih-theme', t); }catch(e){}
+  }
+  var q=new URLSearchParams(location.search).get('theme');
+  var s=null; try{ s=localStorage.getItem('cih-theme'); }catch(e){}
+  applyTheme(q||s||'light');
+  window.addEventListener('message', function(e){ if(e.data&&e.data.type==='cih-theme') applyTheme(e.data.value); });
+})();
+</script>
 <div class="vt-app">
   <header class="vt-header">
     <div class="vt-mark">研</div>
