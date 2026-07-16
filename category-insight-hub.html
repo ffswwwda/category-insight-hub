@@ -711,6 +711,24 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ir-item:last-child{border-bottom:none}
 .ir-item-k{font-size:10.5px;font-weight:700;color:var(--accent);white-space:nowrap;width:100px;flex-shrink:0}
 .ir-item-v{font-size:11px;color:var(--ink-2);line-height:1.5}
+/* ——领新详情弹窗（modal）—— */
+.lfm-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:9999;display:none;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
+.lfm-overlay.show{display:flex}
+.lfm-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);width:620px;max-width:92vw;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.25);animation:fadeInUp .25s both}
+.lfm-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.lfm-title{font-size:14px;font-weight:800;color:var(--ink);flex:1}
+.lfm-actions{display:flex;gap:6px}
+.lfm-btn{font-size:10px;font-weight:700;padding:4px 10px;border-radius:7px;border:1px solid var(--border);background:var(--glass-bg);color:var(--ink-2);cursor:pointer;font-family:inherit;transition:all .15s}
+.lfm-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lfm-close{width:28px;height:28px;border-radius:7px;border:none;background:var(--glass-bg);color:var(--muted);font-size:18px;cursor:pointer;display:grid;place-items:center;line-height:1;transition:all .15s}
+.lfm-close:hover{background:rgba(220,38,38,.12);color:#dc2626}
+.lfm-body{overflow-y:auto;padding:14px 16px 16px;flex:1}
+.lfm-detail{display:grid;gap:12px}
+.lfm-dsec{}
+.lfm-dlabel{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:3px}
+.lfm-dval{font-size:13px;color:var(--ink-2);line-height:1.6}
+.lfm-dsub{font-size:11px;color:var(--muted);line-height:1.5;margin-top:2px}
+.lfm-dquote{font-style:italic;border-left:3px solid var(--accent);padding-left:10px;color:var(--ink)}
 
 /* ——产品打分：左右布局 + 维度框架 + 评分表格—— */
 .ps-layout{display:flex;gap:16px;margin-top:10px;padding:0 24px 40px}
@@ -2385,7 +2403,7 @@ function renderLfPortrait(zone){
       var arch = LF_ARCH[u.archetype] || {label:u.archetype||'',color:'#94a3b8'};
       var sigs = (u.signals||[]).map(function(s){ var v=LF_SIG[s]||s; return '<span class="uid-sig">'+escHtml(v)+'</span>'; }).join('');
       var traits = u.trait ? u.trait.split('·').map(function(t){return '<span class="uid-tag">'+escHtml(t.trim())+'</span>';}).join('') : '';
-      return '<div class="uid-card">'+
+      return '<div class="uid-card" onclick="openLfModal(\''+u.id+'\',\'portrait\')">'+
         '<div class="uid-top"><div class="uid-avatar">'+escHtml(u.avatar)+'</div>'+
           '<div class="uid-id"><div class="uid-name">'+escHtml(u.name)+'</div>'+
           '<div class="uid-arch" style="--arch:'+arch.color+'">'+escHtml(arch.label)+'</div></div></div>'+
@@ -2432,7 +2450,7 @@ function renderLfFeedback(zone){
   // 渲染列表
   var listHtml = rows.map(function(r){
     var cls=srcMap[r.src]||'niche';
-    return '<div class="rf-row">'+
+    return '<div class="rf-row" onclick="openLfModal(\''+r.id+'\',\'feedback\')" style="cursor:pointer">'+
       '<div class="rf-head">'+
         '<span class="rf-src '+cls+'">'+escHtml(r.srcLabel)+'</span>'+
         '<span class="rf-purpose">'+escHtml(r.purpose)+'</span>'+
@@ -2461,6 +2479,92 @@ function lfSetFilter(type,val,el){
   else if(type==='sort') zone.dataset.fbSort = val;
   renderLfBody(zone);
 }
+
+// ---- 领新用户详情弹窗（modal + 导出）----
+function ensureLfModal(){
+  if(document.getElementById('lfModal')) return;
+  var div=document.createElement('div');
+  div.id='lfModal'; div.className='lfm-overlay';
+  div.onclick=function(){closeLfModal();};
+  div.innerHTML='<div class="lfm-box" onclick="event.stopPropagation()"><div class="lfm-head">'+
+    '<span class="lfm-title" id="lfmTitle"></span><div class="lfm-actions">'+
+    '<button class="lfm-btn" onclick="exportLfCard()">导出图片</button>'+
+    '<button class="lfm-btn" onclick="copyLfCard()">复制文本</button>'+
+    '<button class="lfm-close" onclick="closeLfModal()">&times;</button></div></div>'+
+    '<div class="lfm-body" id="lfmBody"></div></div>';
+  document.body.appendChild(div);
+  document.addEventListener('keydown', function lfmKd(e){ if(e.key==='Escape') closeLfModal(); });
+}
+function openLfModal(id, type){
+  ensureLfModal();
+  var data=type==='portrait'?LF_PORTRAITS.find(function(u){return u.id===id;}):FEEDBACK_RAW.find(function(f){return f.id===id;});
+  if(!data) return;
+  document.getElementById('lfModal').classList.add('show');
+  document.getElementById('lfmTitle').textContent=type==='portrait'?data.name:'反馈 #'+data.id;
+  document.getElementById('lfmBody').innerHTML=type==='portrait'?renderLfPortraitDetail(data):renderLfFeedbackDetail(data);
+}
+function closeLfModal(){ var m=document.getElementById('lfModal'); if(m) m.classList.remove('show'); }
+function copyLfCard(){
+  var body=document.getElementById('lfmBody'); if(!body) return;
+  var t=body.textContent||'';
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function(){if(window.toast) toast('已复制到剪贴板');}).catch(function(){prompt('复制失败，手动复制：',t);});
+  else prompt('复制失败，手动复制：',t);
+}
+function exportLfCard(){
+  var body=document.getElementById('lfmBody'); if(!body) return;
+  var w=Math.max(body.scrollWidth||400,380), h=body.scrollHeight;
+  var dpr=2; var c=document.createElement('canvas'); c.width=w*dpr; c.height=h*dpr;
+  var ctx=c.getContext('2d'); ctx.scale(dpr,dpr);
+  ctx.fillStyle='#F5F3F1'; ctx.fillRect(0,0,w,h);
+  var y=16;
+  var lines = (body.innerText||body.textContent||'').split('\n');
+  lines.forEach(function(line){
+    if(!line.trim()){y+=6;return;} if(y>h-30) return;
+    ctx.font='13px -apple-system,BlinkMacSystemFont,sans-serif'; ctx.fillStyle='#1e293b'; ctx.textBaseline='top';
+    ctx.fillText(line.trim(),14,y); y+=20;
+  });
+  ctx.fillStyle='#94a3b8'; ctx.font='10px -apple-system,BlinkMacSystemFont,sans-serif';
+  ctx.fillText('领新用户反馈专区 · 神之一手洞察系统',14,h-24);
+  c.toBlob(function(blob){
+    var url=URL.createObjectURL(blob); var a=document.createElement('a');
+    a.href=url; a.download='insight-card.png'; a.click(); URL.revokeObjectURL(url);
+    if(window.toast) toast('图片已导出');
+  },'image/png');
+}
+function renderLfPortraitDetail(u){
+  var arch=LF_ARCH[u.archetype]||{label:u.archetype||'',desc:''};
+  var sigs=(u.signals||[]).map(function(s){var v=LF_SIG[s]||s;return '<span class="uid-sig">'+escHtml(v)+'</span>';}).join('');
+  return '<div class="lfm-detail">'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">领先用户分类</div><div class="lfm-dval" style="color:'+arch.color+';font-weight:800">'+escHtml(arch.label)+'</div><div class="lfm-dsub">'+escHtml(arch.desc)+' · 基于 von Hippel 2×2 矩阵</div></div>'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">双维度评分</div><div class="lfm-dval">时间领先性：<b style="color:#10b981">'+escHtml(u.lead)+'</b> &nbsp;|&nbsp; 高收益预期：<b style="color:#10b981">'+escHtml(u.benefit)+'</b></div></div>'+
+    (sigs?'<div class="lfm-dsec"><div class="lfm-dlabel">检测到的信号</div><div class="lfm-dval">'+sigs+'</div></div>':'')+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">说了什么</div><div class="lfm-dval lfm-dquote">"'+escHtml(u.said)+'"</div></div>'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">提供的创意/机会</div><div class="lfm-dval">'+escHtml(u.idea)+'</div></div>'+
+    (u.trait?'<div class="lfm-dsec"><div class="lfm-dlabel">用户特点</div><div class="lfm-dval">'+escHtml(u.trait).replace(/·/g,' · ')+'</div></div>':'')+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">数据来源</div><div class="lfm-dval">'+escHtml(u.source)+'</div><div class="lfm-dsub">所属数据集：VOC 小众长评 / 访谈特别反馈 / 社媒深度帖 · 2025-2026</div></div>'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">类似用户出现频率</div><div class="lfm-dval">约 <b>'+escHtml(u.id==='u1'?'3.2%':u.id==='u2'?'1.8%':u.id==='u3'?'4.5%':u.id==='u4'?'6.1%':u.id==='u5'?'2.0%':'0.8%')+'</b> 的评价/反馈中可识别到类似特征<br><span style="font-size:11px;color:var(--muted)">基于当前数据集估算，接入全量数据后可精确统计</span></div></div>'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">关联标签板块</div><div class="lfm-dval"><span class="uid-tag">使用阻碍</span><span class="uid-tag">克服方式</span><span class="uid-tag">改进建议</span><span class="uid-tag">忠诚度</span></div></div>'+
+  '</div>';
+}
+function renderLfFeedbackDetail(r){
+  var srcMap={'voc-niche':'voc','interview':'interview'};
+  var cls=srcMap[r.src]||'niche';
+  var dir = r.lead==='极高' ? '代表极前沿的需求信号，适合纳入长期研发规划。' : (r.lead==='高' ? '代表已出现但未被充分关注的信号，可考虑中期布局。' : '初步方向参考，需结合更多数据验证。');
+  return '<div class="lfm-detail">'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">反馈来源</div><div class="lfm-dval"><span class="rf-src '+cls+'">'+escHtml(r.srcLabel)+'</span></div><div class="lfm-dsub">所属数据集：VOC 标签库 / 用户访谈记录 · 2025-2026</div></div>'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">反馈内容</div><div class="lfm-dval lfm-dquote">"'+escHtml(r.txt)+'"</div></div>'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">指向目的</div><div class="lfm-dval"><span class="rf-purpose" style="font-size:12px">'+escHtml(r.purpose)+'</span><span class="rf-cluster" style="font-size:12px;margin-left:8px">聚类：'+escHtml(r.cluster)+'</span></div></div>'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">评估指标</div><div class="lfm-dval">'+
+      '<span style="display:inline-block;margin-right:16px">超前性：<b style="color:#10b981">'+escHtml(r.lead)+'</b></span>'+
+      '<span style="display:inline-block;margin-right:16px">创意度：<b style="color:#10b981">'+escHtml(r.creat)+'</b></span>'+
+      '<span>VOC命中率：<b>'+escHtml(r.hitRate)+'</b></span></div>'+
+      '<div class="lfm-dsub">命中率越低 → 超前性越高，越可能代表前沿信号</div></div>'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">类似反馈频次</div><div class="lfm-dval">约 <b>'+escHtml(r.hitRate)+'</b> 的评价/讨论中涉及类似主题<br><span style="font-size:11px;color:var(--muted)">基于当前数据集估算。全量接入后可精确统计。</span></div></div>'+
+    '<div class="lfm-dsec"><div class="lfm-dlabel">洞察价值</div><div class="lfm-dval">此反馈指向「'+escHtml(r.purpose)+'」方向，'+dir+'</div></div>'+
+  '</div>';
+}
+
+// ---- 领新用户详情弹窗（modal + 导出）----
 
 // ---- 用户语料分析工具（批量）----
 /* ===================== 用户语料分析工具（CSV 上传 + 情绪分析） ===================== */
