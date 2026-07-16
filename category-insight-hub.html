@@ -771,6 +771,24 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .nd-res-item:last-child{border-bottom:none}
 .nd-res-k{font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap;width:100px;flex-shrink:0}
 .nd-res-v{font-size:11.5px;color:var(--ink-2);line-height:1.5}
+/* ——外部数据参考（Reddit）—— */
+.nd-ext-wrap{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin:6px 0 8px}
+.nd-ext-head{display:flex;align-items:center;gap:6px;padding:7px 10px;font-size:11px;font-weight:800;color:var(--accent);cursor:pointer;transition:background .15s;background:var(--glass-bg)}
+.nd-ext-head:hover{background:rgba(0,212,255,.06)}
+.nd-ext-arrow{font-size:10px;transition:transform .2s}
+.nd-ext-body{padding:8px 10px 10px;border-top:1px solid var(--border)}
+.nd-ext-row{display:flex;gap:6px;margin-bottom:6px}
+.nd-ext-input{flex:1;font:12px/1.5 var(--font);padding:5px 9px;border:1px solid var(--border);border-radius:7px;background:var(--panel-solid);color:var(--ink);outline:none}
+.nd-ext-input:focus{border-color:var(--accent)}
+.nd-ext-btn{padding:5px 14px;border:none;border-radius:7px;font-size:11px;font-weight:800;color:#fff;background:var(--rad-grad);cursor:pointer}
+.nd-ext-btn:disabled{opacity:.5;cursor:default}
+.nd-ext-posts{display:grid;gap:5px;max-height:280px;overflow-y:auto}
+.nd-ext-post{padding:7px 9px;border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .1s;background:var(--glass-bg)}
+.nd-ext-post:hover{border-color:var(--accent);background:rgba(0,212,255,.04)}
+.nd-ep-title{font-size:11.5px;font-weight:700;color:var(--ink);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nd-ep-text{font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:2px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nd-ep-meta{display:flex;gap:10px;margin-top:3px;font-size:10px;color:var(--muted)}
+.nd-ep-sr{font-weight:700;color:var(--accent)}
 
 /* ——产品打分：左右布局 + 维度框架 + 评分表格—— */
 .ps-layout{display:flex;gap:16px;margin-top:10px;padding:0 24px 40px}
@@ -1965,6 +1983,13 @@ function openNewDevelopTool(){
           '<textarea class="ps-nl" id="ndNl" placeholder="描述产品痛点 / 希望改进的方向 / 目标用户…\n例如：用户清洗麻烦、噪音大、不便携" style="min-height:80px"></textarea>'+
           '<div class="ps-input-bar"><button class="ps-run" id="ndRun" onclick="runNewDevelop()">生成创意方案</button></div>'+
         '</div>'+
+        '<div class="nd-ext-wrap"><div class="nd-ext-head" onclick="ndToggleExt()"><span class="nd-ext-arrow">▸</span> 从社媒获取行业灵感</div>'+
+          '<div class="nd-ext-body" id="ndExtBody">'+
+            '<div class="nd-ext-row"><input class="nd-ext-input" id="ndExtKw" placeholder="输入类目/关键词，如 sex toy noise">'+
+            '<button class="nd-ext-btn" id="ndExtBtn" onclick="ndFetchReddit()">拉取</button></div>'+
+            '<div class="nd-ext-load" id="ndExtLoad"></div>'+
+            '<div class="nd-ext-posts" id="ndExtPosts"></div>'+
+          '</div></div>'+
         frameTabs+
         '<div id="ndTrizPanel" class="nd-panel">'+
           '<div class="nd-psec"><div class="nd-psh">选择创新方向（TRIZ 4 大类）</div><div class="nd-cats">'+trizCats+'</div></div>'+
@@ -2049,6 +2074,58 @@ function renderNewDevelopReport(steps, isTriz){
     '<div style="font-size:11px;color:var(--muted);margin:-4px 0 6px">基于 '+(isTriz?'TRIZ 40 个发明原理':'产品创意罗盘 4 象限×20 种打法')+' 生成 · 共 <b>'+total+'</b> 个创意方向</div>'+
     '<div class="nd-res-steps">'+html+'</div>'+
     '<div class="ps-verdict go" style="margin-top:10px;text-align:left;padding:12px 16px"><div style="font-size:11.5px;line-height:1.6;color:var(--ink-2)">以上创意方向可组合使用。建议选取 2-3 个方向进行深入的产品概念验证与用户测试。</div></div>';
+}
+
+// ---- 外部数据：Reddit API 接入 ----
+function ndToggleExt(){
+  var body=document.getElementById('ndExtBody');
+  if(!body) return;
+  var arrow=document.querySelector('.nd-ext-arrow');
+  if(body.style.display==='none'){
+    body.style.display=''; if(arrow) arrow.textContent='▾';
+  } else {
+    body.style.display='none'; if(arrow) arrow.textContent='▸';
+  }
+}
+async function ndFetchReddit(){
+  var kw=document.getElementById('ndExtKw');
+  var q=kw?kw.value.trim():'';
+  if(!q){if(window.toast) toast('请输入关键词'); return;}
+  var load=document.getElementById('ndExtLoad'); if(load) load.innerHTML='<div class="ps-loading" style="padding:8px">正在获取…</div>';
+  var btn=document.getElementById('ndExtBtn'); if(btn) btn.disabled=true;
+  try{
+    var url='https://www.reddit.com/search.json?q='+encodeURIComponent(q)+'&limit=20&sort=top&t=year';
+    var res=await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    var data=await res.json();
+    var posts=data.data.children.filter(function(c){return !c.data.over_18;}).map(function(c){
+      return{title:c.data.title, text:(c.data.selftext||'').substring(0,250), subreddit:c.data.subreddit, score:c.data.score, comments:c.data.num_comments};
+    });
+    renderRedditPosts(posts);
+  }catch(e){
+    if(load) load.innerHTML='<div style="padding:6px;font-size:11px;color:#dc2626">获取失败：'+escHtml(e.message)+'</div>';
+  }
+  if(btn) btn.disabled=false;
+}
+function renderRedditPosts(posts){
+  var el=document.getElementById('ndExtPosts');
+  var load=document.getElementById('ndExtLoad');
+  if(load) load.innerHTML='';
+  if(!el) return;
+  if(!posts.length){ el.innerHTML='<div style="padding:8px;font-size:11px;color:var(--muted)">暂无结果，试试其他关键词</div>'; return; }
+  window._ND_redditPosts=posts;
+  el.innerHTML=posts.map(function(p,i){
+    return '<div class="nd-ext-post" onclick="ndPickReddit('+i+')"><div class="nd-ep-title">'+escHtml(p.title)+'</div>'+
+      (p.text?'<div class="nd-ep-text">'+escHtml(p.text)+'</div>':'')+
+      '<div class="nd-ep-meta"><span class="nd-ep-sr">r/'+escHtml(p.subreddit)+'</span><span>'+p.score+' ▴</span><span>'+p.comments+' 评论</span></div></div>';
+  }).join('');
+}
+function ndPickReddit(i){
+  var posts=window._ND_redditPosts;
+  if(!posts||!posts[i]) return;
+  var ta=document.getElementById('ndNl');
+  if(ta) ta.value='Reddit 用户讨论参考：'+posts[i].title+'\n'+(posts[i].text||posts[i].title);
+  ndToggleExt();
 }
 
 // ---- 产品打分工具（三维度12指标加权评分）----
