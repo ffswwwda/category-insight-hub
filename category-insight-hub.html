@@ -385,6 +385,37 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
   background:rgba(139,123,181,.14);color:var(--purple);border:1px solid rgba(139,123,181,.2)}
 .tp-result{font-size:11.5px;color:var(--ink-2);line-height:1.55;padding:10px 12px;background:var(--bg);border-radius:9px}
 
+/* ========== CORPUS TOOL: CSV 上传 + 情绪分析 ========== */
+.csv-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;
+  padding:22px 16px;border:1.5px dashed var(--border);border-radius:14px;cursor:pointer;
+  background:var(--bg);transition:all .25s var(--rad-easing);text-align:center}
+.csv-drop:hover{border-color:var(--accent);background:rgba(0,195,243,.05)}
+.csv-drop.has-file{border-style:solid;border-color:var(--accent);background:rgba(0,195,243,.06)}
+.csv-sq{width:42px;height:42px;border-radius:12px;background:var(--rad-grad);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(0,195,243,.28)}
+.csv-sq svg{width:22px;height:22px}
+.fd-text{font-size:12.5px;color:var(--ink-2)}
+.fd-text b{color:var(--ink);font-weight:700}
+.csv-cols-wrap{margin-top:12px}
+.csv-cols-label{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:7px}
+.csv-chips{display:flex;flex-wrap:wrap;gap:7px}
+.csv-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;
+  background:var(--bg);border:1px solid var(--border);color:var(--ink-2);cursor:pointer;transition:all .18s var(--rad-easing)}
+.csv-chip:hover{border-color:var(--accent);color:var(--accent)}
+.csv-chip.selected{background:var(--rad-grad);color:#fff;border-color:transparent}
+.cc-rate{font-size:10px;opacity:.7;padding-left:5px;border-left:1px solid currentColor}
+.csv-info{font-size:11.5px;color:var(--muted);margin-top:8px}
+.emo-tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;
+  border:1px solid;margin-left:5px}
+.emo-dist{display:grid;gap:6px;margin-top:4px}
+.emo-row{display:flex;align-items:center;gap:10px;font-size:12px}
+.emo-name{width:42px;color:var(--ink)}
+.emo-track{flex:1;height:9px;background:var(--line);border-radius:6px;overflow:hidden}
+.emo-fill{display:block;height:100%;border-radius:6px}
+.emo-val{width:34px;text-align:right;color:var(--muted)}
+.emo-summary{display:flex;gap:10px;margin:6px 0 4px;flex-wrap:wrap}
+.emo-pill{font-size:12px;font-weight:700;padding:5px 13px;border-radius:20px;color:#fff}
+
 /* ========== EXPORT MODAL ========== */
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:100;display:none;align-items:center;justify-content:center}
@@ -935,6 +966,11 @@ function toast(msg){
   clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove('show')},1800);
 }
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function csvCell(s){
+  s=(s==null?'':String(s));
+  if(/[",\n\r]/.test(s)) s='"'+s.replace(/"/g,'""')+'"';
+  return s;
+}
 
 function getSource(id){return DATA.sources[id]}
 function getPurpose(ws,id){return DATA.workspaces[ws].purposes.find(function(p){return p.id===id})}
@@ -1314,60 +1350,300 @@ function openPredictTool(){
 }
 
 // ---- 用户语料分析工具（批量）----
+/* ===================== 用户语料分析工具（CSV 上传 + 情绪分析） ===================== */
+var CORPUS_CSV = {mode:false, header:[], rows:[], cols:[], selected:[]};
+var CORPUS_LAST = null;
+
+/* 情绪分析引擎（Plutchik 八情绪 + 极性） */
+var EMOTION_DEFS = {
+  joy:         {name:'喜悦', color:'#F59E0B', polarity: 2},
+  trust:       {name:'信任', color:'#10B981', polarity: 2},
+  anticipation:{name:'期待', color:'#14B8A6', polarity: 1},
+  surprise:    {name:'惊讶', color:'#EC4899', polarity: 1},
+  sadness:     {name:'悲伤', color:'#3B82F6', polarity:-2},
+  disgust:     {name:'厌恶', color:'#8B5CF6', polarity:-2},
+  anger:       {name:'愤怒', color:'#EF4444', polarity:-2},
+  fear:        {name:'恐惧', color:'#6366F1', polarity:-2}
+};
+var EMOTION_ORDER = ['joy','trust','anticipation','surprise','sadness','disgust','anger','fear'];
+var EMOTION_RULES = [
+  {emo:'joy',         kws:['满意','喜欢','开心','高兴','赞','棒','好用','惊喜','幸福','值得','推荐','爱','完美','享受','舒服','顺手','惊艳','超出预期','心水']},
+  {emo:'trust',       kws:['信赖','信任','放心','靠谱','品质','正品','安全','保障','稳定','可靠','安心','踏实','正品保证']},
+  {emo:'anticipation',kws:['期待','想买','种草','观望','下次','准备','打算','希望','计划','复购','再来']},
+  {emo:'surprise',    kws:['没想到','意外','居然','竟然','颠覆','刷新','震惊','难以置信']},
+  {emo:'sadness',     kws:['失望','遗憾','落空','难过','心疼','可惜','心累','落差','后悔','无语']},
+  {emo:'disgust',     kws:['廉价感','塑料感','难看','丑','异味','劣质','嫌弃','反感','鸡肋','难闻','掉价','粗糙','廉价','土','山寨','low','LOW']},
+  {emo:'anger',       kws:['差评','投诉','愤怒','气死','坑','骗','垃圾','退货','维权','虚假','欺诈','崩溃','拉黑','糟心']},
+  {emo:'fear',        kws:['怕','担心','害怕','恐惧','焦虑','危险','不安全','隐患','顾虑','担忧']}
+];
+function emotionHasNeg(text, idx){
+  if(idx < 1) return false;
+  var seg = text.slice(Math.max(0, idx-3), idx);
+  return /[不没无别非未否].{0,2}$/.test(seg);
+}
+function classifyEmotion(text){
+  text = (text||'').toString();
+  var found = {};
+  EMOTION_RULES.forEach(function(rule){
+    rule.kws.forEach(function(kw){
+      var idx = text.indexOf(kw);
+      while(idx >= 0){
+        if(!emotionHasNeg(text, idx)){ found[rule.emo] = (found[rule.emo]||0)+1; }
+        idx = text.indexOf(kw, idx+1);
+      }
+    });
+  });
+  var keys = Object.keys(found);
+  if(!keys.length) return {emos:[], primary:'', allLabels:'', polarity:0, tone:'中性', color:'#94A3B8'};
+  var score = 0;
+  keys.forEach(function(k){ score += EMOTION_DEFS[k].polarity * found[k]; });
+  var primary = keys.slice().sort(function(a,b){
+    return (Math.abs(EMOTION_DEFS[b].polarity)*found[b]) - (Math.abs(EMOTION_DEFS[a].polarity)*found[a]);
+  })[0];
+  var tone = score > 0 ? '正面' : (score < 0 ? '负面' : '中性');
+  var color = score > 0 ? '#10B981' : (score < 0 ? '#EF4444' : '#94A3B8');
+  var labels = keys.map(function(k){ return EMOTION_DEFS[k].name; }).join('、');
+  return {emos:keys, primary:EMOTION_DEFS[primary].name, allLabels:labels, polarity:score, tone:tone, color:color};
+}
+function hex2rgbaLocal(hex, a){
+  hex=String(hex).replace('#','');
+  if(hex.length===3) hex=hex.split('').map(function(x){return x+x;}).join('');
+  var r=parseInt(hex.substring(0,2),16),g=parseInt(hex.substring(2,4),16),b=parseInt(hex.substring(4,6),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+
 function openCorpusTool(){
   setActiveNav('nav-ai');
   $('#topbarTitle').textContent='用户语料分析工具';
   setView('CorpusTool');
+  CORPUS_CSV = {mode:false, header:[], rows:[], cols:[], selected:[]};
+  CORPUS_LAST = null;
+  var UP = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>';
   $('#viewCorpusTool').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">用户语料分析工具</span>'+
-      '<span class="ws-tag">批量 · 本地</span></div>'+
+      '<span class="ws-tag">批量 · 本地 · 情绪分析</span></div>'+
     '<div class="tool-wrap">'+
       '<div class="tagger-panel">'+
-        '<textarea class="tp-input" id="corpusInput" style="min-height:160px" placeholder="每行一条用户语料，例如：&#10;尺寸偏小，希望更大一点&#10;静音效果很好，放在卧室不吵&#10;价格偏高，性价比一般&#10;材质塑料感强，不够高级"></textarea>'+
-        '<div class="tp-tip">将逐行运行 VOC 规则引擎，汇总维度标签频率、负面占比与高频问题 TOP5。</div>'+
-        '<button class="export-ai" style="margin-top:10px" onclick="renderCorpusAnalysis()">分析语料</button>'+
+        '<div class="ws-tabs" style="flex-direction:row;gap:8px;margin-bottom:10px">'+
+          '<button class="ws-tab active" id="ctabPaste" style="flex:1;justify-content:center" onclick="corpusSwitch(\'paste\')">粘贴文本</button>'+
+          '<button class="ws-tab" id="ctabCsv" style="flex:1;justify-content:center" onclick="corpusSwitch(\'csv\')">上传 CSV</button>'+
+        '</div>'+
+        '<div id="cfgPaste">'+
+          '<textarea class="tp-input" id="corpusInput" style="min-height:160px" placeholder="每行一条用户语料，例如：&#10;尺寸偏小，希望更大一点&#10;静音效果很好，放在卧室不吵&#10;价格偏高，性价比一般&#10;材质塑料感强，不够高级"></textarea>'+
+          '<div class="tp-tip">逐行运行 VOC 规则引擎 + 情绪分析，汇总维度标签、情绪分布与高频问题。</div>'+
+        '</div>'+
+        '<div id="cfgCsv" style="display:none">'+
+          '<div class="csv-drop" id="csvDrop" onclick="document.getElementById(\'csvFile\').click()">'+
+            '<div class="csv-sq">'+UP+'</div>'+
+            '<div class="fd-text">点击选择 CSV 文件（支持中文列名，自动检测文本列）</div>'+
+            '<input type="file" id="csvFile" accept=".csv,text/csv" onchange="corpusOnCsvSelected(this)" style="display:none">'+
+          '</div>'+
+          '<div class="csv-cols-wrap" id="csvColsWrap" style="display:none">'+
+            '<div class="csv-cols-label">选择要分析的文本列（可多选）：</div>'+
+            '<div class="csv-chips" id="csvColChips"></div>'+
+            '<div class="csv-info" id="csvInfo"></div>'+
+          '</div>'+
+          '<div class="tp-tip">上传后系统自动检测含内容的文本列；所选列文本合并后进行维度打标与情绪分析。</div>'+
+        '</div>'+
+        '<button class="export-ai" style="margin-top:10px" onclick="runCorpusAnalysis()">分析语料</button>'+
       '</div>'+
       '<div class="tool-result" id="corpusResult"></div>'+
     '</div>';
 }
+function corpusSwitch(mode){
+  CORPUS_CSV.mode = (mode==='csv');
+  $('#ctabPaste').classList.toggle('active', mode==='paste');
+  $('#ctabCsv').classList.toggle('active', mode==='csv');
+  $('#cfgPaste').style.display = (mode==='paste')?'':'none';
+  $('#cfgCsv').style.display = (mode==='csv')?'block':'none';
+}
+function corpusParseCSV(text){
+  var rows=[], row=[], field='', i=0, inQ=false;
+  text = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  while(i<text.length){
+    var c=text[i];
+    if(inQ){
+      if(c==='"'){ if(text[i+1]==='"'){field+='"';i+=2;continue;} inQ=false;i++;continue; }
+      field+=c;i++;continue;
+    }
+    if(c==='"'){inQ=true;i++;continue;}
+    if(c===','){row.push(field);field='';i++;continue;}
+    if(c==='\n'){row.push(field);rows.push(row);row=[];field='';i++;continue;}
+    field+=c;i++;
+  }
+  if(field.length>0||row.length>0){row.push(field);rows.push(row);}
+  return rows;
+}
+function corpusColumnStats(header, rows){
+  return header.map(function(col,ci){
+    var ne=0; rows.forEach(function(r){ if((r[ci]||'').trim()) ne++; });
+    return {col:col, ci:ci, nonEmpty:ne, rate: rows.length? ne/rows.length:0};
+  });
+}
+function corpusDetectCols(stats){
+  var cands=['内容','评论','评价','正文','评论内容','review','content','text','comment'];
+  var found=[];
+  cands.forEach(function(c){
+    var s=stats.find(function(x){return x.col.toLowerCase()===c.toLowerCase() && x.nonEmpty>0;});
+    if(s) found.push(s.col);
+  });
+  if(!found.length){
+    var wc=stats.filter(function(x){return x.nonEmpty>0;});
+    if(wc.length) found.push(wc.sort(function(a,b){return b.rate-a.rate;})[0].col);
+  }
+  return found;
+}
+function corpusOnCsvSelected(input){
+  var file=input.files&&input.files[0];
+  var drop=$('#csvDrop'), info=$('#csvInfo'), chips=$('#csvColChips'), colsWrap=$('#csvColsWrap');
+  if(!file){
+    drop.classList.remove('has-file');
+    drop.querySelector('.fd-text').textContent='点击选择 CSV 文件（支持中文列名，自动检测文本列）';
+    info.innerHTML=''; chips.innerHTML=''; colsWrap.style.display='none';
+    CORPUS_CSV={mode:true,header:[],rows:[],cols:[],selected:[]};
+    return;
+  }
+  drop.classList.add('has-file');
+  drop.querySelector('.fd-text').innerHTML='<b>'+escHtml(file.name)+'</b> · 点击重新选择';
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var rows=corpusParseCSV(e.target.result);
+    if(rows.length<2){ info.innerHTML='文件行数过少，请检查格式（需含表头）。'; return; }
+    CORPUS_CSV.header=rows[0].map(function(c){return (c||'').trim();});
+    CORPUS_CSV.rows=rows.slice(1);
+    CORPUS_CSV.cols=CORPUS_CSV.header;
+    var stats=corpusColumnStats(CORPUS_CSV.header, CORPUS_CSV.rows);
+    var auto=corpusDetectCols(stats);
+    CORPUS_CSV.selected=auto.slice();
+    corpusRenderChips(stats, CORPUS_CSV.selected);
+    colsWrap.style.display='';
+    info.innerHTML='已读取 <b>'+CORPUS_CSV.rows.length+'</b> 行 · 自动选中文本列：'+auto.map(function(c){return '<b>'+escHtml(c)+'</b>';}).join('、');
+  };
+  reader.readAsText(file,'utf-8');
+}
+function corpusRenderChips(stats, selected){
+  $('#csvColChips').innerHTML=stats.map(function(s){
+    var sel=selected.indexOf(s.col)>=0;
+    var rate=s.nonEmpty>0?Math.round(s.rate*100)+'%':'空';
+    return '<span class="csv-chip'+(sel?' selected':'')+'" onclick="corpusToggleCol(\''+escHtml(s.col).replace(/'/g,"\\'")+'\')">'+escHtml(s.col)+'<span class="cc-rate">'+rate+'</span></span>';
+  }).join('');
+}
+function corpusToggleCol(col){
+  var i=CORPUS_CSV.selected.indexOf(col);
+  if(i>=0) CORPUS_CSV.selected.splice(i,1); else CORPUS_CSV.selected.push(col);
+  var stats=corpusColumnStats(CORPUS_CSV.header, CORPUS_CSV.rows);
+  corpusRenderChips(stats, CORPUS_CSV.selected);
+}
+function runCorpusAnalysis(){
+  var data=[];
+  if(CORPUS_CSV.mode){
+    if(!CORPUS_CSV.selected.length){ toast('请至少选择一个文本列'); return; }
+    var cis=CORPUS_CSV.selected.map(function(c){return CORPUS_CSV.header.indexOf(c);}).filter(function(i){return i>=0;});
+    if(!cis.length){ toast('未找到选中的文本列'); return; }
+    CORPUS_CSV.rows.forEach(function(r,ri){
+      var text=cis.map(function(ci){return (r[ci]||'').trim();}).filter(Boolean).join('\n');
+      data.push({text:text, cells:r});
+    });
+  } else {
+    var ta=$('#corpusInput'); if(!ta){return;}
+    ta.value.split('\n').map(function(x){return x.trim();}).filter(Boolean).forEach(function(t){ data.push({text:t, cells:null}); });
+    if(!data.length){ toast('请先粘贴用户语料'); return; }
+  }
+  var valid = data.filter(function(d){return d.text;});
+  if(!valid.length){ toast('没有可分析的语料内容'); return; }
 
-function renderCorpusAnalysis(){
-  var ta=$('#corpusInput'); if(!ta){return;}
-  var lines=ta.value.split('\n').map(function(x){return x.trim();}).filter(Boolean);
-  if(!lines.length){toast('请先粘贴用户语料');return;}
-  var tagCount={}, negLines=0, total=lines.length, perLine=[];
-  lines.forEach(function(line){
+  var tagCount={}, emoCount={}, posLines=0, negLines=0;
+  data.forEach(function(d){
+    if(!d.text){ d.tags=[]; d.emo=classifyEmotion(''); return; }
     var tags=[];
     VOC_RULES.forEach(function(rule){
       var m=false;
-      rule.patterns.forEach(function(p){if(p.test(line))m=true;});
-      if(m&&rule.negPatterns.length){rule.negPatterns.forEach(function(np){if(np.test(line))m=false;});}
-      if(m){tags.push(rule.tag);tagCount[rule.tag]=(tagCount[rule.tag]||0)+1;}
+      rule.patterns.forEach(function(p){ if(p.test(d.text)) m=true; });
+      if(m && rule.negPatterns && rule.negPatterns.length){
+        rule.negPatterns.forEach(function(np){ if(np.test(d.text)) m=false; });
+      }
+      if(m){ tags.push(rule.tag); tagCount[rule.tag]=(tagCount[rule.tag]||0)+1; }
     });
-    // 简单情感判断：命中负面表述词
-    var neg = /\b(偏小|太大|太小|不好用|不方便|鸡肋|无效|迟钝|吵|响|大声|贵|不值|难洗|不舒服|硬|粗糙|廉价感|塑料感)\b/.test(line);
-    if(neg)negLines++;
-    perLine.push('<div class="cl-row"><span class="cl-txt">'+escHtml(line)+'</span>'+
-      '<span class="cl-tags">'+ (tags.length?tags.map(function(t){return '<span class="tp-tag">'+t+'</span>'}).join(''):'<span class="cl-none">无匹配</span>')+
-      (neg?'<span class="cl-neg">负面</span>':'') +'</span></div>');
+    var emo=classifyEmotion(d.text);
+    d.tags=tags; d.emo=emo;
+    if(emo.tone==='正面') posLines++;
+    else if(emo.tone==='负面') negLines++;
+    emo.allLabels.split('、').forEach(function(l){ if(l) emoCount[l]=(emoCount[l]||0)+1; });
   });
+  var total=valid.length;
+  var negPct=total?Math.round(negLines/total*100):0;
+  var posPct=total?Math.round(posLines/total*100):0;
+  var neuPct=total?100-posPct-negPct:0;
+  CORPUS_LAST={data:data, total:total, posLines:posLines, negLines:negLines, tagCount:tagCount, emoCount:emoCount};
+
   var topTags=Object.keys(tagCount).sort(function(a,b){return tagCount[b]-tagCount[a];}).slice(0,5);
-  var bars=topTags.map(function(t){
+  var tagBars=topTags.map(function(t){
     var pct=Math.round(tagCount[t]/total*100);
-    return '<div class="rep-bar-row"><span class="rbl">'+t+'</span><span class="rb-track"><span class="rb-fill" style="width:'+pct+'%"></span></span><span class="rbv">'+tagCount[t]+'</span></div>';
+    return '<div class="rep-bar-row"><span class="rbl">'+escHtml(t)+'</span><span class="rb-track"><span class="rb-fill" style="width:'+pct+'%"></span></span><span class="rbv">'+tagCount[t]+'</span></div>';
+  }).join('') || '<div class="rep-note">未命中任何维度标签。</div>';
+
+  var emoRows=EMOTION_ORDER.map(function(k){
+    var c=emoCount[EMOTION_DEFS[k].name]||0;
+    var pct=total?Math.round(c/total*100):0;
+    return '<div class="emo-row"><span class="emo-name">'+EMOTION_DEFS[k].name+'</span>'+
+      '<span class="emo-track"><span class="emo-fill" style="width:'+pct+'%;background:'+EMOTION_DEFS[k].color+'"></span></span>'+
+      '<span class="emo-val">'+c+'</span></div>';
   }).join('');
-  var negPct=Math.round(negLines/total*100);
+
+  var perLine=data.map(function(d){
+    if(!d.text) return '';
+    var tagEls=d.tags.length?d.tags.map(function(t){return '<span class="tp-tag">'+escHtml(t)+'</span>';}).join(''):'<span class="cl-none">无匹配</span>';
+    var emo=d.emo;
+    var emoBg=hex2rgbaLocal(emo.color,.12);
+    var emoEls=emo.allLabels
+      ? ('<span class="emo-tag" style="color:'+emo.color+';border-color:'+emo.color+';background:'+emoBg+'">'+escHtml(emo.allLabels)+'</span>'+
+         '<span class="emo-tag" style="color:'+emo.color+';border-color:'+emo.color+';background:'+emoBg+'">'+emo.tone+'</span>')
+      : '<span class="emo-tag" style="color:#94A3B8;border-color:#94A3B8;background:rgba(148,163,184,.12)">中性</span>';
+    return '<div class="cl-row"><span class="cl-txt">'+escHtml(d.text)+'</span>'+
+      '<span class="cl-tags">'+tagEls+emoEls+'</span></div>';
+  }).join('');
+
   $('#corpusResult').innerHTML=
-    '<div class="rep-title">语料综合分析</div>'+
+    '<div class="rep-title">语料综合分析 · 情绪维度</div>'+
+    '<div class="emo-summary">'+
+      '<span class="emo-pill" style="background:#10B981">正面 '+posPct+'%</span>'+
+      '<span class="emo-pill" style="background:#94A3B8">中性 '+neuPct+'%</span>'+
+      '<span class="emo-pill" style="background:#EF4444">负面 '+negPct+'%</span>'+
+    '</div>'+
     '<div class="rep-grid">'+
       '<div class="rep-kpi"><b>'+total+'</b><span>语料条数</span></div>'+
-      '<div class="rep-kpi"><b>'+negPct+'%</b><span>负面占比</span></div>'+
+      '<div class="rep-kpi"><b>'+posPct+'%</b><span>正面情绪</span></div>'+
+      '<div class="rep-kpi"><b>'+negPct+'%</b><span>负面情绪</span></div>'+
       '<div class="rep-kpi"><b>'+topTags.length+'</b><span>命中维度</span></div>'+
-      '<div class="rep-kpi"><b>'+(total-negLines)+'</b><span>非负面</span></div>'+
     '</div>'+
-    '<div class="rep-section"><div class="rep-h">维度标签频率 TOP5</div>'+bars+'</div>'+
-    '<div class="rep-section"><div class="rep-h">逐行明细</div>'+perLine.join('')+'</div>';
+    '<div class="rep-section"><div class="rep-h">情绪分布（Plutchik 八情绪）</div><div class="emo-dist">'+emoRows+'</div></div>'+
+    '<div class="rep-section"><div class="rep-h">维度标签频率 TOP5</div>'+tagBars+'</div>'+
+    '<div class="rep-section"><div class="rep-h">逐行明细（维度标签 + 情绪）</div>'+perLine+'</div>'+
+    '<button class="export-ai" style="margin-top:6px" onclick="exportCorpusCSV()">导出分析结果 CSV</button>';
+}
+function exportCorpusCSV(){
+  if(!CORPUS_LAST){ toast('请先分析语料'); return; }
+  var L=CORPUS_LAST, rows=[];
+  if(CORPUS_CSV.mode && CORPUS_CSV.header.length){
+    rows.push(['原始行号'].concat(CORPUS_CSV.header, ['情绪','情绪极性','维度标签']).map(csvCell).join(','));
+    L.data.forEach(function(d,ri){
+      var cells=(d.cells||[]).map(csvCell);
+      var line=[ri+1].concat(cells, [csvCell(d.emo?d.emo.allLabels:''), csvCell(d.emo?d.emo.tone:''), csvCell(d.tags.join('、'))]).map(csvCell);
+      rows.push(line.join(','));
+    });
+  } else {
+    rows.push(['原评价','情绪','情绪极性','维度标签'].map(csvCell).join(','));
+    L.data.forEach(function(d){
+      if(!d.text) return;
+      rows.push([csvCell(d.text), csvCell(d.emo?d.emo.allLabels:''), csvCell(d.emo?d.emo.tone:''), csvCell(d.tags.join('、'))].map(csvCell).join(','));
+    });
+  }
+  var csv='﻿'+rows.join('\r\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download='语料情绪分析结果.csv';
+  document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); },200);
 }
 
 // ============================================================
