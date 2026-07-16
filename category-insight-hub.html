@@ -1983,10 +1983,10 @@ function openNewDevelopTool(){
           '<textarea class="ps-nl" id="ndNl" placeholder="描述产品痛点 / 希望改进的方向 / 目标用户…\n例如：用户清洗麻烦、噪音大、不便携" style="min-height:80px"></textarea>'+
           '<div class="ps-input-bar"><button class="ps-run" id="ndRun" onclick="runNewDevelop()">生成创意方案</button></div>'+
         '</div>'+
-        '<div class="nd-ext-wrap"><div class="nd-ext-head" onclick="ndToggleExt()"><span class="nd-ext-arrow">▸</span> 从社媒获取行业灵感</div>'+
+        '<div class="nd-ext-wrap"><div class="nd-ext-head" onclick="ndToggleExt()"><span class="nd-ext-arrow">▸</span> 从百科/样本获取行业灵感</div>'+
           '<div class="nd-ext-body" id="ndExtBody">'+
-            '<div class="nd-ext-row"><input class="nd-ext-input" id="ndExtKw" placeholder="输入类目/关键词，如 sex toy noise">'+
-            '<button class="nd-ext-btn" id="ndExtBtn" onclick="ndFetchReddit()">拉取</button></div>'+
+            '<div class="nd-ext-row"><input class="nd-ext-input" id="ndExtKw" placeholder="输入品类关键词，如 飞机杯 降噪">'+
+            '<button class="nd-ext-btn" id="ndExtBtn" onclick="ndFetchReddit()">搜索</button></div>'+
             '<div class="nd-ext-load" id="ndExtLoad"></div>'+
             '<div class="nd-ext-posts" id="ndExtPosts"></div>'+
           '</div></div>'+
@@ -2076,7 +2076,7 @@ function renderNewDevelopReport(steps, isTriz){
     '<div class="ps-verdict go" style="margin-top:10px;text-align:left;padding:12px 16px"><div style="font-size:11.5px;line-height:1.6;color:var(--ink-2)">以上创意方向可组合使用。建议选取 2-3 个方向进行深入的产品概念验证与用户测试。</div></div>';
 }
 
-// ---- 外部数据：Reddit API 接入 ----
+// ---- 外部数据参考 ----
 function ndToggleExt(){
   var body=document.getElementById('ndExtBody');
   if(!body) return;
@@ -2087,28 +2087,48 @@ function ndToggleExt(){
     body.style.display='none'; if(arrow) arrow.textContent='▸';
   }
 }
+// 内置样本数据
+var ND_SAMPLES = {
+  '飞机杯类':['清洗太麻烦，每次都要洗很久，设计有问题','噪音很大，晚上用会吵到室友，有点尴尬','材质太硬，不舒服，用了几次就闲置了','尺寸不合适，太紧/太松，没有合适的','收纳不方便，没有隐私性，怕被看到'],
+  '小家电类':['操作太复杂，说明书几十页，老人不会用','体积太大，厨房台面放不下','清洁死角多，容易发霉','噪音大，早上用会吵醒家人','电源线太短，使用位置受限'],
+  '个护类':['续航太短，充一次电用不了几天','防水不好，浴室用几次就进水','刷头/刀头太贵，后续成本高','握持不舒服，手滑容易掉','充电慢，要充一晚上']
+};
 async function ndFetchReddit(){
   var kw=document.getElementById('ndExtKw');
   var q=kw?kw.value.trim():'';
-  if(!q){if(window.toast) toast('请输入关键词'); return;}
-  var load=document.getElementById('ndExtLoad'); if(load) load.innerHTML='<div class="ps-loading" style="padding:8px">正在获取（通过代理）…</div>';
+  if(!q){if(window.toast) toast('请输入关键词或选择内置样本'); return;}
+  var load=document.getElementById('ndExtLoad'); if(load) load.innerHTML='<div class="ps-loading" style="padding:8px">正在搜索百科知识…</div>';
   var btn=document.getElementById('ndExtBtn'); if(btn) btn.disabled=true;
   try{
-    var proxy='https://blkproxy.vercel.app/api/proxy?url=';
-    var target='https://www.reddit.com/search.json?q='+encodeURIComponent(q)+'&limit=20&sort=top&t=year';
-    var res=await fetch(proxy+encodeURIComponent(target));
+    // 使用 Wikipedia API（国内可直连、免费、CORS 友好）
+    var url='https://zh.wikipedia.org/w/api.php?action=query&list=search&srsearch='+encodeURIComponent(q)+'&format=json&origin=*&srlimit=10&srprop=snippet';
+    var res=await fetch(url);
     if(!res.ok) throw new Error('HTTP '+res.status);
     var data=await res.json();
-    var posts=data.data.children.filter(function(c){return !c.data.over_18;}).map(function(c){
-      return{title:c.data.title, text:(c.data.selftext||'').substring(0,250), subreddit:c.data.subreddit, score:c.data.score, comments:c.data.num_comments};
-    });
-    renderRedditPosts(posts);
+    var posts=(data.query&&data.query.search) ? data.query.search.map(function(p){
+      return{title:escHtml(p.title), text:(p.snippet||'').replace(/<[^>]+>/g,'').substring(0,250), subreddit:'Wikipedia', score:p.wordcount||0, comments:0};
+    }) : [];
+    if(posts.length) renderRedditPosts(posts);
+    else throw new Error('未找到相关条目');
   }catch(e){
-    if(load) load.innerHTML='<div style="padding:6px;font-size:11px;color:#dc2626">网络获取失败：'+escHtml(e.message)+'</div>'+
-      '<div style="padding:4px 6px;font-size:10px;color:var(--muted)">也可上传本地 CSV/TXT 文件作为替代数据源：</div>'+
-      '<input type="file" accept=".csv,.txt" style="font-size:11px;margin-top:4px" onchange="ndLoadLocalFile(this.files[0])">';
+    if(load) load.innerHTML='<div style="padding:6px;font-size:11px;color:#dc2626">百科搜索异常：'+escHtml(e.message)+'</div>'+
+      '<div style="padding:4px 6px 2px;font-size:10px;color:var(--muted)">也可上传本地 CSV/TXT（每行一条反馈/评论）：</div>'+
+      '<input type="file" accept=".csv,.txt" style="font-size:11px;margin-top:2px" onchange="ndLoadLocalFile(this.files[0])">'+
+      '<div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">'+
+        Object.keys(ND_SAMPLES).map(function(k){
+          return '<button class="lf-chip" onclick="ndFillSample(\''+k+'\',this)">'+escHtml(k)+'</button>';
+        }).join('')+
+      '</div>';
   }
   if(btn) btn.disabled=false;
+}
+function ndFillSample(key,btn){
+  var samples=ND_SAMPLES[key];
+  if(!samples) return;
+  var posts=samples.map(function(s,i){ return {title:'痛点样本 #'+(i+1), text:s, subreddit:'内置样本', score:0, comments:0}; });
+  renderRedditPosts(posts);
+  document.querySelectorAll('.nd-ext-btn-group .lf-chip').forEach(function(b){b.classList.remove('on');});
+  if(btn) btn.classList.add('on');
 }
 function ndLoadLocalFile(file){
   if(!file) return;
