@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>类目用户研究座 · Category Insight Hub</title>
+<style>
+:root{
+  --bg:#F5F3F1; --panel:rgba(255,255,255,.72); --panel-solid:#fff;
+  --border:rgba(0,0,0,.07); --border-glass:rgba(0,0,0,.06);
+  --ink:#2D2A26; --ink-2:#5C5650; --muted:#9B9590; --line:rgba(0,0,0,.04);
+  --accent:#0891B2; --accent-soft:#E0F7FD; --accent-2:#CA8A04;
+  --teal:#14B8A6; --gold:#D4A017; --purple:#8B7BB5; --rose:#D4727A;
+  --blue-a:#2563EB; --green-a:#16A34A; --green-b:#059669;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03);
+  --shadow-md:0 4px 12px rgba(0,0,0,.06),0 12px 32px rgba(0,0,0,.05);
+  --shadow-lg:0 8px 24px rgba(0,0,0,.08),0 24px 48px rgba(0,0,0,.06);
+  --radius:18px; --radius-sm:13px; --radius-xs:9px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+  --easing:cubic-bezier(.25,.46,.45,.94);
+  --glass-bg:rgba(255,255,255,.55); --glass-blur:blur(20px);
+  --glass-border:1px solid rgba(255,255,255,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.58;-webkit-font-smoothing:antialiased;overflow:hidden}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:8px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.22)}
+
+/* === App Layout === */
+.app{display:flex;height:100vh}
+
+/* === Sidebar === */
+.sidebar{width:220px;flex:0 0 220px;background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border-right:var(--glass-border);display:flex;flex-direction:column;padding:18px 14px 16px;z-index:10}
+.brand{display:flex;gap:10px;align-items:center;margin-bottom:22px;padding:0 2px}
+.brand-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--accent),#06B6D4);
+  color:#fff;display:grid;place-items:center;font-size:15px;font-weight:800;box-shadow:var(--shadow-sm)}
+.brand-name{font-weight:700;font-size:13.5px;line-height:1.25;color:var(--ink)}
+.brand-sub{font-size:9px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-top:2px}
+
+/* Workspace tabs */
+.ws-tabs{display:flex;flex-direction:column;gap:7px;margin-bottom:auto}
+.ws-tab{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:13px;
+  border:1.5px solid var(--border);background:var(--glass-bg);backdrop-filter:var(--glass-blur);
+  color:var(--ink-2);font-family:var(--font);font-size:13px;font-weight:650;cursor:pointer;
+  transition:all .28s var(--easing);position:relative;overflow:hidden}
+.ws-tab::before{content:'';position:absolute;left:0;top:0;width:4px;height:100%;background:transparent;border-radius:0 4px 4px 0;transition:background .28s}
+.ws-tab:hover{border-color:var(--accent);color:var(--accent);background:rgba(8,145,178,.06)}
+.ws-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(8,145,178,.07);
+  box-shadow:0 2px 12px rgba(8,145,178,.1)}
+.ws-tab.active::before{background:var(--accent)}
+.ws-tab .wsi{opacity:.6;font-size:14px;width:20px;text-align:center;flex-shrink:0}
+
+/* Sidebar footer */
+.sb-foot{padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.6}
+
+/* === Main === */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);
+  background:var(--panel);backdrop-filter:var(--glass-blur);z-index:5;flex-shrink:0}
+.topbar h1{margin:0;font-size:17px;font-weight:700;letter-spacing:.12px;color:var(--ink)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.tb-search{display:flex;align-items:center;gap:6px;background:var(--glass-bg);backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:10px;padding:7px 12px;width:260px}
+.tb-search input{border:0;outline:0;background:transparent;font-size:12.5px;width:100%;color:var(--ink);font-family:var(--font)}
+.tb-search .ico{color:var(--muted);font-size:13px}
+.tb-btn{appearance:none;border:1px solid var(--border);background:var(--glass-bg);backdrop-filter:var(--glass-blur);
+  color:var(--ink-2);font-family:var(--font);font-size:12px;font-weight:600;padding:6px 13px;border-radius:9px;cursor:pointer;
+  transition:all .2s var(--easing)}
+.tb-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(8,145,178,.06)}
+.tb-primary{background:linear-gradient(135deg,var(--accent),#06B6D4);border-color:transparent;color:#fff}
+.tb-primary:hover{filter:brightness(1.06)}
+
+/* Subnav for workspace view */
+.subnav{display:none;padding:0 24px;border-bottom:1px solid var(--line);background:var(--panel);backdrop-filter:var(--glass-blur);z-index:4;flex-shrink:0}
+.subnav.show{display:flex;gap:0}
+.sn-tab{padding:9px 16px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+.sn-tab:hover{color:var(--ink-2)}
+.sn-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* Board (scrollable area) */
+.board{flex:1;overflow:auto;position:relative}
+
+/* Views */
+.view{display:none;min-height:100%}
+.view.active{display:block}
+
+/* ========== VIEW: PURPOSE GRID ========== */
+.purpose-grid-wrap{padding:22px 24px 40px}
+.purpose-header{margin-bottom:18px}
+.ph-title{font-size:19px;font-weight:800;letter-spacing:.1px;display:flex;align-items:center;gap:10px}
+.ph-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.ph-dot.a{background:var(--accent)}
+.ph-dot.b{background:var(--green-a)}
+.ph-desc{font-size:12.5px;color:var(--muted);margin-top:4px;max-width:680px}
+.src-pool-bar{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px 18px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
+.spb-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.5px}
+.spb-sources{display:flex;flex-wrap:wrap;gap:6px}
+.spb-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
+  background:var(--accent-soft);color:var(--accent);border:1px solid rgba(8,145,178,.15)}
+
+/* Two-column purpose layout */
+.purpose-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.pc-col{display:flex;flex-direction:column;gap:10px}
+.pc-col-header{font-size:13px;font-weight:800;letter-spacing:.3px;padding:10px 4px 8px;
+  color:var(--ink);border-radius:var(--radius-xs);text-align:center}
+.pc-col-header.col-a{background:linear-gradient(135deg,rgba(8,145,178,.08),rgba(6,182,212,.06));color:var(--accent);border:1px solid rgba(8,145,178,.12)}
+.pc-col-header.col-b{background:linear-gradient(135deg,rgba(22,163,74,.08),rgba(5,150,105,.06));color:var(--green-a);border:1px solid rgba(22,163,74,.12)}
+
+/* Purpose card */
+.p-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:16px 18px;cursor:pointer;transition:all .25s var(--easing);position:relative;overflow:hidden}
+.p-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:transparent;transition:background .25s}
+.p-card:hover{border-color:var(--accent);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.p-card:hover::after{background:linear-gradient(90deg,var(--accent),var(--teal))}
+.pcard-name{font-size:14.5px;font-weight:700;margin-bottom:6px}
+.pcard-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.pm-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--line);color:var(--ink-2)}
+.pm-tag.src{background:rgba(8,145,178,.07);color:var(--accent)}
+.pm-tag.mtd{background:rgba(139,123,181,.1);color:var(--purple)}
+.pm-tag.tl{background:rgba(212,160,23,.1);color:var(--gold)}
+.pcard-desc{font-size:11.5px;color:var(--muted);line-height:1.5}
+
+/* ========== VIEW: PURPOSE WORKSPACE ========== */
+
+/* Workspace header bar */
+.ws-bar{display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:1px solid var(--line);
+  background:var(--panel);backdrop-filter:var(--glass-blur);flex-shrink:0;z-index:4}
+.ws-back{appearance:none;border:1px solid var(--border);background:var(--glass-bg);color:var(--ink-2);
+  font-family:var(--font);font-size:12px;font-weight:650;padding:6px 13px;border-radius:9px;cursor:pointer;transition:all .2s}
+.ws-back:hover{border-color:var(--accent);color:var(--accent);background:rgba(8,145,178,.06)}
+.ws-title{font-size:16px;font-weight:800}
+.ws-tag{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;background:rgba(22,163,74,.1);color:var(--green-a)}
+
+/* Mode toggle */
+.mode-toggle{display:flex;background:var(--line);border-radius:11px;padding:3px;margin:12px 24px;flex-shrink:0;z-index:4}
+.mode-opt{flex:1;padding:7px 16px;font-size:12.5px;font-weight:650;border-radius:9px;cursor:pointer;
+  text-align:center;transition:all .22s var(--easing);color:var(--muted);border:1px solid transparent}
+.mode-opt.active{background:var(--panel-solid);color:var(--ink);box-shadow:var(--shadow-sm);border-color:var(--border)}
+
+/* Workspace body - dual panel layout */
+.ws-body{display:flex;flex:1;min-height:0;overflow:hidden}
+
+/* Structured mode panel */
+.struct-panel{width:380px;flex:0 0 380px;overflow-y:auto;padding:16px 20px 30px;border-right:1px solid var(--line);
+  background:var(--bg);scrollbar-width:thin}
+.struct-section{margin-bottom:18px}
+.ss-head{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px}
+
+/* Source/Insight cards in structured mode */
+.s-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:13px 15px;margin-bottom:9px;transition:all .2s;position:relative}
+.s-card:hover{border-color:var(--accent);box-shadow:var(--shadow-sm)}
+.sc-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.sc-type{font-size:10.5px;color:var(--muted);margin-bottom:6px}
+.sc-concl{font-size:11.5px;color:var(--ink-2);line-height:1.5;margin-bottom:8px}
+.sc-to-canvas{float:right;font-size:11px;font-weight:700;color:var(--accent);cursor:pointer;padding:3px 10px;
+  border:1px solid rgba(8,145,178,.2);border-radius:8px;transition:all .15s}
+.sc-to-canvas:hover{background:var(--accent-soft);border-color:var(--accent)}
+
+.i-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:13px 15px;margin-bottom:9px;border-left:3px solid var(--purple)}
+.ic-title{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:4px}
+.ic-body{font-size:11.5px;color:var(--ink-2);line-height:1.5}
+
+/* Method chain */
+.method-chain{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
+.mc-step{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:12px;color:var(--ink-2)}
+.mc-num{width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  font-size:11px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.mc-arrow{color:var(--muted);font-size:14px}
+
+/* Action list */
+.action-list{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
+.al-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;font-size:12px;color:var(--ink-2);line-height:1.5}
+.al-bullet{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
+
+/* Export AI button */
+.export-ai{width:100%;padding:11px;border-radius:11px;font-size:13px;font-weight:700;
+  background:linear-gradient(135deg,var(--accent),#06B6D4);color:#fff;border:0;cursor:pointer;
+  font-family:var(--font);transition:all .25s var(--easing);box-shadow:0 4px 14px rgba(8,145,178,.2)}
+.export-ai:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(8,145,178,.3)}
+
+/* Canvas area */
+.canvas-area{flex:1;position:relative;overflow:hidden;background:
+  radial-gradient(circle at 15% 85%, rgba(8,145,178,.04) 0%, transparent 45%),
+  radial-gradient(circle at 85% 15%, rgba(139,123,181,.03) 0%, transparent 45%),
+  var(--bg)}
+
+/* Canvas toolbar */
+.canvas-toolbar{position:absolute;top:12px;left:12px;z-index:20;display:flex;gap:6px}
+.ct-btn{appearance:none;background:var(--panel-solid);border:1px solid var(--border);border-radius:9px;
+  padding:6px 12px;font-size:11.5px;font-weight:650;color:var(--ink-2);cursor:pointer;font-family:var(--font);
+  transition:all .15s;box-shadow:var(--shadow-sm)}
+.ct-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ct-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.ct-btn.primary:hover{filter:brightness(1.06)}
+
+/* Canvas material drawer */
+.canvas-drawer{position:absolute;top:12px;right:12px;width:220px;z-index:20;
+  background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
+  box-shadow:var(--shadow-md);max-height:calc(100% - 80px);overflow-y:auto}
+.cd-head{padding:12px 14px 8px;font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.5px;
+  border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.cd-toggle{cursor:pointer;color:var(--accent);font-size:11px;font-weight:700}
+.cd-item{padding:10px 14px;border-bottom:1px solid var(--line);cursor:grab;transition:background .12s}
+.cd-item:last-child{border-bottom:0}
+.cd-item:hover{background:var(--accent-soft)}
+.cd-item:active{cursor:grabbing}
+.cdi-name{font-size:12px;font-weight:700;color:var(--ink)}
+.cdi-sub{font-size:10.5px;color:var(--muted);margin-top:2px}
+
+/* Canvas SVG layer (connections + cards) */
+.canvas-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.canvas-svg line{stroke:rgba(8,145,178,.35);stroke-width:1.5}
+.canvas-svg circle{fill:var(--accent);r:4}
+
+/* Canvas card nodes */
+.cn-node{position:absolute;min-width:140px;max-width:240px;background:var(--panel-solid);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 14px;cursor:grab;user-select:none;z-index:2;
+  box-shadow:var(--shadow-sm);transition:box-shadow .2s}
+.cn-node:hover{box-shadow:var(--shadow-md);z-index:3}
+.cn-node:active{cursor:grabbing}
+.cn-node.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(8,145,178,.15),var(--shadow-md)}
+.cn-node.dragging{opacity:.85;z-index:10}
+.cn-type{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px}
+.cn-type.src{color:var(--accent)}
+.cn-type.ins{color:var(--purple)}
+.cn-type.tool{color:var(--gold)}
+.cn-type.note{color:var(--green-a)}
+.cn-title{font-size:13px;font-weight:700;margin-bottom:3px}
+.cn-body{font-size:11px;color:var(--ink-2);line-height:1.45}
+.cn-port{position:absolute;right:-6px;top:50%;width:12px;height:12px;border-radius:50%;
+  background:var(--accent);cursor:crosshair;transform:translateY(-50%);z-index:5}
+.cn-port-left{right:auto;left:-6px}
+
+/* Canvas zoom indicator */
+.zoom-indicator{position:absolute;bottom:12px;left:12px;z-index:20;
+  background:var(--panel-solid);border:1px solid var(--border);border-radius:9px;padding:5px 11px;
+  font-size:11px;font-weight:600;color:var(--muted);font-family:var(--mono)}
+
+/* ========== VOC TAGGER (in structured panel) ========== */
+.tagger-panel{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
+.tp-input{width:100%;min-height:70px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;
+  font-size:12.5px;font-family:var(--font);resize:vertical;outline:none;transition:border-color .2s}
+.tp-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.08)}
+.tp-output{margin-top:10px;display:none}
+.tp-output.show{display:block}
+.tp-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.tp-tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;
+  background:rgba(139,123,181,.1);color:var(--purple);border:1px solid rgba(139,123,181,.15)}
+.tp-result{font-size:11.5px;color:var(--ink-2);line-height:1.55;padding:10px 12px;background:var(--bg);border-radius:9px}
+
+/* ========== EXPORT MODAL ========== */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.35);
+  backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-box{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius);
+  width:640px;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-lg);padding:24px 26px}
+.mb-title{font-size:17px;font-weight:800;margin-bottom:6px}
+.mb-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.mb-field{margin-bottom:14px}
+.mb-label{font-size:12px;font-weight:700;margin-bottom:5px;color:var(--ink-2)}
+.mb-textarea{width:100%;min-height:90px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;
+  font-size:12.5px;font-family:var(--font);resize:vertical;outline:none;font-family:var(--mono);font-size:11.5px;
+  background:var(--bg);color:var(--ink);line-height:1.6}
+.mb-textarea:focus{border-color:var(--accent)}
+.mb-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.mb-copy{padding:9px 20px;border-radius:10px;font-size:12.5px;font-weight:700;
+  background:var(--accent);color:#fff;border:0;cursor:pointer;font-family:var(--font)}
+.mb-close{padding:9px 20px;border-radius:10px;font-size:12.5px;font-weight:700;
+  background:var(--glass-bg);border:1px solid var(--border);cursor:pointer;font-family:var(--font);color:var(--ink-2)}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;
+  font-size:12.5px;padding:10px 18px;border-radius:11px;box-shadow:var(--shadow-lg);opacity:0;
+  transition:opacity .2s,transform .2s;pointer-events:none;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* DE dashboard iframe */
+.de-frame{width:100%;height:calc(100vh - 120px);border:none;display:block}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">研</div><div><div class="brand-name">类目用户研究座</div><div class="brand-sub">CATEGORY INSIGHT HUB</div></div></div>
+    <div class="ws-tabs" id="wsTabs">
+      <button class="ws-tab active" data-ws="insight"><span class="wsi">🌱</span> 用户洞察·创意</button>
+      <button class="ws-tab" data-ws="ops"><span class="wsi">🎯</span> 运营目的·解题</button>
+    </div>
+    <div class="sb-foot">数据源池 · 按目的调用<br>部署目标 · GitHub Pages</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Topbar -->
+    <header class="topbar" id="topbar">
+      <h1 id="topbarTitle">数据源</h1>
+      <div class="topbar-right">
+        <div class="tb-search"><span class="ico">&#x2318;</span><input type="text" placeholder="搜索数据源 / 洞察 / 工具..." id="globalSearch"></div>
+        <button class="tb-btn" onclick="toast('筛选功能待接入')">筛选</button>
+        <button class="tb-btn tb-primary" onclick="openExportModal()">导出到智能体</button>
+      </div>
+    </header>
+
+    <!-- Subnav (shown in workspace views) -->
+    <div class="subnav" id="subnav"></div>
+
+    <!-- Board -->
+    <section class="board" id="board">
+
+      <!-- ===== VIEW: PURPOSE GRID ===== -->
+      <div class="view active" id="viewGrid">
+        <div class="purpose-grid-wrap" id="purposeGridContent"></div>
+      </div>
+
+      <!-- ===== VIEW: PURPOSE WORKSPACE ===== -->
+      <div class="view" id="viewWorkspace">
+        <!-- Workspace bar -->
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>
+          <span class="ws-title" id="wsPurposeTitle">新品打造</span>
+          <span class="ws-tag" id="wsWsTag">B · 运营目的</span>
+          <div style="margin-left:auto;display:flex;gap:6px">
+            <button class="ct-btn primary" onclick="openExportModal()">&#x1F916; 导出到智能体</button>
+          </div>
+        </div>
+
+        <!-- Mode toggle -->
+        <div class="mode-toggle" id="modeToggle">
+          <div class="mode-opt active" data-mode="struct">结构化模式 · 默认</div>
+          <div class="mode-opt" data-mode="canvas">无限画布模式</div>
+        </div>
+
+        <!-- Workspace body -->
+        <div class="ws-body" id="wsBody">
+          <!-- Structured Panel (left) -->
+          <div class="struct-panel" id="structPanel"></div>
+
+          <!-- Canvas Area (right) -->
+          <div class="canvas-area" id="canvasArea">
+            <div class="canvas-toolbar">
+              <button class="ct-btn" onclick="zoomCanvas(1.2)">+ 放大</button>
+              <button class="ct-btn" onclick="zoomCanvas(.8)">- 缩小</button>
+              <button class="ct-btn" onclick="fitCanvas()">适应</button>
+              <button class="ct-btn" onclick="clearCanvas()">清空</button>
+              <button class="ct-btn primary" onclick="openExportModal()">&#x1F916; 导出画布到智能体</button>
+            </div>
+            <svg class="canvas-svg" id="canvasSvg"></svg>
+            <div class="material-drawer" id="matDrawer">
+              <div class="cd-head">素材 <span class="cd-toggle" onclick="toggleDrawer()">&#x25B2;</span></div>
+              <div id="drawerItems"></div>
+            </div>
+            <div class="zoom-indicator" id="zoomIndicator">100%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== VIEW: DE DASHBOARD ===== -->
+      <div class="view" id="viewDe">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>
+          <span class="ws-title">亚马逊德国 · 数据源看板</span>
+          <span class="ws-tag">已接入 · 248款商品</span>
+        </div>
+        <iframe class="de-frame" src="de-dashboard.html" title="德国看板"></iframe>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<!-- Export Modal -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal-box">
+    <div class="mb-title">&#x1F916; 导出到智能体</div>
+    <div class="mb-sub">生成包含当前上下文的提示词，复制后粘贴给智能体使用</div>
+    <div class="mb-field">
+      <div class="mb-label">我的问题 / 推导方向</div>
+      <textarea class="mb-textarea" id="expQuestion" placeholder="例如：我想了解这个细分市场的核心痛点是什么，应该优先优化哪个维度？"></textarea>
+    </div>
+    <div class="mb-field">
+      <div class="mb-label">生成结果（可编辑）</div>
+      <textarea class="mb-textarea" id="expResult" style="min-height:200px" readonly></textarea>
+    </div>
+    <div class="mb-actions">
+      <button class="mb-close" onclick="closeExportModal()">关闭</button>
+      <button class="mb-copy" onclick="copyPrompt()">&#x1F4CB; 复制提示词</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA MODEL — 完整架构（截图1）
+// ============================================================
+var DATA = {
+  // ---- 原始数据源池（你提供的 8 个，按截图1的 s 编号）----
+  sources: {
+    s1:{id:'s1',name:'亚马逊评论',type:'评论/VOC',market:'DE/US/JP/UK/EU',
+        desc:'各站点商品评价原始文本与结构化字段（星级/尺寸/质量/材质等15维）',
+        records:1415,status:'ready'},
+    s2:{id:'s2',name:'社媒声量',type:'社媒',market:'全球',
+        desc:'Twitter/Instagram/TikTok 等平台的品牌/品类讨论声量与情感倾向',
+        records:0,status:'pending'},
+    s3:{id:'s3',name:'竞品分析',type:'竞品',market:'DE/US',
+        desc:'竞品价格、功能对比、卖点矩阵、BSR 排名趋势',
+        records:0,status:'pending'},
+    s4:{id:'s4',name:'搜索数据',type:'搜索',market:'DE/US/JP',
+        desc:'Google/Amazon 搜索关键词量、趋势、长尾词分布',
+        records:0,status:'pending'},
+    s5:{id:'s5',name:'用户访谈',type:'访谈',market:'—',
+        desc:'深度用户访谈记录、用户旅程地图、决策因素清单',
+        records:0,status:'pending'},
+    s6:{id:'s6',name:'客服工单',type:'运营数据',market:'DE/US',
+        desc:'售后反馈、退换货原因归类、FAQ 热点问题',
+        records:0,status:'pending'},
+    s7:{id:'s7',name:'销售数据',type:'运营数据',market:'DE/US/JP',
+        desc:'销量、GMV、转化率、复购率等运营指标时序',
+        records:0,status:'pending'},
+    s8:{id:'s8',name:'德国商品库',type:'商品/VOC',market:'DE',
+        desc:'德国站 248 款在售商品完整字段（含已打标签的评价子集）',
+        records:248,status:'ready',hasDashboard:true},
+    s9:{id:'s9',name:'类目趋势',type:'行业数据',market:'EU/US',
+        desc:'类目大盘增长趋势、季节性规律、新进入者动态',
+        records:0,status:'pending'},
+   s10:{id:'s10',name:'广告投放',type:'营销数据',market:'DE/US',
+        desc:'PPC 点击率、ACOS、关键词表现、竞价策略效果',
+        records:0,status:'pending'},
+   s11:{id:'s11',name:'品牌监测',type:'社媒',market:'全球',
+        desc:'品牌提及追踪、KOL 合作效果、舆情事件记录',
+        records:0,status:'pending'}
+  },
+
+  // ---- 双工作区定义（截图1）----
+  workspaces: {
+    insight: {
+      label:'A · 用户洞察创意工作区',
+      color:'#0891B2',
+      dotClass:'a',
+      purposes:[
+        {id:'market-seg',name:'市场细分',icon:'&#x1F4CA;',
+         sources:['s2','s5','s9','s11'],methods:'动机编码 / 场景聚类',tools:'语料',
+         desc:'从购买动机、用户画像、使用场景切分市场，识别高价值细分群体及其规模。'},
+        {id:'user-problem',name:'用户问题研究',icon:'&#x2753;',
+         sources:['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11'],methods:'JTBD / 问题归类',tools:'语料',
+         desc:'从用户视角出发，识别真实待解决的问题（Jobs to Be Done），按严重度/频次排序。'},
+        {id:'category-opp',name:'品类机会发现',icon:'&#x1F680;',
+         sources:['s1','s3','s8','s9'],methods:'需求矩阵 / 空白识别',tools:'VOC',
+         desc:'在需求四象限中定位空白机会点——高重要低满意度 = 创新突破口。'},
+        {id:'new-concept',name:'新品概念孵化',icon:'&#x1F4A1;',
+         sources:['s1','s2','s6','s8'],methods:'机会→概念卡',tools:'VOC',
+         desc:'将机会点转化为可验证的产品概念卡（痛点→解决方案→差异化主张）。'}
+      ]
+    },
+    ops: {
+      label:'B · 运营目的的工作区',
+      color:'#16A34A',
+      dotClass:'b',
+      purposes:[
+        {id:'product-opt',name:'产品优化',icon:'&#x1F697;',
+         sources:['s1','s3','s7'],methods:'差评归因 / 优先级',tools:'VOC',
+         desc:'从差评中提取归因维度（尺寸/质量/材质/噪音…），按影响面×严重度排优先级。'},
+        {id:'marketing',name:'营销建议',icon:'&#x1F4E2;',
+         sources:['s5','s10','s4'],methods:'情感词 / 场景内容',tools:'社媒',
+         desc:'从社媒和搜索中提炼用户情感关键词和使用场景，反推营销话术与内容方向。'},
+        {id:'new-plan',name:'新品规划',icon:'&#x1F4CB;',
+         sources:['s8','s6','s2'],methods:'SKU梯度 / 排期',tools:'VOC',
+         desc:'基于现有 SKU 表现和市场需求缺口，规划新品线梯度（入门/进阶/旗舰）和上市节奏。'},
+        {id:'new-build',name:'新品打造',icon:'&#x1F527;',
+         sources:['s1','s8','s11'],methods:'痛点→卖点',tools:'VOC',
+         desc:'从核心痛点出发反向推导产品卖点组合，形成 FABE 文案和差异化定位。'}
+      ]
+    }
+  },
+
+  // ---- 种子洞察（每个目的的示例洞察卡片）----
+  seedInsights: {
+    'market-seg':[
+      {title:'高频使用者',body:'每周使用 3 次以上，对静音和便携性有极高要求，愿意为品质溢价 30%。',tags:['高频','品质敏感']},
+      {title:'尝鲜体验者',body:'月均 1-2 次，外观驱动购买决策，社交媒体种草是主要触达渠道。',tags:['尝鲜','社交驱动']},
+      {title:'性价比追求者',body:'价格区间 15-30 欧，关注促销活动和性价比，差评集中在耐用性。',tags:['性价比','价格敏感']}
+    ],
+    'user-problem':[
+      {title:'噪音干扰是 #1 投诉点',body:'约 38% 的差评提到噪音问题，尤其夜间使用场景下严重影响体验。',tags:['噪音','高频']},
+      {title:'尺寸偏差导致退货',body:'实际尺寸与描述不符占退换货原因 TOP3，尤其中文描述翻译误差大。',tags:['尺寸','退货']},
+      {title:'清洁困难',body:'复杂结构的清洁不便被反复提及，用户期望更易拆洗的设计。',tags:['清洁','易用性']}
+    ],
+    'category-opp':[
+      {title:'静音技术空白',body:'市场上缺乏真正有效的静音解决方案，现有产品的降噪声明多为营销话术。',tags:['机会','差异化']},
+      {title:'便携场景未被满足',body:'出差/旅行携带场景的产品形态几乎空白，现有产品偏家用固定。',tags:['机会','场景']},
+      {title:'中端价位断层',body:'低价(<15欧)和高价(>60欧)产品密集，25-40欧 区间竞争少且利润空间好。',tags:['机会','定价']}
+    ],
+    'new-concept':[
+      {title:'概念 A：静音舱',body:'主打"图书馆级别静音"，针对高频使用者的核心痛点，定价 35-45 欧区间。',tags:['概念','高端']},
+      {title:'概念 B：旅行伴侣',body:'折叠便携设计 + 旅行收纳包套装，瞄准尝鲜体验者和礼品市场。',tags:['概念','中端']},
+      {title:'概念 C：智能互联',body:'App 连接 + 使用数据分析 + 个性化建议，面向科技爱好者细分。',tags:['概念','创新']}
+    ],
+    'product-opt':[
+      {title:'尺寸标注需统一标准',body:'多语言环境下尺寸单位混乱（inch/cm/mm混用），应强制统一并加实物参照图。',tags:['优先:P0']},
+      {title:'噪音控制工程升级',body:'电机/结构减震方案投入产出比最高，预计可减少 25% 差评。',tags:['优先:P0']},
+      {title:'包装防损改进',body:'运输破损占售后投诉 12%，加强内衬和包装强度。',tags:['优先:P1']},
+    ],
+    'marketing':[
+      {title:'"静音"是最高效转化词',body:'含"静音"关键词的广告 CTR 比行业均值高 42%，应作为主卖点强化。',tags:['关键词','CTR']},
+      {title:'UGC 内容机会',body:'用户自发分享的使用场景照片质量高，可作为官方素材二次利用。',tags:['UGC','素材']},
+      {title:'节日营销窗口',body:'Q4（黑色星期五~圣诞）是全年销量峰值，需提前 60 天备货和推广。',tags:['节奏','Q4']}
+    ],
+    'new-plan':[
+      {title:'入门款：基础款升级',body:'在现有 15-20 欧基础上增加 1-2 个差异化功能（如简易收纳），抢占入门市场。',tags:['规划','Q3']},
+      {title:'进阶款：静音版',body:'25-40 欧区间，以静音为核心卖点，填补市场中端空白。',tags:['规划','Q4']},
+      {title:'旗舰款：智能版',body:'50+ 欧区间，集成 App 和个性化功能，树立品牌技术形象。',tags:['规划','Q1']}
+    ],
+    'new-build':[
+      {title:'核心卖点：真·静音',body:'实测分贝数据 + 对比竞品图表 + 第三方认证背书，建立可信度。',tags:['卖点','信任']},
+      {title:'差异化：一机三模',body:'同一产品覆盖居家/出差/送礼三个场景，通过配件切换实现。',tags:['差异化','场景']},
+      {title:'FABE 主张',body:'Feature: 双层隔音结构 → Advantage: 图书馆级安静 → Benefit: 随时用不扰邻 → Evidence: 用户实测视频',tags:['FABE']}
+    ]
+  }
+};
+
+// ============================================================
+// APP STATE
+// ============================================================
+var state = {
+  ws: 'insight',           // current workspace
+  purposeId: null,         // current purpose (null = grid view)
+  mode: 'struct',          // struct | canvas
+  canvasZoom: 1,
+  canvasPanX: 0,
+  canvasPanY: 0,
+  canvasNodes: [],         // [{id,x,y,type,title,body,sourceId}]
+  canvasLines: [],         // [{fromId,toId}]
+  isDragging: false,
+  dragNode: null,
+  dragOffX: 0,
+  dragOffY: 0,
+  drawerOpen: true
+};
+
+// ============================================================
+// UTILS
+// ============================================================
+function $(sel){return document.querySelector(sel)}
+function $$(sel){return document.querySelectorAll(sel)}
+function toast(msg){
+  var t=$('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove('show')},1800);
+}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function getSource(id){return DATA.sources[id]}
+function getPurpose(ws,id){return DATA.workspaces[ws].purposes.find(function(p){return p.id===id})}
+function getInsights(pid){return DATA.seedInsights[pid]||[]}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function setView(viewId){
+  $$('.view').forEach(function(v){v.classList.remove('active')});
+  var t=$( '#view'+viewId.charAt(0).toUpperCase()+viewId.slice(1) );
+  if(t)t.classList.add('active');
+}
+
+function switchWorkspace(wsKey){
+  if(state.ws===wsKey)return;
+  state.ws=wsKey;
+  state.purposeId=null;
+  updateWorkspaceUI();
+  renderPurposeGrid();
+  setView('Grid');
+}
+
+function enterPurpose(purposeId){
+  state.purposeId=purposeId;
+  state.mode='struct';
+  updateWorkspaceUI();
+  renderPurposeWorkspace();
+  setView('Workspace');
+}
+
+function goBackToGrid(){
+  state.purposeId=null;
+  updateWorkspaceUI();
+  renderPurposeGrid();
+  setView('Grid');
+}
+
+function openDeDashboard(){
+  state.purposeId=null;
+  $('viewDe').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active')});
+}
+
+// ============================================================
+// RENDER: PURPOSE GRID (截图1)
+// ============================================================
+function renderPurposeGrid(){
+  var ws=DATA.workspaces[state.ws];
+  var container=$('#purposeGridContent');
+
+  // Source pool bar
+  var srcPool='<div class="src-pool-bar"><div class="spb-label">原始数据源池 · DATA.sources（'+Object.keys(DATA.sources).length+' 个）</div><div class="spb-sources">';
+  Object.keys(DATA.sources).forEach(function(k){
+    var s=DATA.sources[k];
+    srcPool+='<span class="spb-chip">'+escHtml(s.name)+'<span style="opacity:.5">·</span>'+escHtml(s.type)+'</span>';
+  });
+  srcPool+='</div><div style="font-size:11px;color:var(--muted);margin-top:6px">全部沉淀于此，按目的的被调用</div></div>';
+
+  // Two column layout
+  var cols='<div class="purpose-cols">';
+  ['insight','ops'].forEach(function(wsk){
+    var w=DATA.workspaces[wsk];
+    var isCur=(state.ws===wsk);
+    cols+='<div class="pc-col">';
+    cols+='<div class="pc-col-header col-'+w.dotClass+'">'+escHtml(w.label)+'</div>';
+    w.purposes.forEach(function(p){
+      var srcTags=p.sources.map(function(s){return '<span class="pm-tag src">'+escHtml(getSource(s)?getSource(s).name:s)+'</span>'}).join('');
+      cols+='<div class="p-card" data-purpose="'+p.id+'" data-ws="'+wsk+'" onclick="enterPurpose(\''+p.id+'\')">';
+      cols+='<div class="pcard-name">'+p.icon+' '+escHtml(p.name)+'</div>';
+      cols+='<div class="pcard-meta">';
+      cols+='调用：<span class="pm-tag">'+p.sources.join('·')+'</span>';
+      cols+='<span class="pm-tag mtd">'+escHtml(p.methods)+'</span>';
+      cols+='<span class="pm-tag tl">'+escHtml(p.tools)+'</span>';
+      cols+='</div>';
+      cols+='<div class="pcard-desc">'+escHtml(p.desc)+'</div>';
+      cols+='</div>';
+    });
+    cols+='</div>';
+  });
+  cols+='</div>';
+
+  container.innerHTML=
+    '<div class="purpose-header">'+
+      '<div class="ph-title"><span class="ph-dot '+ws.dotClass+'"></span>'+escHtml(ws.label)+'</div>'+
+      '<div class="ph-desc">点击任一目的进入工作区，系统将自动绑定对应的数据源、分析方法与工具。</div>'+
+    '</div>'+
+    srcPool+cols;
+
+  // Update topbar
+  $('#topbarTitle').textContent='目的工作区';
+}
+
+// ============================================================
+// RENDER: PURPOSE WORKSPACE (截图2)
+// ============================================================
+function renderPurposeWorkspace(){
+  var p=getPurpose(state.ws,state.purposeId);
+  if(!p)return;
+
+  // Header
+  $('#wsPurposeTitle').textContent=p.name+' ';
+  $('#wsWsTag').textContent=DATA.workspaces[state.ws].label.split('·')[0];
+
+  // Mode toggle reset
+  state.mode='struct';
+  $$('#modeToggle .mode-opt').forEach(function(el){
+    el.classList.toggle('active',el.getAttribute('data-mode')==='struct');
+  });
+
+  // Render structured panel
+  renderStructPanel(p);
+
+  // Render canvas
+  renderCanvasArea(p);
+
+  // Show subnav
+  $('#subnav').classList.add('show');
+  $('#subnav').innerHTML='';
+  var tabLabels=['数据源','分析框架','AI工具','输出'];
+  tabLabels.forEach(function(l,i){
+    var el=document.createElement('div');el.className='sn-tab'+(i===0?' active':'');el.textContent=l;
+    el.addEventListener('click',function(){$('#subnav .sn-tab').forEach(function(x){x.classList.remove('active')});el.classList.add('active')});
+    $('#subnav').appendChild(el);
+  });
+}
+
+// --- Structured Panel ---
+function renderStructPanel(p){
+  var sp=$('#structPanel');
+
+  // Data source cards
+  var srcHtml='<div class="struct-section"><div class="ss-head">数据源卡（调用 '+p.sources.length+' 个）</div>';
+  p.sources.forEach(function(sid){
+    var s=getSource(sid);
+    if(!s)return;
+    var concl=s.status==='ready'?(s.hasDashboard?'248款德国商品已分析':'数据就绪'):'待接入';
+    srcHtml+='<div class="s-card">'+
+      '<button class="sc-to-canvas" onclick="addSourceToCanvas(\''+sid+'\')">+ 画布</button>'+
+      '<div class="sc-name">'+escHtml(s.name)+'</div>'+
+      '<div class="sc-type">'+escHtml(s.type)+' · '+escHtml(s.market)+(s.records?' · '+s.records+' 条':'')+'</div>'+
+      '<div class="sc-concl">'+escHtml(concl)+'</div>'+
+    '</div>';
+  });
+  srcHtml+='</div>';
+
+  // Insight cards
+  var insights=getInsights(state.purposeId);
+  var insHtml='<div class="struct-section"><div class="ss-head">关联洞察</div>';
+  insights.forEach(function(ins,i){
+    insHtml+='<div class="i-card">'+
+      '<button class="sc-to-canvas" onclick="addInsightToCanvas('+i+')">+ 画布</button>'+
+      '<div class="ic-title">'+escHtml(ins.title)+'</div>'+
+      '<div class="ic-body">'+escHtml(ins.body)+'</div>'+
+    '</div>';
+  });
+  insHtml+='</div>';
+
+  // Method chain
+  var steps=p.methods.split('/').map(function(m){return m.trim()});
+  var mcHtml='<div class="struct-section"><div class="ss-head">分析方法链路</div><div class="method-chain">';
+  steps.forEach(function(st,i){
+    mcHtml+='<div class="mc-step"><div class="mc-num">'+(i+1)+'</div><span>'+escHtml(st)+'</span></div>';
+    if(i<steps.length-1)mcHtml+='<div class="mc-arrow">&#x21B3;</div>';
+  });
+  mcHtml+='</div></div>';
+
+  // Action list
+  var actHtml='<div class="struct-section"><div class="ss-head">行动清单</div><div class="action-list">';
+  [
+    '确认绑定的数据源是否已更新至最新版本',
+    '运行 VOC 规则引擎对最新评论批量打标',
+    '在四象限图中标记当前品类的位置和移动方向',
+    '根据洞察优先级排列下一步行动项'
+  ].forEach(function(a){
+    actHtml+='<div class="al-item"><div class="al-bullet"></div>'+escHtml(a)+'</div>';
+  });
+  actHtml+='</div></div>';
+
+  // Export button
+  var expHtml='<div class="struct-section"><button class="export-ai" onclick="openExportModal()">&#x1F916; 导出到智能体</button></div>';
+
+  // VOC Tagger
+  var taggerHtml='<div class="struct-section"><div class="ss-head">VOC 规则引擎（本地运行）</div><div class="tagger-panel">'+
+    '<textarea class="tp-input" id="vocInput" placeholder="粘贴一条用户评论或社媒内容，实时出标签...&#10;&#10;示例：这个东西声音太大了，而且尺寸偏小不太好用"></textarea>'+
+    '<div class="tp-output" id="vocOutput">'+
+      '<div class="tp-tags" id="vocTags"></div>'+
+      '<div class="tp-result" id="vocResult"></div>'+
+    '</div>'+
+    '<button class="export-ai" style="margin-top:8px" onclick="runVocTagger()">运行规则引擎</button>'+
+  '</div></div>';
+
+  sp.innerHTML=srcHtml+insHtml+mcHtml+actHtml+expHtml+taggerHtml;
+}
+
+// ============================================================
+// CANVAS ENGINE (截图2 右侧)
+// ============================================================
+var canvasEl, svgEl;
+
+function renderCanvasArea(p){
+  canvasEl=$('#canvasArea');
+  svgEl=$('#canvasSvg');
+
+  // Seed canvas with initial nodes
+  if(!state.canvasNodes.length){
+    seedCanvas(p);
+  }
+
+  // Material drawer
+  renderDrawer(p);
+
+  // Setup events
+  setupCanvasEvents();
+
+  // Render nodes and lines
+  renderCanvas();
+}
+
+function seedCanvas(p){
+  var baseX=60,baseY=80,gapX=200,gapY=130;
+  var ni=0;
+
+  // Add source nodes
+  p.sources.forEach(function(sid,i){
+    var s=getSource(sid);if(!s)return;
+    state.canvasNodes.push({
+      id:'n-src-'+sid,x:baseX+i*gapX,y:baseY,type:'src',
+      title:s.name,sub:(s.records?s.records+' 条':'待接入'),sourceId:sid
+    });ni++;
+  });
+
+  // Add insight nodes
+  var insights=getInsights(state.purposeId);
+  insights.slice(0,4).forEach(function(ins,i){
+    state.canvasNodes.push({
+      id:'n-ins-'+i,x:baseX+(i%2)*gapX+60,y:baseY+gapY+Math.floor(i/2)*gapY,
+      type:'ins',title:ins.title,body:ins.body
+    });ni++;
+  });
+
+  // Add note node
+  state.canvasNodes.push({id:'n-note-1',x:baseX+gapX*1.5,y:baseY+gapY*3,type:'note',
+    title:'推导批注',body:'在此处记录你的推导过程和关键发现...'});
+  saveCanvasState();
+}
+
+function renderDrawer(p){
+  var html='';
+  // Sources in drawer
+  p.sources.forEach(function(sid){
+    var s=getSource(sid);if(!s)return;
+    html+='<div class="cd-item" draggable="true" data-type="src" data-id="'+sid+'" ondragstart="onDrawerDrag(event)">'+
+      '<div class="cdi-name">'+escHtml(s.name)+'</div>'+
+      '<div class="cdi-sub">'+escHtml(s.type)+' · '+(s.records?s.records+'条':'待接入')+'</div>'+
+    '</div>';
+  });
+  // Insights
+  var insights=getInsights(state.purposeId);
+  insights.forEach(function(ins,i){
+    html+='<div class="cd-item" draggable="true" data-type="ins" data-idx="'+i+'" ondragstart="onDrawerDrag(event)">'+
+      '<div class="cdi-name">'+escHtml(ins.title)+'</div>'+
+      '<div class="cdi-sub">洞察 · 可拖入画布</div>'+
+    '</div>';
+  });
+  // Blank note
+  html+='<div class="cd-item" draggable="true" data-type="note" ondragstart="onDrawerDrag(event)">'+
+    '<div class="cdi-name">空白批注</div><div class="cdi-sub">拖入画布写笔记</div>'+
+  '</div>';
+  $('#drawerItems').innerHTML=html;
+}
+
+function addSourceToCanvas(sid){
+  var s=getSource(sid);if(!s)return;
+  var existing=state.canvasNodes.find(function(n){return n.sourceId===sid&&n.type==='src'});
+  if(existing){toast(s.name+' 已在画布上');return;}
+  state.canvasNodes.push({
+    id:'n-src-'+sid+'-'+Date.now(),x:80+Math.random()*300,y:80+Math.random()*200,
+    type:'src',title:s.name,sub:s.records?s.records+'条':'待接入',sourceId:sid
+  });
+  saveCanvasState();renderCanvas();toast('已添加: '+s.name);
+}
+
+function addInsightToCanvas(idx){
+  var insights=getInsights(state.purposeId);
+  if(!insights[idx])return;
+  var ins=insights[idx];
+  state.canvasNodes.push({
+    id:'n-ins-add-'+Date.now(),x:100+Math.random()*300,y:150+Math.random()*200,
+    type:'ins',title:ins.title,body:ins.body
+  });
+  saveCanvasState();renderCanvas();toast('已添加: '+ins.title);
+}
+
+function setupCanvasEvents(){
+  // Zoom with mousewheel
+  canvasEl.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var factor=e.deltaY>0?.92:1.08;
+    state.canvasZoom=Math.max(.2, Math.min(5, state.canvasZoom*factor));
+    renderCanvas();
+  },{passive:false});
+
+  // Pan with middle-click drag or space+drag
+  var panning=false,pStartX,pStartY;
+  canvasEl.addEventListener('mousedown',function(e){
+    if(e.target===canvasEl||e.target===svgEl||(e.button===1)){
+      panning=true;pStartX=e.clientX-state.canvasPanX;pStartY=e.clientY-state.canvasPanY;
+      canvasEl.style.cursor='grabbing';
+    }
+  });
+  document.addEventListener('mousemove',function(e){
+    if(paning){state.canvasPanX=e.clientX-pStartX;state.canvasPanY=e.clientY-pStartY;renderCanvas();}
+  });
+  document.addEventListener('mouseup',function(e){if(panning){panaging=false;canvasEl.style.cursor='';}});
+
+  // Node dragging
+  canvasEl.addEventListener('mousedown',function(e){
+    var node=e.target.closest('.cn-node');
+    if(node&&!e.target.closest('.cn-port')){
+      state.isDragging=true;state.dragNode=node;
+      var rect=node.getBoundingClientRect();
+      var cRect=canvasEl.getBoundingClientRect();
+      state.dragOffX=e.clientX-rect.left;state.dragOffY=e.clientY-rect.top;
+      node.classList.add('dragging');
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('mousemove',function(e){
+    if(state.isDragging&&state.dragNode){
+      var cRect=canvasEl.getBoundingClientRect();
+      var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-state.dragOffY/state.canvasZoom;
+      var y=(e.clientY-cRect.top-state.canvasPanY)/state.canvasZoom-state.dragOffY/state.canvasZoom;
+      var nid=state.dragNode.getAttribute('data-nid');
+      var n=state.canvasNodes.find(function(n){return n.id===nid});
+      if(n){n.x=x;n.y=y;renderCanvas();}
+    }
+  });
+  document.addEventListener('mouseup',function(e){
+    if(state.isDragging){
+      if(state.dragNode)state.dragNode.classList.remove('dragging');
+      state.isDragging=false;state.dragNode=null;
+      saveCanvasState();
+    }
+  });
+
+  // Connection drawing from port to port
+  var connFrom=null;
+  canvasEl.addEventListener('mousedown',function(e){
+    if(e.target.classList.contains('cn-port')){
+      connFrom=e.target.parentNode.getAttribute('data-nid');
+    }
+  });
+  canvasEl.addEventListener('mouseup',function(e){
+    if(connFrom&&e.target.classList.contains('cn-port')){
+      var connTo=e.target.parentNode.getAttribute('data-nid');
+      if(connFrom!==connTo){
+        // Check duplicate
+        var dup=state.canvasLines.some(function(l){
+          return(l.from===connFrom&&l.to===connTo)||(l.from===connTo&&l.to===connFrom);
+        });
+        if(!dup){
+          state.canvasLines.push({from:connFrom,to:connTo});
+          saveCanvasState();renderCanvas();
+        }
+      }
+    }
+    connFrom=null;
+  });
+}
+
+function renderCanvas(){
+  if(!canvasEl)return;
+
+  // Update transform
+  canvasEl.style.transformOrigin='0 0';
+  canvasEl.style.transform='translate('+state.canvasPanX+'px,'+state.canvasPanY+'px) scale('+state.canvasZoom+')';
+
+  // Zoom indicator
+  $('#zoomIndicator').textContent=Math.round(state.canvasZoom*100)+'%';
+
+  // Remove old nodes
+  $$('.cn-node').forEach(function(n){n.remove()});
+
+  // Render nodes
+  state.canvasNodes.forEach(function(n){
+    var el=document.createElement('div');
+    el.className='cn-node';el.setAttribute('data-nid',n.id);
+    el.style.left=n.x+'px';el.style.top=n.y+'px';
+    var typeLabel={'src':'数据源','ins':'洞察','tool':'工具','note':'批注'}[n.type]||'卡片';
+    var typeClass={'src':'src','ins':'ins','tool':'tool','note':'note'}[n.type]||'';
+    var bodyHtml=n.body?'<div class="cn-body">'+escHtml(n.body)+'</div>':'';
+    var subHtml=n.sub?'<div style="font-size:10.5px;color:var(--muted)">'+escHtml(n.sub)+'</div>':'';
+    el.innerHTML=
+      '<div class="cn-type '+typeClass+'">'+typeLabel+'</div>'+
+      '<div class="cn-title">'+escHtml(n.title)+'</div>'+
+      subHtml+bodyHtml+
+      '<div class="cn-port cn-port-left" title="连线入口"></div>'+
+      '<div class="cn-port" title="连线出口"></div>';
+    canvasEl.appendChild(el);
+
+    // Double click to edit title/body
+    el.addEventListener('dblclick',function(){
+      var newT=prompt('编辑标题:',n.title);if(newT&&newT.trim()){n.title=newT.trim();saveCanvasState();renderCanvas();}
+    });
+  });
+
+  // Render lines (SVG)
+  renderCanvasLines();
+}
+
+function renderCanvasLines(){
+  if(!svgEl)return;
+  svgEl.innerHTML=''; // Clear
+
+  // Get node positions (need to account for transform)
+  var getNodeCenter=function(nid){
+    var el=$('.cn-node[data-nid="'+nid+'"]');
+    if(!el)return null;
+    var rect=el.getBoundingClientRect();
+    var cRect=canvasEl.getBoundingClientRect();
+    return{
+      rx:(rect.left+rect.width-cRect.left-state.canvasPanX)/state.canvasZoom,
+      ry:(rect.top+rect.height/2-cRect.top-state.canvasPanY)/state.canvasZoom,
+      lx:(rect.left-cRect.left-state.canvasPanX)/state.canvasZoom,
+      ly:(rect.top+rect.height/2-cRect.top-state.canvasPanY)/state.canvasZoom
+    };
+  };
+
+  state.canvasLines.forEach(function(line){
+    var from=getNodeCenter(line.from),to=getNodeCenter(line.to);
+    if(!from||!to)return;
+
+    // Bezier curve: right edge of "from" -> left edge of "to"
+    var dx=to.lx-from.rx;
+    var cx1=from.rx+dx*.45,cy1=from.ry;
+    var cx2=to.lx-dx*.45,cy2=to.ty;
+
+    var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d','M'+from.rx+','+from.ry+' C'+cx1+','+cy1+' '+cx2+','+cy2+' '+to.lx+','+to.ly);
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke','rgba(8,145,178,.3)');
+    path.setAttribute('stroke-width','1.5');
+    svgEl.appendChild(path);
+
+    // Endpoint dots
+    [from.rx,from.ry],[to.lx,to.ty].forEach(function(pt){
+      var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',pt[0]);c.setAttribute('cy',pt[1]);c.setAttribute('r','3.5');
+      c.setAttribute('fill','#0891B2');
+      svgEl.appendChild(c);
+    });
+  });
+}
+
+function zoomCanvas(factor){
+  state.canvasZoom=Math.max(.2, Math.min(5, state.canvasZoom*factor));
+  renderCanvas();
+}
+function fitCanvas(){
+  state.canvasZoom=1;state.canvasPanX=0;state.canvasPanY=0;
+  renderCanvas();
+}
+function clearCanvas(){
+  if(confirm('清空画布？所有节点和连线将被移除。')){
+    state.canvasNodes=[];state.canvasLines=[];
+    saveCanvasState();renderCanvas();
+  }
+}
+function toggleDrawer(){
+  var d=$('#matDrawer');state.drawerOpen=!state.drawerOpen;
+  d.style.display=state.drawerOpen?'block':'none';
+}
+
+function saveCanvasState(){
+  try{localStorage.setItem('cih_canvas_'+state.purposeId,JSON.stringify({nodes:state.canvasNodes,lines:state.canvasLines,zoom:state.canvasZoom}));}catch(e){}
+}
+
+function loadCanvasState(){
+  try{
+    var raw=localStorage.getItem('cih_canvas_'+state.purposeId);
+    if(raw){var d=JSON.parse(raw);state.canvasNodes=d.nodes||[];state.canvasLines=d.lines||[];if(d.zoom)state.canvasZoom=d.zoom;}
+  }catch(e){}
+}
+
+// Drawer drag -> drop onto canvas
+function onDrawerDrag(e){
+  e.dataTransfer.setData('text/plain',JSON.stringify({type:e.target.dataset.type,id:e.target.dataset.id,idx:e.target.dataset.idx}));
+}
+canvasEl&&(canvasEl.addEventListener('dragover',function(e){e.preventDefault()}));
+canvasEl&&(canvasEl.addEventListener('drop',function(e){
+  e.preventDefault();
+  try{
+    var d=JSON.parse(e.dataTransfer.getData('text/plain'));
+    var cRect=canvasEl.getBoundingClientRect();
+    var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-70;
+    var y=(e.clientY-cRect.top-state.canvasPanY)/state.canvasZoom-30;
+    if(d.type==='src'){var s=getSource(d.id);if(s){state.canvasNodes.push({id:'n-src-d-'+Date.now(),x:x,y:y,type:'src',title:s.name,sub:d.id,sourceId:d.id});}}
+    else if(d.type==='ins'){var ins=(getInsights(state.purposeId)||[])[parseInt(d.idx)];if(ins){state.canvasNodes.push({id:'n-ins-d-'+Date.now(),x:x,y:y,type:'ins',title:ins.title,body:ins.body});}}
+    else if(d.type==='note'){state.canvasNodes.push({id:'n-note-d-'+Date.now(),x:x,y:y,type:'note',title:'批注',body:''});}
+    saveCanvasState();renderCanvas();toast('已添加到画布');
+  }catch(err){console.error(err);}
+}));
+
+// ============================================================
+// MODE TOGGLE (截图2)
+// ============================================================
+$$('#modeToggle .mode-opt').forEach(function(el){
+  el.addEventListener('click',function(){
+    $$('#modeToggle .mode-opt').forEach(function(x){x.classList.remove('active')});
+    el.classList.add('active');
+    state.mode=el.getAttribute('data-mode');
+    // Toggle visibility
+    $('#structPanel').style.display=state.mode==='struct'?'block':'none';
+    $('.canvas-area').style.flex=state.mode==='struct'?'1':'1';
+    if(state.mode==='canvas'){
+      $('#structPanel').style.display='none';
+      renderCanvas();
+    }else{
+      $('#structPanel').style.display='';
+    }
+  });
+});
+
+// ============================================================
+// VOC RULE ENGINE (简化版)
+// ============================================================
+var VOC_RULES=[
+  {tag:'尺寸',patterns:[/\b(大|小|大号|小号|size|偏大|偏小|太大|太小|尺寸|长短|长短不一)\b/i],negPatterns:[/(不大|不小|尺寸合适|大小刚好)\b/i]},
+  {tag:'外观',patterns:[/\b(好看|丑|漂亮|美观|颜值|设计|颜色|质感|手感|材质|塑料感|廉价感|高级感|精致|粗糙)\b/i],negPatterns:[]},
+  {tag:'功能',patterns:[/\b(好用|不好用|方便|不方便|实用|鸡肋|功能|性能|效果|有效|无效|灵敏|迟钝|快|慢)\b/i],negPatterns:[/(不难用)\b/i]},
+  {tag:'噪音',patterns:[/\b(吵|响|大声|安静|静音|噪音|噪声|吵人|嗡嗡|震动|声音大|声音小)\b/i],negPatterns:[/(不吵|很安静|静音不错)\b/i]},
+  {tag:'价格',patterns:[/\b(贵|便宜|划算|值|不值|性价比|价格|价位|折扣|贵了|便宜了|物有所值)\b/i],negPatterns:[]},
+  {tag:'清洁',patterns:[/\b(清洗|清洁|难洗|好洗|拆卸|安装|组装|拆装|卫生|细菌|发霉)\b/i],negPatterns:[/(好清洗|容易清洗)\b/i]},
+  {tag:'舒适',patterns:[/\b(舒服|不舒服|软|硬|贴合|磨手|夹手|硌|异物感|不适|疼痛)\b/i],negPatterns:[/(很舒适|挺舒服)\b/i]}
+];
+
+function runVocTagger(){
+  var input=$('#vocInput').value.trim();
+  if(!input){toast('请输入内容');return;}
+
+  var tags=[];
+  var judgments=[];
+
+  VOC_RULES.forEach(function(rule){
+    var matched=false;
+    rule.patterns.forEach(function(pat){
+      if(pat.test(input)){matched=true;}
+    });
+    // Negation check
+    if(matched&&rule.negPatterns.length){
+      rule.negPatterns.forEach(function(np){
+        if(np.test(input)){matched=false;}
+      });
+    }
+
+    if(matched){
+      tags.push('<span class="tp-tag">'+rule.tag+'</span>');
+      judgments.push('【'+rule.tag+'】检测到相关表述');
+    }
+  });
+
+  var output=$('#vocOutput');
+  output.classList.add('show');
+  $('#vocTags').innerHTML=tags.length?tags.join(''):'<span style="color:var(--muted)">未匹配到已知维度</span>';
+  $('#vocResult').textContent=judgments.length?
+    judgments.join('\n')+'\n\n结论：'+input.substring(0,60)+'...':
+    '该文本未触发任何已知规则，可能属于新的维度类别。建议人工审核后补充规则。';
+  toast('规则引擎执行完成');
+}
+
+// ============================================================
+// EXPORT TO AI PROMPT (截图3)
+// ============================================================
+function gatherContext(){
+  var ctx={workspace:'',purpose:'',sources:[],methods:'',insights:[],canvasSummary:''};
+
+  // Workspace & purpose
+  ctx.workspace=DATA.workspaces[state.ws].label;
+  if(state.purposeId){
+    var p=getPurpose(state.ws,state.purposeId);
+    if(p){ctx.purpose=p.name;ctx.methods=p.methods;ctx.tools=p.tools;
+      p.sources.forEach(function(s){var src=getSource(s);if(src)ctx.sources.push(src.name+'('+src.type+')');});
+    }
+    // Insights
+    var ins=getInsights(state.purposeId);
+    ins.forEach(function(i){ctx.insights.push(i.title+': '+i.body);});
+  }
+
+  // Canvas context
+  if(state.canvasNodes.length){
+    ctx.canvasSummary='画布上有 '+state.canvasNodes.length+' 个节点（'+
+      state.canvasNodes.filter(function(n){return n.type==='src'}).length+' 数据源 / '+
+      state.canvasNodes.filter(function(n){return n.type==='ins'}).length+' 洞察 / '+
+      state.canvasNodes.filter(function(n){return n.type==='note'}).length+' 批注）'+
+      (state.canvasLines.length?', '+state.canvasLines.length+' 条连线':'');
+  }
+
+  return ctx;
+}
+
+function generatePrompt(ctx,question){
+  var role='我是一名类目用户研究的创作者，你是我的思考伙伴。';
+  var prompt='---\n## 角色设定\n'+role+
+    '\n\n## 当前上下文\n### 工作方向\n'+ctx.workspace+
+    '\n### 当前目的\n'+(ctx.purpose||'全局概览')+
+    '\n### 调用的数据源\n'+(ctx.sources.length?ctx.sources.join('；'):'无')+
+    '\n### 分析方法\n'+(ctx.methods||'—')+
+    '\n### 关键洞察\n'+(ctx.insights.length?ctx.insights.join('\n'):'暂无')+
+    (ctx.canvasSummary?'\n### 画布状态\n'+ctx.canvasSummary:'')+
+    '\n\n## 我的问题\n'+question||
+    '请帮我综合以上信息，给出深度分析和可行动的建议。'+
+    '\n\n## 要求\n1. 先复述你对以上数据的理解，确保没有误解。\n2. 区分"数据已支持"、"需要验证"、"外部补充"三类结论，每条必标出处。'+
+    '3. 给出 2-3 个具体的下一步行动建议，按优先级排列。';
+  return prompt;
+}
+
+function openExportModal(){
+  $('#exportModal').classList.add('show');
+  var ctx=gatherContext();
+  var q=$('#expQuestion').value.trim();
+  $('#expResult').value=generatePrompt(ctx,q);
+}
+
+function closeExportModal(){$('#exportModal').classList.remove('show')}
+function copyPrompt(){
+  var t=$('#expResult').value;
+  navigator.clipboard.writeText(t).then(
+    function(){toast('提示词已复制到剪贴板')},
+    function(){/* fallback */$('#expResult').select();document.execCommand('copy');toast('已复制')}
+  );
+}
+
+// ============================================================
+// WORKSPACE UI UPDATE
+// ============================================================
+function updateWorkspaceUI(){
+  // Workspace buttons
+  $$('.ws-tab').forEach(function(el){
+    el.classList.toggle('active',el.getAttribute('data-ws')===state.ws);
+  });
+  // Topbar
+  $('#topbarTitle').textContent=state.purposeId?
+    (getPurpose(state.ws,state.purposeId)||{}).name||'工作区':
+    '数据源';
+  // Subnav
+  if(!state.purposeId){$('#subnav').classList.remove('show');}
+}
+
+// Workspace tab clicks
+$('#wsTabs').addEventListener('click',function(e){
+  var tab=e.target.closest('.ws-tab');
+  if(tab)switchWorkspace(tab.getAttribute('data-ws'));
+});
+
+// Global search (basic)
+$('#globalSearch')&&$('#globalSearch').addEventListener('keyup',function(e){
+  if(e.key==='Enter'){toast('搜索: '+this.value+' —— 全文搜索待接入');}
+});
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  renderPurposeGrid();
+  loadCanvasState();
+  // Check if DE source should link to dashboard
+  // (s8 hasDashboard flag)
+}
+init();
+</script>
+</body>
+</html>
