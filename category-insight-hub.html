@@ -632,8 +632,9 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ps-nl:focus{border-color:var(--accent)}
 .ps-input-bar{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap}
 .ps-drop{display:flex;align-items:center;gap:10px;flex:1;min-width:220px;padding:10px 12px;border:1.5px dashed var(--border);
-  border-radius:var(--radius-sm);cursor:pointer;color:var(--muted);font-size:12.5px;transition:border-color .2s,background .2s}
-.ps-drop:hover{border-color:var(--accent);background:rgba(0,212,255,.04);color:var(--ink-2)}
+  border-radius:var(--radius-sm);cursor:pointer;color:var(--muted);font-size:12.5px;transition:border-color .2s,background .2s;
+  background:var(--panel-solid)}
+.ps-drop:hover{border-color:var(--accent);background:rgba(0,212,255,.08);color:var(--ink-2)}
 .ps-drop svg{flex:0 0 auto}
 .ps-drop input[type=file]{display:none}
 .ps-run{margin-left:auto;padding:9px 20px;border:none;border-radius:10px;font-size:13px;font-weight:800;color:#fff;cursor:pointer;
@@ -686,6 +687,52 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ps-conf-sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px}
 .ps-conf-pill{font-size:12px;font-weight:700;padding:5px 12px;border-radius:9px;background:var(--glass-bg);border:1px solid var(--border)}
 .ps-loading{padding:30px;text-align:center;color:var(--muted);font-size:13px}
+
+/* ——产品打分：左右布局 + 维度框架 + 评分表格—— */
+.ps-layout{display:flex;gap:16px;margin-top:10px;padding:0 24px 40px}
+.ps-left{flex:0 0 400px;min-width:0;overflow-y:auto;max-height:calc(100vh - 220px)}
+.ps-right{flex:1;min-width:0;overflow-y:auto;max-height:calc(100vh - 220px);border-left:1px solid var(--border);padding-left:16px}
+.ps-example-bar{margin-top:6px}
+.ps-example-btn{display:inline-flex;font-size:10.5px;font-weight:800;padding:3px 12px;border-radius:8px;background:rgba(8,145,178,.12);color:var(--accent);cursor:pointer;transition:background .15s}
+.ps-example-btn:hover{background:rgba(8,145,178,.22)}
+.ps-framework{margin-top:8px}
+.ps-fw-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:6px}
+.fw-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px}
+.fw-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.fw-ico{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--rad-grad);color:#fff;font-size:12px}
+.fw-name{font-size:12px;font-weight:800;color:var(--ink)}
+.fw-wt{margin-left:auto;font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px;background:rgba(128,140,164,.12);color:var(--muted)}
+.fw-body{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px}
+.fw-item{display:flex;flex-direction:column;gap:1px}
+.fw-item-name{font-size:11px;font-weight:700;color:var(--ink-2)}
+.fw-item-hint{font-size:9.5px;color:var(--muted);line-height:1.4}
+/* 评分表格（横向对应表）*/
+.st-panel{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:12px;overflow:hidden}
+.st-panel-head{display:flex;align-items:center;gap:10px;padding:12px 14px 0;border-bottom:1px solid var(--border)}
+.st-panel-ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--rad-grad);color:#fff;font-size:13px}
+.st-panel-title{font-size:14px;font-weight:800;color:var(--ink)}
+.st-panel-wt{font-size:11px;font-weight:700;padding:1px 8px;border-radius:6px;background:rgba(128,140,164,.1);color:var(--muted)}
+.st-panel-score{margin-left:auto;font-size:20px;font-weight:900;background:var(--rad-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.st-hdr{display:grid;grid-template-columns:110px 1fr 1fr 1fr 70px;gap:8px;padding:6px 14px;font-size:10px;font-weight:800;color:var(--muted);border-bottom:1px solid var(--border);background:rgba(128,140,164,.04)}
+.st-row{display:grid;grid-template-columns:110px 1fr 1fr 1fr 70px;gap:8px;padding:8px 14px;border-bottom:1px dashed var(--border);align-items:start}
+.st-row:last-child{border-bottom:none}
+.st-cell{font-size:11.5px;color:var(--ink-2);line-height:1.5}
+.st-name-txt{font-weight:700;color:var(--ink);font-size:12px}
+.st-score{display:flex;flex-direction:column;gap:4px}
+.st-score-val{font-size:13px;font-weight:900;color:var(--ink)}
+.st-of{font-size:10px;color:var(--muted);font-weight:600}
+.st-bar{height:5px;border-radius:3px;background:rgba(128,140,164,.16);overflow:hidden}
+.st-fill{height:100%;border-radius:3px;background:var(--rad-grad);transition:width .4s}
+.st-reason{font-size:11.5px;color:var(--muted);line-height:1.5}
+.st-src{display:flex;flex-wrap:wrap;gap:4px}
+.st-conf{text-align:center}
+.conf-badge{display:inline-block;font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;letter-spacing:.2px;text-transform:uppercase}
+.conf-badge.high{background:rgba(16,185,129,.14);color:#059669}
+.conf-badge.mid{background:rgba(245,158,11,.14);color:#d97706}
+.conf-badge.low{background:rgba(239,68,68,.14);color:#dc2626}
+.conf-badge.guess{background:rgba(156,163,175,.14);color:#6b7280}
 
 /* ============ LEAD USER FEEDBACK ZONE ============ */
 .gal-lf{margin:6px 24px 44px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--glass-bg);
@@ -1786,24 +1833,42 @@ function openProductScore(){
   $('#topbarTitle').textContent='产品打分工具';
   setView('ProductScore');
 
+  // 维度框架说明（左栏下方展示）
+  var fwHtml = PS_DIMS.map(function(dim){
+    var items = dim.items.map(function(it){
+      return '<div class="fw-item"><span class="fw-item-name">'+escHtml(it.name)+'</span>'+
+        '<span class="fw-item-hint">'+escHtml(it.hint)+'</span></div>';
+    }).join('');
+    return '<div class="fw-card"><div class="fw-head"><span class="fw-ico">'+dim.icon+'</span>'+
+      '<span class="fw-name">'+escHtml(dim.name)+'</span>'+
+      '<span class="fw-wt">权重 '+(dim.weight*100)+'%</span></div>'+
+      '<div class="fw-body">'+items+'</div></div>';
+  }).join('');
+
   $('#viewProductScore').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">产品打分工具</span>'+
       '<span class="ws-tag">自然语言拆解 · 数据源匹配 · 可溯源评分</span></div>'+
-    '<div class="tool-wrap">'+
-      '<div class="ps-input-wrap">'+
-        '<textarea class="ps-nl" id="psNl" placeholder="'+escHtml(PS_EXAMPLE)+'"></textarea>'+
-        '<div class="ps-input-bar">'+
-          '<label class="ps-drop" for="psFile">'+
-            '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>'+
-            '<span>点击上传 Word / 表格（.docx .xlsx .csv .txt），或直接在上方输入</span>'+
-          '</label>'+
-          '<input type="file" id="psFile" accept=".txt,.csv,.docx,.xlsx"/>'+
-          '<button class="ps-run" id="psRun" onclick="runProductScore()">拆解并评分</button>'+
+    '<div class="ps-layout">'+
+      '<div class="ps-left">'+
+        '<div class="ps-input-wrap">'+
+          '<textarea class="ps-nl" id="psNl" placeholder="'+escHtml(PS_EXAMPLE)+'"></textarea>'+
+          '<div class="ps-input-bar">'+
+            '<label class="ps-drop" for="psFile">'+
+              '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>'+
+              '<span>上传 Word / 表格 / TXT</span>'+
+            '</label>'+
+            '<input type="file" id="psFile" accept=".txt,.csv,.docx,.xlsx"/>'+
+            '<button class="ps-run" id="psRun" onclick="runProductScore()">拆解并评分</button>'+
+          '</div>'+
+          '<div class="ps-example-bar">'+
+            '<span class="ps-example-btn" onclick=\'document.getElementById("psNl").value='+JSON.stringify(PS_EXAMPLE)+';document.getElementById("psNl").focus()\'>+ 填入示例</span>'+
+          '</div>'+
         '</div>'+
-        '<div style="margin-top:8px"><span class="ws-tag" style="cursor:pointer" onclick="document.getElementById(\'psNl\').value='+JSON.stringify(PS_EXAMPLE)+';">填入示例</span></div>'+
+        '<div class="ps-framework"><div class="ps-sec">评分维度框架</div>'+
+          '<div class="ps-fw-grid">'+fwHtml+'</div></div>'+
       '</div>'+
-      '<div id="psReport"></div>'+
+      '<div class="ps-right"><div id="psReport"></div></div>'+
     '</div>';
 
   var fEl=document.getElementById('psFile');
@@ -1832,7 +1897,7 @@ async function runProductScore(){
 function renderScoreReport(d, sources, report){
   var el=document.getElementById('psReport'); if(!el) return;
 
-  // 拆解结果
+  // ① 拆解结果
   var dc=[
     {k:'类目', v:d.category||'未识别'},
     {k:'客单价', v:d.price!=null?(d.price+(d.priceUnit||'')):'未提供'},
@@ -1846,7 +1911,7 @@ function renderScoreReport(d, sources, report){
     return '<span class="dc-chip'+(muted?' muted':'')+'">'+escHtml(c.k)+'：<b>'+escHtml(c.v)+'</b></span>';
   }).join('');
 
-  // 数据源匹配
+  // ② 数据源匹配
   var maxW = sources.length?sources[0].weight:1;
   var srcHtml = sources.slice(0,6).map(function(s){
     var pct=Math.round(s.weight/maxW*100);
@@ -1854,34 +1919,45 @@ function renderScoreReport(d, sources, report){
       '<span class="src-name">'+escHtml(s.name)+'</span>'+
       '<span class="src-track"><span class="src-fill" style="width:'+pct+'%"></span></span>'+
       '<span class="src-pct">'+pct+'%</span>'+
-      '<span class="src-go" onclick="openSource(\''+s.id+'\')">查看 →</span>'+
+      '<span class="src-go" onclick="openSource(\''+s.id+'\')">查看</span>'+
     '</div>';
   }).join('');
 
-  // 评分面板
-  var panelsHtml = report.panels.map(function(p){
+  // ③ 评分表格——每个板块一张 table，每维度一行横向（维度名→分数+bar→理由→引用源→置信度）
+  var tablesHtml = report.panels.map(function(p){
     var rows = p.items.map(function(it){
       var chips = it.srcIds.map(function(id){
-        return '<span class="src-chip" onclick="openSource(\''+id+'\')">'+escHtml(DATA.sources[id].name)+'</span>';
+        var sn = DATA.sources[id] ? DATA.sources[id].name : id;
+        return '<span class="src-chip" onclick="openSource(\''+id+'\')">'+escHtml(sn)+'</span>';
       }).join('');
-      var confLabel={high:'高置信',mid:'中置信',low:'低置信',guess:'推测'}[it.conf];
-      return '<div class="score-row">'+
-        '<div class="score-row-top">'+
-          '<span class="score-row-name">'+escHtml(it.item.name)+'</span>'+
-          '<span class="score-row-val">'+it.score+'<span class="of">/5</span></span>'+
-          '<span class="conf '+it.conf+'">'+confLabel+'</span>'+
+      var confLabel={high:'高',mid:'中',low:'低',guess:'推测'}[it.conf]||'--';
+      var score = it.score || 3;
+      var pct = (score/5*100).toFixed(0);
+      return '<div class="st-row">'+
+        '<div class="st-cell st-name"><span class="st-name-txt">'+escHtml(it.item.name)+'</span></div>'+
+        '<div class="st-cell st-score">'+
+          '<span class="st-score-val">'+score+'<span class="st-of">/5</span></span>'+
+          '<span class="st-bar"><span class="st-fill" style="width:'+pct+'%"></span></span>'+
         '</div>'+
-        '<div class="score-reason">'+escHtml(it.reason)+'</div>'+
-        '<div class="score-sources"><span style="font-size:11px;color:var(--muted)">引用源：</span>'+chips+'</div>'+
+        '<div class="st-cell st-reason">'+escHtml(it.reason)+'</div>'+
+        '<div class="st-cell st-src">'+(chips||'<span style="color:var(--muted);font-size:11px">无引用源</span>')+'</div>'+
+        '<div class="st-cell st-conf"><span class="conf-badge '+it.conf+'">'+confLabel+'</span></div>'+
       '</div>';
     }).join('');
-    return '<div class="score-panel">'+
-      '<div class="score-panel-head">'+
-        '<div class="score-panel-ico">'+p.dim.icon+'</div>'+
-        '<span class="score-panel-title">'+escHtml(p.dim.name)+'</span>'+
-        '<span class="score-panel-score">'+p.panelScore.toFixed(2)+'</span>'+
+    return '<div class="st-panel">'+
+      '<div class="st-panel-head">'+
+        '<div class="st-panel-ico">'+p.dim.icon+'</div>'+
+        '<span class="st-panel-title">'+escHtml(p.dim.name)+'</span>'+
+        '<span class="st-panel-wt">权重 '+(p.dim.weight*100)+'%</span>'+
+        '<span class="st-panel-score">'+p.panelScore.toFixed(2)+'</span>'+
       '</div>'+
-      '<div class="score-panel-note">权重 '+(p.dim.weight*100)+'% · 板块均分</div>'+
+      '<div class="st-hdr">'+
+        '<span class="st-hd st-hd-name">维度</span>'+
+        '<span class="st-hd st-hd-score">评分</span>'+
+        '<span class="st-hd st-hd-reason">评分理由</span>'+
+        '<span class="st-hd st-hd-src">数据源 点击可溯</span>'+
+        '<span class="st-hd st-hd-conf">置信度</span>'+
+      '</div>'+
       rows+
     '</div>';
   }).join('');
@@ -1899,11 +1975,11 @@ function renderScoreReport(d, sources, report){
   el.innerHTML=
     '<div class="ps-sec">① 输入拆解</div>'+
     '<div class="ps-decomp">'+dcHtml+'</div>'+
-    '<div class="ps-sec">② 数据源匹配（按拆解信号）</div>'+
+    '<div class="ps-sec">② 数据源匹配度</div>'+
     '<div class="src-match">'+srcHtml+'</div>'+
-    '<div class="ps-sec">③ 评分结果（每个维度附理由 · 引用源 · 置信度）</div>'+
+    '<div class="ps-sec">③ 评分结果 可溯源表格</div>'+
     confSum+
-    panelsHtml+
+    tablesHtml+
     '<div class="ps-total-bar">'+
       '<span class="ps-total-label">加权总分</span>'+
       '<span class="ps-total-val" id="psTotalVal">3.00</span>'+
