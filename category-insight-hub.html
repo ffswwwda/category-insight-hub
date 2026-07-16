@@ -624,7 +624,72 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ps-verdict.caution{background:rgba(245,158,11,.1);color:#d97706;border:1px solid rgba(245,158,11,.25)}
 .ps-verdict.stop{background:rgba(220,38,38,.1);color:#dc2626;border:1px solid rgba(220,38,38,.25)}
 
+/* ============ PRODUCT SCORING (NL decomposition + source match + report) ============ */
+.ps-input-wrap{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px}
+.ps-nl{width:100%;min-height:120px;resize:vertical;font:13px/1.6 var(--font);color:var(--ink);
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;outline:none}
+.ps-nl:focus{border-color:var(--accent)}
+.ps-input-bar{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap}
+.ps-drop{display:flex;align-items:center;gap:10px;flex:1;min-width:220px;padding:10px 12px;border:1.5px dashed var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;color:var(--muted);font-size:12.5px;transition:border-color .2s,background .2s}
+.ps-drop:hover{border-color:var(--accent);background:rgba(0,212,255,.04);color:var(--ink-2)}
+.ps-drop svg{flex:0 0 auto}
+.ps-drop input[type=file]{display:none}
+.ps-run{margin-left:auto;padding:9px 20px;border:none;border-radius:10px;font-size:13px;font-weight:800;color:#fff;cursor:pointer;
+  background:var(--rad-grad);background-size:200% 200%;box-shadow:0 6px 18px rgba(0,180,255,.25);transition:transform .15s}
+.ps-run:hover{transform:translateY(-1px)}
+
+.ps-decomp{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 18px}
+.dc-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:9px;font-size:12px;font-weight:700;
+  background:var(--glass-bg);border:1px solid var(--border)}
+.dc-chip b{color:var(--accent);font-weight:800}
+.dc-chip.muted{color:var(--muted)}
+
+.ps-sec{margin:18px 0 8px;font-size:13px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px}
+.ps-sec::before{content:'';width:4px;height:14px;border-radius:2px;background:var(--rad-grad)}
+.src-match{display:flex;flex-direction:column;gap:8px}
+.src-row{display:flex;align-items:center;gap:12px;padding:9px 12px;background:var(--glass-bg);border:1px solid var(--border);border-radius:10px}
+.src-row .src-name{font-size:12.5px;font-weight:700;color:var(--ink);min-width:110px}
+.src-row .src-track{flex:1;height:6px;border-radius:3px;background:rgba(128,140,164,.16);overflow:hidden}
+.src-row .src-fill{height:100%;border-radius:3px;background:var(--rad-grad)}
+.src-row .src-pct{font-size:11.5px;font-weight:800;color:var(--muted);min-width:36px;text-align:right}
+.src-row .src-go{font-size:11px;font-weight:800;color:var(--accent);cursor:pointer;opacity:.85}
+.src-row .src-go:hover{opacity:1}
+
+.score-panel{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px;position:relative;overflow:hidden}
+.score-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rad-grad)}
+.score-panel-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.score-panel-ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--rad-grad);color:#fff}
+.score-panel-title{font-size:15px;font-weight:800;color:var(--ink)}
+.score-panel-score{margin-left:auto;font-size:22px;font-weight:900;background:var(--rad-grad);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-panel-note{font-size:11.5px;color:var(--muted);margin-bottom:10px}
+.score-row{padding:9px 0;border-bottom:1px dashed var(--border)}
+.score-row:last-child{border-bottom:none}
+.score-row-top{display:flex;align-items:center;gap:10px}
+.score-row-name{font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.score-row-val{font-size:13px;font-weight:900;color:var(--ink);min-width:26px;text-align:right}
+.score-row-val .of{font-size:10px;color:var(--muted);font-weight:600}
+.score-reason{font-size:11.5px;color:var(--muted);line-height:1.6;margin:5px 0 6px}
+.score-sources{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.src-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(0,212,255,.1);color:#0891b2;border:1px solid rgba(0,212,255,.22);cursor:pointer}
+.src-chip:hover{background:rgba(0,212,255,.18)}
+.conf{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;font-size:10.5px;font-weight:800;margin-left:auto}
+.conf::before{content:'';width:6px;height:6px;border-radius:50%}
+.conf.high{background:rgba(16,185,129,.12);color:#059669}.conf.high::before{background:#10b981}
+.conf.mid{background:rgba(245,158,11,.12);color:#d97706}.conf.mid::before{background:#f59e0b}
+.conf.low{background:rgba(99,102,241,.12);color:#6366f1}.conf.low::before{background:#6366f1}
+.conf.guess{background:rgba(128,140,164,.14);color:#64748b}.conf.guess::before{background:#94a3b8}
+.ps-conf-sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px}
+.ps-conf-pill{font-size:12px;font-weight:700;padding:5px 12px;border-radius:9px;background:var(--glass-bg);border:1px solid var(--border)}
+.ps-loading{padding:30px;text-align:center;color:var(--muted);font-size:13px}
+
 /* ============ LEAD USER FEEDBACK ZONE ============ */
+.gal-lf{margin:6px 24px 44px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--glass-bg);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);padding:14px 16px 6px}
 .lf-zone{margin-top:6px}
 .lf-tabs{display:flex;gap:0;margin-bottom:10px;border-bottom:1px solid var(--border)}
 .lf-tab{padding:7px 16px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
@@ -1401,14 +1466,23 @@ function openAITools(){
     '<div class="ai-card" onclick="openProductScore()">'+
       '<div class="ai-ico">'+ICON_SCORE+'</div>'+
       '<div class="ai-name">产品打分工具</div>'+
-      '<div class="ai-desc">三维度12指标加权评分：市场价值(25%)、商业价值(25%)、产品差异化(20%)。每项 1-5 分滑块，自动计算加权总分 + 雷达图可视化 + 投资建议。</div>'+
+      '<div class="ai-desc">输入自然语言或上传文件（Word/表格），自动拆解类目/客单价/功能/外观 → 匹配数据源 → 按三大板块12维度评分，每项附理由、引用源（可点击追溯）与置信度。</div>'+
       '<div class="ai-go">打开工具</div>'+
     '</div>';
   setView('AITools');
   $('#viewAITools').innerHTML=
     '<div class="gal-head"><div><div class="gal-h-title">AI 简化工具</div>'+
-      '<div class="gal-h-sub">四个工具：VOC 打标签（单条）、用户语料分析（批量）、产品打分（三维度加权评分）+ 预测控制台（外部）。均不依赖大模型。</div></div></div>'+
-    '<div class="ai-grid">'+cards+'</div>';
+      '<div class="gal-h-sub">四个工具：VOC 打标签（单条）、用户语料分析（批量，含情绪）、产品打分（自然语言拆解 + 数据源匹配评分）+ 预测控制台（外部）。均不依赖大模型。下方为领新用户反馈专区。</div></div></div>'+
+    '<div class="ai-grid">'+cards+'</div>'+
+    '<div class="lf-zone gal-lf"><div class="ss-head">领新用户反馈专区</div>'+
+      '<div class="lf-tabs">'+
+        '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户画像看板</div>'+
+        '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">用户反馈看板</div>'+
+      '</div>'+
+      '<div class="lf-body"></div>'+
+    '</div>';
+  var aiZone = document.getElementById('viewAITools').querySelector('.lf-zone');
+  if(aiZone) renderLfBody(aiZone);
 }
 
 // ---- VOC 打标签工具（独立页面）----
@@ -1428,21 +1502,21 @@ function openPredictTool(){
 
 // ---- 产品打分工具（三维度12指标加权评分）----
 var PS_DIMS = [
-  {id:'market', name:'市场价值', weight:0.25, icon:'📈', color:'#00d4ff',
+  {id:'market', name:'市场价值', weight:0.25, icon:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V5M16 20v-7M22 20H2"/></svg>', color:'#00d4ff',
     items:[
       {id:'demand_heat', name:'需求热度', hint:'Amazon搜索量、社媒讨论量、竞品增长情况'},
       {id:'user_pain', name:'用户痛点', hint:'用户/问题是否明确、是否存在高频VOC反馈'},
       {id:'trend', name:'趋势性', hint:'需求是否处于增长趋势、是否具备持续性'},
       {id:'market_size', name:'市场规模', hint:'市场容量是否足够、是否具备销量空间'}
     ]},
-  {id:'commercial', name:'商业价值', weight:0.25, icon:'💰', color:'#10b981',
+  {id:'commercial', name:'商业价值', weight:0.25, icon:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10.5h3.2a1.8 1.8 0 010 3.6H9.5M14.5 13.5h-3.2"/></svg>', color:'#10b981',
     items:[
       {id:'margin', name:'利润空间', hint:'毛利率是否符合公司标准'},
       {id:'price_band', name:'售价带', hint:'是否符合目标价格区间'},
       {id:'sales_potential', name:'销量潜力', hint:'是否具备稳定销售预期'},
       {id:'lifecycle', name:'生命周期', hint:'产品生命周期是否足够长'}
     ]},
-  {id:'diff', name:'产品差异化', weight:0.20, icon:'💎', color:'#a855f7',
+  {id:'diff', name:'产品差异化', weight:0.20, icon:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 5-7 13L5 8z"/></svg>', color:'#a855f7',
     items:[
       {id:'diff_level', name:'差异化程度', hint:'产品备具区别于竞品的核心特点'},
       {id:'barrier', name:'竞争壁垒', hint:'是否容易被复制'},
@@ -1453,54 +1527,345 @@ var PS_DIMS = [
 
 var PS_SCORES = {};
 
+// ---- 拆解词表（类目 / 功能 / 外观 / 人群 / 场景）----
+var PS_TAXONOMY = {
+  category: {
+    '飞机杯':['s1','s8','s3'], '按摩器':['s1','s8','s3'], '情趣':['s1','s8'], '个护':['s1','s8','s7'],
+    '小家电':['s1','s8','s7'], '家居':['s1','s8'], '母婴':['s1','s8'], '宠物':['s1','s8'],
+    '厨房':['s1','s8','s7'], '户外':['s1','s8'], '美妆':['s1','s8','s3'], '数码':['s1','s8','s3']
+  },
+  feature: {
+    '震动':['s1','s8','s3'], '加热':['s1','s8'], '加温':['s1','s8'], '静音':['s1','s8','s6'],
+    '远程':['s1','s8'], 'APP':['s1','s8'], '蓝牙':['s1','s8'], '防水':['s1','s8'],
+    '可充电':['s1','s8'], '智能':['s1','s8','s3'], '便携':['s1','s8'], '可折叠':['s1','s8'],
+    '按摩':['s1','s8'], '语音':['s1','s8'], '温控':['s1','s8'], '磁吸':['s1','s8']
+  },
+  appearance: ['外观','颜值','设计','好看','漂亮','质感','做工','材质','轻巧','小巧','高级','精致','好看'],
+  audience: ['男性','女性','男士','女士','送礼','情侣','老人','母婴','宠物','租房','学生','极客','健身','办公','宿舍'],
+  scene: ['卧室','客厅','浴室','办公室','旅行','车载','宿舍','厨房','户外','阳台','租房']
+};
+var PS_EXAMPLE = '我上了一款飞机杯，60美元左右，功能有震动，产品外观不错，你觉得能不能卖好？';
+
+// 每个子维度对应的相关数据源（用于追溯与置信度）
+var DIM_SRC = {
+  demand_heat:['s1','s8','s3','s9'], user_pain:['s1','s8','s6'], trend:['s9','s2','s11','s8'],
+  market_size:['s9','s7','s8'], margin:['s7','s3'], price_band:['s3','s9'],
+  sales_potential:['s7','s9'], lifecycle:['s7'], diff_level:['s1','s8','s3'],
+  barrier:['s3','s1'], fantasy_value:['s1','s8','s5'], usp_unique:['s1','s8','s11']
+};
+
+function decomposeInput(text){
+  text = (text||'').toString();
+  var d = {raw:text, category:null, categoryHit:[], price:null, priceUnit:'', features:[], appearance:[], audience:[], scene:[]};
+  for(var c in PS_TAXONOMY.category){
+    if(text.indexOf(c) >= 0){ d.category=c; d.categoryHit=PS_TAXONOMY.category[c]; break; }
+  }
+  if(!d.category){
+    var m = text.match(/(?:一款|一个|一支|一台|一件|卖|上|做|开发|设计|推)(.{1,8}?)(?:，|。|，|\s|$)/);
+    d.category = (m && m[1] && m[1].length>=2) ? m[1].replace(/[，。\s]/g,'') : '通用品类';
+  }
+  var pm = text.match(/(\d+(?:\.\d+)?)\s*(美元|美金|欧|元|块|￥|¥|eur|usd|\$)/i);
+  if(pm){ d.price=parseFloat(pm[1]); d.priceUnit=(pm[2]||'').toLowerCase(); }
+  for(var f in PS_TAXONOMY.feature){ if(text.indexOf(f) >= 0) d.features.push(f); }
+  PS_TAXONOMY.appearance.forEach(function(w){ if(text.indexOf(w) >= 0) d.appearance.push(w); });
+  PS_TAXONOMY.audience.forEach(function(w){ if(text.indexOf(w) >= 0) d.audience.push(w); });
+  PS_TAXONOMY.scene.forEach(function(w){ if(text.indexOf(w) >= 0) d.scene.push(w); });
+  return d;
+}
+
+function matchSources(decomp){
+  var hits = {};
+  function add(id,w){ hits[id]=(hits[id]||0)+w; }
+  decomp.categoryHit.forEach(function(id){ add(id,3); });
+  decomp.features.forEach(function(f){ (PS_TAXONOMY.feature[f]||[]).forEach(function(id){ add(id,2); }); });
+  if(decomp.price!=null){ add('s3',2); add('s7',2); add('s9',1); }
+  if(decomp.appearance.length){ add('s1',1); add('s8',1); }
+  if(decomp.audience.length){ add('s5',2); add('s1',1); }
+  if(decomp.scene.length){ add('s1',1); add('s6',1); add('s5',1); }
+  add('s1',1); add('s8',1); // VOC 基底始终计入
+  return Object.keys(hits).map(function(id){
+    var s = DATA.sources[id];
+    return {id:id, name:s.name, weight:hits[id], status:s.status, records:s.records, desc:s.desc};
+  }).sort(function(a,b){ return b.weight-a.weight; });
+}
+
+function confidenceOf(srcIds){
+  var readyBig=false, ready=false, pending=false;
+  srcIds.forEach(function(id){
+    var s=DATA.sources[id]; if(!s) return;
+    if(s.status==='ready' && s.records>=100) readyBig=true;
+    else if(s.status==='ready') ready=true;
+    else if(s.status==='pending') pending=true;
+  });
+  if(readyBig) return 'high';
+  if(ready) return 'mid';
+  if(pending) return 'low';
+  return 'guess';
+}
+function dimSignalWeak(itemId, d){
+  switch(itemId){
+    case 'margin': case 'price_band': return d.price==null;
+    case 'demand_heat': case 'trend': case 'market_size': case 'fantasy_value': return !d.category || d.category==='通用品类';
+    case 'user_pain': case 'diff_level': case 'usp_unique': case 'barrier': return d.features.length===0;
+    case 'sales_potential': case 'lifecycle': return d.audience.length===0 && d.features.length===0;
+  }
+  return false;
+}
+function dimSrcIds(itemId, matchedIds){
+  var base = DIM_SRC[itemId] || [];
+  var inter = base.filter(function(id){ return matchedIds.indexOf(id) >= 0; });
+  return inter.length ? inter : base;
+}
+
+function scoreDimension(itemId, d, matchedIds){
+  var featN=d.features.length, audN=d.audience.length, appN=d.appearance.length;
+  var hasCat = d.category && d.category!=='通用品类';
+  var srcIds = dimSrcIds(itemId, matchedIds);
+  var score=3, reason='';
+  switch(itemId){
+    case 'demand_heat':
+      score=3; if(hasCat)score++; if(featN>=2)score++; if(!hasCat&&featN===0)score=2;
+      reason = hasCat ? ('类目「'+d.category+'」命中数据源，结合功能词可判断存在明确需求。') : '未识别明确类目，需求热度按通用品类估算。'; break;
+    case 'user_pain':
+      score=3; if(featN>=1)score++; if(audN>=1)score++; if(appN>=1)score++;
+      reason='从功能/人群/外观信号看用户诉求明确'+(featN?'（含'+d.features.join('、')+'）':'')+'，痛点可被产品响应。'; break;
+    case 'trend':
+      score=3; if(hasCat && ['小家电','数码','个护','家居','美妆'].indexOf(d.category)>=0)score++;
+      reason=hasCat?('类目「'+d.category+'」属持续消费品类，趋势性中等偏上。'):'类目未明确，趋势性按中性估算。'; break;
+    case 'market_size':
+      score=3; if(hasCat)score++; if(d.price!=null&&d.price>=20)score++;
+      reason='类目'+(hasCat?'「'+d.category+'」':'')+'具备一定容量，配合价格带判断有销售空间。'; break;
+    case 'margin':
+      score=3; if(d.price!=null){ if(d.price>=45)score++; else if(d.price<15)score--; }
+      reason=d.price!=null?('客单价约 '+d.price+(d.priceUnit||'')+'，毛利率空间'+(d.price>=45?'较充足':d.price<15?'偏紧':'中性')+'。'):'未提供价格，毛利率按中性估算。'; break;
+    case 'price_band':
+      score=3; if(d.price!=null){ if(d.price>=20&&d.price<=120)score=4; else if(d.price<20)score=2; }
+      reason=d.price!=null?('售价 '+d.price+(d.priceUnit||'')+'，'+(d.price>=20&&d.price<=120?'落在主流可接受区间':'需强价值或走量支撑')+'。'):'价格缺失，售价带按中性估算。'; break;
+    case 'sales_potential':
+      score=3; if(featN>=2)score++; if(audN>=1)score++;
+      reason=(featN>=2||audN>=1)?'功能组合/目标人群清晰，具备稳定销售预期。':'信号偏弱，销售潜力按中性估算。'; break;
+    case 'lifecycle':
+      score=3; if(hasCat && ['家居','数码','个护','小家电','美妆'].indexOf(d.category)>=0)score++;
+      reason=hasCat?('「'+d.category+'」属耐耗/复购品类，生命周期较长。'):'类目未明确，生命周期按中性估算。'; break;
+    case 'diff_level':
+      score=3; if(featN>=2)score++; if(appN>=1)score++;
+      reason=(featN>=1||appN>=1)?('功能'+(featN?('「'+d.features.join('、')+'」'):'')+(appN?' + 外观优势':'')+'提供差异化抓手。'):'缺乏明显差异化锚点，差异化程度中性。'; break;
+    case 'barrier':
+      score=3; if(featN>=1&&(d.features.indexOf('智能')>=0||d.features.indexOf('APP')>=0||d.features.indexOf('蓝牙')>=0))score++;
+      reason=(d.features.indexOf('智能')>=0||d.features.indexOf('APP')>=0)?'含智能/互联功能，具备一定技术壁垒。':'功能较易复制，壁垒中性。'; break;
+    case 'fantasy_value':
+      score=3; if(hasCat&&['情趣','个护','美妆','家居'].indexOf(d.category)>=0)score++;
+      reason=(hasCat&&['情趣','个护','美妆','家居'].indexOf(d.category)>=0)?('「'+d.category+'」具备人设/幻想标签延展空间。'):'幻想标签价值按中性估算。'; break;
+    case 'usp_unique':
+      score=3; if(featN>=1)score++; if(appN>=1)score++;
+      reason=(featN>=1||appN>=1)?'存在可感知、可传播的核心卖点。':'可传播卖点不突出，独特性中性。'; break;
+  }
+  score=Math.max(1,Math.min(5,score));
+  var conf = confidenceOf(srcIds);
+  if(conf!=='high' && conf!=='mid' && dimSignalWeak(itemId,d)) conf='guess';
+  return {score:score, reason:reason, srcIds:srcIds, conf:conf};
+}
+
+function computeScoreReport(d, sources){
+  var matchedIds = sources.map(function(s){ return s.id; });
+  var panels = PS_DIMS.map(function(dim){
+    var items = dim.items.map(function(item){
+      var r = scoreDimension(item.id, d, matchedIds);
+      PS_SCORES[item.id] = r.score;
+      return {item:item, score:r.score, reason:r.reason, srcIds:r.srcIds, conf:r.conf};
+    });
+    var avg = items.reduce(function(a,b){return a+b.score;},0)/items.length;
+    return {dim:dim, items:items, panelScore:avg};
+  });
+  var confCounts = {high:0,mid:0,low:0,guess:0};
+  panels.forEach(function(p){ p.items.forEach(function(it){ confCounts[it.conf]++; }); });
+  return {panels:panels, confCounts:confCounts};
+}
+
+// ---- 文件读取（txt/csv 直接；docx/xlsx 用 DecompressionStream 提取文本）----
+async function psReadFile(file){
+  var name=(file.name||'').toLowerCase();
+  if(name.endsWith('.txt')||name.endsWith('.csv')) return await file.text();
+  if(name.endsWith('.docx')||name.endsWith('.xlsx')){
+    try{ return await extractOfficeText(file); }catch(e){ return ''; }
+  }
+  try{ return await file.text(); }catch(e){ return ''; }
+}
+async function psOnFile(file){
+  if(!file) return;
+  var t = await psReadFile(file);
+  if(!t || !t.trim()){ if(window.toast) toast('无法解析该文件，请导出为 .txt 或 .csv 后重试'); return; }
+  var ta=document.getElementById('psNl'); if(ta){ ta.value=t.slice(0,20000); }
+  if(window.toast) toast('已读取文件内容，点击「拆解并评分」');
+}
+async function extractOfficeText(file){
+  var buf=await file.arrayBuffer();
+  var bytes=new Uint8Array(buf);
+  var isDocx=file.name.toLowerCase().endsWith('.docx');
+  var targets=isDocx?['word/document.xml']:['xl/sharedStrings.xml','xl/worksheets/sheet1.xml'];
+  var texts=[]; var i=0;
+  while(i<bytes.length-4){
+    if(bytes[i]===0x50&&bytes[i+1]===0x4b&&bytes[i+2]===0x03&&bytes[i+3]===0x04){
+      var method=bytes[i+8]|(bytes[i+9]<<8);
+      var nameLen=bytes[i+26]|(bytes[i+27]<<8);
+      var extraLen=bytes[i+28]|(bytes[i+29]<<8);
+      var name=new TextDecoder().decode(bytes.subarray(i+30,i+30+nameLen));
+      var compSize=(bytes[i+18]|(bytes[i+19]<<8)|(bytes[i+20]<<24)|(bytes[i+21]<<16))>>>0;
+      var dataStart=i+30+nameLen+extraLen;
+      if(targets.indexOf(name)>=0 && method===8){
+        var compBytes=bytes.subarray(dataStart,dataStart+compSize);
+        var ds=new DecompressionStream('deflate-raw');
+        var writer=ds.writable.getWriter(); writer.write(compBytes); writer.close();
+        var ab=await new Response(ds.readable).arrayBuffer();
+        var xml=new TextDecoder().decode(new Uint8Array(ab));
+        texts.push(extractXmlText(xml,name));
+      }
+      i = (method===8) ? dataStart+compSize : dataStart+1;
+      continue;
+    }
+    i++;
+  }
+  return texts.join('\n');
+}
+function extractXmlText(xml,name){
+  var out=[];
+  var re=/<(?:w:t|t)[^>]*>([\s\S]*?)<\/\w:t>/g, m;
+  while((m=re.exec(xml))){ out.push(m[1].replace(/<[^>]+>/g,'')); }
+  return out.join(name.indexOf('sharedStrings')>=0?' ':'\n');
+}
+
+// ---- 渲染 ----
 function openProductScore(){
   setActiveNav('nav-ai');
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent='产品打分工具';
   setView('ProductScore');
 
-  // Initialize scores to 3 (neutral)
-  PS_SCORES = {};
-  PS_DIMS.forEach(function(dim){
-    dim.items.forEach(function(item){
-      PS_SCORES[item.id] = 3;
-    });
-  });
-
-  var dimsHtml = PS_DIMS.map(function(dim){
-    var itemsHtml = dim.items.map(function(item){
-      return '<div class="ps-item">'+
-        '<span class="ps-item-name">'+escHtml(item.name)+'</span>'+
-        '<input type="range" class="ps-slider" min="1" max="5" step="1" value="3" data-item="'+item.id+'" oninput="PS_SCORES[\''+item.id+'\']=Number(this.value);this.nextElementSibling.textContent=this.value;renderPSTotal()"/>'+
-        '<span class="ps-item-score">'+PS_SCORES[item.id]+'</span>'+
-        '</div>';
-    }).join('');
-    return '<div class="ps-dim">'+
-      '<div class="ps-dim-head">'+
-        '<div class="ps-dim-ico" style="background:linear-gradient(135deg,'+dim.color+'22,'+dim.color+'44);color:'+dim.color+'">'+dim.icon+'</div>'+
-        '<span class="ps-dim-title">'+escHtml(dim.name)+'</span>'+
-        '<span class="ps-dim-wt" style="background:'+dim.color+'18;color:'+dim.color+'">'+(dim.weight*100)+'%</span>'+
-      '</div>'+itemsHtml+
-    '</div>';
-  }).join('');
-
   $('#viewProductScore').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">产品打分工具</span>'+
-      '<span class="ws-tag">三维度 · 12 指标 · 加权</span></div>'+
+      '<span class="ws-tag">自然语言拆解 · 数据源匹配 · 可溯源评分</span></div>'+
     '<div class="tool-wrap">'+
-      '<div style="font-size:12px;color:var(--muted);margin-bottom:8px">拖动每项滑块打分（1-5），系统自动计算加权总分并生成雷达图。</div>'+
-      '<div class="ps-dims">'+dimsHtml+'</div>'+
-      '<div class="ps-total-bar">'+
-        '<span class="ps-total-label">加权总分</span>'+
-        '<span class="ps-total-val" id="psTotalVal">3.00</span>'+
-        '<span class="ps-total-max">/ 5.00</span>'+
+      '<div class="ps-input-wrap">'+
+        '<textarea class="ps-nl" id="psNl" placeholder="'+escHtml(PS_EXAMPLE)+'"></textarea>'+
+        '<div class="ps-input-bar">'+
+          '<label class="ps-drop" for="psFile">'+
+            '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>'+
+            '<span>点击上传 Word / 表格（.docx .xlsx .csv .txt），或直接在上方输入</span>'+
+          '</label>'+
+          '<input type="file" id="psFile" accept=".txt,.csv,.docx,.xlsx"/>'+
+          '<button class="ps-run" id="psRun" onclick="runProductScore()">拆解并评分</button>'+
+        '</div>'+
+        '<div style="margin-top:8px"><span class="ws-tag" style="cursor:pointer" onclick="document.getElementById(\'psNl\').value='+JSON.stringify(PS_EXAMPLE)+';">填入示例</span></div>'+
       '</div>'+
-      '<div class="ps-radar-wrap" id="psRadar"></div>'+
-      '<div class="ps-verdict caution" id="psVerdict">请调整各指标分数查看评估结论</div>'+
+      '<div id="psReport"></div>'+
     '</div>';
 
-  renderPSTotal();
+  var fEl=document.getElementById('psFile');
+  if(fEl) fEl.addEventListener('change', function(e){ psOnFile(e.target.files[0]); });
+}
+
+async function runProductScore(){
+  var ta=document.getElementById('psNl');
+  var text=ta?ta.value.trim():'';
+  if(!text){ if(window.toast) toast('请先输入自然语言描述，或上传文件'); return; }
+  var reportEl=document.getElementById('psReport');
+  if(reportEl) reportEl.innerHTML='<div class="ps-loading">正在拆解输入、匹配数据源并评分…</div>';
+  var btn=document.getElementById('psRun'); if(btn) btn.disabled=true;
+
+  var decomp=decomposeInput(text);
+  var sources=matchSources(decomp);
+  var report=computeScoreReport(decomp, sources);
+  PS_SCORES=PS_SCORES; // already filled by computeScoreReport
+
+  if(reportEl) renderScoreReport(decomp, sources, report);
+  renderPSTotal(); // 雷达图 + 加权总分 + 结论
+
+  if(btn) btn.disabled=false;
+}
+
+function renderScoreReport(d, sources, report){
+  var el=document.getElementById('psReport'); if(!el) return;
+
+  // 拆解结果
+  var dc=[
+    {k:'类目', v:d.category||'未识别'},
+    {k:'客单价', v:d.price!=null?(d.price+(d.priceUnit||'')):'未提供'},
+    {k:'功能', v:d.features.length?d.features.join('、'):'未提及'},
+    {k:'外观', v:d.appearance.length?d.appearance.join('、'):'未提及'},
+    {k:'人群', v:d.audience.length?d.audience.join('、'):'未提及'},
+    {k:'场景', v:d.scene.length?d.scene.join('、'):'未提及'}
+  ];
+  var dcHtml=dc.map(function(c){
+    var muted = (c.v==='未识别'||c.v==='未提供'||c.v==='未提及');
+    return '<span class="dc-chip'+(muted?' muted':'')+'">'+escHtml(c.k)+'：<b>'+escHtml(c.v)+'</b></span>';
+  }).join('');
+
+  // 数据源匹配
+  var maxW = sources.length?sources[0].weight:1;
+  var srcHtml = sources.slice(0,6).map(function(s){
+    var pct=Math.round(s.weight/maxW*100);
+    return '<div class="src-row">'+
+      '<span class="src-name">'+escHtml(s.name)+'</span>'+
+      '<span class="src-track"><span class="src-fill" style="width:'+pct+'%"></span></span>'+
+      '<span class="src-pct">'+pct+'%</span>'+
+      '<span class="src-go" onclick="openSource(\''+s.id+'\')">查看 →</span>'+
+    '</div>';
+  }).join('');
+
+  // 评分面板
+  var panelsHtml = report.panels.map(function(p){
+    var rows = p.items.map(function(it){
+      var chips = it.srcIds.map(function(id){
+        return '<span class="src-chip" onclick="openSource(\''+id+'\')">'+escHtml(DATA.sources[id].name)+'</span>';
+      }).join('');
+      var confLabel={high:'高置信',mid:'中置信',low:'低置信',guess:'推测'}[it.conf];
+      return '<div class="score-row">'+
+        '<div class="score-row-top">'+
+          '<span class="score-row-name">'+escHtml(it.item.name)+'</span>'+
+          '<span class="score-row-val">'+it.score+'<span class="of">/5</span></span>'+
+          '<span class="conf '+it.conf+'">'+confLabel+'</span>'+
+        '</div>'+
+        '<div class="score-reason">'+escHtml(it.reason)+'</div>'+
+        '<div class="score-sources"><span style="font-size:11px;color:var(--muted)">引用源：</span>'+chips+'</div>'+
+      '</div>';
+    }).join('');
+    return '<div class="score-panel">'+
+      '<div class="score-panel-head">'+
+        '<div class="score-panel-ico">'+p.dim.icon+'</div>'+
+        '<span class="score-panel-title">'+escHtml(p.dim.name)+'</span>'+
+        '<span class="score-panel-score">'+p.panelScore.toFixed(2)+'</span>'+
+      '</div>'+
+      '<div class="score-panel-note">权重 '+(p.dim.weight*100)+'% · 板块均分</div>'+
+      rows+
+    '</div>';
+  }).join('');
+
+  // 置信度汇总
+  var cc=report.confCounts;
+  var confSum=
+    '<div class="ps-conf-sum">'+
+      '<span class="ps-conf-pill">高置信 <b>'+cc.high+'</b></span>'+
+      '<span class="ps-conf-pill">中置信 <b>'+cc.mid+'</b></span>'+
+      '<span class="ps-conf-pill">低置信 <b>'+cc.low+'</b></span>'+
+      '<span class="ps-conf-pill">推测 <b>'+cc.guess+'</b></span>'+
+    '</div>';
+
+  el.innerHTML=
+    '<div class="ps-sec">① 输入拆解</div>'+
+    '<div class="ps-decomp">'+dcHtml+'</div>'+
+    '<div class="ps-sec">② 数据源匹配（按拆解信号）</div>'+
+    '<div class="src-match">'+srcHtml+'</div>'+
+    '<div class="ps-sec">③ 评分结果（每个维度附理由 · 引用源 · 置信度）</div>'+
+    confSum+
+    panelsHtml+
+    '<div class="ps-total-bar">'+
+      '<span class="ps-total-label">加权总分</span>'+
+      '<span class="ps-total-val" id="psTotalVal">3.00</span>'+
+      '<span class="ps-total-max">/ 5.00</span>'+
+    '</div>'+
+    '<div class="ps-radar-wrap" id="psRadar"></div>'+
+    '<div class="ps-verdict caution" id="psVerdict"></div>';
 }
 
 function renderPSTotal(){
@@ -1608,18 +1973,22 @@ var FEEDBACK_RAW = [
   {src:'voc-niche', srcLabel:'VOC小众', txt:'我是做产品设计的，从专业角度看这个模具精度至少可以提升两个等级，现在的公差太大了', lead:'中', creat:'极高', hitRate:'5%'}
 ];
 
-var lfCurrentTab = 'portrait';
+var lfCurrentTabUnused = 'portrait'; // 历史遗留占位，tab 状态已改为按 zone 局部
 
 function switchLfTab(tab, el){
-  lfCurrentTab = tab;
-  $$('.lf-tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-lftab')===tab); });
-  renderLfBody();
+  var zone = el ? el.closest('.lf-zone') : null;
+  var tabs = zone ? zone.querySelectorAll('.lf-tab') : $$('.lf-tab');
+  tabs.forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-lftab')===tab); });
+  renderLfBody(zone);
 }
 
-function renderLfBody(){
-  var body = document.getElementById('lfBody');
+function renderLfBody(zone){
+  if(!zone) zone = document.querySelector('.lf-zone');
+  var body = zone ? zone.querySelector('.lf-body') : null;
   if(!body) return;
-  if(lfCurrentTab === 'portrait') body.innerHTML = renderLfPortrait();
+  var active = zone.querySelector('.lf-tab.active');
+  var tab = active ? active.getAttribute('data-lftab') : 'portrait';
+  if(tab === 'portrait') body.innerHTML = renderLfPortrait();
   else body.innerHTML = renderLfFeedback();
 }
 
@@ -2130,7 +2499,7 @@ function renderStructPanel(p){
       '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户画像看板</div>'+
       '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">用户反馈看板</div>'+
     '</div>'+
-    '<div class="lf-body" id="lfBody"></div>'+
+    '<div class="lf-body"></div>'+
     '</div></div>'+
     /* ===== 中栏：分析逻辑框架 ===== */
     '<div class="struct-col struct-col-center"><div class="col-header">分析框架</div>'+mcHtml+nlHtml+sugHtml+taggerHtml+'</div>'+
@@ -2142,7 +2511,8 @@ function renderStructPanel(p){
   renderQuadrant(p);
   renderSegments(p);
   renderJourney(p);
-  renderLfBody(); // 领新用户反馈专区
+  var _lz = sp.querySelector('.struct-col-left .lf-zone');
+  if(_lz) renderLfBody(_lz); // 领新用户反馈专区
 }
 
 // ============================================================
