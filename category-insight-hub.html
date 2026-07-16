@@ -516,7 +516,53 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .j-pain{font-size:10px;color:#b91c1c;margin-top:3px}
 .j-arrow{align-self:center;color:var(--muted);font-size:14px}
 
-@media(max-width:1100px){.se-kpis,.rep-grid{grid-template-columns:repeat(2,1fr)}.analysis-grid{grid-template-columns:1fr}}
+/* ============ GALLERIES (源数据/逻辑 三大板块 → 右侧) ============ */
+.gal-head{padding:22px 24px 14px}
+.gal-h-title{font-size:22px;font-weight:800;letter-spacing:.1px;background:var(--rad-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gal-h-sub{font-size:12.5px;color:var(--muted);margin-top:5px;max-width:760px;line-height:1.6}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:6px 24px 40px}
+.gal-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 18px;cursor:pointer;
+  transition:transform .25s var(--easing),box-shadow .25s var(--easing),border-color .25s;position:relative;overflow:hidden;animation:fadeInUp .4s both}
+.gal-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rad-grad);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--easing)}
+.gal-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:rgba(0,195,243,.4)}
+.gal-card:hover::after{transform:scaleX(1)}
+.gal-top{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.gal-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.gal-dot.on{background:var(--green-b);box-shadow:0 0 0 3px rgba(5,150,105,.16)}
+.gal-dot.off{background:var(--muted);opacity:.5}
+.gal-ico{font-size:18px;flex-shrink:0}
+.gal-name{font-size:15px;font-weight:700;color:var(--ink)}
+.gal-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--rad-grad);color:#fff}
+.gal-type{font-size:11.5px;color:var(--muted);margin-bottom:8px}
+.gal-desc{font-size:12px;color:var(--ink-2);line-height:1.55;margin-bottom:12px;min-height:34px}
+.gal-foot{display:flex;align-items:center;justify-content:space-between;font-size:11.5px}
+.gal-rec{color:var(--green-b);font-weight:600}
+.gal-foot .gal-go{color:var(--accent);font-weight:700;opacity:0;transition:opacity .2s,transform .2s;transform:translateX(-4px)}
+.gal-card:hover .gal-go{opacity:1;transform:translateX(0)}
+
+/* ============ AI TOOLS ============ */
+.ai-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;padding:6px 24px 40px}
+.ai-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;cursor:pointer;
+  transition:transform .25s var(--easing),box-shadow .25s, border-color .25s;position:relative;overflow:hidden;animation:fadeInUp .4s both}
+.ai-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:rgba(0,195,243,.45)}
+.ai-ico{width:52px;height:52px;border-radius:15px;background:var(--rad-grad);display:grid;place-items:center;font-size:26px;margin-bottom:14px;box-shadow:0 6px 18px rgba(0,195,243,.25)}
+.ai-name{font-size:17px;font-weight:800;margin-bottom:8px;color:var(--ink)}
+.ai-desc{font-size:12.5px;color:var(--ink-2);line-height:1.65;margin-bottom:14px}
+.ai-go{font-size:12.5px;font-weight:700;color:var(--accent);opacity:.85}
+
+/* ============ TOOL WRAP (VOC / Corpus) ============ */
+.tool-wrap{padding:18px 24px 40px;max-width:920px}
+.tool-result{margin-top:16px}
+.tp-tip{font-size:11px;color:var(--muted);margin:8px 0 4px;line-height:1.5}
+.cl-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px}
+.cl-txt{flex:1;color:var(--ink-2);line-height:1.5}
+.cl-tags{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.cl-none{color:var(--muted);font-size:11px}
+.cl-neg{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:8px;background:rgba(220,38,38,.14);color:#b91c1c;margin-left:4px}
+
+@media(max-width:1100px){.se-kpis,.rep-grid{grid-template-columns:repeat(2,1fr)}.analysis-grid{grid-template-columns:1fr}.gal-grid,.ai-grid{grid-template-columns:1fr}}
 @media(max-width:768px){body{cursor:auto}.custom-cursor,.cursor-glow{display:none}
   .sidebar{position:fixed;transform:translateX(-100%);transition:transform .3s}
   .purpose-cols{grid-template-columns:1fr}}
@@ -539,12 +585,8 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 
     <nav class="nav-tree" id="navTree">
       <section class="nav-sec">
-        <div class="nav-sec-head"><span class="nsh-ico">&#x25A4;</span>数据源板块<span class="nav-sec-tag shared">共享</span></div>
-        <div class="nav-sec-body" id="navSources"></div>
-      </section>
-      <section class="nav-sec">
-        <div class="nav-sec-head"><span class="nsh-ico">&#x25C8;</span>分析框架板块<span class="nav-sec-tag shared">共享</span></div>
-        <div class="nav-sec-body" id="navFramework"></div>
+        <div class="nav-sec-head"><span class="nsh-ico">&#x25A4;</span>源数据 / 逻辑<span class="nav-sec-tag shared">共享</span></div>
+        <div class="nav-sec-body" id="navShared"></div>
       </section>
       <section class="nav-sec nav-sec-dyn">
         <div class="nav-sec-head"><span class="nsh-ico">&#x2B21;</span><span id="navPurposeTitle">目的工作区</span><span class="nav-sec-tag dyn" id="navPurposeTag">洞察</span></div>
@@ -552,7 +594,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
       </section>
     </nav>
 
-    <div class="sb-foot">数据源池 · 按目的调用<br>部署目标 · GitHub Pages</div>
+    <div class="sb-foot">源数据 / 逻辑 · 三大板块共享<br>目的工作区 · 随工作区切换</div>
   </aside>
 
   <!-- Main -->
@@ -636,6 +678,21 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 
       <!-- ===== VIEW: FRAMEWORK DETAIL ===== -->
       <div class="view" id="viewFramework"></div>
+
+      <!-- ===== VIEW: SOURCE GALLERY (drill-down) ===== -->
+      <div class="view" id="viewSourceGallery"></div>
+
+      <!-- ===== VIEW: FRAMEWORK GALLERY (drill-down) ===== -->
+      <div class="view" id="viewFrameworkGallery"></div>
+
+      <!-- ===== VIEW: AI TOOLS LANDING ===== -->
+      <div class="view" id="viewAITools"></div>
+
+      <!-- ===== VIEW: VOC TAGGING TOOL ===== -->
+      <div class="view" id="viewVocTool"></div>
+
+      <!-- ===== VIEW: USER CORPUS ANALYSIS TOOL ===== -->
+      <div class="view" id="viewCorpusTool"></div>
 
     </section>
   </main>
@@ -889,24 +946,17 @@ function openDeDashboard(){
 // LEFT NAV TREE (截图1：三个大板块，第三板块随工作区切换)
 // ============================================================
 function renderNavShared(){
-  // 板块1：数据源（共享）
-  var sh='';
-  Object.keys(DATA.sources).forEach(function(k){
-    var s=DATA.sources[k];
-    var ready=s.status==='ready';
-    sh+='<div class="nav-item" data-nav="src-'+k+'" onclick="openSource(\''+k+'\')">'+
-        '<span class="ni-dot '+(ready?'on':'off')+'"></span>'+
-        '<span class="ni-name">'+escHtml(s.name)+'</span>'+
-        '<span class="ni-sub">'+escHtml(s.type)+'</span></div>';
-  });
-  $('#navSources').innerHTML=sh;
-
-  // 板块2：分析框架（共享）
-  $('#navFramework').innerHTML=DATA.frameworks.map(function(f){
-    return '<div class="nav-item" data-nav="fw-'+f.id+'" onclick="openFramework(\''+f.id+'\')">'+
-           '<span class="ni-ico">'+f.icon+'</span>'+
-           '<span class="ni-name">'+escHtml(f.name)+'</span></div>';
-  }).join('');
+  // 源数据/逻辑 三大板块（共享，点击切右侧画廊/工具）
+  var srcN=Object.keys(DATA.sources).length;
+  var fwN=DATA.frameworks.length;
+  var html=
+    '<div class="nav-item" data-nav="nav-src" onclick="openSourceGallery()">'+
+      '<span class="ni-ico">&#x1F4E6;</span><span class="ni-name">数据源</span><span class="ni-sub">'+srcN+' 个</span></div>'+
+    '<div class="nav-item" data-nav="nav-fw" onclick="openFrameworkGallery()">'+
+      '<span class="ni-ico">&#x1F4CA;</span><span class="ni-name">分析框架</span><span class="ni-sub">'+fwN+' 个</span></div>'+
+    '<div class="nav-item" data-nav="nav-ai" onclick="openAITools()">'+
+      '<span class="ni-ico">&#x1F916;</span><span class="ni-name">AI 简化工具</span><span class="ni-sub">2 个</span></div>';
+  $('#navShared').innerHTML=html;
 }
 
 function renderNavPurpose(){
@@ -927,7 +977,7 @@ function setActiveNav(nav){
 function openSource(srcId){
   var s=DATA.sources[srcId];
   if(!s)return;
-  setActiveNav('src-'+srcId);
+  setActiveNav('nav-src');
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent=s.name;
   if(s.hasDashboard){
@@ -998,7 +1048,7 @@ function renderSourceExplorer(srcId){
   setView('Source');
   $('#viewSource').innerHTML=
     '<div class="ws-bar">'+
-      '<button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>'+
+      '<button class="ws-back" onclick="openSourceGallery()">&#8592; 返回数据源</button>'+
       '<span class="ws-title">'+escHtml(s.name)+'</span>'+
       '<span class="ws-tag">'+(s.status==='ready'?'已接入':'样本数据')+'</span>'+
       '<div style="margin-left:auto;display:flex;gap:6px">'+
@@ -1102,18 +1152,169 @@ function genSourceReport(srcId){
 function openFramework(fwId){
   var f=DATA.frameworks.find(function(x){return x.id===fwId;});
   if(!f)return;
-  setActiveNav('fw-'+fwId);
+  setActiveNav('nav-fw');
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent=f.name;
   setView('Framework');
   $('#viewFramework').innerHTML=
-    '<div class="ws-bar"><button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>'+
+    '<div class="ws-bar"><button class="ws-back" onclick="openFrameworkGallery()">&#8592; 返回分析框架</button>'+
       '<span class="ws-title">'+escHtml(f.name)+'</span>'+
       '<span class="ws-tag">分析框架 · 共享</span></div>'+
     '<div class="fw-detail">'+
       '<div class="fw-desc">'+escHtml(f.desc)+'</div>'+
       '<div class="fw-note">此框架在「目的工作区」的结构化面板与无限画布中被调用，用于组织洞察与推导链路。</div>'+
     '</div>';
+}
+
+// ============================================================
+// GALLERIES + AI TOOLS (左侧 源数据/逻辑 三大板块 → 右侧内容)
+// ============================================================
+
+// ---- 板块1：数据源画廊（点击进入单个数据源看板）----
+function openSourceGallery(){
+  setActiveNav('nav-src');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='数据源 · 全景';
+  var cards=Object.keys(DATA.sources).map(function(k){
+    var s=DATA.sources[k];
+    var ready=s.status==='ready';
+    var rec = s.records>0 ? s.records+' 条' : '样本';
+    return '<div class="gal-card" onclick="openSource(\''+k+'\')">'+
+      '<div class="gal-top"><span class="gal-dot '+(ready?'on':'off')+'"></span><span class="gal-name">'+escHtml(s.name)+'</span>'+
+        (s.hasDashboard?'<span class="gal-badge">看板</span>':'')+'</div>'+
+      '<div class="gal-type">'+escHtml(s.type)+' · '+escHtml(s.market)+'</div>'+
+      '<div class="gal-desc">'+escHtml(s.desc)+'</div>'+
+      '<div class="gal-foot"><span class="gal-rec">'+ready+' · '+rec+'</span><span class="gal-go">进入 &#8594;</span></div>'+
+    '</div>';
+  }).join('');
+  setView('SourceGallery');
+  $('#viewSourceGallery').innerHTML=
+    '<div class="gal-head"><div><div class="gal-h-title">数据源 · 全景</div>'+
+      '<div class="gal-h-sub">共 '+Object.keys(DATA.sources).length+' 个原始数据源，点击任一卡片进入其独立看板（支持筛选 / 导出 CSV / 综合报告）</div></div></div>'+
+    '<div class="gal-grid">'+cards+'</div>';
+}
+
+// ---- 板块2：分析框架画廊 ----
+function openFrameworkGallery(){
+  setActiveNav('nav-fw');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='分析框架 · 全景';
+  var cards=DATA.frameworks.map(function(f){
+    return '<div class="gal-card" onclick="openFramework(\''+f.id+'\')">'+
+      '<div class="gal-top"><span class="gal-ico">'+f.icon+'</span><span class="gal-name">'+escHtml(f.name)+'</span></div>'+
+      '<div class="gal-desc">'+escHtml(f.desc)+'</div>'+
+      '<div class="gal-foot"><span class="gal-rec">共享框架</span><span class="gal-go">查看 &#8594;</span></div>'+
+    '</div>';
+  }).join('');
+  setView('FrameworkGallery');
+  $('#viewFrameworkGallery').innerHTML=
+    '<div class="gal-head"><div><div class="gal-h-title">分析框架 · 全景</div>'+
+      '<div class="gal-h-sub">共 '+DATA.frameworks.length+' 个分析框架，在「目的工作区」中被调用以组织洞察与推导链路</div></div></div>'+
+    '<div class="gal-grid">'+cards+'</div>';
+}
+
+// ---- 板块3：AI 简化工具落地页 ----
+function openAITools(){
+  setActiveNav('nav-ai');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='AI 简化工具';
+  var cards=
+    '<div class="ai-card" onclick="openVocTool()">'+
+      '<div class="ai-ico">&#x1F9EC;</div>'+
+      '<div class="ai-name">VOC 打标签工具</div>'+
+      '<div class="ai-desc">基于本地规则引擎（含否定保护），对单条用户评论/社媒内容实时打维度标签并给出判断。零依赖、可离线。</div>'+
+      '<div class="ai-go">打开工具 &#8594;</div>'+
+    '</div>'+
+    '<div class="ai-card" onclick="openCorpusTool()">'+
+      '<div class="ai-ico">&#x1F4DD;</div>'+
+      '<div class="ai-name">用户语料分析工具</div>'+
+      '<div class="ai-desc">粘贴多行用户语料，批量运行 VOC 规则，输出维度标签频率、负面占比、高频问题 TOP 列表，辅助发现机会点。</div>'+
+      '<div class="ai-go">打开工具 &#8594;</div>'+
+    '</div>';
+  setView('AITools');
+  $('#viewAITools').innerHTML=
+    '<div class="gal-head"><div><div class="gal-h-title">AI 简化工具</div>'+
+      '<div class="gal-h-sub">两个轻量分析工具：VOC 打标签（单条）+ 用户语料分析（批量）。均为本地运行，不依赖大模型。</div></div></div>'+
+    '<div class="ai-grid">'+cards+'</div>';
+}
+
+// ---- VOC 打标签工具（独立页面）----
+function openVocTool(){
+  setActiveNav('nav-ai');
+  $('#topbarTitle').textContent='VOC 打标签工具';
+  setView('VocTool');
+  $('#viewVocTool').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">&#8592; 返回工具箱</button>'+
+      '<span class="ws-title">VOC 打标签工具</span>'+
+      '<span class="ws-tag">本地规则引擎</span></div>'+
+    '<div class="tool-wrap">'+
+      '<div class="tagger-panel">'+
+        '<textarea class="tp-input" id="vocToolInput" placeholder="粘贴一条用户评论或社媒内容，实时出标签...&#10;&#10;示例：这个东西声音太大了，而且尺寸偏小不太好用"></textarea>'+
+        '<div class="tp-tip">规则覆盖维度：尺寸 / 外观 / 功能 / 噪音 / 价格 / 清洁 / 舒适（含否定保护，如“不大”不误判）</div>'+
+        '<button class="export-ai" style="margin-top:10px" onclick="runVocTagger(\'vocToolInput\',\'vocToolTags\',\'vocToolResult\')">运行规则引擎</button>'+
+        '<div class="tp-output" id="vocToolOutput">'+
+          '<div class="tp-tags" id="vocToolTags"></div>'+
+          '<div class="tp-result" id="vocToolResult"></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+}
+
+// ---- 用户语料分析工具（批量）----
+function openCorpusTool(){
+  setActiveNav('nav-ai');
+  $('#topbarTitle').textContent='用户语料分析工具';
+  setView('CorpusTool');
+  $('#viewCorpusTool').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">&#8592; 返回工具箱</button>'+
+      '<span class="ws-title">用户语料分析工具</span>'+
+      '<span class="ws-tag">批量 · 本地</span></div>'+
+    '<div class="tool-wrap">'+
+      '<div class="tagger-panel">'+
+        '<textarea class="tp-input" id="corpusInput" style="min-height:160px" placeholder="每行一条用户语料，例如：&#10;尺寸偏小，希望更大一点&#10;静音效果很好，放在卧室不吵&#10;价格偏高，性价比一般&#10;材质塑料感强，不够高级"></textarea>'+
+        '<div class="tp-tip">将逐行运行 VOC 规则引擎，汇总维度标签频率、负面占比与高频问题 TOP5。</div>'+
+        '<button class="export-ai" style="margin-top:10px" onclick="renderCorpusAnalysis()">&#x1F4CA; 分析语料</button>'+
+      '</div>'+
+      '<div class="tool-result" id="corpusResult"></div>'+
+    '</div>';
+}
+
+function renderCorpusAnalysis(){
+  var ta=$('#corpusInput'); if(!ta){return;}
+  var lines=ta.value.split('\n').map(function(x){return x.trim();}).filter(Boolean);
+  if(!lines.length){toast('请先粘贴用户语料');return;}
+  var tagCount={}, negLines=0, total=lines.length, perLine=[];
+  lines.forEach(function(line){
+    var tags=[];
+    VOC_RULES.forEach(function(rule){
+      var m=false;
+      rule.patterns.forEach(function(p){if(p.test(line))m=true;});
+      if(m&&rule.negPatterns.length){rule.negPatterns.forEach(function(np){if(np.test(line))m=false;});}
+      if(m){tags.push(rule.tag);tagCount[rule.tag]=(tagCount[rule.tag]||0)+1;}
+    });
+    // 简单情感判断：命中负面表述词
+    var neg = /\b(偏小|太大|太小|不好用|不方便|鸡肋|无效|迟钝|吵|响|大声|贵|不值|难洗|不舒服|硬|粗糙|廉价感|塑料感)\b/.test(line);
+    if(neg)negLines++;
+    perLine.push('<div class="cl-row"><span class="cl-txt">'+escHtml(line)+'</span>'+
+      '<span class="cl-tags">'+ (tags.length?tags.map(function(t){return '<span class="tp-tag">'+t+'</span>'}).join(''):'<span class="cl-none">无匹配</span>')+
+      (neg?'<span class="cl-neg">负面</span>':'') +'</span></div>');
+  });
+  var topTags=Object.keys(tagCount).sort(function(a,b){return tagCount[b]-tagCount[a];}).slice(0,5);
+  var bars=topTags.map(function(t){
+    var pct=Math.round(tagCount[t]/total*100);
+    return '<div class="rep-bar-row"><span class="rbl">'+t+'</span><span class="rb-track"><span class="rb-fill" style="width:'+pct+'%"></span></span><span class="rbv">'+tagCount[t]+'</span></div>';
+  }).join('');
+  var negPct=Math.round(negLines/total*100);
+  $('#corpusResult').innerHTML=
+    '<div class="rep-title">语料综合分析</div>'+
+    '<div class="rep-grid">'+
+      '<div class="rep-kpi"><b>'+total+'</b><span>语料条数</span></div>'+
+      '<div class="rep-kpi"><b>'+negPct+'%</b><span>负面占比</span></div>'+
+      '<div class="rep-kpi"><b>'+topTags.length+'</b><span>命中维度</span></div>'+
+      '<div class="rep-kpi"><b>'+(total-negLines)+'</b><span>非负面</span></div>'+
+    '</div>'+
+    '<div class="rep-section"><div class="rep-h">维度标签频率 TOP5</div>'+bars+'</div>'+
+    '<div class="rep-section"><div class="rep-h">逐行明细</div>'+perLine.join('')+'</div>';
 }
 
 // ============================================================
@@ -1789,17 +1990,19 @@ $$('#modeToggle .mode-opt').forEach(function(el){
 // VOC RULE ENGINE (简化版)
 // ============================================================
 var VOC_RULES=[
-  {tag:'尺寸',patterns:[/\b(大|小|大号|小号|size|偏大|偏小|太大|太小|尺寸|长短|长短不一)\b/i],negPatterns:[/(不大|不小|尺寸合适|大小刚好)\b/i]},
-  {tag:'外观',patterns:[/\b(好看|丑|漂亮|美观|颜值|设计|颜色|质感|手感|材质|塑料感|廉价感|高级感|精致|粗糙)\b/i],negPatterns:[]},
-  {tag:'功能',patterns:[/\b(好用|不好用|方便|不方便|实用|鸡肋|功能|性能|效果|有效|无效|灵敏|迟钝|快|慢)\b/i],negPatterns:[/(不难用)\b/i]},
-  {tag:'噪音',patterns:[/\b(吵|响|大声|安静|静音|噪音|噪声|吵人|嗡嗡|震动|声音大|声音小)\b/i],negPatterns:[/(不吵|很安静|静音不错)\b/i]},
-  {tag:'价格',patterns:[/\b(贵|便宜|划算|值|不值|性价比|价格|价位|折扣|贵了|便宜了|物有所值)\b/i],negPatterns:[]},
-  {tag:'清洁',patterns:[/\b(清洗|清洁|难洗|好洗|拆卸|安装|组装|拆装|卫生|细菌|发霉)\b/i],negPatterns:[/(好清洗|容易清洗)\b/i]},
-  {tag:'舒适',patterns:[/\b(舒服|不舒服|软|硬|贴合|磨手|夹手|硌|异物感|不适|疼痛)\b/i],negPatterns:[/(很舒适|挺舒服)\b/i]}
+  {tag:'尺寸',patterns:[/偏大|偏小|太大|太小|尺寸|长短|大小|大一些|小一点/],negPatterns:[/不大|不小|尺寸合适|大小刚好|大小正好/]},
+  {tag:'外观',patterns:[/好看|丑|漂亮|美观|颜值|设计|颜色|质感|手感|材质|塑料感|廉价感|高级感|精致|粗糙/],negPatterns:[]},
+  {tag:'功能',patterns:[/好用|不好用|方便|不方便|实用|鸡肋|功能|性能|效果|有效|无效|灵敏|迟钝|太快|太慢/],negPatterns:[/不难用/]},
+  {tag:'噪音',patterns:[/吵|响|大声|安静|静音|噪音|噪声|吵人|嗡嗡|震动|声音大|声音小|声音太大|声音太小|太大声|太响/],negPatterns:[/不吵|很安静|静音不错|不响/]},
+  {tag:'价格',patterns:[/贵|便宜|划算|性价比|价格|价位|折扣|贵了|便宜了|物有所值|不值/],negPatterns:[]},
+  {tag:'清洁',patterns:[/清洗|清洁|难洗|好洗|拆卸|安装|组装|拆装|卫生|细菌|发霉/],negPatterns:[/好清洗|容易清洗|好洗/]},
+  {tag:'舒适',patterns:[/舒服|不舒服|软|硬|贴合|磨手|夹手|硌|异物感|不适|疼痛/],negPatterns:[/很舒适|挺舒服|很舒服/]}
 ];
 
-function runVocTagger(){
-  var input=$('#vocInput').value.trim();
+function runVocTagger(inputId,tagsId,resultId,outputId){
+  inputId=inputId||'vocInput'; tagsId=tagsId||'vocTags'; resultId=resultId||'vocResult'; outputId=outputId||'vocOutput';
+  var inputEl=$('#'+inputId); if(!inputEl)return;
+  var input=inputEl.value.trim();
   if(!input){toast('请输入内容');return;}
 
   var tags=[];
@@ -1823,10 +2026,10 @@ function runVocTagger(){
     }
   });
 
-  var output=$('#vocOutput');
+  var output=$('#'+outputId);
   output.classList.add('show');
-  $('#vocTags').innerHTML=tags.length?tags.join(''):'<span style="color:var(--muted)">未匹配到已知维度</span>';
-  $('#vocResult').textContent=judgments.length?
+  $('#'+tagsId).innerHTML=tags.length?tags.join(''):'<span style="color:var(--muted)">未匹配到已知维度</span>';
+  $('#'+resultId).textContent=judgments.length?
     judgments.join('\n')+'\n\n结论：'+input.substring(0,60)+'...':
     '该文本未触发任何已知规则，可能属于新的维度类别。建议人工审核后补充规则。';
   toast('规则引擎执行完成');
