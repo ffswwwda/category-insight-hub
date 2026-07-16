@@ -325,6 +325,98 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14p
 
 /* DE dashboard iframe */
 .de-frame{width:100%;height:calc(100vh - 120px);border:none;display:block}
+
+/* ============ LEVEL1: SOURCE EXPLORER ============ */
+.src-explorer{padding:18px 22px;overflow:auto;height:calc(100vh - 120px)}
+.se-meta{font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.6}
+.se-filter{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.se-search{flex:1;min-width:220px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;
+  background:var(--glass-bg);backdrop-filter:var(--glass-blur);font-size:13px;color:var(--ink);outline:none}
+.se-search:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.12)}
+.se-select{padding:9px 12px;border:1px solid var(--border);border-radius:10px;background:var(--glass-bg);
+  backdrop-filter:var(--glass-blur);font-size:12.5px;color:var(--ink)}
+.se-chips{display:flex;gap:6px;flex-wrap:wrap}
+.se-chip{padding:6px 12px;border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--muted);
+  cursor:pointer;background:var(--glass-bg);transition:.15s}
+.se-chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.se-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.se-kpi{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--border);
+  border-radius:14px;padding:14px 16px;text-align:center}
+.se-kpi b{display:block;font-size:20px;color:var(--ink);font-weight:700}
+.se-kpi span{font-size:11px;color:var(--muted)}
+.se-table-wrap{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--border);
+  border-radius:14px;overflow:auto;max-height:calc(100vh - 420px);margin-bottom:16px}
+.se-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.se-table th{position:sticky;top:0;background:var(--panel-solid);text-align:left;padding:10px 12px;color:var(--muted);
+  font-weight:600;border-bottom:1px solid var(--border)}
+.se-table td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--ink);vertical-align:top}
+.se-txt{color:var(--muted);max-width:420px}
+.se-sent{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600}
+.s-正面{background:rgba(22,163,74,.14);color:#15803d}
+.s-负面{background:rgba(220,38,38,.14);color:#b91c1c}
+.s-中性{background:rgba(100,116,139,.14);color:#475569}
+.se-report{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--border);
+  border-radius:16px;padding:20px 24px;margin-bottom:20px}
+.rep-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:14px}
+.rep-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.rep-kpi{text-align:center;background:var(--panel-solid);border-radius:12px;padding:12px}
+.rep-kpi b{display:block;font-size:18px;color:var(--accent)}
+.rep-kpi span{font-size:11px;color:var(--muted)}
+.rep-section{margin-bottom:14px}
+.rep-h{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.rep-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:12px}
+.rbl{width:60px;color:var(--ink)}
+.rb-track{flex:1;height:10px;background:var(--panel-solid);border-radius:6px;overflow:hidden}
+.rb-fill{display:block;height:100%;background:linear-gradient(90deg,#0891B2,#22d3ee)}
+.rbv{width:42px;text-align:right;color:var(--muted)}
+.rep-note{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic}
+
+/* ============ LEVEL2: NL / SUGGESTIONS / ANALYSIS ============ */
+.nl-box{display:flex;gap:8px;margin-bottom:8px}
+.nl-input{flex:1;min-height:46px;resize:vertical;padding:10px 12px;border:1px solid var(--border);border-radius:10px;
+  background:var(--glass-bg);backdrop-filter:var(--glass-blur);font-size:13px;color:var(--ink);outline:none;font-family:inherit}
+.nl-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.12)}
+.nl-result{margin-top:6px}
+.nl-head{font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.nl-hit{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--panel-solid);
+  border-radius:10px;margin-bottom:6px}
+.nl-name{font-weight:600;color:var(--ink);font-size:13px}
+.nl-meta{font-size:11px;color:var(--muted)}
+.nl-add{margin-left:auto;padding:5px 12px;border:none;border-radius:8px;background:var(--accent);color:#fff;
+  font-size:12px;cursor:pointer}
+.nl-empty{font-size:12px;color:var(--muted);padding:8px 0}
+.suggest-block{margin-bottom:12px}
+.sb-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:7px;opacity:.85}
+.sg-list{display:flex;flex-wrap:wrap;gap:7px}
+.sg-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);
+  border-radius:20px;font-size:12px;color:var(--ink);background:var(--glass-bg);cursor:pointer;transition:.15s}
+.sg-chip.src.on,.sg-chip.fw.on{background:rgba(8,145,178,.12);border-color:var(--accent);color:var(--accent)}
+.sg-chip .sg-x{font-size:10px;color:var(--muted)}
+.sg-empty{font-size:12px;color:var(--muted)}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.an-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--border);
+  border-radius:14px;padding:14px;min-height:160px}
+.an-h{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:10px}
+.an-body{font-size:12px}
+.an-note{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
+.quad-svg{width:100%;height:auto;display:block}
+.quad-bg{fill:var(--panel-solid);stroke:var(--border);stroke-width:1}
+.quad-axis{stroke:var(--border);stroke-width:1;stroke-dasharray:3 3}
+.quad-lbl{fill:var(--muted);font-size:9px}
+.quad-pt{fill:var(--accent)}
+.quad-pt-lbl{fill:var(--ink);font-size:8.5px}
+.seg-item{margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed var(--border)}
+.seg-item b{color:var(--ink);font-size:12.5px}
+.seg-tags{font-size:10.5px;color:var(--accent);margin-left:6px}
+.seg-body{color:var(--muted);margin-top:3px;line-height:1.5}
+.journey-flow{display:flex;align-items:stretch;gap:2px;flex-wrap:wrap}
+.j-step{flex:1;min-width:64px;background:var(--panel-solid);border-radius:10px;padding:8px 6px;text-align:center}
+.j-num{width:18px;height:18px;line-height:18px;margin:0 auto 4px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px}
+.j-name{font-size:11.5px;font-weight:600;color:var(--ink)}
+.j-pain{font-size:10px;color:#b91c1c;margin-top:3px}
+.j-arrow{align-self:center;color:var(--muted);font-size:14px}
+
+@media(max-width:1100px){.se-kpis,.rep-grid{grid-template-columns:repeat(2,1fr)}.analysis-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -617,7 +709,13 @@ var state = {
   dragNode: null,
   dragOffX: 0,
   dragOffY: 0,
-  drawerOpen: true
+  drawerOpen: true,
+  // ---- 三层级新增状态 ----
+  sourceCache: {},        // {srcId: [rows]}  Level1 样本缓存
+  sourceFilters: {},      // {srcId: {text, market, dimension, sentiment}}
+  nlAcquired: [],         // Level2 自然语言匹配到的数据源 id
+  selectedFrameworks: [], // Level2 用户选中的分析框架 id
+  analysisSummary: {}     // Level2 基础分析结论（供 Level3 提示词引用）
 };
 
 // ============================================================
@@ -626,7 +724,8 @@ var state = {
 function $(sel){return document.querySelector(sel)}
 function $$(sel){return document.querySelectorAll(sel)}
 function toast(msg){
-  var t=$('toast');t.textContent=msg;t.classList.add('show');
+  var t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;t.classList.add('show');
   clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove('show')},1800);
 }
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
@@ -724,24 +823,172 @@ function openSource(srcId){
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent=s.name;
   if(s.hasDashboard){
+    // Level1：s8 德国商品库 → 专属完整看板（已含筛选/导出/报告）
     $('#viewDe').classList.add('active');
     $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
     return;
   }
+  // Level1：其余数据源 → 统一 Explorer 二级页（筛选/导出CSV/综合报告）
+  renderSourceExplorer(srcId);
+}
+
+// ============================================================
+// SOURCE EXPLORER (Level1 数据源二级页：筛选 / 导出 / 看板报告 / 综合报告)
+// ============================================================
+var DIMS=['尺寸','质量','材质','噪音','价格','清洁','舒适'];
+var SENTS=['正面','负面','中性'];
+
+function genSampleRows(srcId){
+  if(state.sourceCache[srcId])return state.sourceCache[srcId];
+  var s=DATA.sources[srcId]; if(!s)return [];
+  var mkts=(s.market||'DE/US/JP').split('/').filter(Boolean);
+  if(mkts[0]==='—'||!mkts.length)mkts=['DE'];
+  var n = s.records>0 ? Math.min(s.records,400) : 120;
+  var rows=[];
+  for(var i=0;i<n;i++){
+    var r1=Math.abs(Math.sin(i*12.9898))*43758.5453; r1=r1-Math.floor(r1);
+    var r2=Math.abs(Math.sin(i*78.233)+1)*12543.123; r2=r2-Math.floor(r2);
+    var r3=Math.abs(Math.cos(i*3.17))*9123.7; r3=r3-Math.floor(r3);
+    var dim=DIMS[Math.floor(r1*DIMS.length)];
+    var sent=SENTS[Math.floor(r2*SENTS.length)];
+    var rating=1+Math.floor(r3*5);
+    var mk=mkts[Math.floor(r1*mkts.length)];
+    var txt=(sent==='负面'
+        ? '该商品在'+dim+'方面表现不佳，'+(dim==='噪音'?'运行时声音偏大影响体验。':dim==='尺寸'?'尺寸与描述不符偏小。':dim==='价格'?'定价偏高性价比不足。':'用户反馈需要改进。')
+        : sent==='正面'
+        ? '整体满意，'+dim+'符合预期，使用顺畅。'
+        : '中规中矩，'+dim+'没有明显问题也没有惊喜。');
+    rows.push({id:i+1,market:mk,rating:rating,dimension:dim,sentiment:sent,text:txt});
+  }
+  state.sourceCache[srcId]=rows;
+  return rows;
+}
+
+function computeSourceStats(rows){
+  var n=rows.length||1;
+  var neg=rows.filter(function(r){return r.sentiment==='负面'}).length;
+  var avg=rows.reduce(function(a,r){return a+(+r.rating||0)},0)/n;
+  var dimCount={};
+  rows.forEach(function(r){dimCount[r.dimension]=(dimCount[r.dimension]||0)+1});
+  var topDim=Object.keys(dimCount).sort(function(a,b){return dimCount[b]-dimCount[a]})[0]||'—';
+  return {n:n,negPct:Math.round(neg/n*100),avg:avg.toFixed(2),topDim:topDim,dimCount:dimCount};
+}
+
+function renderSourceExplorer(srcId){
+  var s=DATA.sources[srcId]; if(!s)return;
+  var rows=genSampleRows(srcId);
+  state.sourceFilters[srcId]=state.sourceFilters[srcId]||{text:'',market:'',dimension:'',sentiment:''};
+  var mkts=(s.market||'DE/US/JP').split('/').filter(Boolean); if(mkts[0]==='—')mkts=['DE'];
+  var st=computeSourceStats(rows);
+  var f=state.sourceFilters[srcId];
+  var marketChips=mkts.map(function(m){
+    var on=f.market===m;
+    return '<span class="se-chip'+(on?' on':'')+'" onclick="toggleSourceFilter(\''+srcId+'\',\'market\',\''+m+'\')">'+m+'</span>';
+  }).join('');
+  var dimOpts='<option value="">全部维度</option>'+DIMS.map(function(d){return '<option value="'+d+'"'+(f.dimension===d?' selected':'')+'>'+d+'</option>'}).join('');
+  var sentOpts='<option value="">全部情感</option>'+SENTS.map(function(d){return '<option value="'+d+'"'+(f.sentiment===d?' selected':'')+'>'+d+'</option>'}).join('');
   setView('Source');
   $('#viewSource').innerHTML=
-    '<div class="ws-bar"><button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>'+
+    '<div class="ws-bar">'+
+      '<button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>'+
       '<span class="ws-title">'+escHtml(s.name)+'</span>'+
-      '<span class="ws-tag">'+(s.status==='ready'?'已接入':'待接入')+'</span></div>'+
-    '<div class="src-detail">'+
-      '<div class="sd-kpis">'+
-        '<div class="sd-kpi"><div class="sd-kv">'+escHtml(s.market)+'</div><div class="sd-kl">覆盖市场</div></div>'+
-        '<div class="sd-kpi"><div class="sd-kv">'+s.records+'</div><div class="sd-kl">记录数</div></div>'+
-        '<div class="sd-kpi"><div class="sd-kv">'+escHtml(s.type)+'</div><div class="sd-kl">数据类型</div></div>'+
+      '<span class="ws-tag">'+(s.status==='ready'?'已接入':'样本数据')+'</span>'+
+      '<div style="margin-left:auto;display:flex;gap:6px">'+
+        '<button class="ct-btn" onclick="genSourceReport(\''+srcId+'\')">&#x1F4CA; 综合报告</button>'+
+        '<button class="ct-btn primary" onclick="exportSourceData(\''+srcId+'\')">&#x2B73; 导出 CSV</button>'+
       '</div>'+
-      '<div class="sd-desc">'+escHtml(s.desc)+'</div>'+
-      (s.status==='ready'?'':'<div class="sd-hint">该数据源看板待接入，接入后将在此展示实时看板与筛选分析。</div>')+
+    '</div>'+
+    '<div class="src-explorer">'+
+      '<div class="se-meta">'+escHtml(s.desc)+' · 覆盖市场 '+escHtml(s.market)+' · 当前样本 '+rows.length+' 条</div>'+
+      '<div class="se-filter">'+
+        '<input class="se-search" id="seSearch-'+srcId+'" placeholder="搜索文本，如 噪音 / 尺寸…" value="'+escHtml(f.text)+'" oninput="onSourceFilterInput(\''+srcId+'\')">'+
+        '<select class="se-select" onchange="setSourceFilter(\''+srcId+'\',\'dimension\',this.value)">'+dimOpts+'</select>'+
+        '<select class="se-select" onchange="setSourceFilter(\''+srcId+'\',\'sentiment\',this.value)">'+sentOpts+'</select>'+
+        '<div class="se-chips">'+marketChips+'</div>'+
+      '</div>'+
+      '<div class="se-kpis">'+
+        '<div class="se-kpi"><b>'+st.n+'</b><span>样本数</span></div>'+
+        '<div class="se-kpi"><b>'+st.avg+'</b><span>平均评分</span></div>'+
+        '<div class="se-kpi"><b>'+st.negPct+'%</b><span>负面占比</span></div>'+
+        '<div class="se-kpi"><b>'+escHtml(st.topDim)+'</b><span>高频维度</span></div>'+
+      '</div>'+
+      '<div class="se-table-wrap"><table class="se-table" id="seTable-'+srcId+'"></table></div>'+
+      '<div class="se-report" id="seReport-'+srcId+'" style="display:none"></div>'+
     '</div>';
+  applySourceFilter(srcId);
+}
+
+function onSourceFilterInput(srcId){
+  state.sourceFilters[srcId].text=$('#seSearch-'+srcId).value;
+  applySourceFilter(srcId);
+}
+function setSourceFilter(srcId,key,val){
+  state.sourceFilters[srcId][key]=val;
+  applySourceFilter(srcId);
+}
+function toggleSourceFilter(srcId,key,val){
+  state.sourceFilters[srcId][key]=(state.sourceFilters[srcId][key]===val?'':val);
+  renderSourceExplorer(srcId);
+}
+function filterSourceRows(srcId){
+  var f=state.sourceFilters[srcId]; if(!f)return genSampleRows(srcId);
+  return genSampleRows(srcId).filter(function(r){
+    if(f.text && (r.text+r.dimension+r.market).indexOf(f.text)<0)return false;
+    if(f.market && r.market!==f.market)return false;
+    if(f.dimension && r.dimension!==f.dimension)return false;
+    if(f.sentiment && r.sentiment!==f.sentiment)return false;
+    return true;
+  });
+}
+function applySourceFilter(srcId){
+  var rows=filterSourceRows(srcId);
+  var tbl=$('#seTable-'+srcId); if(!tbl)return;
+  var head='<thead><tr><th>#</th><th>市场</th><th>评分</th><th>维度</th><th>情感</th><th>内容</th></tr></thead>';
+  var body=rows.slice(0,60).map(function(r){
+    return '<tr><td>'+r.id+'</td><td>'+r.market+'</td><td>'+r.rating+'</td><td>'+escHtml(r.dimension)+
+      '</td><td><span class="se-sent s-'+r.sentiment+'">'+r.sentiment+'</span></td><td class="se-txt">'+escHtml(r.text)+'</td></tr>';
+  }).join('');
+  tbl.innerHTML=head+'<tbody>'+(body||'<tr><td colspan="6" style="text-align:center;color:var(--muted)">无匹配记录</td></tr>')+'</tbody>';
+  var st=computeSourceStats(rows);
+  var kpis=$('#viewSource').querySelectorAll('.se-kpi b');
+  if(kpis.length===4){kpis[0].textContent=st.n;kpis[2].textContent=st.negPct+'%';kpis[3].textContent=st.topDim;}
+}
+function exportSourceData(srcId){
+  var rows=filterSourceRows(srcId);
+  var header=['id','market','rating','dimension','sentiment','text'];
+  var csv=[header.join(',')].concat(rows.map(function(r){
+    return header.map(function(h){var v=(''+r[h]).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}).join(',');
+  })).join('\n');
+  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=((DATA.sources[srcId]||{}).name||srcId)+'_export.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  toast('已导出 '+rows.length+' 条记录');
+}
+function genSourceReport(srcId){
+  var s=DATA.sources[srcId]; if(!s)return;
+  var box=$('#seReport-'+srcId); if(!box)return;
+  var rows=genSampleRows(srcId);
+  var st=computeSourceStats(rows);
+  var dims=Object.keys(st.dimCount).sort(function(a,b){return st.dimCount[b]-st.dimCount[a]});
+  var dimBars=dims.map(function(d){
+    var pct=Math.round(st.dimCount[d]/st.n*100);
+    return '<div class="rep-bar-row"><span class="rbl">'+d+'</span><span class="rb-track"><span class="rb-fill" style="width:'+pct+'%"></span></span><span class="rbv">'+pct+'%</span></div>';
+  }).join('');
+  box.style.display='block';
+  box.innerHTML='<div class="rep-title">&#x1F4CA; '+escHtml(s.name)+' · 数据源综合报告</div>'+
+    '<div class="rep-grid">'+
+      '<div class="rep-kpi"><b>'+st.n+'</b><span>样本量</span></div>'+
+      '<div class="rep-kpi"><b>'+st.avg+'</b><span>平均评分</span></div>'+
+      '<div class="rep-kpi"><b>'+st.negPct+'%</b><span>负面占比</span></div>'+
+      '<div class="rep-kpi"><b>'+escHtml(st.topDim)+'</b><span>最高频维度</span></div>'+
+    '</div>'+
+    '<div class="rep-section"><div class="rep-h">维度分布</div>'+dimBars+'</div>'+
+    '<div class="rep-section"><div class="rep-h">综合判断</div>'+
+      '<p>该数据源覆盖 <b>'+escHtml(s.market)+'</b> 市场，样本共 <b>'+st.n+'</b> 条；平均评分 <b>'+st.avg+'</b>，'+
+      '负面反馈占比 <b>'+st.negPct+'%</b>，其中 <b>'+escHtml(st.topDim)+'</b> 是最常被提及的维度。'+
+      '建议在'+(s.status==='ready'?'已接入':'样本')+'状态下结合其他数据源做交叉验证后再下结论。</p></div>'+
+    '<div class="rep-note">注：当前为样本/示意数据，接入真实数据源后此处将实时刷新。</div>';
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function openFramework(fwId){
@@ -897,6 +1144,28 @@ function renderStructPanel(p){
   actHtml+='</div></div>';
 
   // Export button
+  // Level2：自然语言获取数据源
+  var nlHtml='<div class="struct-section"><div class="ss-head">自然语言获取数据源（基于目的）</div>'+
+    '<div class="nl-box">'+
+      '<textarea class="nl-input" id="nlInput" placeholder="描述你要找的数据，例如：我想看德国站差评里关于噪音的评论"></textarea>'+
+      '<button class="export-ai" onclick="runNLAcquire()">获取 / 匹配数据源</button>'+
+    '</div>'+
+    '<div class="nl-result" id="nlResult"></div></div>';
+
+  // Level2：智能建议
+  var sugHtml='<div class="struct-section"><div class="ss-head">智能建议（基于当前目的）</div>'+
+    '<div class="suggest-block"><div class="sb-title">建议交叉分析的数据源</div><div id="suggestSources" class="sg-list"></div></div>'+
+    '<div class="suggest-block"><div class="sb-title">建议使用的分析框架</div><div id="suggestFrameworks" class="sg-list"></div></div>'+
+  '</div>';
+
+  // Level2：基础分析结果（简化版 skill 输出）
+  var anHtml='<div class="struct-section"><div class="ss-head">基础分析结果（简化版 · skill 自动产出）</div>'+
+    '<div class="analysis-grid">'+
+      '<div class="an-card"><div class="an-h">需求四象限</div><div id="quadBox" class="an-body"></div></div>'+
+      '<div class="an-card"><div class="an-h">细分市场</div><div id="segBox" class="an-body"></div></div>'+
+      '<div class="an-card"><div class="an-h">购买旅程</div><div id="journeyBox" class="an-body"></div></div>'+
+    '</div></div>';
+
   var expHtml='<div class="struct-section"><button class="export-ai" onclick="openExportModal()">&#x1F916; 导出到智能体</button></div>';
 
   // VOC Tagger
@@ -909,7 +1178,174 @@ function renderStructPanel(p){
     '<button class="export-ai" style="margin-top:8px" onclick="runVocTagger()">运行规则引擎</button>'+
   '</div></div>';
 
-  sp.innerHTML=srcHtml+insHtml+mcHtml+actHtml+expHtml+taggerHtml;
+  sp.innerHTML=srcHtml+insHtml+mcHtml+actHtml+nlHtml+sugHtml+anHtml+expHtml+taggerHtml;
+
+  // 渲染动态部分
+  renderSuggestions(p);
+  renderQuadrant(p);
+  renderSegments(p);
+  renderJourney(p);
+}
+
+// ============================================================
+// LEVEL2 HELPERS: 自然语言匹配 / 智能建议 / 基础分析展示
+// ============================================================
+var PURPOSE_FW={
+  'market-seg':['motivation','quad'],
+  'user-problem':['jtbd','voc'],
+  'category-opp':['quad','voc'],
+  'new-concept':['voc','motivation'],
+  'product-opt':['voc','quad'],
+  'marketing':['journey','motivation'],
+  'new-plan':['quad','jtbd'],
+  'new-build':['voc','journey']
+};
+
+function matchSourcesByNL(text){
+  var q=text.toLowerCase();
+  var hits=[];
+  Object.keys(DATA.sources).forEach(function(k){
+    var s=DATA.sources[k];
+    var hay=(s.name+' '+s.type+' '+s.desc+' '+s.market+' '+k).toLowerCase();
+    var score=0;
+    if(q) q.split(/[\s,，。、]+/).filter(Boolean).forEach(function(tok){
+      if(hay.indexOf(tok)>=0)score+=2;
+    });
+    // 关键词映射
+    [['噪音','噪音'],['声音','噪音'],['尺寸','尺寸'],['大小','尺寸'],['质量','质量'],['材质','材质'],
+     ['价格','价格'],['便宜','价格'],['评论','评论'],['差评','评论'],['德国','DE'],['美国','US'],
+     ['日本','JP'],['竞品','竞品'],['对手','竞品'],['搜索','搜索'],['关键词','搜索'],['社媒','社媒'],
+     ['舆情','社媒'],['访谈','访谈'],['客服','客服'],['售后','客服'],['销售','销售'],['销量','销售'],
+     ['趋势','趋势'],['类目','类目'],['广告','广告'],['投放','广告'],['品牌','品牌']].forEach(function(p){
+      if(q.indexOf(p[0])>=0 && hay.indexOf(p[1])>=0)score+=3;
+    });
+    if(score>0)hits.push({id:k,score:score});
+  });
+  hits.sort(function(a,b){return b.score-a.score});
+  return hits.slice(0,4);
+}
+
+function runNLAcquire(){
+  var txt=$('#nlInput').value.trim();
+  if(!txt){toast('请输入你想获取的数据描述');return;}
+  var hits=matchSourcesByNL(txt);
+  var box=$('#nlResult');
+  if(!hits.length){box.innerHTML='<div class="nl-empty">未匹配到数据源，试试更具体的词，如「德国 差评 噪音」。</div>';return;}
+  state.nlAcquired=hits.map(function(h){return h.id});
+  box.innerHTML='<div class="nl-head">智能体为你匹配到 '+hits.length+' 个数据源：</div>'+hits.map(function(h){
+    var s=DATA.sources[h.id];
+    return '<div class="nl-hit"><span class="nl-name">'+escHtml(s.name)+'</span>'+
+      '<span class="nl-meta">'+escHtml(s.type)+' · '+escHtml(s.market)+'</span>'+
+      '<button class="nl-add" onclick="addSourceToCanvas(\''+h.id+'\')">+ 画布</button></div>';
+  }).join('');
+  toast('已匹配 '+hits.length+' 个数据源');
+}
+
+function suggestCrossSources(p){
+  var bound=p.sources;
+  var boundMarkets={};
+  bound.forEach(function(sid){var s=DATA.sources[sid];if(s)(s.market||'').split('/').forEach(function(m){boundMarkets[m]=1});});
+  // 跨目的出现频次
+  var freq={};
+  Object.keys(DATA.workspaces).forEach(function(wk){
+    DATA.workspaces[wk].purposes.forEach(function(pp){
+      pp.sources.forEach(function(sid){if(bound.indexOf(sid)<0)freq[sid]=(freq[sid]||0)+1;});
+    });
+  });
+  var cands=Object.keys(DATA.sources).filter(function(sid){return bound.indexOf(sid)<0;});
+  cands.sort(function(a,b){
+    var sa=0,sb=0;
+    var ma=(DATA.sources[a].market||'').split('/');var mb=(DATA.sources[b].market||'').split('/');
+    ma.forEach(function(m){if(boundMarkets[m])sa+=2;});mb.forEach(function(m){if(boundMarkets[m])sb+=2;});
+    sa+=(freq[a]||0);sb+=(freq[b]||0);
+    return sb-sa;
+  });
+  return cands.slice(0,3);
+}
+
+function suggestFrameworks(p){
+  return PURPOSE_FW[p.id]||['voc'];
+}
+
+function renderSuggestions(p){
+  var cross=suggestCrossSources(p);
+  $('#suggestSources').innerHTML=cross.length?cross.map(function(sid){
+    var s=DATA.sources[sid];
+    return '<span class="sg-chip src" onclick="addSourceToCanvas(\''+sid+'\')">'+escHtml(s.name)+
+      '<span class="sg-x">+ 交叉</span></span>';
+  }).join(''):'<span class="sg-empty">暂无额外建议</span>';
+
+  var fwIds=suggestFrameworks(p);
+  state.selectedFrameworks=fwIds.slice(); // 默认按目的预选
+  $('#suggestFrameworks').innerHTML=fwIds.map(function(fid){
+    var f=DATA.frameworks.find(function(x){return x.id===fid;});
+    if(!f)return '';
+    return '<span class="sg-chip fw" data-fw="'+fid+'" onclick="toggleFramework(\''+fid+'\')">'+f.icon+' '+escHtml(f.name)+'</span>';
+  }).join('');
+}
+
+function toggleFramework(fid){
+  var i=state.selectedFrameworks.indexOf(fid);
+  if(i>=0)state.selectedFrameworks.splice(i,1);else state.selectedFrameworks.push(fid);
+  $$('#suggestFrameworks .sg-chip').forEach(function(el){
+    el.classList.toggle('on',state.selectedFrameworks.indexOf(el.getAttribute('data-fw'))>=0);
+  });
+}
+
+// ---- 基础分析结果：需求四象限 ----
+function renderQuadrant(p){
+  var box=$('#quadBox');if(!box)return;
+  // 由种子洞察合成散点（重要度×满意度）
+  var ins=getInsights(p.id);
+  var pts=ins.length?ins.slice(0,6).map(function(i2,idx){
+    var imp=0.4+((idx*37)%6)/10;
+    var sat=0.3+((idx*53)%6)/10;
+    return {x:imp,y:sat,label:i2.title};
+  }):[{x:0.8,y:0.3,label:'高重要·低满意'},{x:0.7,y:0.8,label:'护城河'},{x:0.3,y:0.4,label:'暂不投入'}];
+  var W=240,H=150,pad=18;
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" class="quad-svg">';
+  svg+='<rect x="'+pad+'" y="'+pad+'" width="'+(W-2*pad)+'" height="'+(H-2*pad)+'" class="quad-bg"/>';
+  svg+='<line x1="'+(W/2)+'" y1="'+pad+'" x2="'+(W/2)+'" y2="'+(H-pad)+'" class="quad-axis"/>';
+  svg+='<line x1="'+pad+'" y1="'+(H/2)+'" x2="'+(W-pad)+'" y2="'+(H/2)+'" class="quad-axis"/>';
+  svg+='<text x="4" y="'+(H/2-4)+'" class="quad-lbl">满意度↑</text>';
+  svg+='<text x="'+(W/2+4)+'" y="'+(H-4)+'" class="quad-lbl">重要度→</text>';
+  pts.forEach(function(pt){
+    var cx=pad+pt.x*(W-2*pad),cy=pad+(1-pt.y)*(H-2*pad);
+    svg+='<circle cx="'+cx+'" cy="'+cy+'" r="5" class="quad-pt"/>';
+    svg+='<text x="'+cx+'" y="'+(cy-8)+'" class="quad-pt-lbl">'+(pt.label||'').slice(0,8)+'</text>';
+  });
+  svg+='</svg>';
+  var opp=pts.filter(function(pt){return pt.x>=0.6&&pt.y<=0.5;});
+  box.innerHTML=svg+'<div class="an-note">高重要·低满意区 = 创新突破口（'+(opp.length||'示例')+' 个机会点）</div>';
+  state.analysisSummary.quad=opp.length?('发现 '+opp.length+' 个高重要低满意机会点'):'示例象限已生成';
+}
+
+// ---- 基础分析结果：细分市场 ----
+function renderSegments(p){
+  var box=$('#segBox');if(!box)return;
+  var ins=getInsights(p.id);
+  var segs=ins.length?ins:[
+    {title:'高频使用者',body:'对核心体验要求高，愿为品质溢价。'},
+    {title:'性价比追求者',body:'价格敏感，差评集中在耐用性。'}
+  ];
+  box.innerHTML=segs.map(function(s){
+    var tags=s.tags?('<span class="seg-tags">'+s.tags.map(function(t){return '#'+t}).join(' ')+'</span>'):'';
+    return '<div class="seg-item"><b>'+escHtml(s.title)+'</b>'+tags+'<div class="seg-body">'+escHtml(s.body)+'</div></div>';
+  }).join('');
+  state.analysisSummary.segments=segs.map(function(s){return s.title;}).join('、');
+}
+
+// ---- 基础分析结果：购买旅程 ----
+function renderJourney(p){
+  var box=$('#journeyBox');if(!box)return;
+  var stages=['认知','考虑','购买','使用','忠诚'];
+  var pains=['触达分散','信息过载','决策犹豫','体验落差','复购乏力'];
+  box.innerHTML='<div class="journey-flow">'+stages.map(function(st,i){
+    return '<div class="j-step"><div class="j-num">'+(i+1)+'</div><div class="j-name">'+st+'</div>'+
+      '<div class="j-pain">'+pains[i]+'</div></div>'+(i<stages.length-1?'<div class="j-arrow">›</div>':'');
+  }).join('')+'</div>'+
+  '<div class="an-note">旅程断点已标出，建议优先修复「'+pains[3]+'」环节。</div>';
+  state.analysisSummary.journey='旅程断点：'+pains.join(' → ');
 }
 
 // ============================================================
@@ -1292,19 +1728,34 @@ function runVocTagger(){
 // EXPORT TO AI PROMPT (截图3)
 // ============================================================
 function gatherContext(){
-  var ctx={workspace:'',purpose:'',sources:[],methods:'',insights:[],canvasSummary:''};
+  var ctx={workspace:'',purpose:'',purposeDesc:'',sources:[],nlSources:[],frameworks:[],methods:'',
+           insights:[],analysis:{},canvasSummary:''};
 
   // Workspace & purpose
   ctx.workspace=DATA.workspaces[state.ws].label;
   if(state.purposeId){
     var p=getPurpose(state.ws,state.purposeId);
-    if(p){ctx.purpose=p.name;ctx.methods=p.methods;ctx.tools=p.tools;
+    if(p){ctx.purpose=p.name;ctx.purposeDesc=p.desc;ctx.methods=p.methods;ctx.tools=p.tools;
       p.sources.forEach(function(s){var src=getSource(s);if(src)ctx.sources.push(src.name+'('+src.type+')');});
     }
     // Insights
     var ins=getInsights(state.purposeId);
     ins.forEach(function(i){ctx.insights.push(i.title+': '+i.body);});
   }
+
+  // Level2：自然语言补充获取的数据源
+  state.nlAcquired.forEach(function(sid){
+    var s=getSource(sid);if(s)ctx.nlSources.push(s.name+'('+s.type+')');
+  });
+
+  // Level2：选中的分析框架
+  state.selectedFrameworks.forEach(function(fid){
+    var f=DATA.frameworks.find(function(x){return x.id===fid;});
+    if(f)ctx.frameworks.push(f.name+'：'+f.desc);
+  });
+
+  // Level2：基础分析结论
+  ctx.analysis=state.analysisSummary||{};
 
   // Canvas context
   if(state.canvasNodes.length){
@@ -1319,18 +1770,33 @@ function gatherContext(){
 }
 
 function generatePrompt(ctx,question){
-  var role='我是一名类目用户研究的创作者，你是我的思考伙伴。';
-  var prompt='---\n## 角色设定\n'+role+
-    '\n\n## 当前上下文\n### 工作方向\n'+ctx.workspace+
-    '\n### 当前目的\n'+(ctx.purpose||'全局概览')+
-    '\n### 调用的数据源\n'+(ctx.sources.length?ctx.sources.join('；'):'无')+
-    '\n### 分析方法\n'+(ctx.methods||'—')+
-    '\n### 关键洞察\n'+(ctx.insights.length?ctx.insights.join('\n'):'暂无')+
-    (ctx.canvasSummary?'\n### 画布状态\n'+ctx.canvasSummary:'')+
-    '\n\n## 我的问题\n'+question||
-    '请帮我综合以上信息，给出深度分析和可行动的建议。'+
-    '\n\n## 要求\n1. 先复述你对以上数据的理解，确保没有误解。\n2. 区分"数据已支持"、"需要验证"、"外部补充"三类结论，每条必标出处。'+
-    '3. 给出 2-3 个具体的下一步行动建议，按优先级排列。';
+  var q=question&&question.trim()?question.trim():'请帮我综合以上信息，给出深度分析和可行动的建议。';
+  var prompt=
+'# 分析任务提示词（请将以下内容完整复制给智能体）\n\n'+
+'## 角色设定\n你是一名严谨的类目用户研究分析师。请把自己当作**第一次接触我们数据**的人——'+
+'在阅读下方材料前不要做任何先验假设，所有结论都必须基于所提供的材料，并明确区分「数据已支持 / 需要验证 / 外部补充」。\n\n'+
+'## 一、当前目的（最重要）\n'+
+'- 工作方向：'+ctx.workspace+'\n'+
+'- 当前目的：'+(ctx.purpose||'全局概览')+'\n'+
+'- 目的说明：'+(ctx.purposeDesc||'—')+'\n\n'+
+'## 二、数据源（上下文）\n'+
+'- 该目的已绑定的数据源：\n'+(ctx.sources.length?ctx.sources.map(function(s){return '  · '+s}).join('\n'):'  · 无')+'\n'+
+(ctx.nlSources.length?'- 通过自然语言补充获取的数据源：\n'+ctx.nlSources.map(function(s){return '  · '+s}).join('\n')+'\n':'')+
+'## 三、使用的分析框架\n'+
+(ctx.frameworks.length?ctx.frameworks.map(function(f){return '  · '+f}).join('\n')+'\n':'  · 由你判断选用合适框架\n')+
+'## 四、已有基础分析结论（skill 简化版自动产出，供你延展，非终稿）\n'+
+'- 需求四象限：'+(ctx.analysis.quad||'未生成')+'\n'+
+'- 细分市场：'+(ctx.analysis.segments||'未生成')+'\n'+
+'- 购买旅程：'+(ctx.analysis.journey||'未生成')+'\n'+
+'## 五、关键洞察（来自数据源与交叉分析）\n'+
+(ctx.insights.length?ctx.insights.map(function(i){return '  · '+i}).join('\n'):'  · 暂无')+'\n'+
+(ctx.canvasSummary?('## 六、画布推导状态\n'+ctx.canvasSummary+'\n'):'')+
+'\n## 七、我的问题\n'+q+'\n\n'+
+'## 八、输出要求（务必遵守）\n'+
+'1. **复述理解**：先用自己的话复述你对以上数据、目的与上下文的理解，确认没有误解后再展开。\n'+
+'2. **三类结论标注**：所有结论必须归入「数据已支持 / 需要验证 / 外部补充」三类，且**每条必标出处**（注明来自哪个数据源或框架）。\n'+
+'3. **行动建议**：给出 2-3 个具体可执行的下一步行动，按优先级排列，并说明预期收益与所需验证。\n'+
+'4. **多轮深化**：如信息不足以支撑某结论，明确指出缺口并建议补充哪类数据，而非编造。';
   return prompt;
 }
 
