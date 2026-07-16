@@ -599,6 +599,20 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .gal-h-title{font-size:22px;font-weight:800;letter-spacing:.1px;background:var(--rad-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .gal-h-sub{font-size:12.5px;color:var(--muted);margin-top:5px;max-width:760px;line-height:1.6}
 .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:6px 24px 40px}
+/* ——分析框架双板块—— */
+.fg-section{margin-bottom:8px}
+.fg-shead{font-size:13px;font-weight:800;color:var(--ink);margin:0 24px 10px;display:flex;align-items:center;gap:8px}
+.fg-shead::before{content:'';width:4px;height:14px;border-radius:2px;background:var(--rad-grad)}
+.dc-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;margin:0 24px 10px;padding:18px 20px;
+  transition:all .25s;position:relative;overflow:hidden}
+.dc-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:rgba(0,195,243,.45)}
+.dc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rad-grad)}
+.dc-head{display:flex;align-items:center;gap:14px}
+.dc-ico{width:52px;height:52px;border-radius:14px;background:var(--rad-grad);display:grid;place-items:center;flex-shrink:0;box-shadow:0 6px 18px rgba(0,195,243,.25)}
+.dc-title{font-size:18px;font-weight:800;color:var(--ink)}
+.dc-sub{font-size:12px;color:var(--ink-2);margin-top:2px}
+.dc-go{margin-left:auto;font-size:12px;font-weight:700;color:var(--accent);opacity:.85}
 .gal-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
   border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 18px;cursor:pointer;
   transition:transform .25s var(--easing),box-shadow .25s var(--easing),border-color .25s;position:relative;overflow:hidden;animation:fadeInUp .4s both}
@@ -1817,7 +1831,7 @@ function openSourceGallery(){
 function openFrameworkGallery(){
   setActiveNav('nav-fw');
   $('#subnav').classList.remove('show');
-  $('#topbarTitle').textContent='分析框架 · 全景';
+  $('#topbarTitle').textContent='分析框架';
   var cards=DATA.frameworks.map(function(f,i){
     return '<div class="gal-card" onclick="openFramework(\''+f.id+'\')">'+
       '<div class="gal-top"><span class="gal-idx">'+(i+1)+'</span><span class="gal-name">'+escHtml(f.name)+'</span></div>'+
@@ -1825,11 +1839,19 @@ function openFrameworkGallery(){
       '<div class="gal-foot"><span class="gal-rec">共享框架</span><span class="gal-go">查看</span></div>'+
     '</div>';
   }).join('');
+  // 数据清洗框架（VOC标签体系）入口卡片
+  var dataCleanCard =
+    '<div class="dc-card" onclick="openFramework(\'voc\')"><div class="dc-head">'+
+      '<div class="dc-ico"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 20 7.4 12 11.8 4 7.4Z"/><path d="M4 7.4 4 16.6 12 21 12 11.8"/><path d="M20 7.4 20 16.6 12 21"/></svg></div>'+
+      '<div><div class="dc-title">数据清洗框架</div><div class="dc-sub">VOC 标签体系 · 9 大模块 · 35 子维度 · 类目用户案例</div></div>'+
+      '<span class="dc-go">进入</span></div>'+
+    '</div>';
   setView('FrameworkGallery');
   $('#viewFrameworkGallery').innerHTML=
-    '<div class="gal-head"><div><div class="gal-h-title">分析框架 · 全景</div>'+
-      '<div class="gal-h-sub">共 '+DATA.frameworks.length+' 个分析框架，在「目的工作区」中被调用以组织洞察与推导链路</div></div></div>'+
-    '<div class="gal-grid">'+cards+'</div>';
+    '<div class="gal-head"><div><div class="gal-h-title">分析框架</div>'+
+      '<div class="gal-h-sub">两大板块：数据清洗框架（VOC标签体系） + 分析框架全景（'+DATA.frameworks.length+' 个分析框架）</div></div></div>'+
+    '<div class="fg-section"><div class="fg-shead">数据清洗框架</div>'+dataCleanCard+'</div>'+
+    '<div class="fg-section"><div class="fg-shead">分析框架全景</div><div class="gal-grid">'+cards+'</div></div>';
 }
 
 // ---- 板块3：AI 简化工具落地页（四大类分组） ----
