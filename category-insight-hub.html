@@ -1005,7 +1005,7 @@ function renderNavShared(){
     '<div class="nav-item" data-nav="nav-fw" onclick="openFrameworkGallery()">'+
       '<span class="ni-name">分析框架</span><span class="ni-sub">'+fwN+' 个</span></div>'+
     '<div class="nav-item" data-nav="nav-ai" onclick="openAITools()">'+
-      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">2 个</span></div>';
+      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">3 个</span></div>';
   $('#navShared').innerHTML=html;
 }
 
@@ -1268,23 +1268,33 @@ function openAITools(){
   setActiveNav('nav-ai');
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent='AI 简化工具';
+  // Radium 渐变方块 + 内嵌 3D 几何图形（白描边 SVG）
+  var ICON_VOC = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 20 7.4 12 11.8 4 7.4Z"/><path d="M4 7.4 4 16.6 12 21 12 11.8"/><path d="M20 7.4 20 16.6 12 21"/></svg>';
+  var ICON_CORPUS = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M5 20V11M12 20V5M19 20v-7"/><path d="M3.5 20h17"/></svg>';
+  var ICON_PREDICT = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M3 17l5-5 4 3 7-8"/><path d="M16 7h5v5"/></svg>';
   var cards=
     '<div class="ai-card" onclick="openVocTool()">'+
-      '<div class="ai-ico">01</div>'+
+      '<div class="ai-ico">'+ICON_VOC+'</div>'+
       '<div class="ai-name">VOC 打标签工具</div>'+
       '<div class="ai-desc">基于本地规则引擎（含否定保护），对单条用户评论/社媒内容实时打维度标签并给出判断。零依赖、可离线。</div>'+
       '<div class="ai-go">打开工具</div>'+
     '</div>'+
     '<div class="ai-card" onclick="openCorpusTool()">'+
-      '<div class="ai-ico">02</div>'+
+      '<div class="ai-ico">'+ICON_CORPUS+'</div>'+
       '<div class="ai-name">用户语料分析工具</div>'+
       '<div class="ai-desc">粘贴多行用户语料，批量运行 VOC 规则，输出维度标签频率、负面占比、高频问题 TOP 列表，辅助发现机会点。</div>'+
       '<div class="ai-go">打开工具</div>'+
+    '</div>'+
+    '<div class="ai-card" onclick="openPredictTool()">'+
+      '<div class="ai-ico">'+ICON_PREDICT+'</div>'+
+      '<div class="ai-name">预测工具</div>'+
+      '<div class="ai-desc">基于历史销售与类目信号，预测趋势与机会窗口，辅助选品与排期决策。跳转至外部预测控制台。</div>'+
+      '<div class="ai-go">打开控制台 ↗</div>'+
     '</div>';
   setView('AITools');
   $('#viewAITools').innerHTML=
     '<div class="gal-head"><div><div class="gal-h-title">AI 简化工具</div>'+
-      '<div class="gal-h-sub">两个轻量分析工具：VOC 打标签（单条）+ 用户语料分析（批量）。均为本地运行，不依赖大模型。</div></div></div>'+
+      '<div class="gal-h-sub">三个工具：VOC 打标签（单条）、用户语料分析（批量，本地运行）+ 预测控制台（外部）。均不依赖大模型。</div></div></div>'+
     '<div class="ai-grid">'+cards+'</div>';
 }
 
@@ -1296,6 +1306,11 @@ function openVocTool(){
   var th=document.body.classList.contains('dark')?'dark':'light';
   $('#viewVocTool').innerHTML=
     '<iframe class="voc-frame" src="voc-tagging.html?theme='+th+'" title="VOC 智能打标工具"></iframe>';
+}
+
+// ---- 预测工具（外部控制台）----
+function openPredictTool(){
+  window.open('https://ffswwwda.github.io/mirofish-console/','_blank','noopener');
 }
 
 // ---- 用户语料分析工具（批量）----
