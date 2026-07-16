@@ -628,7 +628,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
       <div class="view" id="viewWorkspace">
         <!-- Workspace bar -->
         <div class="ws-bar">
-          <button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
           <span class="ws-title" id="wsPurposeTitle">新品打造</span>
           <span class="ws-tag" id="wsWsTag">B · 运营目的</span>
           <div style="margin-left:auto;display:flex;gap:6px">
@@ -658,7 +658,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
             </div>
             <svg class="canvas-svg" id="canvasSvg"></svg>
             <div class="material-drawer" id="matDrawer">
-              <div class="cd-head">素材 <span class="cd-toggle" onclick="toggleDrawer()">&#x25B2;</span></div>
+              <div class="cd-head">素材 <span class="cd-toggle" onclick="toggleDrawer()">收起</span></div>
               <div id="drawerItems"></div>
             </div>
             <div class="zoom-indicator" id="zoomIndicator">100%</div>
@@ -669,7 +669,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
       <!-- ===== VIEW: DE DASHBOARD ===== -->
       <div class="view" id="viewDe">
         <div class="ws-bar">
-          <button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
           <span class="ws-title">亚马逊德国 · 数据源看板</span>
           <span class="ws-tag">已接入 · 248款商品</span>
         </div>
@@ -1089,7 +1089,7 @@ function renderSourceExplorer(srcId){
   setView('Source');
   $('#viewSource').innerHTML=
     '<div class="ws-bar">'+
-      '<button class="ws-back" onclick="openSourceGallery()">&#8592; 返回数据源</button>'+
+      '<button class="ws-back" onclick="openSourceGallery()">返回数据源</button>'+
       '<span class="ws-title">'+escHtml(s.name)+'</span>'+
       '<span class="ws-tag">'+(s.status==='ready'?'已接入':'样本数据')+'</span>'+
       '<div style="margin-left:auto;display:flex;gap:6px">'+
@@ -1198,7 +1198,7 @@ function openFramework(fwId){
   $('#topbarTitle').textContent=f.name;
   setView('Framework');
   $('#viewFramework').innerHTML=
-    '<div class="ws-bar"><button class="ws-back" onclick="openFrameworkGallery()">&#8592; 返回分析框架</button>'+
+    '<div class="ws-bar"><button class="ws-back" onclick="openFrameworkGallery()">返回分析框架</button>'+
       '<span class="ws-title">'+escHtml(f.name)+'</span>'+
       '<span class="ws-tag">分析框架 · 共享</span></div>'+
     '<div class="fw-detail">'+
@@ -1225,7 +1225,7 @@ function openSourceGallery(){
         (s.hasDashboard?'<span class="gal-badge">看板</span>':'')+'</div>'+
       '<div class="gal-type">'+escHtml(s.type)+' · '+escHtml(s.market)+'</div>'+
       '<div class="gal-desc">'+escHtml(s.desc)+'</div>'+
-      '<div class="gal-foot"><span class="gal-rec">'+ready+' · '+rec+'</span><span class="gal-go">进入 &#8594;</span></div>'+
+      '<div class="gal-foot"><span class="gal-rec">'+ready+' · '+rec+'</span><span class="gal-go">进入</span></div>'+
     '</div>';
   }).join('');
   setView('SourceGallery');
@@ -1244,7 +1244,7 @@ function openFrameworkGallery(){
     return '<div class="gal-card" onclick="openFramework(\''+f.id+'\')">'+
       '<div class="gal-top"><span class="gal-idx">'+(i+1)+'</span><span class="gal-name">'+escHtml(f.name)+'</span></div>'+
       '<div class="gal-desc">'+escHtml(f.desc)+'</div>'+
-      '<div class="gal-foot"><span class="gal-rec">共享框架</span><span class="gal-go">查看 &#8594;</span></div>'+
+      '<div class="gal-foot"><span class="gal-rec">共享框架</span><span class="gal-go">查看</span></div>'+
     '</div>';
   }).join('');
   setView('FrameworkGallery');
@@ -1264,13 +1264,13 @@ function openAITools(){
       '<div class="ai-ico">01</div>'+
       '<div class="ai-name">VOC 打标签工具</div>'+
       '<div class="ai-desc">基于本地规则引擎（含否定保护），对单条用户评论/社媒内容实时打维度标签并给出判断。零依赖、可离线。</div>'+
-      '<div class="ai-go">打开工具 &#8594;</div>'+
+      '<div class="ai-go">打开工具</div>'+
     '</div>'+
     '<div class="ai-card" onclick="openCorpusTool()">'+
       '<div class="ai-ico">02</div>'+
       '<div class="ai-name">用户语料分析工具</div>'+
       '<div class="ai-desc">粘贴多行用户语料，批量运行 VOC 规则，输出维度标签频率、负面占比、高频问题 TOP 列表，辅助发现机会点。</div>'+
-      '<div class="ai-go">打开工具 &#8594;</div>'+
+      '<div class="ai-go">打开工具</div>'+
     '</div>';
   setView('AITools');
   $('#viewAITools').innerHTML=
@@ -1285,7 +1285,7 @@ function openVocTool(){
   $('#topbarTitle').textContent='VOC 打标签工具';
   setView('VocTool');
   $('#viewVocTool').innerHTML=
-    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">&#8592; 返回工具箱</button>'+
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">VOC 打标签工具</span>'+
       '<span class="ws-tag">本地规则引擎</span></div>'+
     '<div class="tool-wrap">'+
@@ -1307,7 +1307,7 @@ function openCorpusTool(){
   $('#topbarTitle').textContent='用户语料分析工具';
   setView('CorpusTool');
   $('#viewCorpusTool').innerHTML=
-    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">&#8592; 返回工具箱</button>'+
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">用户语料分析工具</span>'+
       '<span class="ws-tag">批量 · 本地</span></div>'+
     '<div class="tool-wrap">'+
@@ -1475,7 +1475,7 @@ function renderStructPanel(p){
   var mcHtml='<div class="struct-section"><div class="ss-head">分析方法链路</div><div class="method-chain">';
   steps.forEach(function(st,i){
     mcHtml+='<div class="mc-step"><div class="mc-num">'+(i+1)+'</div><span>'+escHtml(st)+'</span></div>';
-    if(i<steps.length-1)mcHtml+='<div class="mc-arrow">&#x21B3;</div>';
+    if(i<steps.length-1)mcHtml+='<div class="mc-arrow">↓</div>';
   });
   mcHtml+='</div></div>';
 
