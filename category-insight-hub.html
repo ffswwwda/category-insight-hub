@@ -591,6 +591,11 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ai-name{font-size:17px;font-weight:800;margin-bottom:8px;color:var(--ink)}
 .ai-desc{font-size:12.5px;color:var(--ink-2);line-height:1.65;margin-bottom:14px}
 .ai-go{font-size:12.5px;font-weight:700;color:var(--accent);opacity:.85}
+.ai-groups{margin-top:0}
+.ai-group{margin-bottom:20px}
+.ag-head{padding:8px 24px 10px;font-size:15px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:10px}
+.ag-head::before{content:'';width:4px;height:16px;border-radius:2px;background:var(--rad-grad);flex-shrink:0}
+.ai-group .ai-grid{padding:0 24px}
 
 /* ============ PRODUCT SCORING TOOL ============ */
 .ps-dims{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:14px}
@@ -950,6 +955,14 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
       <!-- ===== VIEW: LEAD-USER FEEDBACK ZONE (平级于 AI 简化工具) ===== -->
       <div class="view" id="viewLfZone"></div>
 
+      <!-- ===== VIEW: PREDICTIVE TOOLS ===== -->
+      <div class="view" id="viewInsightTool"></div>
+      <div class="view" id="viewRiskPredict"></div>
+
+      <!-- ===== VIEW: CREATIVE TOOLS ===== -->
+      <div class="view" id="viewNewIdea"></div>
+      <div class="view" id="viewNewDevelop"></div>
+
     </section>
   </main>
 </div>
@@ -1257,7 +1270,7 @@ function renderNavShared(){
     '<div class="nav-item" data-nav="nav-fw" onclick="openFrameworkGallery()">'+
       '<span class="ni-name">分析框架</span><span class="ni-sub">'+fwN+' 个</span></div>'+
     '<div class="nav-item" data-nav="nav-ai" onclick="openAITools()">'+
-      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">4 个</span></div>'+
+      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">9 个</span></div>'+
     '<div class="nav-item" data-nav="nav-lf" onclick="openLfZone()">'+
       '<span class="ni-name">领新用户反馈专区</span><span class="ni-sub">画像+反馈</span></div>';
   $('#navShared').innerHTML=html;
@@ -1517,7 +1530,7 @@ function openFrameworkGallery(){
     '<div class="gal-grid">'+cards+'</div>';
 }
 
-// ---- 板块3：AI 简化工具落地页 ----
+// ---- 板块3：AI 简化工具落地页（四大类分组） ----
 function openAITools(){
   setActiveNav('nav-ai');
   $('#subnav').classList.remove('show');
@@ -1525,38 +1538,51 @@ function openAITools(){
   // Radium 渐变方块 + 内嵌 3D 几何图形（白描边 SVG）
   var ICON_VOC = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 20 7.4 12 11.8 4 7.4Z"/><path d="M4 7.4 4 16.6 12 21 12 11.8"/><path d="M20 7.4 20 16.6 12 21"/></svg>';
   var ICON_CORPUS = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M5 20V11M12 20V5M19 20v-7"/><path d="M3.5 20h17"/></svg>';
-  var ICON_PREDICT = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M3 17l5-5 4 3 7-8"/><path d="M16 7h5v5"/></svg>';
   var ICON_SCORE = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/><path d="M12 6v4M12 16v2"/></svg>';
-  var cards=
-    '<div class="ai-card" onclick="openVocTool()">'+
-      '<div class="ai-ico">'+ICON_VOC+'</div>'+
-      '<div class="ai-name">VOC 打标签工具</div>'+
-      '<div class="ai-desc">基于本地规则引擎（含否定保护），对单条用户评论/社媒内容实时打维度标签并给出判断。零依赖、可离线。</div>'+
-      '<div class="ai-go">打开工具</div>'+
-    '</div>'+
-    '<div class="ai-card" onclick="openCorpusTool()">'+
-      '<div class="ai-ico">'+ICON_CORPUS+'</div>'+
-      '<div class="ai-name">用户语料分析工具</div>'+
-      '<div class="ai-desc">粘贴多行用户语料，批量运行 VOC 规则，输出维度标签频率、负面占比、高频问题 TOP 列表，辅助发现机会点。</div>'+
-      '<div class="ai-go">打开工具</div>'+
-    '</div>'+
-    '<div class="ai-card" onclick="openPredictTool()">'+
-      '<div class="ai-ico">'+ICON_PREDICT+'</div>'+
-      '<div class="ai-name">预测工具</div>'+
-      '<div class="ai-desc">基于历史销售与类目信号，预测趋势与机会窗口，辅助选品与排期决策。跳转至外部预测控制台。</div>'+
-      '<div class="ai-go">打开控制台 ↗</div>'+
-    '</div>'+
-    '<div class="ai-card" onclick="openProductScore()">'+
-      '<div class="ai-ico">'+ICON_SCORE+'</div>'+
-      '<div class="ai-name">产品打分工具</div>'+
-      '<div class="ai-desc">输入自然语言或上传文件（Word/表格），自动拆解类目/客单价/功能/外观 → 匹配数据源 → 按三大板块12维度评分，每项附理由、引用源（可点击追溯）与置信度。</div>'+
-      '<div class="ai-go">打开工具</div>'+
-    '</div>';
+  var ICON_PREDICT = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M3 17l5-5 4 3 7-8"/><path d="M16 7h5v5"/></svg>';
+  var ICON_INSIGHT = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/><circle cx="12" cy="8" r="1.5" fill="#fff"/></svg>';
+  var ICON_RISK = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2l8 3v8a10 10 0 01-8 9 10 10 0 01-8-9V5l8-3z"/><path d="M12 8v4"/><circle cx="12" cy="16" r=".5" fill="#fff"/></svg>';
+  var ICON_GTM = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2a15 15 0 010 20 15 15 0 010-20z"/></svg>';
+  var ICON_IDEA = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M10 17v4h4v-4"/><path d="M12 3a6 6 0 00-4 10.3V14h8v-.7A6 6 0 0012 3z"/></svg>';
+  var ICON_DEV = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>';
+
+  function _c(icon,name,desc,go,onclick){
+    return '<div class="ai-card" onclick="'+onclick+'">'+
+      '<div class="ai-ico">'+icon+'</div>'+
+      '<div class="ai-name">'+escHtml(name)+'</div>'+
+      '<div class="ai-desc">'+escHtml(desc)+'</div>'+
+      '<div class="ai-go">'+escHtml(go)+'</div></div>';
+  }
+
+  var groups = [
+    {head:'分析类工具', cards:
+      _c(ICON_VOC,'VOC 智能打标工具','基于本地规则引擎（含否定保护），对单条用户评论/社媒内容实时打维度标签并给出判断。零依赖、可离线。','打开工具',"openVocTool()")+
+      _c(ICON_CORPUS,'用户语料分析工具','粘贴多行用户语料，批量运行 VOC 规则，输出维度标签频率、负面占比、高频问题 TOP 列表，辅助发现机会点。','打开工具',"openCorpusTool()")+
+      _c(ICON_SCORE,'产品打分工具','输入自然语言或上传文件，自动拆解类目/客单价/功能/外观 → 匹配数据源 → 三大板块12维度评分，每项附理由、引用源（可点击追溯）与置信度。','打开工具',"openProductScore()")
+    },
+    {head:'预测类工具', cards:
+      _c(ICON_PREDICT,'数字世界模拟预测','基于历史销售与类目信号，模拟预测趋势与机会窗口，辅助选品与排期决策。跳转至外部预测控制台。','打开控制台 ↗',"openPredictTool()")+
+      _c(ICON_INSIGHT,'用户洞察工具','基于用户评论/反馈/社媒数据，识别用户画像、购买动机、使用场景与未满足需求——从数据中提炼可执行的用户洞察。','打开工具',"openInsightTool()")+
+      _c(ICON_RISK,'风险预测工具','综合类目趋势、竞品动态、政策变化与供应链信号，预测产品上市/运营的关键风险点与规避策略。','打开工具',"openRiskPredict()")
+    },
+    {head:'看板类工具', cards:
+      _c(ICON_GTM,'GTM 社媒监控看板','监控社媒渠道（Reddit / 论坛 / 社媒）的品牌提及、趋势信号与竞品讨论，辅助 GTM 策略调整。','跳转看板 ↗',"openGTMDashboard()")
+    },
+    {head:'创意类工具', cards:
+      _c(ICON_IDEA,'新品打造创意灵感','基于市场趋势、用户痛点与领先用户洞察，生成新品概念方向与差异化定位灵感。','打开工具',"openNewIdeaTool()")+
+      _c(ICON_DEV,'新品开发创意工具','结合需求四象限与 TRIZ 创新方法，系统化生成新品功能组合与创新方案，输出 FABE 设计需求。','打开工具',"openNewDevelopTool()")
+    }
+  ];
+
+  var groupHtml = groups.map(function(g){
+    return '<div class="ai-group"><div class="ag-head">'+escHtml(g.head)+'</div><div class="ai-grid">'+g.cards+'</div></div>';
+  }).join('');
+
   setView('AITools');
   $('#viewAITools').innerHTML=
     '<div class="gal-head"><div><div class="gal-h-title">AI 简化工具</div>'+
-      '<div class="gal-h-sub">四个工具：VOC 打标签（单条）、用户语料分析（批量，含情绪）、产品打分（自然语言拆解 + 数据源匹配评分）+ 预测控制台（外部）。均不依赖大模型。</div></div></div>'+
-    '<div class="ai-grid">'+cards+'</div>';
+      '<div class="gal-h-sub">四大类共 9 个工具：分析类（VOC/语料/产品打分）、预测类（模拟/洞察/风险）、看板类（GTM社媒）、创意类（新品灵感/新品开发）。均不依赖大模型。</div></div></div>'+
+    '<div class="ai-groups">'+groupHtml+'</div>';
 }
 
 // ---- 领新用户反馈专区（与 AI 简化工具平级的独立入口） ----
@@ -1584,12 +1610,84 @@ function openVocTool(){
   setView('VocTool');
   var th=document.body.classList.contains('dark')?'dark':'light';
   $('#viewVocTool').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
+      '<span class="ws-title">VOC 打标签工具</span>'+
+      '<span class="ws-tag">单条 · 实时的标签与判断</span></div>'+
     '<iframe class="voc-frame" src="voc-tagging.html?theme='+th+'" title="VOC 智能打标工具"></iframe>';
 }
 
 // ---- 预测工具（外部控制台）----
 function openPredictTool(){
   window.open('https://ffswwwda.github.io/mirofish-console/','_blank','noopener');
+}
+
+// ---- 用户洞察工具（预测类）----
+function openInsightTool(){
+  setActiveNav('nav-ai');
+  $('#topbarTitle').textContent='用户洞察工具';
+  setView('InsightTool');
+  $('#viewInsightTool').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
+      '<span class="ws-title">用户洞察工具</span>'+
+      '<span class="ws-tag">画像 · 动机 · 场景 · 未满足需求</span></div>'+
+    '<div class="tool-wrap" style="padding:40px;text-align:center;color:var(--muted)">'+
+      '<div style="font-size:40px;margin-bottom:12px;color:var(--accent)"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/><circle cx="12" cy="8" r="1.5" fill="#fff"/></svg></div>'+
+      '<div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px">用户洞察工具</div>'+
+      '<div style="font-size:13px;line-height:1.7;max-width:400px;margin:0 auto">基于用户评论 / 反馈 / 社媒数据，识别用户画像、购买动机、使用场景与未满足需求，从数据中提炼可执行的用户洞察。</div>'+
+      '<div style="margin-top:20px;font-size:11px;color:var(--muted)">数据接入中 · 功能即将上线</div></div>';
+}
+
+// ---- 风险预测工具（预测类）----
+function openRiskPredict(){
+  setActiveNav('nav-ai');
+  $('#topbarTitle').textContent='风险预测工具';
+  setView('RiskPredict');
+  $('#viewRiskPredict').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
+      '<span class="ws-title">风险预测工具</span>'+
+      '<span class="ws-tag">趋势 · 竞品 · 政策 · 供应链</span></div>'+
+    '<div class="tool-wrap" style="padding:40px;text-align:center;color:var(--muted)">'+
+      '<div style="font-size:40px;margin-bottom:12px;color:var(--accent)"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2l8 3v8a10 10 0 01-8 9 10 10 0 01-8-9V5l8-3z"/><path d="M12 8v4"/><circle cx="12" cy="16" r=".5" fill="#fff"/></svg></div>'+
+      '<div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px">风险预测工具</div>'+
+      '<div style="font-size:13px;line-height:1.7;max-width:400px;margin:0 auto">综合类目趋势、竞品动态、政策变化与供应链信号，预测产品上市 / 运营的关键风险点与规避策略。</div>'+
+      '<div style="margin-top:20px;font-size:11px;color:var(--muted)">数据接入中 · 功能即将上线</div></div>';
+}
+
+// ---- GTM 社媒监控看板（看板类，外部跳转）----
+function openGTMDashboard(){
+  window.open('https://ffswwwda.github.io/content-analytics-dashboard/','_blank','noopener');
+}
+
+// ---- 新品打造创意灵感（创意类）----
+function openNewIdeaTool(){
+  setActiveNav('nav-ai');
+  $('#topbarTitle').textContent='新品打造创意灵感';
+  setView('NewIdea');
+  $('#viewNewIdea').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
+      '<span class="ws-title">新品打造创意灵感</span>'+
+      '<span class="ws-tag">趋势 · 痛点 · 领先用户 · 差异化定位</span></div>'+
+    '<div class="tool-wrap" style="padding:40px;text-align:center;color:var(--muted)">'+
+      '<div style="font-size:40px;margin-bottom:12px;color:var(--accent)"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M10 17v4h4v-4"/><path d="M12 3a6 6 0 00-4 10.3V14h8v-.7A6 6 0 0012 3z"/></svg></div>'+
+      '<div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px">新品打造创意灵感</div>'+
+      '<div style="font-size:13px;line-height:1.7;max-width:400px;margin:0 auto">基于市场趋势、用户痛点与领先用户洞察，生成新品概念方向与差异化定位灵感。</div>'+
+      '<div style="margin-top:20px;font-size:11px;color:var(--muted)">数据接入中 · 功能即将上线</div></div>';
+}
+
+// ---- 新品开发创意工具（创意类）----
+function openNewDevelopTool(){
+  setActiveNav('nav-ai');
+  $('#topbarTitle').textContent='新品开发创意工具';
+  setView('NewDevelop');
+  $('#viewNewDevelop').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
+      '<span class="ws-title">新品开发创意工具</span>'+
+      '<span class="ws-tag">FABE · TRIZ · 需求四象限 · 创新方案</span></div>'+
+    '<div class="tool-wrap" style="padding:40px;text-align:center;color:var(--muted)">'+
+      '<div style="font-size:40px;margin-bottom:12px;color:var(--accent)"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>'+
+      '<div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px">新品开发创意工具</div>'+
+      '<div style="font-size:13px;line-height:1.7;max-width:400px;margin:0 auto">结合需求四象限与 TRIZ 创新方法，系统化生成新品功能组合与创新方案，输出 FABE 设计需求。</div>'+
+      '<div style="margin-top:20px;font-size:11px;color:var(--muted)">数据接入中 · 功能即将上线</div></div>';
 }
 
 // ---- 产品打分工具（三维度12指标加权评分）----
