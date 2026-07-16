@@ -2795,13 +2795,22 @@ function ensureLfModal(){
   if(document.getElementById('lfModal')) return;
   var div=document.createElement('div');
   div.id='lfModal'; div.className='lfm-overlay';
-  div.onclick=function(e){ if(e.target===e.currentTarget) closeLfModal(); };
-  div.innerHTML='<div class="lfm-box" onclick="event.stopPropagation()"><div class="lfm-head">'+
+  div.innerHTML='<div class="lfm-box"><div class="lfm-head">'+
     '<span class="lfm-title" id="lfmTitle"></span><div class="lfm-actions">'+
-    '<button class="lfm-btn" onclick="exportLfCard()">导出图片</button>'+
-    '<button class="lfm-btn" onclick="copyLfCard()">复制文本</button>'+
-    '<button class="lfm-close" onclick="closeLfModal()">&times;</button></div></div>'+
+    '<button class="lfm-btn" id="lfmExportBtn">导出图片</button>'+
+    '<button class="lfm-btn" id="lfmCopyBtn">复制文本</button>'+
+    '<button class="lfm-close" id="lfmCloseBtn">&times;</button></div></div>'+
     '<div class="lfm-body" id="lfmBody"></div></div>';
+  // 用 addEventListener 绑定所有事件，避免 HTML onclick 的 event 变量问题
+  div.addEventListener('click', function(e){ if(e.target===e.currentTarget) closeLfModal(); });
+  var box=div.querySelector('.lfm-box');
+  if(box) box.addEventListener('click', function(e){ e.stopPropagation(); });
+  var expBtn=div.querySelector('#lfmExportBtn');
+  if(expBtn) expBtn.addEventListener('click', exportLfCard);
+  var cpyBtn=div.querySelector('#lfmCopyBtn');
+  if(cpyBtn) cpyBtn.addEventListener('click', copyLfCard);
+  var clsBtn=div.querySelector('#lfmCloseBtn');
+  if(clsBtn) clsBtn.addEventListener('click', closeLfModal);
   document.body.appendChild(div);
   document.addEventListener('keydown', function lfmKd(e){ if(e.key==='Escape') closeLfModal(); });
 }
