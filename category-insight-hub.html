@@ -592,6 +592,73 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ai-desc{font-size:12.5px;color:var(--ink-2);line-height:1.65;margin-bottom:14px}
 .ai-go{font-size:12.5px;font-weight:700;color:var(--accent);opacity:.85}
 
+/* ============ PRODUCT SCORING TOOL ============ */
+.ps-dims{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:14px}
+.ps-dim{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;position:relative;overflow:hidden}
+.ps-dim::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rad-grad)}
+.ps-dim-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ps-dim-ico{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:17px}
+.ps-dim-title{font-size:15px;font-weight:800;color:var(--ink)}
+.ps-dim-wt{margin-left:auto;font-size:13px;font-weight:800;padding:2px 10px;border-radius:8px}
+.ps-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(128,140,164,.12)}
+.ps-item:last-child{border-bottom:none}
+.ps-item-name{flex:1;font-size:12.5px;color:var(--ink-2);line-height:1.4}
+.ps-item-score{width:56px;text-align:center;font-size:13px;font-weight:700;color:var(--ink)}
+.ps-slider{flex:1;height:4px;-webkit-appearance:none;appearance:none;border-radius:2px;
+  background:rgba(128,140,164,.15);outline:none;cursor:pointer}
+.ps-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--rad-grad);cursor:pointer;box-shadow:0 2px 8px rgba(0,195,243,.35)}
+.ps-total-bar{display:flex;align-items:center;gap:20px;margin-top:22px;padding:18px 22px;
+  background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(168,87,247,.06));
+  border:1px solid rgba(0,195,243,.25);border-radius:var(--radius)}
+.ps-total-label{font-size:14px;font-weight:700;color:var(--ink)}
+.ps-total-val{font-size:32px;font-weight:900;background:var(--rad-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text}
+.ps-total-max{font-size:12px;color:var(--muted)}
+.ps-radar-wrap{text-align:center;margin-top:18px}
+.ps-radar-wrap svg{max-width:360px;width:100%;height:auto}
+.ps-verdict{margin-top:14px;padding:12px 18px;border-radius:var(--radius-sm);
+  font-size:13.5px;font-weight:700;text-align:center;line-height:1.55}
+.ps-verdict.go{background:rgba(16,185,129,.1);color:#059669;border:1px solid rgba(16,185,129,.25)}
+.ps-verdict.caution{background:rgba(245,158,11,.1);color:#d97706;border:1px solid rgba(245,158,11,.25)}
+.ps-verdict.stop{background:rgba(220,38,38,.1);color:#dc2626;border:1px solid rgba(220,38,38,.25)}
+
+/* ============ LEAD USER FEEDBACK ZONE ============ */
+.lf-zone{margin-top:6px}
+.lf-tabs{display:flex;gap:0;margin-bottom:10px;border-bottom:1px solid var(--border)}
+.lf-tab{padding:7px 16px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s;position:relative;top:1px}
+.lf-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.lf-tab:hover:not(.active){color:var(--ink-2)}
+.lf-body{min-height:120px}
+/* User Identity Cards */
+.uid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.uid-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.uid-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.uid-avatar{width:40px;height:40px;border-radius:12px;background:var(--rad-grad);display:grid;
+  place-items:center;font-size:18px;font-weight:900;color:#fff;margin-bottom:8px}
+.uid-name{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:2px}
+.uid-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}
+.uid-tag{font-size:10px;padding:1px 7px;border-radius:6px;background:rgba(0,212,255,.1);color:var(--accent);font-weight:600}
+.uid-quote{font-size:11.5px;color:var(--ink-2);line-height:1.5;font-style:italic;border-left:2px solid var(--accent);
+  padding-left:8px;margin-top:4px}
+.uid-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--muted)}
+/* Raw Feedback List */
+.rf-list{}.rf-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px;transition:background .15s}
+.rf-row:hover{background:rgba(0,212,255,.04)}
+.rf-src{font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px;white-space:nowrap;margin-top:2px}
+.rf-src.voc{background:rgba(245,158,11,.1);color:#b45309}
+.rf-src.interview{background:rgba(168,87,247,.1);color:#7e22ce}
+.rf-src.niche{background:rgba(16,185,129,.1);color:#047857}
+.rf-txt{flex:1;color:var(--ink-2);line-height:1.5}
+.rf-metrics{display:flex;gap:6px;flex-shrink:0}
+.rf-metric{font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px;white-space:nowrap}
+.rf-metric.lead{background:rgba(0,212,255,.1);color:#0369a1}
+.rf-metric.creat{background:rgba(236,72,153,.1);color:#be185d}
+.rf-metric.hit-low{background:rgba(156,163,175,.12);color:#6b7280}
+
 /* ============ TOOL WRAP (VOC / Corpus) ============ */
 .tool-wrap{padding:18px 24px 40px;max-width:920px}
 .tool-result{margin-top:16px}
@@ -733,6 +800,9 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 
       <!-- ===== VIEW: USER CORPUS ANALYSIS TOOL ===== -->
       <div class="view" id="viewCorpusTool"></div>
+
+      <!-- ===== VIEW: PRODUCT SCORING TOOL ===== -->
+      <div class="view" id="viewProductScore"></div>
 
     </section>
   </main>
@@ -1041,7 +1111,7 @@ function renderNavShared(){
     '<div class="nav-item" data-nav="nav-fw" onclick="openFrameworkGallery()">'+
       '<span class="ni-name">分析框架</span><span class="ni-sub">'+fwN+' 个</span></div>'+
     '<div class="nav-item" data-nav="nav-ai" onclick="openAITools()">'+
-      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">3 个</span></div>';
+      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">4 个</span></div>';
   $('#navShared').innerHTML=html;
 }
 
@@ -1308,6 +1378,7 @@ function openAITools(){
   var ICON_VOC = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 20 7.4 12 11.8 4 7.4Z"/><path d="M4 7.4 4 16.6 12 21 12 11.8"/><path d="M20 7.4 20 16.6 12 21"/></svg>';
   var ICON_CORPUS = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M5 20V11M12 20V5M19 20v-7"/><path d="M3.5 20h17"/></svg>';
   var ICON_PREDICT = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M3 17l5-5 4 3 7-8"/><path d="M16 7h5v5"/></svg>';
+  var ICON_SCORE = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/><path d="M12 6v4M12 16v2"/></svg>';
   var cards=
     '<div class="ai-card" onclick="openVocTool()">'+
       '<div class="ai-ico">'+ICON_VOC+'</div>'+
@@ -1326,11 +1397,17 @@ function openAITools(){
       '<div class="ai-name">预测工具</div>'+
       '<div class="ai-desc">基于历史销售与类目信号，预测趋势与机会窗口，辅助选品与排期决策。跳转至外部预测控制台。</div>'+
       '<div class="ai-go">打开控制台 ↗</div>'+
+    '</div>'+
+    '<div class="ai-card" onclick="openProductScore()">'+
+      '<div class="ai-ico">'+ICON_SCORE+'</div>'+
+      '<div class="ai-name">产品打分工具</div>'+
+      '<div class="ai-desc">三维度12指标加权评分：市场价值(25%)、商业价值(25%)、产品差异化(20%)。每项 1-5 分滑块，自动计算加权总分 + 雷达图可视化 + 投资建议。</div>'+
+      '<div class="ai-go">打开工具</div>'+
     '</div>';
   setView('AITools');
   $('#viewAITools').innerHTML=
     '<div class="gal-head"><div><div class="gal-h-title">AI 简化工具</div>'+
-      '<div class="gal-h-sub">三个工具：VOC 打标签（单条）、用户语料分析（批量，本地运行）+ 预测控制台（外部）。均不依赖大模型。</div></div></div>'+
+      '<div class="gal-h-sub">四个工具：VOC 打标签（单条）、用户语料分析（批量）、产品打分（三维度加权评分）+ 预测控制台（外部）。均不依赖大模型。</div></div></div>'+
     '<div class="ai-grid">'+cards+'</div>';
 }
 
@@ -1347,6 +1424,237 @@ function openVocTool(){
 // ---- 预测工具（外部控制台）----
 function openPredictTool(){
   window.open('https://ffswwwda.github.io/mirofish-console/','_blank','noopener');
+}
+
+// ---- 产品打分工具（三维度12指标加权评分）----
+var PS_DIMS = [
+  {id:'market', name:'市场价值', weight:0.25, icon:'📈', color:'#00d4ff',
+    items:[
+      {id:'demand_heat', name:'需求热度', hint:'Amazon搜索量、社媒讨论量、竞品增长情况'},
+      {id:'user_pain', name:'用户痛点', hint:'用户/问题是否明确、是否存在高频VOC反馈'},
+      {id:'trend', name:'趋势性', hint:'需求是否处于增长趋势、是否具备持续性'},
+      {id:'market_size', name:'市场规模', hint:'市场容量是否足够、是否具备销量空间'}
+    ]},
+  {id:'commercial', name:'商业价值', weight:0.25, icon:'💰', color:'#10b981',
+    items:[
+      {id:'margin', name:'利润空间', hint:'毛利率是否符合公司标准'},
+      {id:'price_band', name:'售价带', hint:'是否符合目标价格区间'},
+      {id:'sales_potential', name:'销量潜力', hint:'是否具备稳定销售预期'},
+      {id:'lifecycle', name:'生命周期', hint:'产品生命周期是否足够长'}
+    ]},
+  {id:'diff', name:'产品差异化', weight:0.20, icon:'💎', color:'#a855f7',
+    items:[
+      {id:'diff_level', name:'差异化程度', hint:'产品备具区别于竞品的核心特点'},
+      {id:'barrier', name:'竞争壁垒', hint:'是否容易被复制'},
+      {id:'fantasy_value', name:'幻想标签价值', hint:'人设/幻想方向是否具备新颖与吸引力'},
+      {id:'usp_unique', name:'卖点独特性', hint:'是否具备可传播、可感知的核心卖点'}
+    ]}
+];
+
+var PS_SCORES = {};
+
+function openProductScore(){
+  setActiveNav('nav-ai');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='产品打分工具';
+  setView('ProductScore');
+
+  // Initialize scores to 3 (neutral)
+  PS_SCORES = {};
+  PS_DIMS.forEach(function(dim){
+    dim.items.forEach(function(item){
+      PS_SCORES[item.id] = 3;
+    });
+  });
+
+  var dimsHtml = PS_DIMS.map(function(dim){
+    var itemsHtml = dim.items.map(function(item){
+      return '<div class="ps-item">'+
+        '<span class="ps-item-name">'+escHtml(item.name)+'</span>'+
+        '<input type="range" class="ps-slider" min="1" max="5" step="1" value="3" data-item="'+item.id+'" oninput="PS_SCORES[\''+item.id+'\']=Number(this.value);this.nextElementSibling.textContent=this.value;renderPSTotal()"/>'+
+        '<span class="ps-item-score">'+PS_SCORES[item.id]+'</span>'+
+        '</div>';
+    }).join('');
+    return '<div class="ps-dim">'+
+      '<div class="ps-dim-head">'+
+        '<div class="ps-dim-ico" style="background:linear-gradient(135deg,'+dim.color+'22,'+dim.color+'44);color:'+dim.color+'">'+dim.icon+'</div>'+
+        '<span class="ps-dim-title">'+escHtml(dim.name)+'</span>'+
+        '<span class="ps-dim-wt" style="background:'+dim.color+'18;color:'+dim.color+'">'+(dim.weight*100)+'%</span>'+
+      '</div>'+itemsHtml+
+    '</div>';
+  }).join('');
+
+  $('#viewProductScore').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
+      '<span class="ws-title">产品打分工具</span>'+
+      '<span class="ws-tag">三维度 · 12 指标 · 加权</span></div>'+
+    '<div class="tool-wrap">'+
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:8px">拖动每项滑块打分（1-5），系统自动计算加权总分并生成雷达图。</div>'+
+      '<div class="ps-dims">'+dimsHtml+'</div>'+
+      '<div class="ps-total-bar">'+
+        '<span class="ps-total-label">加权总分</span>'+
+        '<span class="ps-total-val" id="psTotalVal">3.00</span>'+
+        '<span class="ps-total-max">/ 5.00</span>'+
+      '</div>'+
+      '<div class="ps-radar-wrap" id="psRadar"></div>'+
+      '<div class="ps-verdict caution" id="psVerdict">请调整各指标分数查看评估结论</div>'+
+    '</div>';
+
+  renderPSTotal();
+}
+
+function renderPSTotal(){
+  var totalEl = document.getElementById('psTotalVal');
+  var radarEl = document.getElementById('psRadar');
+  var verdictEl = document.getElementById('psVerdict');
+  if(!totalEl || !radarEl || !verdictEl) return;
+
+  // Calculate weighted total
+  var weightedSum = 0;
+  var maxWeightedSum = 0;
+  var dimScores = [];
+  PS_DIMS.forEach(function(dim){
+    var itemSum = 0;
+    dim.items.forEach(function(item){
+      itemSum += (PS_SCORES[item.id] || 3);
+    });
+    var avgItem = itemSum / dim.items.length;
+    var wScore = avgItem * dim.weight;
+    weightedSum += wScore;
+    maxWeightedSum += 5 * dim.weight; // max per dimension
+    dimScores.push({name:dim.name, score:avgItem, color:dim.color});
+  });
+
+  var finalScore = weightedSum / (maxWeightedSum || 1) * 5;
+  // Clamp
+  if(finalScore > 5) finalScore = 5;
+  if(finalScore < 1) finalScore = 1;
+
+  totalEl.textContent = finalScore.toFixed(2);
+
+  // Radar chart SVG
+  radarEl.innerHTML = buildPSRadar(dimScores);
+
+  // Verdict
+  var cls, text;
+  if(finalScore >= 3.8){cls='go';text='建议推进 — 市场真实存在且具备商业价值，差异化竞争力较强。建议进入详细可行性验证阶段（小批量测款 / VOC深度挖掘）。';}
+  else if(finalScore >= 2.6){cls='caution';text='谨慎观察 — 部分维度存在风险或不确定性。建议补充数据验证薄弱环节（如扩大VOC样本 / 竞品对标分析）后再决策。';}
+  else{cls='stop';text='暂缓投入 — 当前维度综合得分偏低，市场需求或商业回报存在明显缺口。建议重新评估方向或寻找替代机会点。';}
+  verdictEl.className = 'ps-verdict '+cls;
+  verdictEl.textContent = text;
+}
+
+function buildPSRadar(dimScores){
+  var cx=180, cy=170, R=120;
+  var N = dimScores.length;
+  var angles = dimScores.map(function(_,i){ return -Math.PI/2 + (2*Math.PI*i)/N; });
+
+  // Background grid (5 rings)
+  var grid='';
+  for(var ring=1;ring<=5;ring++){
+    var r=R*ring/5;
+    var pts=angles.map(function(a){ return (cx+r*Math.cos(a))+','+(cy+r*Math.sin(a)); }).join(' ');
+    grid+='<polygon points="'+pts+'" fill="none" stroke="rgba(128,140,164,.15)" stroke-width="1"/>';
+  }
+  // Axes
+  angles.forEach(function(a){
+    grid+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+R*Math.cos(a))+'" y2="'+(cy+R*Math.sin(a))+'" stroke="rgba(128,140,164,.15)" stroke-width="1"/>';
+  });
+
+  // Data polygon
+  var dPts = dimScores.map(function(d,i){
+    var s=(d.score||3)/5*R;
+    var a=angles[i];
+    return (cx+s*Math.cos(a))+','+(cy+s*Math.sin(a));
+  }).join(' ');
+  var dataPoly='<polygon points="'+dPts+'" fill="rgba(0,212,255,.18)" stroke="#00d4ff" stroke-width="2"/>';
+
+  // Labels + dots
+  var labels='';
+  dimScores.forEach(function(d,i){
+    var a=angles[i];
+    var lx=cx+(R+22)*Math.cos(a);
+    var ly=cy+(R+22)*Math.sin(a);
+    var align=i===0?'middle':(i<N/2?'start':'end');
+    labels+='<text x="'+lx+'" y="'+ly+'" fill="var(--ink)" font-size="11.5" font-weight="700" text-anchor="'+align+'">'+d.name+'</text>';
+    // dot
+    var s=(d.score||3)/5*R;
+    var dx=cx+s*Math.cos(a);
+    var dy=cy+s*Math.sin(a);
+    labels+='<circle cx="'+dx+'" cy="'+dy+'" r="4" fill="'+d.color+'"/>';
+  });
+
+  // Center label
+  labels+='<text x="'+cx+'" y="'+(cy+4)+'" fill="var(--muted)" font-size="11" text-anchor="middle" font-weight="700">核心</text>';
+
+  return '<svg viewBox="0 0 360 340" xmlns="http://www.w3.org/2000/svg">'+grid+dataPoly+labels+'</svg>';
+}
+
+// ============================================================
+// 领新用户反馈专区（结构化模式左栏）
+// ============================================================
+var LF_PORTRAITS = [
+  {id:'u1', avatar:'A', name:'极客型早期采用者', tags:['技术敏感','DIY改装','高付费'], quote:'我自己加了静音棉，效果还行但希望出厂就做好', source:'VOC·小众长评', lead:'高', creat:'高'},
+  {id:'u2', avatar:'B', name:'场景定制需求者', tags:['特殊尺寸','非标空间','功能组合'], quote:'我的柜子深度只有30cm，市面上没有合适的', source:'访谈·线下用户', lead:'极高', creat:'中'},
+  {id:'u3', avatar:'C', name:'审美优先体验派', tags:['外观控','社交分享','品牌认知'], quote:'放在客厅里不好看，像工业品不像家电', source:'VOC·低分差评', lead:'中', creat:'高'},
+  {id:'u4', avatar:'D', name:'性价比精算师', tags:['多平台比价','参数党','复购驱动'], source:'VOC·中性评价', quote:'同样参数别家便宜20%，看不出差异在哪', lead:'低', creat:'低'}
+];
+
+var FEEDBACK_RAW = [
+  {src:'voc-niche', srcLabel:'VOC小众', txt:'这个产品的安装方式对租房党不友好，我搬了三次家每次都要拆装，希望能出一款免打孔的版本', lead:'高', creat:'高', hitRate:'12%'},
+  {src:'interview', srcLabel:'访谈特别', txt:'我在用竞品X的时候发现它的APP联动做得很好，但你们的产品连基本的蓝牙配对都很不稳定', lead:'极高', creat:'极高', hitRate:'3%'},
+  {src:'voc-niche', srcLabel:'VOC小众', txt:'作为一个养猫家庭，我最在意的是噪音和安全性。目前市面上几乎没有同时满足这两个需求的', lead:'高', creat:'中', hitRate:'8%'},
+  {src:'interview', srcLabel:'访谈特别', txt:'我们公司采购了50台给员工宿舍用，半年坏了7台。维修响应太慢了，而且配件要等两周', lead:'极高', creat:'低', hitRate:'2%'},
+  {src:'voc-niche', srcLabel:'VOC小众', txt:'我是做产品设计的，从专业角度看这个模具精度至少可以提升两个等级，现在的公差太大了', lead:'中', creat:'极高', hitRate:'5%'}
+];
+
+var lfCurrentTab = 'portrait';
+
+function switchLfTab(tab, el){
+  lfCurrentTab = tab;
+  $$('.lf-tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-lftab')===tab); });
+  renderLfBody();
+}
+
+function renderLfBody(){
+  var body = document.getElementById('lfBody');
+  if(!body) return;
+  if(lfCurrentTab === 'portrait') body.innerHTML = renderLfPortrait();
+  else body.innerHTML = renderLfFeedback();
+}
+
+function renderLfPortrait(){
+  if(!LF_PORTRAITS.length) return '<div style="padding:14px;color:var(--muted);font-size:12px">暂无领新用户画像数据</div>';
+  return '<div class="uid-grid">'+
+    LF_PORTRAITS.map(function(u){
+      return '<div class="uid-card">'+
+        '<div class="uid-avatar">'+escHtml(u.avatar)+'</div>'+
+        '<div class="uid-name">'+escHtml(u.name)+'</div>'+
+        '<div class="uid-tags">'+u.tags.map(function(t){ return '<span class="uid-tag">'+escHtml(t)+'</span>'; }).join('')+'</div>'+
+        '<div class="uid-quote">"'+escHtml(u.quote)+'"</div>'+
+        '<div class="uid-meta"><span>'+escHtml(u.source)+'</span><span>超前性:'+escHtml(u.lead)+' · 创意度:'+escHtml(u.creat)+'</span></div>'+
+      '</div>';
+    }).join('')+
+  '</div>';
+}
+
+function renderLfFeedback(){
+  if(!FEEDBACK_RAW.length) return '<div style="padding:14px;color:var(--muted);font-size:12px">暂无原始反馈数据</div>';
+  var srcMap = {'voc-niche':'voc','interview':'interview'};
+  return '<div class="rf-list">'+
+    FEEDBACK_RAW.map(function(f){
+      var cls = srcMap[f.src] || 'niche';
+      return '<div class="rf-row">'+
+        '<span class="rf-src '+cls+'">'+escHtml(f.srcLabel)+'</span>'+
+        '<span class="rf-txt">'+escHtml(f.txt)+'</span>'+
+        '<div class="rf-metrics">'+
+          '<span class="rf-metric lead">超前'+escHtml(f.lead)+'</span>'+
+          '<span class="rf-metric creat">创意'+escHtml(f.creat)+'</span>'+
+          '<span class="rf-metric hit-low">命中'+escHtml(f.hitRate)+'</span>'+
+        '</div>'+
+      '</div>';
+    })+
+  '</div>';
 }
 
 // ---- 用户语料分析工具（批量）----
@@ -1815,8 +2123,15 @@ function renderStructPanel(p){
   '</div></div>';
 
   sp.innerHTML=
-    /* ===== 左栏：数据源 + 洞察 ===== */
-    '<div class="struct-col struct-col-left"><div class="col-header">数据源</div>'+srcHtml+insHtml+'</div>'+
+    /* ===== 左栏：数据源 + 洞察 + 领新反馈 ===== */
+    '<div class="struct-col struct-col-left"><div class="col-header">数据源</div>'+srcHtml+insHtml+
+    '<div class="struct-section lf-zone"><div class="ss-head">领新用户反馈专区</div>'+
+    '<div class="lf-tabs">'+
+      '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户画像看板</div>'+
+      '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">用户反馈看板</div>'+
+    '</div>'+
+    '<div class="lf-body" id="lfBody"></div>'+
+    '</div></div>'+
     /* ===== 中栏：分析逻辑框架 ===== */
     '<div class="struct-col struct-col-center"><div class="col-header">分析框架</div>'+mcHtml+nlHtml+sugHtml+taggerHtml+'</div>'+
     /* ===== 右栏：分析结果 + 导出 ===== */
@@ -1827,6 +2142,7 @@ function renderStructPanel(p){
   renderQuadrant(p);
   renderSegments(p);
   renderJourney(p);
+  renderLfBody(); // 领新用户反馈专区
 }
 
 // ============================================================
