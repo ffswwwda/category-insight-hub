@@ -878,6 +878,14 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .uid-quote{font-size:11.5px;color:var(--ink-2);line-height:1.5;font-style:italic;border-left:2px solid var(--accent);
   padding-left:8px;margin-top:4px}
 .uid-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--muted)}
+/* ——领先用户视图切换 + 四象限图—— */
+.lf-view-toggle{display:flex;gap:4px;margin-bottom:8px;justify-content:flex-end}
+.lf-vt{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:7px;border:1px solid var(--border);background:var(--glass-bg);color:var(--ink-2);cursor:pointer;transition:all .15s;font-family:inherit}
+.lf-vt.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lf-vt:hover:not(.on){border-color:var(--accent);color:var(--accent)}
+.lf-quad-wrap{display:grid;place-items:center;padding:6px}
+.lf-pt{transition:transform .2s}
+.lf-pt:hover{transform:scale(1.1);transform-origin:center}
 /* Raw Feedback List */
 .rf-list{}.rf-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px;transition:background .15s}
 .rf-row:hover{background:rgba(0,212,255,.04)}
@@ -2864,7 +2872,10 @@ function renderLfBody(zone){
 
 function renderLfPortrait(zone){
   if(!LF_PORTRAITS.length) return '<div style="padding:14px;color:var(--muted);font-size:12px">暂无领新用户画像数据</div>';
-  return '<div class="uid-grid">'+
+  var mode = zone.dataset.lfMode || 'grid';
+  var toggle = '<div class="lf-view-toggle"><button class="lf-vt'+(mode==='grid'?' on':'')+'" data-mode="grid" onclick="lfSwitchView(\'grid\',this)">▦ 身份卡</button><button class="lf-vt'+(mode==='quadrant'?' on':'')+'" data-mode="quadrant" onclick="lfSwitchView(\'quadrant\',this)">◷ 四象限分布</button></div>';
+  if(mode==='quadrant') return toggle + renderLfQuadrant();
+  return toggle+'<div class="uid-grid">'+
     LF_PORTRAITS.map(function(u){
       var arch = LF_ARCH[u.archetype] || {label:u.archetype||'',color:'#94a3b8'};
       var sigs = (u.signals||[]).map(function(s){ var v=LF_SIG[s]||s; return '<span class="uid-sig">'+escHtml(v)+'</span>'; }).join('');
@@ -2885,6 +2896,73 @@ function renderLfPortrait(zone){
       '</div>';
     }).join('')+
   '</div>';
+}
+function lfSwitchView(mode, btn){
+  var zone = btn.closest('.lf-zone');
+  if(!zone) return;
+  zone.dataset.lfMode = mode;
+  renderLfBody(zone);
+}
+// 四象限分布图：横轴=产品优化/创意；纵轴=用户感知度
+function renderLfQuadrant(){
+  // 位置映射（基于每个用户的特征/idea/trait）
+  var pos = {
+    u1:{x:0.25,y:0.75}, u2:{x:0.72,y:0.85}, u3:{x:0.32,y:0.78},
+    u4:{x:0.18,y:0.42}, u5:{x:0.68,y:0.86}, u6:{x:0.28,y:0.45}
+  };
+  var W=460, H=340, P=40, gap=18;
+  // 统计每个象限的用户数
+  var quad = {NE:0, NW:0, SE:0, SW:0};
+  LF_PORTRAITS.forEach(function(u){
+    var p=pos[u.id]||{x:0.5,y:0.5};
+    if(p.x>=0.5) p.y>=0.5?quad.NE++:quad.SE++; else p.y>=0.5?quad.NW++:quad.SW++;
+  });
+  // 4 个散点（每个用户）
+  var dots = LF_PORTRAITS.map(function(u){
+    var p=pos[u.id]||{x:0.5,y:0.5};
+    var cx = P + p.x*(W-2*P);
+    var cy = P + (1-p.y)*(H-2*P); // y 翻转
+    var arch=LF_ARCH[u.archetype]||{color:'#94a3b8'};
+    return '<g class="lf-pt" onclick="openLfModal(\''+u.id+'\',\'portrait\')" style="cursor:pointer">'+
+      '<circle cx="'+cx+'" cy="'+cy+'" r="14" fill="'+arch.color+'" fill-opacity=".15" stroke="'+arch.color+'" stroke-width="1.5"/>'+
+      '<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="13" font-weight="900">'+escHtml(u.avatar)+'</text>'+
+      '<text x="'+cx+'" y="'+(cy+22)+'" text-anchor="middle" fill="var(--ink)" font-size="10" font-weight="700">'+escHtml(u.name.length>8?u.name.substring(0,8)+'…':u.name)+'</text>'+
+      '<title>'+escHtml(u.name)+'</title></g>';
+  }).join('');
+  // 4 象限标签
+  var labels = [
+    {x:0.78,y:0.85,t:'创新 × 感知',s:'品牌级差异化机会',c:'#0891B2'},
+    {x:0.22,y:0.85,t:'优化 × 感知',s:'体验升级',c:'#10B981'},
+    {x:0.78,y:0.15,t:'创新 × 不感知',s:'内部能力建设',c:'#A855F7'},
+    {x:0.22,y:0.15,t:'优化 × 不感知',s:'运营降本',c:'#F59E0B'}
+  ];
+  var labelHtml = labels.map(function(l){
+    var cx = P + l.x*(W-2*P);
+    var cy = P + (1-l.y)*(H-2*P);
+    return '<text x="'+cx+'" y="'+cy+'" text-anchor="middle" fill="'+l.c+'" font-size="10" font-weight="800" opacity=".7">'+escHtml(l.t)+'</text>'+
+           '<text x="'+cx+'" y="'+(cy+12)+'" text-anchor="middle" fill="var(--muted)" font-size="8" opacity=".6">'+escHtml(l.s)+'</text>';
+  }).join('');
+  // 轴标签
+  var axisHtml = '<text x="'+(W/2)+'" y="'+(H-4)+'" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="700">横轴：产品优化升级 ←→ 产品创意升级</text>'+
+    '<text x="6" y="'+(H/2)+'" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="700" transform="rotate(-90 6 '+(H/2)+')">纵轴：用户感知度（不易 ↔ 明显）</text>';
+  return '<div class="lf-quad-wrap"><svg viewBox="0 0 '+W+' '+(H+gap)+'" style="width:100%;max-width:520px;height:auto;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm)">'+
+    // 4 象限背景
+    '<rect x="'+P+'" y="'+P+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#10B981" fill-opacity=".04"/>'+
+    '<rect x="'+(W/2)+'" y="'+P+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#0891B2" fill-opacity=".04"/>'+
+    '<rect x="'+P+'" y="'+(H/2)+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#F59E0B" fill-opacity=".04"/>'+
+    '<rect x="'+(W/2)+'" y="'+(H/2)+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#A855F7" fill-opacity=".04"/>'+
+    // 中线
+    '<line x1="'+(W/2)+'" y1="'+P+'" x2="'+(W/2)+'" y2="'+(H-P)+'" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 3"/>'+
+    '<line x1="'+P+'" y1="'+(H/2)+'" x2="'+(W-P)+'" y2="'+(H/2)+'" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 3"/>'+
+    // 轴标签
+    labelHtml+
+    // 散点
+    dots+
+    // 坐标轴
+    axisHtml+
+    // 4 象限统计
+    '<text x="'+(W-P-4)+'" y="'+(P+10)+'" text-anchor="end" fill="var(--accent)" font-size="10" font-weight="800">NE:'+quad.NE+' · NW:'+quad.NW+' · SE:'+quad.SE+' · SW:'+quad.SW+'</text>'+
+    '</svg></div>';
 }
 
 function renderLfFeedback(zone){
