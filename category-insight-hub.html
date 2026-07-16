@@ -692,6 +692,25 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ps-conf-sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px}
 .ps-conf-pill{font-size:12px;font-weight:700;padding:5px 12px;border-radius:9px;background:var(--glass-bg);border:1px solid var(--border)}
 .ps-loading{padding:30px;text-align:center;color:var(--muted);font-size:13px}
+/* ——神之一手洞察工具—— */
+.is-framework{margin-top:6px}
+.is-steps{display:grid;grid-template-columns:1fr;gap:5px;margin-top:6px}
+.is-card{display:flex;gap:8px;padding:8px 10px;background:var(--glass-bg);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.is-card-n{width:24px;height:24px;border-radius:7px;background:var(--rad-grad);color:#fff;font-size:11px;font-weight:900;display:grid;place-items:center;flex-shrink:0;margin-top:1px}
+.is-card-body{flex:1}
+.is-card-title{font-size:11.5px;font-weight:800;color:var(--ink)}
+.is-card-desc{font-size:10px;color:var(--muted);line-height:1.4;margin-top:1px}
+.ir-steps{display:grid;gap:10px}
+.ir-summary{margin-bottom:2px}
+.ir-card{background:var(--glass-bg);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.ir-head{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border)}
+.ir-n{width:22px;height:22px;border-radius:6px;background:var(--rad-grad);color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
+.ir-title{font-size:12px;font-weight:800;color:var(--ink)}
+.ir-body{padding:8px 12px 6px}
+.ir-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px dashed rgba(128,140,164,.1)}
+.ir-item:last-child{border-bottom:none}
+.ir-item-k{font-size:10.5px;font-weight:700;color:var(--accent);white-space:nowrap;width:100px;flex-shrink:0}
+.ir-item-v{font-size:11px;color:var(--ink-2);line-height:1.5}
 
 /* ——产品打分：左右布局 + 维度框架 + 评分表格—— */
 .ps-layout{display:flex;gap:16px;margin-top:10px;padding:0 24px 40px}
@@ -1624,17 +1643,123 @@ function openPredictTool(){
 // ---- 用户洞察工具（预测类）----
 function openInsightTool(){
   setActiveNav('nav-ai');
-  $('#topbarTitle').textContent='用户洞察工具';
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='神之一手 · 用户洞察工具';
   setView('InsightTool');
+  // 5 步流程说明卡片
+  var STEPS = [
+    {n:'01', title:'异常发现', desc:'发现奇怪现象、高频问题、用户矛盾、反常行为、长尾问题'},
+    {n:'02', title:'需求本质提取', desc:'不看产品，只看用户真正想获得什么'},
+    {n:'03', title:'行业默认逻辑拆解', desc:'拆解默认假设：为什么必须这样？是否只是惯性？'},
+    {n:'04', title:'重新定义产品', desc:'回到产品最原始目的，重构产品定义'},
+    {n:'05', title:'神之一手洞察', desc:'输出类目级机会：新方向、新场景、新体验路径'}
+  ];
+  var stepsHtml = STEPS.map(function(s){
+    return '<div class="is-card"><div class="is-card-n">'+s.n+'</div><div class="is-card-body"><div class="is-card-title">'+escHtml(s.title)+'</div><div class="is-card-desc">'+escHtml(s.desc)+'</div></div></div>';
+  }).join('');
   $('#viewInsightTool').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
-      '<span class="ws-title">用户洞察工具</span>'+
-      '<span class="ws-tag">画像 · 动机 · 场景 · 未满足需求</span></div>'+
-    '<div class="tool-wrap" style="padding:40px;text-align:center;color:var(--muted)">'+
-      '<div style="font-size:40px;margin-bottom:12px;color:var(--accent)"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/><circle cx="12" cy="8" r="1.5" fill="#fff"/></svg></div>'+
-      '<div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px">用户洞察工具</div>'+
-      '<div style="font-size:13px;line-height:1.7;max-width:400px;margin:0 auto">基于用户评论 / 反馈 / 社媒数据，识别用户画像、购买动机、使用场景与未满足需求，从数据中提炼可执行的用户洞察。</div>'+
-      '<div style="margin-top:20px;font-size:11px;color:var(--muted)">数据接入中 · 功能即将上线</div></div>';
+      '<span class="ws-title">神之一手 · 用户洞察</span>'+
+      '<span class="ws-tag">神之一手洞察系统 · 类目级创新洞察</span></div>'+
+    '<div class="ps-layout">'+
+      '<div class="ps-left" style="flex-basis:360px">'+
+        '<div class="ps-input-wrap">'+
+          '<textarea class="ps-nl" id="insightNl" placeholder="粘贴用户评论、反馈、社媒讨论…\\n系统将从这几条信息中发现行业还没有意识到的问题和机会。" style="min-height:100px"></textarea>'+
+          '<div class="ps-input-bar">'+
+            '<button class="ps-run" id="insightRun" onclick="runInsight()">运行洞察</button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="is-framework"><div class="ps-sec" style="margin:10px 0 6px">五步洞察工作流</div>'+
+          '<div class="is-steps">'+stepsHtml+'</div></div>'+
+      '</div>'+
+      '<div class="ps-right"><div id="insightReport"></div></div>'+
+    '</div>';
+}
+
+// ---- 神之一手洞察引擎（启发式信号分析）----
+var INSIGHT_SIGNALS = {
+  problems:['清洗','噪音','麻烦','难用','不方便','累','不舒服','不好','差','坏','易坏','容易坏','卡','慢','痛','硬','软','脏','异味','臭','松','紧','滑','漏','不够','太少','太短','太大','太小','太重','太轻','没效果','不好用','不实用','不卫生','不防水','不静音','不牢固','不耐用'],
+  scenes:['卧室','客厅','浴室','厨房','旅行','出差','酒店','宿舍','办公室','车载','户外','阳台','床上','地板','沙发','厕所','洗手间'],
+  emotions:['烦','焦虑','担心','失望','愤怒','恼火','崩溃','痛苦','难受','尴尬','羞耻','害怕','不舒服','孤独','无助'],
+  desires:['希望','想','要','需要','期待','渴望','想有','想要','打算','计划','考虑','想试试'],
+  workarounds:['自己','改装','换','替代','用别','自己做了','自己弄','DIY','自制','自己加','自己改','自己装'],
+  deepNeeds:['放松','沉浸','陪伴','安全','自由','自然','被服务','解放双手','无负担','隐私','真实感','不尴尬','不操心','简单','直觉','轻松']
+};
+function runInsight(){
+  var ta=document.getElementById('insightNl');
+  var text=ta?ta.value.trim():'';
+  if(!text){ if(window.toast) toast('请先输入用户评论或反馈'); return; }
+  var el=document.getElementById('insightReport');
+  if(el) el.innerHTML='<div class="ps-loading">正在运行神之一手洞察…</div>';
+  var btn=document.getElementById('insightRun'); if(btn) btn.disabled=true;
+  var steps=[];
+  // Step 1:异常发现
+  var probs=[]; INSIGHT_SIGNALS.problems.forEach(function(p){if(text.indexOf(p)>-1)probs.push(p);});
+  var scenes=[]; var us=[]; INSIGHT_SIGNALS.scenes.forEach(function(s){if(text.indexOf(s)>-1&&us.indexOf(s)<0)us.push(s);}); scenes=us;
+  var emos=[]; INSIGHT_SIGNALS.emotions.forEach(function(e){if(text.indexOf(e)>-1)emos.push(e);});
+  var wa=[]; INSIGHT_SIGNALS.workarounds.forEach(function(w){if(text.indexOf(w)>-1)wa.push(w);});
+  steps.push({title:'异常发现',n:'01',items:[
+    {k:'显性问题',v:probs.length?probs.join(' · '):'未检测到典型高频问题词'},
+    {k:'关联场景',v:scenes.length?scenes.join(' · '):'未检测到场景词'},
+    {k:'情感信号',v:emos.length?'负面情感：'+emos.join(' · '):'情感表达较中性'},
+    {k:'自创方案',v:wa.length?'用户尝试自己解决：'+wa.join(' · '):'无明显DIY信号'}
+  ]});
+  // Step 2:需求本质提取
+  var desires=[]; INSIGHT_SIGNALS.desires.forEach(function(d){if(text.indexOf(d)>-1)desires.push(d);});
+  var deeps=[]; INSIGHT_SIGNALS.deepNeeds.forEach(function(d){if(text.indexOf(d)>-1)deeps.push(d);});
+  var inferred=[];
+  if(probs.indexOf('清洗')>-1||probs.indexOf('卫生')>-1) inferred.push('懒人化 · 免维护体验');
+  if(probs.indexOf('噪音')>-1) inferred.push('沉浸感 · 安静陪伴');
+  if(probs.indexOf('不方便')>-1||probs.indexOf('麻烦')>-1) inferred.push('解放双手 · 直觉操作');
+  if(emos.length>0) inferred.push('情绪安抚 · 被理解和接纳');
+  if(wa.length>0) inferred.push('未满足需求强度高 · 用户愿意自己动手');
+  steps.push({title:'需求本质提取',n:'02',items:[
+    {k:'表层表达',v:desires.length?'用户表达：'+desires.join(' · '):'未直接表达期望'},
+    {k:'真正想获得的状态',v:deeps.length?deeps.join(' · '):'未检测到深层状态词'},
+    {k:'从问题反推',v:inferred.length?inferred.join('\n'):'信号不足以反推需求本质'}
+  ]});
+  // Step 3:行业默认逻辑拆解
+  var assumptions=[];
+  if(scenes.indexOf('浴室')>-1) assumptions.push('为什么产品必须「防水」才算合格？如果最早设计就考虑浴室场景，防水应该是基础而不是卖点。');
+  if(scenes.indexOf('卧室')>-1) assumptions.push('为什么产品默认「只在卧室/私密空间使用」？定义本身就限制了使用场景。');
+  if(probs.indexOf('清洗')>-1) assumptions.push('为什么用户必须自己清洗？行业默认「每次用完都要洗」，但用户真正想要的是「用完不用管」。');
+  if(probs.indexOf('噪音')>-1) assumptions.push('为什么产品一定有噪音？行业默认「电机=噪音」，但用户要的是「无声操作」。');
+  if(wa.length>0) assumptions.push('用户选择自己动手 → 行业方案无法满足 → 存在尚未被定义的默认假设。');
+  if(!assumptions.length) assumptions.push('未从输入中识别到明显默认假设。建议补充更多原始数据。');
+  steps.push({title:'行业默认逻辑拆解',n:'03',items:assumptions.map(function(a){return{k:'被挑战的默认假设',v:a};})});
+  // Step 4:重新定义产品
+  steps.push({title:'重新定义产品',n:'04',items:[
+    {k:'产品的原始目的',v:'帮助用户进入某种理想的体验状态——不是「提供功能」，而是「创造状态」。'},
+    {k:'从异常到新定义',v:inferred.length?'目标状态应向「'+inferred.slice(0,2).join('」+「')+'」靠拢，而非继续在参数上竞争':'数据不足'},
+    {k:'可能的体验系统方向',v:inferred.length?'不再是单一工具 → 整合 '+inferred.slice(0,3).map(function(i){return i.split('·')[0].trim();}).filter(Boolean).join(' / ')+' 的体验':'数据不足'}
+  ]});
+  // Step 5:神之一手洞察
+  var opp=[];
+  if(scenes.length) opp.push('新场景机会：'+scenes.join('/')+' 场景的需求未被充分满足，存在定义新子类目的空间。');
+  if(probs.length) opp.push('问题驱动创新：'+probs.slice(0,3).join('/')+' 等高频问题说明现有产品定义存在本质缺陷。');
+  if(wa.length) opp.push('用户自创信号：用户开始自己解决问题 → 这是「下一代产品方向」的最强信号。');
+  if(inferred.length) opp.push('体验升级路径：从 '+inferred[0].split('·')[0].trim()+' 切入，重新定义类目的使用预期。');
+  if(!opp.length) opp.push('输入数据不足以形成类目级洞察，请提供更多原始用户评论。');
+  steps.push({title:'神之一手洞察',n:'05',items:[{k:'类目级机会',v:opp.join('\n\n')}]});
+  renderInsightReport(steps);
+  if(btn) btn.disabled=false;
+}
+function renderInsightReport(steps){
+  var el=document.getElementById('insightReport');
+  if(!el) return;
+  var html=steps.map(function(s){
+    var items=s.items.map(function(it){
+      return '<div class="ir-item"><div class="ir-item-k">'+escHtml(it.k)+'</div><div class="ir-item-v">'+escHtml(it.v).replace(/\n/g,'<br>')+'</div></div>';
+    }).join('');
+    return '<div class="ir-card"><div class="ir-head"><span class="ir-n">'+s.n+'</span><span class="ir-title">'+escHtml(s.title)+'</span></div><div class="ir-body">'+items+'</div></div>';
+  }).join('');
+  el.innerHTML=
+    '<div class="ir-summary"><div class="ps-sec">洞察报告</div>'+
+      '<div style="font-size:11px;color:var(--muted);margin-top:-4px;margin-bottom:6px">基于「神之一手洞察系统」5步工作流的启发式分析。接入真实数据后精度可大幅提升。</div></div>'+
+    '<div class="ir-steps">'+html+'</div>'+
+    '<div class="ps-verdict go" style="margin-top:12px;text-align:left;padding:14px 18px">'+
+      '<div style="font-size:12px;font-weight:800;margin-bottom:4px">神之一手洞察小结</div>'+
+      '<div style="font-size:11.5px;line-height:1.6;color:var(--ink-2)">真正的洞察，不是直接听用户说什么。而是从用户行为、抱怨、矛盾、体验中，理解需求本质。最稀缺的能力不是「最会分析数据」，而是「最能发现行业没意识到的问题」。</div></div>';
 }
 
 // ---- 风险预测工具（预测类）----
