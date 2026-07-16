@@ -42,7 +42,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14p
 .brand-sub{font-size:9px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-top:2px}
 
 /* Workspace tabs */
-.ws-tabs{display:flex;flex-direction:column;gap:7px;margin-bottom:auto}
+.ws-tabs{display:flex;flex-direction:column;gap:7px;margin-bottom:8px;flex-shrink:0}
 .ws-tab{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:13px;
   border:1.5px solid var(--border);background:var(--glass-bg);backdrop-filter:var(--glass-blur);
   color:var(--ink-2);font-family:var(--font);font-size:13px;font-weight:650;cursor:pointer;
@@ -53,6 +53,45 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14p
   box-shadow:0 2px 12px rgba(8,145,178,.1)}
 .ws-tab.active::before{background:var(--accent)}
 .ws-tab .wsi{opacity:.6;font-size:14px;width:20px;text-align:center;flex-shrink:0}
+
+/* === Nav Tree (three big sections) === */
+.nav-tree{flex:1;overflow-y:auto;margin-top:4px;display:flex;flex-direction:column;gap:13px;padding-right:2px}
+.nav-sec{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;flex-shrink:0}
+.nav-sec-head{display:flex;align-items:center;gap:7px;padding:10px 12px;font-size:12.5px;font-weight:750;color:var(--ink);
+  border-bottom:1px solid var(--line);background:rgba(255,255,255,.42)}
+.nsh-ico{font-size:13px;color:var(--accent);opacity:.85}
+.nav-sec-tag{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.3px}
+.nav-sec-tag.shared{background:rgba(0,0,0,.05);color:var(--muted)}
+.nav-sec-tag.dyn{background:linear-gradient(135deg,var(--accent),#06B6D4);color:#fff}
+.nav-sec-dyn .nsh-ico{color:var(--green-a)}
+.nav-sec-body{padding:7px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;
+  font-size:12.5px;color:var(--ink-2);transition:all .2s var(--easing);position:relative}
+.nav-item:hover{background:rgba(8,145,178,.07);color:var(--accent)}
+.nav-item.active{background:rgba(8,145,178,.1);color:var(--accent);font-weight:700}
+.nav-item.active::before{content:'';position:absolute;left:0;top:7px;bottom:7px;width:3px;border-radius:3px;background:var(--accent)}
+.ni-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.ni-dot.on{background:var(--green-b);box-shadow:0 0 0 3px rgba(5,150,105,.15)}
+.ni-dot.off{background:var(--muted);opacity:.5}
+.ni-ico{width:18px;text-align:center;font-size:13px;flex-shrink:0}
+.ni-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ni-sub{font-size:10px;color:var(--muted);flex-shrink:0}
+
+/* Source / Framework detail views */
+.src-detail,.fw-detail{padding:26px 28px;max-width:900px}
+.sd-kpis{display:flex;gap:14px;margin:18px 0 22px;flex-wrap:wrap}
+.sd-kpi{flex:1;min-width:150px;background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);
+  border-radius:14px;padding:16px 18px}
+.sd-kv{font-size:18px;font-weight:800;color:var(--ink)}
+.sd-kl{font-size:11px;color:var(--muted);margin-top:3px}
+.sd-desc{font-size:13.5px;color:var(--ink-2);line-height:1.75;background:var(--glass-bg);border:1px solid var(--glass-border);
+  border-radius:14px;padding:16px 18px}
+.sd-hint{margin-top:14px;font-size:12.5px;color:var(--accent-2);background:rgba(202,138,4,.08);border:1px solid rgba(202,138,4,.2);
+  border-radius:12px;padding:12px 15px}
+.fw-desc{font-size:14px;color:var(--ink-2);line-height:1.8;background:var(--glass-bg);border:1px solid var(--glass-border);
+  border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.fw-note{font-size:12.5px;color:var(--muted);line-height:1.7}
 
 /* Sidebar footer */
 .sb-foot{padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.6}
@@ -298,6 +337,22 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14p
       <button class="ws-tab active" data-ws="insight"><span class="wsi">🌱</span> 用户洞察·创意</button>
       <button class="ws-tab" data-ws="ops"><span class="wsi">🎯</span> 运营目的·解题</button>
     </div>
+
+    <nav class="nav-tree" id="navTree">
+      <section class="nav-sec">
+        <div class="nav-sec-head"><span class="nsh-ico">&#x25A4;</span>数据源板块<span class="nav-sec-tag shared">共享</span></div>
+        <div class="nav-sec-body" id="navSources"></div>
+      </section>
+      <section class="nav-sec">
+        <div class="nav-sec-head"><span class="nsh-ico">&#x25C8;</span>分析框架板块<span class="nav-sec-tag shared">共享</span></div>
+        <div class="nav-sec-body" id="navFramework"></div>
+      </section>
+      <section class="nav-sec nav-sec-dyn">
+        <div class="nav-sec-head"><span class="nsh-ico">&#x2B21;</span><span id="navPurposeTitle">目的工作区</span><span class="nav-sec-tag dyn" id="navPurposeTag">洞察</span></div>
+        <div class="nav-sec-body" id="navPurpose"></div>
+      </section>
+    </nav>
+
     <div class="sb-foot">数据源池 · 按目的调用<br>部署目标 · GitHub Pages</div>
   </aside>
 
@@ -375,6 +430,12 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14p
         </div>
         <iframe class="de-frame" src="de-dashboard.html" title="德国看板"></iframe>
       </div>
+
+      <!-- ===== VIEW: SOURCE DETAIL ===== -->
+      <div class="view" id="viewSource"></div>
+
+      <!-- ===== VIEW: FRAMEWORK DETAIL ===== -->
+      <div class="view" id="viewFramework"></div>
 
     </section>
   </main>
@@ -486,6 +547,15 @@ var DATA = {
     }
   },
 
+  // ---- 共享分析框架（板块2：分析框架板块，两个工作区通用）----
+  frameworks:[
+    {id:'quad',name:'需求四象限',icon:'&#x25A6;',desc:'将需求点按「重要度 × 满意度」定位：高重要低满意 = 创新突破口，高重要高满意 = 护城河，低重要低满意 = 暂不投入。'},
+    {id:'jtbd',name:'JTBD 待办任务',icon:'&#x2316;',desc:'从「用户雇用产品来完成什么任务」出发，识别真实待解决问题，避免被表面功能需求误导。'},
+    {id:'journey',name:'购买旅程',icon:'&#x279B;',desc:'覆盖认知 → 考虑 → 购买 → 使用 → 忠诚全链路，定位每个触点的体验断点与优化机会。'},
+    {id:'motivation',name:'动机编码',icon:'&#x274B;',desc:'对语料做动机 / 场景 / 人群编码，聚类出高价值细分群体及其规模与特征。'},
+    {id:'voc',name:'VOC 标签体系',icon:'&#x1F3F7;',desc:'评论 / 访谈文本的结构化打标（尺寸 / 质量 / 材质 / 噪音等 15 维），支撑所有下游分析。'}
+  ],
+
   // ---- 种子洞察（每个目的的示例洞察卡片）----
   seedInsights: {
     'market-seg':[
@@ -578,7 +648,9 @@ function switchWorkspace(wsKey){
   if(state.ws===wsKey)return;
   state.ws=wsKey;
   state.purposeId=null;
+  setActiveNav('');
   updateWorkspaceUI();
+  renderNavPurpose();
   renderPurposeGrid();
   setView('Grid');
 }
@@ -586,6 +658,7 @@ function switchWorkspace(wsKey){
 function enterPurpose(purposeId){
   state.purposeId=purposeId;
   state.mode='struct';
+  setActiveNav('pw-'+purposeId);
   updateWorkspaceUI();
   renderPurposeWorkspace();
   setView('Workspace');
@@ -593,6 +666,7 @@ function enterPurpose(purposeId){
 
 function goBackToGrid(){
   state.purposeId=null;
+  setActiveNav('');
   updateWorkspaceUI();
   renderPurposeGrid();
   setView('Grid');
@@ -600,7 +674,91 @@ function goBackToGrid(){
 
 function openDeDashboard(){
   state.purposeId=null;
-  $('viewDe').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active')});
+  setActiveNav('src-s8');
+  $('#viewDe').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active')});
+}
+
+// ============================================================
+// LEFT NAV TREE (截图1：三个大板块，第三板块随工作区切换)
+// ============================================================
+function renderNavShared(){
+  // 板块1：数据源（共享）
+  var sh='';
+  Object.keys(DATA.sources).forEach(function(k){
+    var s=DATA.sources[k];
+    var ready=s.status==='ready';
+    sh+='<div class="nav-item" data-nav="src-'+k+'" onclick="openSource(\''+k+'\')">'+
+        '<span class="ni-dot '+(ready?'on':'off')+'"></span>'+
+        '<span class="ni-name">'+escHtml(s.name)+'</span>'+
+        '<span class="ni-sub">'+escHtml(s.type)+'</span></div>';
+  });
+  $('#navSources').innerHTML=sh;
+
+  // 板块2：分析框架（共享）
+  $('#navFramework').innerHTML=DATA.frameworks.map(function(f){
+    return '<div class="nav-item" data-nav="fw-'+f.id+'" onclick="openFramework(\''+f.id+'\')">'+
+           '<span class="ni-ico">'+f.icon+'</span>'+
+           '<span class="ni-name">'+escHtml(f.name)+'</span></div>';
+  }).join('');
+}
+
+function renderNavPurpose(){
+  var ws=DATA.workspaces[state.ws];
+  $('#navPurposeTitle').textContent='目的工作区';
+  $('#navPurposeTag').textContent = state.ws==='insight'?'洞察':'运营';
+  $('#navPurpose').innerHTML=ws.purposes.map(function(p){
+    return '<div class="nav-item" data-nav="pw-'+p.id+'" onclick="enterPurpose(\''+p.id+'\')">'+
+           '<span class="ni-ico">'+p.icon+'</span>'+
+           '<span class="ni-name">'+escHtml(p.name)+'</span></div>';
+  }).join('');
+}
+
+function setActiveNav(nav){
+  $$('.nav-item').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-nav')===nav);});
+}
+
+function openSource(srcId){
+  var s=DATA.sources[srcId];
+  if(!s)return;
+  setActiveNav('src-'+srcId);
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent=s.name;
+  if(s.hasDashboard){
+    $('#viewDe').classList.add('active');
+    $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
+    return;
+  }
+  setView('Source');
+  $('#viewSource').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>'+
+      '<span class="ws-title">'+escHtml(s.name)+'</span>'+
+      '<span class="ws-tag">'+(s.status==='ready'?'已接入':'待接入')+'</span></div>'+
+    '<div class="src-detail">'+
+      '<div class="sd-kpis">'+
+        '<div class="sd-kpi"><div class="sd-kv">'+escHtml(s.market)+'</div><div class="sd-kl">覆盖市场</div></div>'+
+        '<div class="sd-kpi"><div class="sd-kv">'+s.records+'</div><div class="sd-kl">记录数</div></div>'+
+        '<div class="sd-kpi"><div class="sd-kv">'+escHtml(s.type)+'</div><div class="sd-kl">数据类型</div></div>'+
+      '</div>'+
+      '<div class="sd-desc">'+escHtml(s.desc)+'</div>'+
+      (s.status==='ready'?'':'<div class="sd-hint">该数据源看板待接入，接入后将在此展示实时看板与筛选分析。</div>')+
+    '</div>';
+}
+
+function openFramework(fwId){
+  var f=DATA.frameworks.find(function(x){return x.id===fwId;});
+  if(!f)return;
+  setActiveNav('fw-'+fwId);
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent=f.name;
+  setView('Framework');
+  $('#viewFramework').innerHTML=
+    '<div class="ws-bar"><button class="ws-back" onclick="goBackToGrid()">&#8592; 返回</button>'+
+      '<span class="ws-title">'+escHtml(f.name)+'</span>'+
+      '<span class="ws-tag">分析框架 · 共享</span></div>'+
+    '<div class="fw-detail">'+
+      '<div class="fw-desc">'+escHtml(f.desc)+'</div>'+
+      '<div class="fw-note">此框架在「目的工作区」的结构化面板与无限画布中被调用，用于组织洞察与推导链路。</div>'+
+    '</div>';
 }
 
 // ============================================================
@@ -1223,10 +1381,10 @@ $('#globalSearch')&&$('#globalSearch').addEventListener('keyup',function(e){
 // INIT
 // ============================================================
 function init(){
+  renderNavShared();
+  renderNavPurpose();
   renderPurposeGrid();
   loadCanvasState();
-  // Check if DE source should link to dashboard
-  // (s8 hasDashboard flag)
 }
 init();
 </script>
