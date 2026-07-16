@@ -732,6 +732,45 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .lfm-dval{font-size:13px;color:var(--ink-2);line-height:1.6}
 .lfm-dsub{font-size:11px;color:var(--muted);line-height:1.5;margin-top:3px}
 .lfm-dquote{font-style:italic;border-left:3px solid var(--accent);padding-left:10px;color:var(--ink)}
+/* ——新品开发创意工具—— */
+.nd-tabs{display:flex;gap:0;margin:8px 0;border-bottom:1px solid var(--border)}
+.nd-tab{font-size:11.5px;font-weight:800;padding:6px 14px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.nd-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nd-panel{margin-top:2px}
+.nd-psec{margin-bottom:10px}
+.nd-psh{font-size:11px;font-weight:800;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.nd-cats{display:flex;flex-wrap:wrap;gap:6px}
+.nd-cat{font-size:10.5px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:var(--glass-bg);color:var(--ink-2);cursor:pointer;transition:all .15s;font-family:inherit}
+.nd-cat.active,.nd-cat:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.06)}
+.nd-cnt{font-size:9px;opacity:.7;margin-left:4px}
+.nd-selcnt{font-size:10px;font-weight:800;padding:1px 7px;border-radius:5px;background:var(--accent);color:#fff}
+.nd-prins{display:grid;gap:4px;max-height:280px;overflow-y:auto}
+.nd-prin{display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .1s;background:var(--glass-bg)}
+.nd-prin:hover{border-color:var(--accent)}
+.nd-prin.sel{border-color:var(--accent);background:rgba(0,212,255,.08)}
+.nd-pn{width:20px;height:20px;border-radius:5px;background:var(--rad-grad);color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
+.nd-pname{font-size:11px;font-weight:700;color:var(--ink);min-width:36px}
+.nd-pdesc{font-size:10px;color:var(--muted);line-height:1.3;flex:1}
+.nc-grid{display:grid;gap:8px}
+.nc-quad{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;cursor:pointer;transition:all .15s;background:var(--glass-bg)}
+.nc-quad.active,.nc-quad:hover{border-color:var(--qc,#0891B2);box-shadow:0 0 0 1px var(--qc,#0891B2)}
+.nc-qh{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.nc-ql{font-size:12px;font-weight:800;color:var(--qc,#0891B2)}
+.nc-qd{font-size:10.5px;color:var(--muted);margin-bottom:4px}
+.nc-ms{display:grid;gap:2px;padding-left:4px}
+.nc-move{display:flex;gap:6px;font-size:10.5px;line-height:1.4}
+.nc-mn{font-weight:700;color:var(--ink-2);min-width:52px}
+.nc-md{color:var(--muted)}
+.nd-res-steps{display:grid;gap:10px}
+.nd-res-card{background:var(--glass-bg);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.nd-res-head{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border)}
+.nd-res-n{width:22px;height:22px;border-radius:6px;background:var(--rad-grad);color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
+.nd-res-title{font-size:12px;font-weight:800;color:var(--ink)}
+.nd-res-body{padding:8px 12px 6px}
+.nd-res-item{display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed rgba(128,140,164,.1)}
+.nd-res-item:last-child{border-bottom:none}
+.nd-res-k{font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap;width:100px;flex-shrink:0}
+.nd-res-v{font-size:11.5px;color:var(--ink-2);line-height:1.5}
 
 /* ——产品打分：左右布局 + 维度框架 + 评分表格—— */
 .ps-layout{display:flex;gap:16px;margin-top:10px;padding:0 24px 40px}
@@ -1823,17 +1862,193 @@ function openNewIdeaTool(){
 // ---- 新品开发创意工具（创意类）----
 function openNewDevelopTool(){
   setActiveNav('nav-ai');
+  $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent='新品开发创意工具';
   setView('NewDevelop');
+  // TRIZ 40 原理简化数据
+  var TRIZ = [
+    {n:1,name:'分割',cat:'A',desc:'化整为零，模块化，可分离',example:'模块化可换套设计，用户自由组合'},
+    {n:2,name:'抽取',cat:'A',desc:'分离有用与无用，提取核心',example:'内芯可取出，外壳独立清洗'},
+    {n:3,name:'局部质量',cat:'A',desc:'不同部分承担不同功能',example:'三段式：头部脉冲/中部恒温/尾部固定'},
+    {n:4,name:'非对称',cat:'A',desc:'打破对称，适应人体',example:'人体工学S形曲面，贴合不对称结构'},
+    {n:7,name:'嵌套',cat:'A',desc:'一个物体在另一个内部',example:'伸缩式收纳设计，减小存放体积'},
+    {n:17,name:'多维化',cat:'A',desc:'一维变二维/三维',example:'平面变立体折叠结构，多角度使用'},
+    {n:24,name:'中介物',cat:'A',desc:'使用中间载体',example:'凝胶/润滑/穿戴式中间层提升体验'},
+    {n:25,name:'自服务',cat:'A',desc:'物体自行执行辅助功能',example:'自清洁/自消毒表面涂层'},
+    {n:26,name:'复制',cat:'A',desc:'用便宜的复制品替代',example:'标准模块化配件，低成本更换'},
+    {n:39,name:'惰性环境',cat:'A',desc:'使用惰性介质',example:'真空密封/惰性气体延长寿命'},
+    {n:40,name:'复合材料',cat:'A',desc:'多种材料组合',example:'软硬复合硅胶，支撑+触感兼顾'},
+    {n:10,name:'预先作用',cat:'B',desc:'预先放置物体',example:'预热功能，开机即达舒适温度'},
+    {n:11,name:'预先应急',cat:'B',desc:'预先布置应急措施',example:'防摔/防水/过充保护多重备份'},
+    {n:12,name:'等势',cat:'B',desc:'改变工作条件避免升降',example:'平躺/坐姿多角度适用设计'},
+    {n:15,name:'动态化',cat:'B',desc:'物体自动调节适应',example:'自适应贴合曲线，智能调节松紧'},
+    {n:16,name:'未达/过度',cat:'B',desc:'稍微不够或过多',example:'略微加强的刺激阈值，预留可调空间'},
+    {n:18,name:'机械振动',cat:'B',desc:'使物体振动',example:'多频段振动+脉冲+敲击复合模式'},
+    {n:19,name:'周期性作用',cat:'B',desc:'周期性脉冲代替连续',example:'心率同步节拍模式，跟随呼吸节奏'},
+    {n:20,name:'连续性',cat:'B',desc:'连续作用移除间歇',example:'无级变速，平滑过渡不中断'},
+    {n:21,name:'高速急冲',cat:'B',desc:'高速执行有害操作',example:'瞬间强刺激模式，突破耐受阈值'},
+    {n:29,name:'气动/液压',cat:'B',desc:'用气体/液体代替固体',example:'气动缓震结构，液体导热温控'},
+    {n:34,name:'废弃/回收',cat:'B',desc:'丢弃或再生部分',example:'可替换耗材包，环保降解包装'},
+    {n:37,name:'热膨胀',cat:'B',desc:'利用材料热胀冷缩',example:'温感变色/形状记忆材料'},
+    {n:5,name:'合并',cat:'C',desc:'合并同类或邻近物体',example:'多合一：震动+加热+按摩一体化'},
+    {n:6,name:'多用性',cat:'C',desc:'一个物体多种功能',example:'伴侣共用设计，双向刺激'},
+    {n:8,name:'重量补偿',cat:'C',desc:'用另一物体补偿重量',example:'吸盘/磁吸/重力底座解放双手'},
+    {n:9,name:'预先反作用',cat:'C',desc:'预先施加反作用力',example:'预紧力结构抵消震动位移'},
+    {n:13,name:'反向',cat:'C',desc:'反过来做',example:'从主动刺激改为被动接收模式'},
+    {n:14,name:'曲面化',cat:'C',desc:'直线变曲线',example:'流线型人体工学S曲线'},
+    {n:22,name:'变害为利',cat:'C',desc:'利用有害因素',example:'利用震动噪音作为反馈信号'},
+    {n:30,name:'柔性壳体',cat:'C',desc:'用柔性材料代替刚性',example:'液态硅胶一体成型，无缝触感'},
+    {n:31,name:'多孔材料',cat:'C',desc:'使用多孔/渗水材料',example:'透气亲肤纹理表面，减少闷热'},
+    {n:32,name:'颜色改变',cat:'C',desc:'改变颜色/透明度',example:'温感变色，体温激活渐变色'},
+    {n:35,name:'参数变化',cat:'C',desc:'改变物理/化学参数',example:'可调粘度润滑液，适配不同需求'},
+    {n:36,name:'相变',cat:'C',desc:'利用物质相变',example:'蜡质温控导热模块'},
+    {n:38,name:'强氧化剂',cat:'C',desc:'使用富氧空气',example:'抗菌活性氧消毒盒'},
+    {n:23,name:'反馈',cat:'D',desc:'引入反馈机制',example:'APP同步使用数据，生成个人报告'},
+    {n:27,name:'廉价替代',cat:'D',desc:'用廉价材料代替昂贵',example:'食品级替代医疗级，降低成本'},
+    {n:28,name:'机械替代',cat:'D',desc:'用场/传感器替代机械',example:'触摸传感替代物理按键'},
+    {n:33,name:'同质性',cat:'D',desc:'使用同质材料',example:'全硅胶一体设计，无拼接不适'},
+  ];
+  var CAT = {A:'空间/结构类',B:'时间/过程类',C:'界面/相互作用类',D:'系统/进化类'};
+  // 产品创意罗盘：4 象限×5 打法
+  var COMPASS = [
+    {q:'Q1', qName:'功能增强型', color:'#0891B2', desc:'在现有功能基础上做极致优化', moves:[
+      {m:'极效化',desc:'把一个功能做到极致，远超行业标准'},
+      {m:'组合化',desc:'整合多个相关功能为一，减少切换'},
+      {m:'自动化',desc:'减少用户操作步骤，实现一键完成'},
+      {m:'可调化',desc:'让用户自定义参数，适配个性化需求'},
+      {m:'场景化',desc:'针对特定使用场景设计专属模式'}
+    ]},
+    {q:'Q2', qName:'体验创新型', color:'#A855F7', desc:'重新定义用户与产品的交互方式', moves:[
+      {m:'触觉升级',desc:'提升触感/温度/质感的真实度'},
+      {m:'沉浸化',desc:'创造多感官闭环体验（视+听+触）'},
+      {m:'智能化',desc:'AI自适应学习用户偏好，主动调节'},
+      {m:'社交化',desc:'增加连接/分享/互动社交元素'},
+      {m:'情感化',desc:'赋予产品情绪感知与回应能力'}
+    ]},
+    {q:'Q3', qName:'系统重构型', color:'#F59E0B', desc:'打破品类边界，重新定义产品形态', moves:[
+      {m:'跨界融合',desc:'与其他品类/行业的功能结合'},
+      {m:'去形态化',desc:'打破"必须长这样"的行业惯性'},
+      {m:'生态化',desc:'从单一产品变成系统/平台/服务'},
+      {m:'极简化',desc:'砍掉一切非核心功能，回归本质'},
+      {m:'去工具化',desc:'让产品从"工具"变成"体验"'}
+    ]},
+    {q:'Q4', qName:'价值重塑型', color:'#10B981', desc:'从成本/渠道/交付环节重构价值', moves:[
+      {m:'降维打击',desc:'用更低价格提供 80% 的核心体验'},
+      {m:'订阅化',desc:'从买断制转向订阅/耗材模式'},
+      {m:'服务化',desc:'产品+持续服务的组合模式'},
+      {m:'透明化',desc:'让用户看到成本和价值构成'},
+      {m:'共创化',desc:'用户参与设计和迭代反馈闭环'}
+    ]}
+  ];
+  // 左栏框架选择 HTML
+  var frameTabs =
+    '<div class="nd-tabs"><button class="nd-tab active" id="ndTabTriz" onclick="ndSwitchTab(\'triz\')">TRIZ 创新原理</button>'+
+    '<button class="nd-tab" id="ndTabCompass" onclick="ndSwitchTab(\'compass\')">产品创意罗盘</button></div>';
+  // TRIZ 分类按钮
+  var trizCats = Object.keys(CAT).map(function(k){
+    var cnt = TRIZ.filter(function(p){return p.cat===k;}).length;
+    return '<button class="nd-cat" data-cat="'+k+'" onclick="ndFilterCat(\''+k+'\',this)">'+k+'. '+CAT[k]+' <span class="nd-cnt">'+cnt+'</span></button>';
+  }).join('');
+  // 罗盘象限
+  var compassCards = COMPASS.map(function(q){
+    var moves = q.moves.map(function(m){return '<div class="nc-move"><span class="nc-mn">'+escHtml(m.m)+'</span><span class="nc-md">'+escHtml(m.desc)+'</span></div>';}).join('');
+    return '<div class="nc-quad" onclick="ndSelectQuad(\''+q.q+'\',this)" style="--qc:'+q.color+'"><div class="nc-qh"><span class="nc-ql">'+escHtml(q.qName)+'</span></div><div class="nc-qd">'+escHtml(q.desc)+'</div><div class="nc-ms">'+moves+'</div></div>';
+  }).join('');
+  // 页面渲染
   $('#viewNewDevelop').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">新品开发创意工具</span>'+
-      '<span class="ws-tag">FABE · TRIZ · 需求四象限 · 创新方案</span></div>'+
-    '<div class="tool-wrap" style="padding:40px;text-align:center;color:var(--muted)">'+
-      '<div style="font-size:40px;margin-bottom:12px;color:var(--accent)"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>'+
-      '<div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px">新品开发创意工具</div>'+
-      '<div style="font-size:13px;line-height:1.7;max-width:400px;margin:0 auto">结合需求四象限与 TRIZ 创新方法，系统化生成新品功能组合与创新方案，输出 FABE 设计需求。</div>'+
-      '<div style="margin-top:20px;font-size:11px;color:var(--muted)">数据接入中 · 功能即将上线</div></div>';
+      '<span class="ws-tag">TRIZ 40 原理 · 产品创意罗盘 4象限×20打法</span></div>'+
+    '<div class="ps-layout">'+
+      '<div class="ps-left" style="flex-basis:380px">'+
+        '<div class="ps-input-wrap">'+
+          '<textarea class="ps-nl" id="ndNl" placeholder="描述产品痛点 / 希望改进的方向 / 目标用户…\n例如：用户清洗麻烦、噪音大、不便携" style="min-height:80px"></textarea>'+
+          '<div class="ps-input-bar"><button class="ps-run" id="ndRun" onclick="runNewDevelop()">生成创意方案</button></div>'+
+        '</div>'+
+        frameTabs+
+        '<div id="ndTrizPanel" class="nd-panel">'+
+          '<div class="nd-psec"><div class="nd-psh">选择创新方向（TRIZ 4 大类）</div><div class="nd-cats">'+trizCats+'</div></div>'+
+          '<div class="nd-psec"><div class="nd-psh">已选原理 <span class="nd-selcnt" id="ndSelCnt">0</span></div><div class="nd-prins" id="ndPrins"></div></div>'+
+        '</div>'+
+        '<div id="ndCompassPanel" class="nd-panel" style="display:none">'+
+          '<div class="nd-psec"><div class="nd-psh">选择创新象限</div><div class="nc-grid">'+compassCards+'</div></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ps-right"><div id="ndReport"></div></div>'+
+    '</div>';
+  window._ND = {triz:TRIZ, cat:CAT, compass:COMPASS, selCat:'A', selPrins:[], selQuad:null};
+  ndFilterCat('A', document.querySelector('.nd-cat[data-cat="A"]'));
+}
+// ---- 新品开发引擎 ----
+function ndSwitchTab(tab){
+  document.getElementById('ndTabTriz').classList.toggle('active',tab==='triz');
+  document.getElementById('ndTabCompass').classList.toggle('active',tab==='compass');
+  document.getElementById('ndTrizPanel').style.display=(tab==='triz'?'':'none');
+  document.getElementById('ndCompassPanel').style.display=(tab==='compass'?'':'none');
+}
+function ndFilterCat(cat, btn){
+  document.querySelectorAll('.nd-cat').forEach(function(b){b.classList.toggle('active',b===btn);});
+  if(!window._ND) return;
+  window._ND.selCat=cat;
+  var list = window._ND.triz.filter(function(p){return p.cat===cat;});
+  var html = list.map(function(p){
+    var sel = window._ND.selPrins.indexOf(p.n)>-1;
+    return '<div class="nd-prin'+(sel?' sel':'')+'" data-n="'+p.n+'" onclick="ndTogglePrin('+p.n+',this)"><span class="nd-pn">'+p.n+'</span><span class="nd-pname">'+escHtml(p.name)+'</span><span class="nd-pdesc">'+escHtml(p.desc)+'</span></div>';
+  }).join('');
+  document.getElementById('ndPrins').innerHTML=html||'<div class="nd-pempty">该分类暂无原理</div>';
+}
+function ndTogglePrin(n, el){
+  if(!window._ND) return;
+  var idx = window._ND.selPrins.indexOf(n);
+  if(idx>-1){ window._ND.selPrins.splice(idx,1); el.classList.remove('sel'); }
+  else{ window._ND.selPrins.push(n); el.classList.add('sel'); }
+  document.getElementById('ndSelCnt').textContent = window._ND.selPrins.length;
+}
+function ndSelectQuad(q, el){
+  document.querySelectorAll('.nc-quad').forEach(function(b){b.classList.toggle('active',b===el);});
+  if(window._ND) window._ND.selQuad = (window._ND.selQuad===q?null:q);
+}
+function runNewDevelop(){
+  var ta=document.getElementById('ndNl');
+  var text=ta?ta.value.trim():'';
+  if(!text){ if(window.toast) toast('请先输入产品痛点或描述'); return; }
+  if(!window._ND) return;
+  var el=document.getElementById('ndReport');
+  if(el) el.innerHTML='<div class="ps-loading">正在基于选定框架生成创意方案…</div>';
+  var btn=document.getElementById('ndRun'); if(btn) btn.disabled=true;
+  var isTriz = document.getElementById('ndTabTriz').classList.contains('active');
+  var steps = [];
+  if(isTriz){
+    var sel = window._ND.selPrins.length ? window._ND.selPrins.map(function(n){return window._ND.triz.find(function(p){return p.n===n;});}).filter(Boolean) : window._ND.triz.filter(function(p){return p.cat===window._ND.selCat;}).slice(0,4);
+    steps.push({title:'TRIZ 创意方案', n:'01', items:sel.map(function(p){
+      return {k:p.n+'. '+escHtml(p.name), v:'核心思路：'+escHtml(p.desc)+'<br>应用示例：'+escHtml(p.example)+'<br><span style="color:var(--accent)">建议：结合「'+escHtml(text)+'」的痛点，可将此原理应用于产品重构。</span>'};
+    })});
+  } else {
+    var selQ = window._ND.selQuad ? window._ND.compass.find(function(q){return q.q===window._ND.selQuad;}) : window._ND.compass[0];
+    if(selQ){
+      steps.push({title:'产品创意罗盘 · '+escHtml(selQ.qName), n:'01', items:selQ.moves.map(function(m){
+        return {k:escHtml(m.m), v:escHtml(m.desc)+'<br><span style="color:var(--accent)">结合痛点「'+escHtml(text)+'」，从 '+escHtml(m.m)+' 方向切入：重新定义产品在 '+escHtml(selQ.qName)+' 维度的价值。</span>'};
+      })});
+    }
+  }
+  renderNewDevelopReport(steps, isTriz);
+  if(btn) btn.disabled=false;
+}
+function renderNewDevelopReport(steps, isTriz){
+  var el=document.getElementById('ndReport');
+  if(!el||!steps.length) return;
+  var html = steps.map(function(s){
+    var items=s.items.map(function(it){
+      return '<div class="nd-res-item"><div class="nd-res-k">'+it.k+'</div><div class="nd-res-v">'+it.v+'</div></div>';
+    }).join('');
+    return '<div class="nd-res-card"><div class="nd-res-head"><span class="nd-res-n">'+s.n+'</span><span class="nd-res-title">'+s.title+'</span></div><div class="nd-res-body">'+items+'</div></div>';
+  }).join('');
+  var total = steps.reduce(function(a,s){return a+s.items.length;},0);
+  el.innerHTML=
+    '<div class="ps-sec">创意方案</div>'+
+    '<div style="font-size:11px;color:var(--muted);margin:-4px 0 6px">基于 '+(isTriz?'TRIZ 40 个发明原理':'产品创意罗盘 4 象限×20 种打法')+' 生成 · 共 <b>'+total+'</b> 个创意方向</div>'+
+    '<div class="nd-res-steps">'+html+'</div>'+
+    '<div class="ps-verdict go" style="margin-top:10px;text-align:left;padding:12px 16px"><div style="font-size:11.5px;line-height:1.6;color:var(--ink-2)">以上创意方向可组合使用。建议选取 2-3 个方向进行深入的产品概念验证与用户测试。</div></div>';
 }
 
 // ---- 产品打分工具（三维度12指标加权评分）----
