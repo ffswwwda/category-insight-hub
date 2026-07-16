@@ -173,21 +173,37 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .voc-cat.on,.voc-cat:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.06)}
 .voc-cases{display:grid;grid-template-columns:1fr;gap:10px}
 .voc-ucards{display:grid;gap:10px}
-.voc-ucard{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-  border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 14px 12px;position:relative;overflow:hidden}
-.voc-ucard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--rad-grad)}
-.voc-utop{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.voc-uavatar{width:34px;height:34px;border-radius:10px;background:var(--rad-grad);color:#fff;font-size:16px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
+.voc-ucards{display:grid;gap:10px} /* keep for fallback */
+.voc-rows{display:grid;gap:10px}
+.voc-row{display:grid;grid-template-columns:1fr 16px 1fr 16px 1.1fr;gap:0;background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);position:relative;overflow:hidden;padding:0}
+.voc-row::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--uc,var(--accent))}
+.voc-col{padding:12px 14px;min-width:0}
+.voc-utop{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.voc-uavatar{width:30px;height:30px;border-radius:9px;background:var(--rad-grad);color:#fff;font-size:14px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
 .voc-uinfo{flex:1;min-width:0}
-.voc-uname{font-size:14px;font-weight:800;color:var(--ink);line-height:1.2}
-.voc-ulevel{font-size:10px;color:var(--muted);line-height:1.3;display:flex;flex-wrap:wrap;gap:2px}
+.voc-uname{font-size:13px;font-weight:800;color:var(--ink);line-height:1.2}
+.voc-ulevel{font-size:9.5px;color:var(--muted);margin-top:1px;line-height:1.3}
 .voc-ulevel b{font-weight:800}
-.voc-udesc{font-size:11px;color:var(--ink-2);line-height:1.5;margin-bottom:8px;padding-left:44px}
-.voc-usec{margin-bottom:8px;padding-left:44px}
-.voc-us-head{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px}
-.voc-uhits{display:flex;flex-wrap:wrap;gap:3px}
-.voc-hit{font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:5px;background:rgba(139,92,246,.1);color:#7c3aed}
-.voc-uaim{font-size:11px;font-weight:700;color:var(--accent);line-height:1.5;padding:5px 10px;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.12);border-radius:7px;margin-top:4px}
+.voc-udesc{font-size:10.5px;color:var(--ink-2);line-height:1.45;margin-bottom:6px}
+.voc-usec{margin-top:4px}
+.voc-us-head{font-size:8.5px;font-weight:800;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-bottom:3px}
+.voc-uhits{display:flex;flex-wrap:wrap;gap:2px}
+.voc-hit{font-size:8.5px;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(139,92,246,.1);color:#7c3aed}
+/* 用户 → 洞察 → 动作 的连接箭头 */
+.voc-arrow{position:relative;background:linear-gradient(to right,transparent,var(--border) 30%,var(--border) 70%,transparent);width:1px;margin:0;justify-self:center}
+.voc-arrow::after{content:'→';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg);color:var(--accent);font-size:14px;font-weight:900;padding:0 4px}
+/* 洞察列 */
+.voc-insight-label{font-size:9px;font-weight:800;color:var(--accent);letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px}
+.voc-insight-title{font-size:14px;font-weight:900;color:var(--ink);line-height:1.35;margin-bottom:6px;background:linear-gradient(135deg,var(--accent),var(--ink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.voc-insight-dir{font-size:10.5px;color:var(--ink-2);line-height:1.5;margin-bottom:6px}
+.voc-insight-aim{font-size:10px;font-weight:700;color:var(--accent);padding:4px 8px;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.15);border-radius:6px;display:inline-block}
+/* 动作列 */
+.voc-actions-label{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:6px}
+.voc-actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.voc-act{background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.2);border-radius:6px;padding:5px 6px;display:flex;align-items:flex-start;gap:5px;min-height:42px}
+.voc-act-n{width:16px;height:16px;border-radius:50%;background:var(--rad-grad);color:#fff;font-size:9px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
+.voc-act-t{font-size:10px;font-weight:600;color:var(--ink);line-height:1.35}
 .sd-kpis{display:flex;gap:14px;margin:18px 0 22px;flex-wrap:wrap}
 .sd-kpi{flex:1;min-width:150px;background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--border);
   border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm)}
@@ -1769,14 +1785,32 @@ var VOC_MODULES = [
 ];
 var VOC_CASES = {
   '倒模类': [
-    {name:'小张', level:'画像缺乏', dims:3, hit:['购买动机-情感驱动','不满&障碍-产品设计不满','十三种需求-亲密/安全'], aim:'用于细分市场：定位情感需求型用户群体', desc:'以情感诉求为主，对产品外观/质感关注度高，缺少完整使用流程讨论。'},
-    {name:'王先生', level:'画像完整', dims:5, hit:['用户画像-人口统计+心理特征','购买动机-功能+情感','不满&障碍-产品设计+体验','克服方式-产品改进','十三种需求-安全+舒适+审美'], aim:'用于新品开发：针对性解决清洗/材质痛点', desc:'完整讨论了从购买动机到使用阻碍全流程，情感+清洗两方面突出。'},
-    {name:'老李', level:'话多用户', dims:7, hit:['用户画像-全维度','购买动机-全维度','不满&障碍-全流程','克服方式-多方案','改进建议-设计+功能','十三种需求-全层次'], aim:'用于用户洞察：全面理解倒模类用户需求层次', desc:'深度参与产品讨论全链，从动机到改进建议均有高质量表达。'}
+    {name:'小张', level:'画像缺乏', dims:3, hit:['购买动机-情感驱动','不满&障碍-产品设计不满','十三种需求-亲密/安全'],
+      title:'满足无数个小张的情感需求', dir:'重点满足他们对「亲密 / 安全」的具体情感需求',
+      actions:['情感驱动型卖点提炼','亲密感产品概念设计','细分人群广告素材','KOL 情感种草','社媒话题运营'],
+      aim:'用于细分市场：定位情感需求型用户群体', desc:'以情感诉求为主，对产品外观/质感关注度高，缺少完整使用流程讨论。'},
+    {name:'王先生', level:'画像完整', dims:5, hit:['用户画像-人口统计+心理特征','购买动机-功能+情感','不满&障碍-产品设计+体验','克服方式-产品改进','十三种需求-安全+舒适+审美'],
+      title:'满足无数个王先生的「清洁/材质/审美」全维度需求', dir:'重点解决清洗+材质痛点，兼顾审美',
+      actions:['易清洁材质研发','标准化品质测试','包装升级设计','情感+功能双重卖点','MOC 测评反馈'],
+      aim:'用于新品开发：针对性解决清洗/材质痛点', desc:'完整讨论了从购买动机到使用阻碍全流程，情感+清洗两方面突出。'},
+    {name:'老李', level:'话多用户', dims:7, hit:['用户画像-全维度','购买动机-全维度','不满&障碍-全流程','克服方式-多方案','改进建议-设计+功能','十三种需求-全层次'],
+      title:'满足无数个老李的全链路深度需求', dir:'从动机到改进建议全链覆盖，是行业知识节点',
+      actions:['建立用户深访机制','系统化产品迭代','品牌社群运营','竞品对比分析','社群内容运营'],
+      aim:'用于用户洞察：全面理解倒模类用户需求层次', desc:'深度参与产品讨论全链，从动机到改进建议均有高质量表达。'}
   ],
   '飞机杯类': [
-    {name:'郑哥', level:'画像缺乏', dims:3, hit:['购买动机-功能驱动','不满&障碍-功能体验障碍','十三种需求-刺激/舒适'], aim:'用于产品优化：聚焦功能性能提升', desc:'集中于功能层面讨论，关注震动/加热等参数，情感表达较少。'},
-    {name:'陈先生', level:'画像完整', dims:5, hit:['用户画像-使用经验+社群','购买动机-功能+情感','不满&障碍-噪音+尺寸+清洗','改进建议-功能增强','十三种需求-刺激+安全+舒适'], aim:'用于新品开发+产品优化：功能+体验双线改进', desc:'从参数对比到使用体验均有讨论，功能+体验+价格是核心关注。'},
-    {name:'刘老', level:'话多用户', dims:8, hit:['用户画像-全维度','购买动机-全维度','不满&障碍-全流程','克服方式-多种DIY','改进建议-设计+功能+强烈','忠诚度-高+低','十三种需求-全层次'], aim:'用于竞品分析+市场趋势：了解用户对竞品的对比和迁移路径', desc:'多平台比价+多品牌对比+深度DIY，是行业关键信息源。'}
+    {name:'郑哥', level:'画像缺乏', dims:3, hit:['购买动机-功能驱动','不满&障碍-功能体验障碍','十三种需求-刺激/舒适'],
+      title:'满足无数个郑哥的功能体验需求', dir:'重点解决震动/加热/防水等核心功能痛点',
+      actions:['核心功能性能升级','续航与防水优化','参数可视化对比','功能型广告卖点'],
+      aim:'用于产品优化：聚焦功能性能提升', desc:'集中于功能层面讨论，关注震动/加热等参数，情感表达较少。'},
+    {name:'陈先生', level:'画像完整', dims:5, hit:['用户画像-使用经验+社群','购买动机-功能+情感','不满&障碍-噪音+尺寸+清洗','改进建议-功能增强','十三种需求-刺激+安全+舒适'],
+      title:'满足无数个陈先生的「功能+体验+价格」综合需求', dir:'从参数对比到使用体验全维优化',
+      actions:['降噪+防水技术升级','尺寸矩阵优化','价格分层策略','社群口碑运营','退换货政策优化'],
+      aim:'用于新品开发+产品优化：功能+体验双线改进', desc:'从参数对比到使用体验均有讨论，功能+体验+价格是核心关注。'},
+    {name:'刘老', level:'话多用户', dims:8, hit:['用户画像-全维度','购买动机-全维度','不满&障碍-全流程','克服方式-多种DIY','改进建议-设计+功能+强烈','忠诚度-高+低','十三种需求-全层次'],
+      title:'满足无数个刘老的全维度竞品对比需求', dir:'服务这类行业关键信息源，影响品牌迁移',
+      actions:['竞品对比内容营销','KOC 多品牌测评','用户 DIY 教程社群','品牌迁移挽留机制','行业洞察报告'],
+      aim:'用于竞品分析+市场趋势：了解用户对竞品的对比和迁移路径', desc:'多平台比价+多品牌对比+深度DIY，是行业关键信息源。'}
   ]
 };
 // VOC 基础维度标签（数据源）
@@ -1820,17 +1854,38 @@ function renderVocTagPage(){
 function renderVocCases(cat){
   var users=VOC_CASES[cat];
   if(!users) return '';
-  return '<div class="voc-ucards">'+users.map(function(u){
+  return '<div class="voc-rows">'+users.map(function(u){
     var hits = u.hit.map(function(h){ return '<span class="voc-hit">'+escHtml(h)+'</span>'; }).join('');
     var levelColor={3:'#94A3B8',5:'#F59E0B',7:'#10B981',8:'#0891B2'}[u.dims]||'#94a3b8';
-    return '<div class="voc-ucard"><div class="voc-utop">'+
-      '<div class="voc-uavatar">'+escHtml(u.name.charAt(0))+'</div>'+
-      '<div class="voc-uinfo"><div class="voc-uname">'+escHtml(u.name)+'</div>'+
-        '<div class="voc-ulevel" style="--uc:'+levelColor+'">'+escHtml(u.level)+' · 命中 <b style="font-size:14px;color:'+levelColor+'">'+u.dims+'</b> 个标签维度 · '+(u.dims<5?'基础覆盖':'<b style="color:'+levelColor+'">多维度覆盖</b>')+'</div></div>'+
+    // 动作卡片
+    var acts = (u.actions||[]).map(function(a,i){
+      return '<div class="voc-act"><div class="voc-act-n">'+(i+1)+'</div><div class="voc-act-t">'+escHtml(a)+'</div></div>';
+    }).join('');
+    return '<div class="voc-row" style="--uc:'+levelColor+'">'+
+      // 左：用户卡
+      '<div class="voc-col voc-col-user">'+
+        '<div class="voc-utop"><div class="voc-uavatar">'+escHtml(u.name.charAt(0))+'</div>'+
+          '<div class="voc-uinfo"><div class="voc-uname">'+escHtml(u.name)+'</div>'+
+            '<div class="voc-ulevel" style="--uc:'+levelColor+'">'+escHtml(u.level)+' · 命中 <b style="color:'+levelColor+'">'+u.dims+'</b> 标签</div></div></div>'+
+        '<div class="voc-udesc">'+escHtml(u.desc)+'</div>'+
+        '<div class="voc-usec"><div class="voc-us-head">命中标签板块</div><div class="voc-uhits">'+hits+'</div></div>'+
       '</div>'+
-      '<div class="voc-udesc">'+escHtml(u.desc)+'</div>'+
-      '<div class="voc-usec"><div class="voc-us-head">命中标签板块</div><div class="voc-uhits">'+hits+'</div></div>'+
-      '<div class="voc-uaim">'+escHtml(u.aim)+'</div>'+
+      // 箭头
+      '<div class="voc-arrow"></div>'+
+      // 中：洞察标题
+      '<div class="voc-col voc-col-insight">'+
+        '<div class="voc-insight-label">用户洞察 → 目的</div>'+
+        '<div class="voc-insight-title">'+escHtml(u.title)+'</div>'+
+        '<div class="voc-insight-dir">方向：'+escHtml(u.dir)+'</div>'+
+        '<div class="voc-insight-aim">'+escHtml(u.aim)+'</div>'+
+      '</div>'+
+      // 箭头
+      '<div class="voc-arrow"></div>'+
+      // 右：动作卡片
+      '<div class="voc-col voc-col-actions">'+
+        '<div class="voc-actions-label">我们要做的动作</div>'+
+        '<div class="voc-actions-grid">'+acts+'</div>'+
+      '</div>'+
     '</div>';
   }).join('')+'</div>';
 }
