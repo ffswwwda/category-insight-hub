@@ -691,6 +691,8 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .gal-lf{margin:6px 24px 44px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--glass-bg);
   backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);padding:14px 16px 6px}
 .lf-zone{margin-top:6px}
+.lf-page{margin:6px 24px 44px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--glass-bg);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);padding:14px 16px 6px}
 .lf-tabs{display:flex;gap:0;margin-bottom:10px;border-bottom:1px solid var(--border)}
 .lf-tab{padding:7px 16px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
   transition:color .2s,border-color .2s;position:relative;top:1px}
@@ -868,6 +870,9 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 
       <!-- ===== VIEW: PRODUCT SCORING TOOL ===== -->
       <div class="view" id="viewProductScore"></div>
+
+      <!-- ===== VIEW: LEAD-USER FEEDBACK ZONE (平级于 AI 简化工具) ===== -->
+      <div class="view" id="viewLfZone"></div>
 
     </section>
   </main>
@@ -1176,7 +1181,9 @@ function renderNavShared(){
     '<div class="nav-item" data-nav="nav-fw" onclick="openFrameworkGallery()">'+
       '<span class="ni-name">分析框架</span><span class="ni-sub">'+fwN+' 个</span></div>'+
     '<div class="nav-item" data-nav="nav-ai" onclick="openAITools()">'+
-      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">4 个</span></div>';
+      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">4 个</span></div>'+
+    '<div class="nav-item" data-nav="nav-lf" onclick="openLfZone()">'+
+      '<span class="ni-name">领新用户反馈专区</span><span class="ni-sub">画像+反馈</span></div>';
   $('#navShared').innerHTML=html;
 }
 
@@ -1472,20 +1479,29 @@ function openAITools(){
   setView('AITools');
   $('#viewAITools').innerHTML=
     '<div class="gal-head"><div><div class="gal-h-title">AI 简化工具</div>'+
-      '<div class="gal-h-sub">四个工具：VOC 打标签（单条）、用户语料分析（批量，含情绪）、产品打分（自然语言拆解 + 数据源匹配评分）+ 预测控制台（外部）。均不依赖大模型。下方为领新用户反馈专区。</div></div></div>'+
-    '<div class="ai-grid">'+cards+'</div>'+
-    '<div class="lf-zone gal-lf"><div class="ss-head">领新用户反馈专区</div>'+
+      '<div class="gal-h-sub">四个工具：VOC 打标签（单条）、用户语料分析（批量，含情绪）、产品打分（自然语言拆解 + 数据源匹配评分）+ 预测控制台（外部）。均不依赖大模型。</div></div></div>'+
+    '<div class="ai-grid">'+cards+'</div>';
+}
+
+// ---- 领新用户反馈专区（与 AI 简化工具平级的独立入口） ----
+function openLfZone(){
+  setActiveNav('nav-lf');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='领新用户反馈专区';
+  setView('LfZone');
+  $('#viewLfZone').innerHTML=
+    '<div class="gal-head"><div><div class="gal-h-title">领新用户反馈专区</div>'+
+      '<div class="gal-h-sub">基于领先用户理论：从 VOC 小众长评与访谈特别反馈中识别超前需求与创意信号。可切换「用户画像看板」与「用户反馈看板」。</div></div></div>'+
+    '<div class="lf-zone lf-page"><div class="ss-head">领新用户反馈</div>'+
       '<div class="lf-tabs">'+
         '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户画像看板</div>'+
         '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">用户反馈看板</div>'+
       '</div>'+
       '<div class="lf-body"></div>'+
     '</div>';
-  var aiZone = document.getElementById('viewAITools').querySelector('.lf-zone');
-  if(aiZone) renderLfBody(aiZone);
+  var zone = document.getElementById('viewLfZone').querySelector('.lf-zone');
+  if(zone) renderLfBody(zone);
 }
-
-// ---- VOC 打标签工具（独立页面）----
 function openVocTool(){
   setActiveNav('nav-ai');
   $('#topbarTitle').textContent='VOC 打标签工具';
