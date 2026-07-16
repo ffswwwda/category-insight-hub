@@ -409,6 +409,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 
 /* DE dashboard iframe */
 .de-frame{width:100%;height:calc(100vh - 120px);border:none;display:block}
+.voc-frame{width:100%;height:calc(100vh - 120px);border:none;display:block;background:transparent}
 
 /* ============ LEVEL1: SOURCE EXPLORER ============ */
 .src-explorer{padding:18px 22px;overflow:auto;height:calc(100vh - 120px)}
@@ -1285,20 +1286,7 @@ function openVocTool(){
   $('#topbarTitle').textContent='VOC 打标签工具';
   setView('VocTool');
   $('#viewVocTool').innerHTML=
-    '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
-      '<span class="ws-title">VOC 打标签工具</span>'+
-      '<span class="ws-tag">本地规则引擎</span></div>'+
-    '<div class="tool-wrap">'+
-      '<div class="tagger-panel">'+
-        '<textarea class="tp-input" id="vocToolInput" placeholder="粘贴一条用户评论或社媒内容，实时出标签...&#10;&#10;示例：这个东西声音太大了，而且尺寸偏小不太好用"></textarea>'+
-        '<div class="tp-tip">规则覆盖维度：尺寸 / 外观 / 功能 / 噪音 / 价格 / 清洁 / 舒适（含否定保护，如“不大”不误判）</div>'+
-        '<button class="export-ai" style="margin-top:10px" onclick="runVocTagger(\'vocToolInput\',\'vocToolTags\',\'vocToolResult\')">运行规则引擎</button>'+
-        '<div class="tp-output" id="vocToolOutput">'+
-          '<div class="tp-tags" id="vocToolTags"></div>'+
-          '<div class="tp-result" id="vocToolResult"></div>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
+    '<iframe class="voc-frame" src="voc-tagging.html" title="VOC 智能打标工具"></iframe>';
 }
 
 // ---- 用户语料分析工具（批量）----
