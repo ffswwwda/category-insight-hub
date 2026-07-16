@@ -725,6 +725,35 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .rf-metric.lead{background:rgba(0,212,255,.1);color:#0369a1}
 .rf-metric.creat{background:rgba(236,72,153,.1);color:#be185d}
 .rf-metric.hit-low{background:rgba(156,163,175,.12);color:#6b7280}
+/* ——领先用户扩展：身份卡双维度+信号+区块—— */
+.uid-top{display:flex;gap:10px;margin-bottom:8px}
+.uid-id{flex:1}
+.uid-arch{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.3px;padding:1px 6px;border-radius:5px;background:var(--arch,#94a3b8);color:#fff;text-transform:uppercase;margin-top:1px}
+.uid-dims{display:flex;gap:10px;margin-bottom:6px}
+.uid-dim{flex:1;display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.uid-dim b{font-size:13px}
+.dim-hi{color:#10b981}
+.dim-mid{color:#f59e0b}
+.dim-lo{color:#94a3b8}
+.uid-sigs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.uid-sig{font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;background:rgba(139,92,246,.1);color:#7c3aed;letter-spacing:.2px}
+.uid-block{margin-bottom:5px}
+.ub-h{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin-bottom:2px;text-transform:uppercase}
+.uid-idea{font-size:11.5px;color:var(--accent);line-height:1.5;font-weight:600}
+/* ——领先需求评估：聚类筛选栏—— */
+.fb-filter{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px}
+.fb-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.fb-row:last-child{margin-bottom:0}
+.fb-label{font-size:10px;font-weight:800;color:var(--muted);width:44px;flex-shrink:0}
+.fb-chips{display:flex;flex-wrap:wrap;gap:5px}
+.lf-chip{font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;border:1px solid var(--border);background:var(--glass-bg);color:var(--ink-2);cursor:pointer;transition:all .15s;font-family:inherit}
+.lf-chip:hover{border-color:var(--accent);color:var(--accent)}
+.lf-chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.rf-head{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:3px}
+.rf-purpose{font-size:9px;font-weight:800;padding:1px 6px;border-radius:5px;background:rgba(16,185,129,.1);color:#047857;letter-spacing:.3px}
+.rf-cluster{font-size:9px;font-weight:700;padding:1px 6px;border-radius:5px;background:rgba(8,145,178,.1);color:#0369a1}
+.rf-metric b{font-size:12px}
+.rf-hint{font-size:10px;color:var(--muted);margin-bottom:6px;padding-left:2px}
 
 /* ============ TOOL WRAP (VOC / Corpus) ============ */
 .tool-wrap{padding:18px 24px 40px;max-width:920px}
@@ -1491,11 +1520,11 @@ function openLfZone(){
   setView('LfZone');
   $('#viewLfZone').innerHTML=
     '<div class="gal-head"><div><div class="gal-h-title">领新用户反馈专区</div>'+
-      '<div class="gal-h-sub">基于领先用户理论：从 VOC 小众长评与访谈特别反馈中识别超前需求与创意信号。可切换「用户画像看板」与「用户反馈看板」。</div></div></div>'+
+      '<div class="gal-h-sub">基于领先用户理论：从 VOC 小众长评与访谈特别反馈中识别超前需求与创意信号。可切换「用户身份卡」与「领先需求评估」。</div></div></div>'+
     '<div class="lf-zone lf-page"><div class="ss-head">领新用户反馈</div>'+
       '<div class="lf-tabs">'+
-        '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户画像看板</div>'+
-        '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">用户反馈看板</div>'+
+        '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户身份卡</div>'+
+        '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">领先需求评估</div>'+
       '</div>'+
       '<div class="lf-body"></div>'+
     '</div>';
@@ -1974,22 +2003,64 @@ function buildPSRadar(dimScores){
 // ============================================================
 // 领新用户反馈专区（结构化模式左栏）
 // ============================================================
+// ===== 领先用户理论框架常量（von Hippel 两大标准 + 2×2 矩阵 + 信号）=====
+var LF_ARCH = {
+  lead:   {label:'真正领先用户', desc:'高时间领先 + 高收益预期', color:'#0891B2'},
+  trend:  {label:'趋势观察者',   desc:'高时间领先 + 低收益预期', color:'#A855F7'},
+  power:  {label:'重度用户',     desc:'低时间领先 + 高收益预期', color:'#F59E0B'},
+  normal: {label:'普通用户',     desc:'低时间领先 + 低收益预期', color:'#94A3B8'}
+};
+var LF_SIG = {
+  workaround:'自创方案',
+  future:'未来需求',
+  emotion:'极端情感',
+  social:'社交影响'
+};
+// 领先用户身份卡（用户全景，后续按此 schema 接入数据，可容纳几十~数百条）
 var LF_PORTRAITS = [
-  {id:'u1', avatar:'A', name:'极客型早期采用者', tags:['技术敏感','DIY改装','高付费'], quote:'我自己加了静音棉，效果还行但希望出厂就做好', source:'VOC·小众长评', lead:'高', creat:'高'},
-  {id:'u2', avatar:'B', name:'场景定制需求者', tags:['特殊尺寸','非标空间','功能组合'], quote:'我的柜子深度只有30cm，市面上没有合适的', source:'访谈·线下用户', lead:'极高', creat:'中'},
-  {id:'u3', avatar:'C', name:'审美优先体验派', tags:['外观控','社交分享','品牌认知'], quote:'放在客厅里不好看，像工业品不像家电', source:'VOC·低分差评', lead:'中', creat:'高'},
-  {id:'u4', avatar:'D', name:'性价比精算师', tags:['多平台比价','参数党','复购驱动'], source:'VOC·中性评价', quote:'同样参数别家便宜20%，看不出差异在哪', lead:'低', creat:'低'}
+  {id:'u1', avatar:'A', name:'极客型早期采用者', archetype:'lead', lead:'高', benefit:'高', signals:['workaround','future'],
+    said:'我自己加了静音棉，效果还行，但希望出厂就做好，还能调震频。',
+    idea:'出厂预装静音模块 + 可调震频固件，省去用户 DIY。',
+    trait:'技术敏感 · DIY 改装 · 高付费意愿', source:'VOC·小众长评'},
+  {id:'u2', avatar:'B', name:'场景定制需求者', archetype:'lead', lead:'高', benefit:'高', signals:['future'],
+    said:'我的柜子深度只有 30cm，市面上没有合适的，只能将就。',
+    idea:'模块化非标尺寸定制 / 可伸缩结构，适配非标空间。',
+    trait:'特殊尺寸 · 非标空间 · 功能组合', source:'访谈·线下用户'},
+  {id:'u3', avatar:'C', name:'审美优先体验派', archetype:'trend', lead:'高', benefit:'中', signals:['emotion'],
+    said:'放在客厅里不好看，像工业品不像家电，朋友来都觉得尴尬。',
+    idea:'家居化 / 装饰性外观，能当摆件而非躲起来。',
+    trait:'外观控 · 社交分享 · 品牌认知', source:'VOC·低分差评'},
+  {id:'u4', avatar:'D', name:'性价比精算师', archetype:'power', lead:'低', benefit:'高', signals:['emotion'],
+    said:'同样参数别家便宜 20%，看不出你们差异在哪，凭什么贵？',
+    idea:'差异化价值可视化（参数 + 体验对比），否则只能拼价格。',
+    trait:'多平台比价 · 参数党 · 复购驱动', source:'VOC·中性评价'},
+  {id:'u5', avatar:'E', name:'养宠安全顾虑者', archetype:'lead', lead:'高', benefit:'高', signals:['future','emotion'],
+    said:'养猫家庭最在意噪音和安全性，市面几乎没有同时满足这两个的。',
+    idea:'低噪 + 宠物安全材质（无毒 / 防咬）双满足。',
+    trait:'养宠家庭 · 安全敏感 · 高客单', source:'VOC·小众长评'},
+  {id:'u6', avatar:'F', name:'企业批量采购者', archetype:'power', lead:'低', benefit:'高', signals:['social'],
+    said:'公司采购 50 台给员工宿舍，半年坏 7 台，维修响应太慢。',
+    idea:'B 端可靠性套餐 + 本地化备件，降低运维成本。',
+    trait:'批量采购 · 运维导向 · 决策理性', source:'访谈·企业用户'}
 ];
-
+// 领先需求评估（偏用户反馈，指向我方目的，可聚类筛选）
 var FEEDBACK_RAW = [
-  {src:'voc-niche', srcLabel:'VOC小众', txt:'这个产品的安装方式对租房党不友好，我搬了三次家每次都要拆装，希望能出一款免打孔的版本', lead:'高', creat:'高', hitRate:'12%'},
-  {src:'interview', srcLabel:'访谈特别', txt:'我在用竞品X的时候发现它的APP联动做得很好，但你们的产品连基本的蓝牙配对都很不稳定', lead:'极高', creat:'极高', hitRate:'3%'},
-  {src:'voc-niche', srcLabel:'VOC小众', txt:'作为一个养猫家庭，我最在意的是噪音和安全性。目前市面上几乎没有同时满足这两个需求的', lead:'高', creat:'中', hitRate:'8%'},
-  {src:'interview', srcLabel:'访谈特别', txt:'我们公司采购了50台给员工宿舍用，半年坏了7台。维修响应太慢了，而且配件要等两周', lead:'极高', creat:'低', hitRate:'2%'},
-  {src:'voc-niche', srcLabel:'VOC小众', txt:'我是做产品设计的，从专业角度看这个模具精度至少可以提升两个等级，现在的公差太大了', lead:'中', creat:'极高', hitRate:'5%'}
+  {id:'f1', src:'voc-niche', srcLabel:'VOC小众', txt:'这个产品的安装方式对租房党不友好，我搬了三次家每次都要拆装，希望能出一款免打孔的版本',
+   purpose:'产品开发', cluster:'安装适配', lead:'高', creat:'高', hitRate:'12%'},
+  {id:'f2', src:'interview', srcLabel:'访谈特别', txt:'我在用竞品X的时候发现它的APP联动做得很好，但你们的产品连基本的蓝牙配对都很不稳定',
+   purpose:'产品优化', cluster:'智能连接', lead:'极高', creat:'极高', hitRate:'3%'},
+  {id:'f3', src:'voc-niche', srcLabel:'VOC小众', txt:'作为一个养猫家庭，我最在意的是噪音和安全性。目前市面上几乎没有同时满足这两个需求的',
+   purpose:'产品开发', cluster:'噪音安全', lead:'高', creat:'中', hitRate:'8%'},
+  {id:'f4', src:'interview', srcLabel:'访谈特别', txt:'我们公司采购了50台给员工宿舍用，半年坏了7台。维修响应太慢了，而且配件要等两周',
+   purpose:'产品优化', cluster:'可靠性售后', lead:'极高', creat:'低', hitRate:'2%'},
+  {id:'f5', src:'voc-niche', srcLabel:'VOC小众', txt:'我是做产品设计的，从专业角度看这个模具精度至少可以提升两个等级，现在的公差太大了',
+   purpose:'创意', cluster:'工艺精度', lead:'中', creat:'极高', hitRate:'5%'}
 ];
+var LF_PURPOSES = ['产品开发','产品优化','创意','营销'];
+var LF_CLUSTERS = ['安装适配','智能连接','噪音安全','可靠性售后','工艺精度'];
 
-var lfCurrentTabUnused = 'portrait'; // 历史遗留占位，tab 状态已改为按 zone 局部
+function lfDimClass(v){ var s=String(v); return s==='极高'||s==='高' ? 'dim-hi' : (s==='中' ? 'dim-mid' : 'dim-lo'); }
+function lfScore(v){ var s=String(v); return s==='极高'?4 : s==='高'?3 : s==='中'?2 : 1; }
 
 function switchLfTab(tab, el){
   var zone = el ? el.closest('.lf-zone') : null;
@@ -2004,42 +2075,92 @@ function renderLfBody(zone){
   if(!body) return;
   var active = zone.querySelector('.lf-tab.active');
   var tab = active ? active.getAttribute('data-lftab') : 'portrait';
-  if(tab === 'portrait') body.innerHTML = renderLfPortrait();
-  else body.innerHTML = renderLfFeedback();
+  if(tab === 'portrait') body.innerHTML = renderLfPortrait(zone);
+  else body.innerHTML = renderLfFeedback(zone);
 }
 
-function renderLfPortrait(){
+function renderLfPortrait(zone){
   if(!LF_PORTRAITS.length) return '<div style="padding:14px;color:var(--muted);font-size:12px">暂无领新用户画像数据</div>';
   return '<div class="uid-grid">'+
     LF_PORTRAITS.map(function(u){
+      var arch = LF_ARCH[u.archetype] || {label:u.archetype||'',color:'#94a3b8'};
+      var sigs = (u.signals||[]).map(function(s){ var v=LF_SIG[s]||s; return '<span class="uid-sig">'+escHtml(v)+'</span>'; }).join('');
+      var traits = u.trait ? u.trait.split('·').map(function(t){return '<span class="uid-tag">'+escHtml(t.trim())+'</span>';}).join('') : '';
       return '<div class="uid-card">'+
-        '<div class="uid-avatar">'+escHtml(u.avatar)+'</div>'+
-        '<div class="uid-name">'+escHtml(u.name)+'</div>'+
-        '<div class="uid-tags">'+u.tags.map(function(t){ return '<span class="uid-tag">'+escHtml(t)+'</span>'; }).join('')+'</div>'+
-        '<div class="uid-quote">"'+escHtml(u.quote)+'"</div>'+
-        '<div class="uid-meta"><span>'+escHtml(u.source)+'</span><span>超前性:'+escHtml(u.lead)+' · 创意度:'+escHtml(u.creat)+'</span></div>'+
+        '<div class="uid-top"><div class="uid-avatar">'+escHtml(u.avatar)+'</div>'+
+          '<div class="uid-id"><div class="uid-name">'+escHtml(u.name)+'</div>'+
+          '<div class="uid-arch" style="--arch:'+arch.color+'">'+escHtml(arch.label)+'</div></div></div>'+
+        '<div class="uid-dims">'+
+          '<div class="uid-dim"><span>时间领先性</span><b class="'+lfDimClass(u.lead)+'">'+escHtml(u.lead)+'</b></div>'+
+          '<div class="uid-dim"><span>高收益预期</span><b class="'+lfDimClass(u.benefit)+'">'+escHtml(u.benefit)+'</b></div>'+
+        '</div>'+
+        (sigs?'<div class="uid-sigs">'+sigs+'</div>':'')+
+        '<div class="uid-block"><div class="ub-h">说了什么</div><div class="uid-quote">"'+escHtml(u.said)+'"</div></div>'+
+        '<div class="uid-block"><div class="ub-h">提供创意</div><div class="uid-idea">'+escHtml(u.idea)+'</div></div>'+
+        (traits?'<div class="uid-tags" style="margin-top:1px;padding:0">'+traits+'</div>':'')+
+        '<div class="uid-meta"><span>'+escHtml(u.source)+'</span></div>'+
       '</div>';
     }).join('')+
   '</div>';
 }
 
-function renderLfFeedback(){
+function renderLfFeedback(zone){
   if(!FEEDBACK_RAW.length) return '<div style="padding:14px;color:var(--muted);font-size:12px">暂无原始反馈数据</div>';
-  var srcMap = {'voc-niche':'voc','interview':'interview'};
-  return '<div class="rf-list">'+
-    FEEDBACK_RAW.map(function(f){
-      var cls = srcMap[f.src] || 'niche';
-      return '<div class="rf-row">'+
-        '<span class="rf-src '+cls+'">'+escHtml(f.srcLabel)+'</span>'+
-        '<span class="rf-txt">'+escHtml(f.txt)+'</span>'+
-        '<div class="rf-metrics">'+
-          '<span class="rf-metric lead">超前'+escHtml(f.lead)+'</span>'+
-          '<span class="rf-metric creat">创意'+escHtml(f.creat)+'</span>'+
-          '<span class="rf-metric hit-low">命中'+escHtml(f.hitRate)+'</span>'+
-        '</div>'+
-      '</div>';
-    })+
-  '</div>';
+  var f = {purpose:zone.dataset.fbPurpose||'all', cluster:zone.dataset.fbCluster||'all', sort:zone.dataset.fbSort||'lead'};
+  // 筛选栏：按目的聚类
+  var purChips = ['all'].concat(LF_PURPOSES).map(function(p){
+    var on = f.purpose===p;
+    return '<button class="lf-chip'+(on?' on':'')+'" onclick="lfSetFilter(\'purpose\',\''+p+'\',this)">'+(p==='all'?'全部目的':escHtml(p))+'</button>';
+  }).join('');
+  // 筛选栏：按主题聚类
+  var cluChips = ['all'].concat(LF_CLUSTERS).map(function(c){
+    var on = f.cluster===c;
+    return '<button class="lf-chip'+(on?' on':'')+'" onclick="lfSetFilter(\'cluster\',\''+c+'\',this)">'+(c==='all'?'全部主题':escHtml(c))+'</button>';
+  }).join('');
+  // 排序控件
+  var sortChips = [['lead','超前性'],['creat','创意度'],['hitRate','命中率(低→高)']].map(function(s){
+    var on=f.sort===s[0];
+    return '<button class="lf-chip'+(on?' on':'')+'" onclick="lfSetFilter(\'sort\',\''+s[0]+'\',this)">'+s[1]+'</button>';
+  }).join('');
+  // 过滤 + 排序
+  var rows = FEEDBACK_RAW.filter(function(r){
+    return (f.purpose==='all'||r.purpose===f.purpose) && (f.cluster==='all'||r.cluster===f.cluster);
+  });
+  if(f.sort==='lead'||f.sort==='creat') rows.sort(function(a,b){ return lfScore(b[f.sort])-lfScore(a[f.sort]); });
+  else rows.sort(function(a,b){ return parseFloat(a.hitRate)-(parseFloat(b.hitRate)) }); // 命中率低排前
+  // 来源样式映射
+  var srcMap={'voc-niche':'voc','interview':'interview'};
+  // 渲染列表
+  var listHtml = rows.map(function(r){
+    var cls=srcMap[r.src]||'niche';
+    return '<div class="rf-row">'+
+      '<div class="rf-head">'+
+        '<span class="rf-src '+cls+'">'+escHtml(r.srcLabel)+'</span>'+
+        '<span class="rf-purpose">'+escHtml(r.purpose)+'</span>'+
+        '<span class="rf-cluster">'+escHtml(r.cluster)+'</span>'+
+      '</div>'+
+      '<div class="rf-txt">'+escHtml(r.txt)+'</div>'+
+      '<div class="rf-metrics">'+
+        '<span class="rf-metric lead">超前性 <b class="'+lfDimClass(r.lead)+'">'+escHtml(r.lead)+'</b></span>'+
+        '<span class="rf-metric creat">创意度 <b class="'+lfDimClass(r.creat)+'">'+escHtml(r.creat)+'</b></span>'+
+        '<span class="rf-metric hit-low">VOC命中 '+escHtml(r.hitRate)+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  return '<div class="fb-filter"><div class="fb-row"><span class="fb-label">按目的</span><div class="fb-chips">'+purChips+'</div></div>'+
+    '<div class="fb-row"><span class="fb-label">按主题</span><div class="fb-chips">'+cluChips+'</div></div>'+
+    '<div class="fb-row"><span class="fb-label">排序</span><div class="fb-chips">'+sortChips+'</div></div></div>'+
+    (rows.length?'<div class="rf-hint">匹配 <b>'+rows.length+'</b> 条反馈</div>':'')+
+    '<div class="rf-list">'+(listHtml||'<div style="padding:14px;color:var(--muted);font-size:12px">无匹配记录</div>')+'</div>';
+}
+
+function lfSetFilter(type,val,el){
+  var zone = el.closest('.lf-zone');
+  if(!zone) return;
+  if(type==='purpose') zone.dataset.fbPurpose = (zone.dataset.fbPurpose===val ? 'all' : val);
+  else if(type==='cluster') zone.dataset.fbCluster = (zone.dataset.fbCluster===val ? 'all' : val);
+  else if(type==='sort') zone.dataset.fbSort = val;
+  renderLfBody(zone);
 }
 
 // ---- 用户语料分析工具（批量）----
@@ -2512,8 +2633,8 @@ function renderStructPanel(p){
     '<div class="struct-col struct-col-left"><div class="col-header">数据源</div>'+srcHtml+insHtml+
     '<div class="struct-section lf-zone"><div class="ss-head">领新用户反馈专区</div>'+
     '<div class="lf-tabs">'+
-      '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户画像看板</div>'+
-      '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">用户反馈看板</div>'+
+      '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">用户身份卡</div>'+
+      '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">领先需求评估</div>'+
     '</div>'+
     '<div class="lf-body"></div>'+
     '</div></div>'+
