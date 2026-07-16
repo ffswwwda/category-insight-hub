@@ -68,14 +68,14 @@ body.light::after,body.dark::after{content:'';position:fixed;inset:0;pointer-eve
 
 /* === Radium signature: cursor + glow + scroll-progress === */
 .custom-cursor{position:fixed;width:20px;height:20px;border-radius:50%;background:var(--rad-grad);
-  pointer-events:none;z-index:9999;mix-blend-mode:screen;box-shadow:0 0 20px var(--rad-cyan),0 0 40px var(--rad-purple);
+  pointer-events:none;z-index:100000;mix-blend-mode:screen;box-shadow:0 0 20px var(--rad-cyan),0 0 40px var(--rad-purple);
   transform:translate(-50%,-50%);transition:width .3s ease,height .3s ease}
 body.light .custom-cursor{mix-blend-mode:normal;box-shadow:0 0 14px rgba(0,195,243,.6),0 0 28px rgba(168,85,247,.4)}
 .cursor-glow{position:fixed;width:100px;height:100px;border-radius:50%;
-  background:radial-gradient(circle,rgba(0,212,255,.28) 0%,transparent 70%);pointer-events:none;z-index:9998;
+  background:radial-gradient(circle,rgba(0,212,255,.28) 0%,transparent 70%);pointer-events:none;z-index:99999;
   transform:translate(-50%,-50%);transition:all .12s ease}
 .particle{position:fixed;width:6px;height:6px;border-radius:50%;background:var(--accent);pointer-events:none;
-  z-index:9997;opacity:.8}
+  z-index:99998;opacity:.8}
 .scroll-progress{position:fixed;top:0;left:0;height:4px;width:0;background:var(--rad-grad);z-index:9999;
   transition:width .12s ease;box-shadow:0 0 20px var(--rad-cyan)}
 
