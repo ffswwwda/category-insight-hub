@@ -2091,11 +2091,12 @@ async function ndFetchReddit(){
   var kw=document.getElementById('ndExtKw');
   var q=kw?kw.value.trim():'';
   if(!q){if(window.toast) toast('请输入关键词'); return;}
-  var load=document.getElementById('ndExtLoad'); if(load) load.innerHTML='<div class="ps-loading" style="padding:8px">正在获取…</div>';
+  var load=document.getElementById('ndExtLoad'); if(load) load.innerHTML='<div class="ps-loading" style="padding:8px">正在获取（通过代理）…</div>';
   var btn=document.getElementById('ndExtBtn'); if(btn) btn.disabled=true;
   try{
-    var url='https://www.reddit.com/search.json?q='+encodeURIComponent(q)+'&limit=20&sort=top&t=year';
-    var res=await fetch(url);
+    var proxy='https://blkproxy.vercel.app/api/proxy?url=';
+    var target='https://www.reddit.com/search.json?q='+encodeURIComponent(q)+'&limit=20&sort=top&t=year';
+    var res=await fetch(proxy+encodeURIComponent(target));
     if(!res.ok) throw new Error('HTTP '+res.status);
     var data=await res.json();
     var posts=data.data.children.filter(function(c){return !c.data.over_18;}).map(function(c){
@@ -2103,9 +2104,23 @@ async function ndFetchReddit(){
     });
     renderRedditPosts(posts);
   }catch(e){
-    if(load) load.innerHTML='<div style="padding:6px;font-size:11px;color:#dc2626">获取失败：'+escHtml(e.message)+'</div>';
+    if(load) load.innerHTML='<div style="padding:6px;font-size:11px;color:#dc2626">网络获取失败：'+escHtml(e.message)+'</div>'+
+      '<div style="padding:4px 6px;font-size:10px;color:var(--muted)">也可上传本地 CSV/TXT 文件作为替代数据源：</div>'+
+      '<input type="file" accept=".csv,.txt" style="font-size:11px;margin-top:4px" onchange="ndLoadLocalFile(this.files[0])">';
   }
   if(btn) btn.disabled=false;
+}
+function ndLoadLocalFile(file){
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var lines=(e.target.result||'').split('\n').filter(Boolean);
+    var posts=lines.map(function(line,i){
+      return{title:'本地数据 #'+(i+1), text:line.trim().substring(0,250), subreddit:'本地文件', score:0, comments:0};
+    });
+    renderRedditPosts(posts);
+  };
+  reader.readAsText(file);
 }
 function renderRedditPosts(posts){
   var el=document.getElementById('ndExtPosts');
