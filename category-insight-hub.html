@@ -886,6 +886,30 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .lf-quad-wrap{display:grid;place-items:center;padding:6px}
 .lf-pt{transition:transform .2s}
 .lf-pt:hover{transform:scale(1.1);transform-origin:center}
+/* ——四象限分布重做版（hero卡+大图+结论卡）—— */
+.lfq-wrap{display:grid;gap:12px;padding:4px 0}
+.lfq-hero{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;position:relative;overflow:hidden}
+.lfq-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rad-grad)}
+.lfq-hl{font-size:16px;font-weight:900;color:var(--ink);margin-bottom:2px}
+.lfq-hs{font-size:11px;color:var(--muted);margin-bottom:10px}
+.lfq-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.lfq-kpi{text-align:center;background:rgba(128,140,164,.06);border:1px solid var(--border);border-radius:8px;padding:6px 4px;position:relative}
+.lfq-kv{font-size:20px;font-weight:900;line-height:1.1}
+.lfq-kl{font-size:9.5px;color:var(--muted);margin-top:2px;font-weight:600}
+.lfq-svg{padding:0}
+.lfq-bottom{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;position:relative;overflow:hidden}
+.lfq-bottom::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--rad-grad)}
+.lfq-bh{font-size:14px;font-weight:900;color:var(--ink);margin-bottom:4px}
+.lfq-bs{font-size:11.5px;color:var(--ink-2);margin-bottom:10px;line-height:1.5}
+.lfq-bs b{color:var(--accent)}
+.lfq-recs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lfq-rec{background:rgba(128,140,164,.06);border:1px solid var(--border);border-radius:8px;padding:8px 10px}
+.lfq-rh{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.lfq-rt{font-size:11.5px;font-weight:800}
+.lfq-rm{font-size:9px;font-weight:800;padding:1px 6px;border-radius:5px;background:var(--accent);color:#fff;margin-left:auto}
+.lfq-rd{font-size:10.5px;color:var(--ink-2);line-height:1.5}
 /* Raw Feedback List */
 .rf-list{}.rf-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px;transition:background .15s}
 .rf-row:hover{background:rgba(0,212,255,.04)}
@@ -2905,61 +2929,114 @@ function lfSwitchView(mode, btn){
 }
 // 四象限分布图：横轴=产品优化/创意；纵轴=用户感知度
 function renderLfQuadrant(){
-  // x 坐标：基于 idea 判断偏向优化/创意；y 坐标：基于出现频率 freq
-  var maxFreq = 0;
-  LF_PORTRAITS.forEach(function(u){ if(u.freq>maxFreq) maxFreq=u.freq; });
+  // 1. 收集统计
+  var maxFreq = 0, minFreq = 999, totalFreq = 0, hiUser = null, loUser = null;
+  LF_PORTRAITS.forEach(function(u){
+    if(!u.freq) return;
+    if(u.freq>maxFreq){maxFreq=u.freq; hiUser=u;}
+    if(u.freq<minFreq){minFreq=u.freq; loUser=u;}
+    totalFreq += u.freq;
+  });
+  // 2. 计算每用户坐标
   var pos = {};
   LF_PORTRAITS.forEach(function(u){
     var ic = (u.idea||'').toLowerCase();
-    // x: 优化关键词→偏左0.15~0.45，创意/新→偏右0.55~0.85
     var isCreative = ic.indexOf('新')>-1 || ic.indexOf('定制')>-1 || ic.indexOf('设计')>-1 || ic.indexOf('模块化')>-1;
-    var x = isCreative ? 0.15+Math.random()*0.30+0.40 : 0.15+Math.random()*0.30;
-    // y: 基于出现频率归一化（freq越高→越明显→y靠上）
+    var x = isCreative ? 0.50 + Math.random()*0.30 : 0.20 + Math.random()*0.30;
     var y = maxFreq>0 ? 0.15 + (u.freq/maxFreq)*0.70 : 0.5;
     pos[u.id] = {x:Math.max(0.1,Math.min(0.9,x)), y:Math.max(0.1,Math.min(0.9,y))};
   });
-  var W=460, H=340, P=40;
-  // 统计象限
+  // 3. 象限统计
   var quad={NE:0,NW:0,SE:0,SW:0};
   LF_PORTRAITS.forEach(function(u){
     var p=pos[u.id]||{x:0.5,y:0.5};
     if(p.x>=0.5) p.y>=0.5?quad.NE++:quad.SE++; else p.y>=0.5?quad.NW++:quad.SW++;
   });
-  // 散点
+  var dominant = Object.keys(quad).sort(function(a,b){return quad[b]-quad[a];})[0];
+  // 4. SVG（放大、轴端标签、象限角标）
+  var W=580, H=380, P=70;
   var dots = LF_PORTRAITS.map(function(u){
     var p=pos[u.id]||{x:0.5,y:0.5};
     var cx=P+p.x*(W-2*P), cy=P+(1-p.y)*(H-2*P);
     var arch=LF_ARCH[u.archetype]||{color:'#94a3b8'};
     return '<g class="lf-pt" onclick="openLfModal(\''+u.id+'\',\'portrait\')" style="cursor:pointer">'+
-      '<circle cx="'+cx+'" cy="'+cy+'" r="'+(8+Math.round(u.freq||3))+'" fill="'+arch.color+'" fill-opacity=".15" stroke="'+arch.color+'" stroke-width="1.5"/>'+
+      '<circle cx="'+cx+'" cy="'+cy+'" r="'+(12+Math.round((u.freq||0)/1.2))+'" fill="'+arch.color+'" fill-opacity=".18" stroke="'+arch.color+'" stroke-width="1.8"/>'+
       '<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="13" font-weight="900">'+escHtml(u.avatar)+'</text>'+
-      '<text x="'+cx+'" y="'+(cy+20+(u.idea.length>10?4:0))+'" text-anchor="middle" fill="var(--ink)" font-size="9" font-weight="700">'+(u.freq?escHtml(u.freq+'%'):'')+'</text>'+
-      '<title>'+escHtml(u.name)+'</title></g>';
+      '<text x="'+cx+'" y="'+(cy+24)+'" text-anchor="middle" fill="'+arch.color+'" font-size="10" font-weight="800">'+escHtml((u.freq||0)+'%')+'</text>'+
+      '<title>'+escHtml(u.name)+' · '+escHtml((u.freq||0)+'%')+'</title></g>';
   }).join('');
-  // 4 象限标签
-  var labels = [
-    {x:0.78,y:0.85,t:'创新 × 高频',s:'品牌级差异化机会',c:'#0891B2'},
-    {x:0.22,y:0.85,t:'优化 × 高频',s:'体验升级/优先做',c:'#10B981'},
-    {x:0.78,y:0.15,t:'创新 × 低频',s:'内部能力建设',c:'#A855F7'},
-    {x:0.22,y:0.15,t:'优化 × 低频',s:'运营降本',c:'#F59E0B'}
+  // 象限角标
+  var qLabels = [
+    {qx:1, qy:1, t:'创新 × 高频', s:'品牌级差异化', c:'#0891B2', icon:'◎'},
+    {qx:0, qy:1, t:'优化 × 高频', s:'体验升级', c:'#10B981', icon:'✓'},
+    {qx:1, qy:0, t:'创新 × 低频', s:'内部能力建设', c:'#A855F7', icon:'◇'},
+    {qx:0, qy:0, t:'优化 × 低频', s:'运营降本', c:'#F59E0B', icon:'△'}
   ];
-  var labelHtml = labels.map(function(l){
-    var cx = P + l.x*(W-2*P), cy = P + (1-l.y)*(H-2*P);
-    return '<text x="'+cx+'" y="'+cy+'" text-anchor="middle" fill="'+l.c+'" font-size="10" font-weight="800" opacity=".7">'+escHtml(l.t)+'</text>'+
-           '<text x="'+cx+'" y="'+(cy+12)+'" text-anchor="middle" fill="var(--muted)" font-size="8" opacity=".6">'+escHtml(l.s)+'</text>';
+  var qlHtml = qLabels.map(function(l){
+    var cx = P + (l.qx>0.5?0.55:0.05) * (W-2*P) + (l.qx>0.5?0:0);
+    var cy = P + ((1-(l.qy>0.5?0.85:0.15)))*(H-2*P);
+    // 简化：在象限内部靠角位置（象限标题在象限中央偏上）
+    return '<text x="'+cx+'" y="'+cy+'" text-anchor="'+(l.qx>0.5?'end':'start')+'" fill="'+l.c+'" font-size="11" font-weight="800" opacity=".8">'+escHtml(l.t)+'</text>'+
+           '<text x="'+cx+'" y="'+(cy+13)+'" text-anchor="'+(l.qx>0.5?'end':'start')+'" fill="var(--muted)" font-size="9" opacity=".7">'+escHtml(l.s)+'</text>';
   }).join('');
-  var axisHtml = '<text x="'+(W/2)+'" y="'+(H-4)+'" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="700">横轴：产品优化升级 ←← 产品创意升级 →→</text>'+
-    '<text x="6" y="'+(H/2)+'" text-anchor="middle" fill="var(--muted)" font-size="9" font-weight="700" transform="rotate(-90 6 '+(H/2)+')">纵轴：评价中出现频率（低频 ↔ 高频）</text>';
-  return '<div class="lf-quad-wrap"><svg viewBox="0 0 '+W+' '+(H+10)+'" style="width:100%;max-width:520px;height:auto;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm)">'+
-    '<rect x="'+P+'" y="'+P+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#10B981" fill-opacity=".04"/>'+
-    '<rect x="'+(W/2)+'" y="'+P+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#0891B2" fill-opacity=".04"/>'+
-    '<rect x="'+P+'" y="'+(H/2)+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#F59E0B" fill-opacity=".04"/>'+
-    '<rect x="'+(W/2)+'" y="'+(H/2)+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#A855F7" fill-opacity=".04"/>'+
+  var axisHtml =
+    // 横轴箭头 + 端点标签（大字）
+    '<line x1="'+P+'" y1="'+(H/2)+'" x2="'+(W-P)+'" y2="'+(H/2)+'" stroke="var(--ink-2)" stroke-width="1" opacity=".5"/>'+
+    '<line x1="'+P+'" y1="'+P+'" x2="'+P+'" y2="'+(H-P)+'" stroke="var(--ink-2)" stroke-width="1" opacity=".5"/>'+
+    // 横轴标题（轴端下方）
+    '<text x="'+P+'" y="'+(H-P+18)+'" fill="var(--accent)" font-size="12" font-weight="800">产品优化升级</text>'+
+    '<text x="'+(W-P)+'" y="'+(H-P+18)+'" text-anchor="end" fill="var(--accent)" font-size="12" font-weight="800">产品创意升级</text>'+
+    '<text x="'+(W/2)+'" y="'+(H-P+18)+'" text-anchor="middle" fill="var(--muted)" font-size="10">× 创意程度</text>'+
+    // 纵轴标题（轴端左侧）
+    '<text x="'+P-12+'" y="'+P+'" text-anchor="end" fill="var(--accent)" font-size="12" font-weight="800">低频 不易察觉</text>'+
+    '<text x="'+P-12+'" y="'+(H-P)+'" text-anchor="end" fill="var(--accent)" font-size="12" font-weight="800">高频 明显感知</text>'+
+    '<text x="'+P-12+'" y="'+(H/2)+'" text-anchor="end" fill="var(--muted)" font-size="10" transform="rotate(-90 '+(P-12)+' '+(H/2)+')">出现频率 ×</text>';
+  // 5. 顶部 Hero 卡（关键数据）
+  var hero =
+    '<div class="lfq-hero">'+
+      '<div class="lfq-hl">领先用户四象限分布</div>'+
+      '<div class="lfq-hs">基于「创意程度 × 出现频率」量化聚类 · 共 '+LF_PORTRAITS.length+' 位领先用户</div>'+
+      '<div class="lfq-kpis">'+
+        '<div class="lfq-kpi"><div class="lfq-kv" style="color:#0891B2">'+quad.NE+'</div><div class="lfq-kl">创新×高频</div></div>'+
+        '<div class="lfq-kpi"><div class="lfq-kv" style="color:#10B981">'+quad.NW+'</div><div class="lfq-kl">优化×高频</div></div>'+
+        '<div class="lfq-kpi"><div class="lfq-kv" style="color:#A855F7">'+quad.SE+'</div><div class="lfq-kl">创新×低频</div></div>'+
+        '<div class="lfq-kpi"><div class="lfq-kv" style="color:#F59E0B">'+quad.SW+'</div><div class="lfq-kl">优化×低频</div></div>'+
+      '</div>'+
+    '</div>';
+  // 6. 底部结论卡
+  var dominantName = {NE:'创新×高频（品牌级差异化）', NW:'优化×高频（体验升级）', SE:'创新×低频（能力建设）', SW:'优化×低频（运营降本）'}[dominant];
+  var recommendations = [
+    {q:'NE', name:'创新 × 高频', tip:'用户已主动表达且频次高，是最值得投入的方向，量产+营销+大投入。', color:'#0891B2'},
+    {q:'NW', name:'优化 × 高频', tip:'高频低门槛改进，做了立即有体感，性价比最高的优化。', color:'#10B981'},
+    {q:'SE', name:'创新 × 低频', tip:'早期信号，可能定义下一代品类，需要技术验证与MVP测试。', color:'#A855F7'},
+    {q:'SW', name:'优化 × 低频', tip:'长尾运营改进，可纳入长期 roadmap 批量优化。', color:'#F59E0B'}
+  ];
+  var recHtml = recommendations.map(function(r){
+    var active = r.q===dominant;
+    return '<div class="lfq-rec" style="--rc:'+r.color+';border-color:'+(active?r.color:'var(--border)')+';'+(active?'background:rgba(0,212,255,.04)':'')+'">'+
+      '<div class="lfq-rh"><span class="lfq-rt" style="color:'+r.color+'">'+r.name+'</span>'+(active?'<span class="lfq-rm">当前主要</span>':'')+'</div>'+
+      '<div class="lfq-rd">'+r.tip+'</div>'+
+    '</div>';
+  }).join('');
+  var bottom = '<div class="lfq-bottom"><div class="lfq-bh">结论与建议</div><div class="lfq-bs">主要分布：<b>'+dominantName+'</b> · 共 '+quad[dominant]+' 位用户 · 占比 '+Math.round(quad[dominant]/Math.max(1,LF_PORTRAITS.length)*100)+'%</div><div class="lfq-recs">'+recHtml+'</div></div>';
+  // 7. SVG 整体
+  var svg = '<div class="lfq-svg"><svg viewBox="0 0 '+W+' '+(H+10)+'" style="width:100%;height:auto;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm)">'+
+    // 4 象限背景
+    '<rect x="'+P+'" y="'+P+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#10B981" fill-opacity=".05"/>'+
+    '<rect x="'+(W/2)+'" y="'+P+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#0891B2" fill-opacity=".05"/>'+
+    '<rect x="'+P+'" y="'+(H/2)+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#F59E0B" fill-opacity=".05"/>'+
+    '<rect x="'+(W/2)+'" y="'+(H/2)+'" width="'+(W/2-P)+'" height="'+(H/2-P)+'" fill="#A855F7" fill-opacity=".05"/>'+
+    // 中线
     '<line x1="'+(W/2)+'" y1="'+P+'" x2="'+(W/2)+'" y2="'+(H-P)+'" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 3"/>'+
     '<line x1="'+P+'" y1="'+(H/2)+'" x2="'+(W-P)+'" y2="'+(H/2)+'" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 3"/>'+
-    labelHtml+dots+axisHtml+
-    '<text x="'+(W-P-4)+'" y="'+(P+10)+'" text-anchor="end" fill="var(--accent)" font-size="10" font-weight="800">↑'+quad.NE+' · ↑'+quad.NW+' · ↓'+quad.SE+' · ↓'+quad.SW+'</text>'+
+    // 轴 + 标签
+    axisHtml+
+    // 象限标签
+    qlHtml+
+    // 散点
+    dots+
     '</svg></div>';
+  return '<div class="lfq-wrap">'+hero+svg+bottom+'</div>';
 }
 
 function renderLfFeedback(zone){
