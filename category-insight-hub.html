@@ -772,6 +772,23 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .nd-res-item:last-child{border-bottom:none}
 .nd-res-k{font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap;width:100px;flex-shrink:0}
 .nd-res-v{font-size:11.5px;color:var(--ink-2);line-height:1.5}
+/* ——风险预测工具—— */
+.rp-q{margin-bottom:8px}
+.rp-ql{font-size:11px;font-weight:800;color:var(--ink);margin-bottom:1px}
+.rp-qh{font-size:9.5px;color:var(--muted);margin-bottom:3px}
+.rp-qt{width:100%;font:12px/1.5 var(--font);padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--panel-solid);color:var(--ink);resize:vertical;min-height:38px;outline:none;box-sizing:border-box}
+.rp-qt:focus{border-color:var(--accent)}
+.rp-steps{display:grid;gap:10px}
+.rp-rcard{background:var(--glass-bg);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.rp-rhead{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border)}
+.rp-rn{width:24px;height:24px;border-radius:6px;background:var(--rad-grad);color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
+.rp-rtitle{font-size:12px;font-weight:800;color:var(--ink)}
+.rp-rbody{padding:8px 12px 6px}
+.rp-ri{display:flex;gap:8px;padding:5px 0;border-bottom:1px dashed rgba(128,140,164,.1)}
+.rp-ri:last-child{border-bottom:none}
+.rp-rik{font-size:10.5px;font-weight:700;color:var(--accent);white-space:nowrap;min-width:80px;flex-shrink:0}
+.rp-riv{font-size:11.5px;color:var(--ink-2);line-height:1.5}
+.rp-risk-chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(245,158,11,.12);color:#b45309;margin:2px}
 /* ——外部数据参考（Reddit）—— */
 .nd-ext-wrap{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin:6px 0 8px}
 .nd-ext-head{display:flex;align-items:center;gap:6px;padding:7px 10px;font-size:11px;font-weight:800;color:var(--accent);cursor:pointer;transition:background .15s;background:var(--glass-bg)}
@@ -1844,17 +1861,136 @@ function renderInsightReport(steps){
 // ---- 风险预测工具（预测类）----
 function openRiskPredict(){
   setActiveNav('nav-ai');
-  $('#topbarTitle').textContent='风险预测工具';
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='风险与能力匹配 · 风险预测工具';
   setView('RiskPredict');
+  var QS = [
+    {id:'rqGoal', title:'你的目标是什么？', hint:'真正想要的结果、规模、时间要求'},
+    {id:'rqSuccess', title:'你的成功标准是什么？', hint:'怎么算成功？量化指标'},
+    {id:'rqAbility', title:'你目前有什么？', hint:'团队/资金/资源/品牌/渠道/技术'},
+    {id:'rqExp', title:'你做过什么？', hint:'相关的经验/案例/成绩'},
+    {id:'rqEnv', title:'你面临什么环境？', hint:'市场/竞争/政策/用户等情况'}
+  ];
+  var qHtml = QS.map(function(q){
+    return '<div class="rp-q"><div class="rp-ql">'+escHtml(q.title)+'</div><div class="rp-qh">'+escHtml(q.hint)+'</div><textarea class="rp-qt" id="'+q.id+'" rows="2"></textarea></div>';
+  }).join('');
   $('#viewRiskPredict').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
-      '<span class="ws-title">风险预测工具</span>'+
-      '<span class="ws-tag">趋势 · 竞品 · 政策 · 供应链</span></div>'+
-    '<div class="tool-wrap" style="padding:40px;text-align:center;color:var(--muted)">'+
-      '<div style="font-size:40px;margin-bottom:12px;color:var(--accent)"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2l8 3v8a10 10 0 01-8 9 10 10 0 01-8-9V5l8-3z"/><path d="M12 8v4"/><circle cx="12" cy="16" r=".5" fill="#fff"/></svg></div>'+
-      '<div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px">风险预测工具</div>'+
-      '<div style="font-size:13px;line-height:1.7;max-width:400px;margin:0 auto">综合类目趋势、竞品动态、政策变化与供应链信号，预测产品上市 / 运营的关键风险点与规避策略。</div>'+
-      '<div style="margin-top:20px;font-size:11px;color:var(--muted)">数据接入中 · 功能即将上线</div></div>';
+      '<span class="ws-title">风险与能力匹配</span>'+
+      '<span class="ws-tag">风险与能力匹配决策模型 · 7步分析</span></div>'+
+    '<div class="ps-layout">'+
+      '<div class="ps-left" style="flex-basis:400px">'+
+        '<div class="ps-input-wrap" style="padding:12px 14px">'+
+          '<div style="font-size:11px;font-weight:800;color:var(--muted);margin-bottom:6px">填写以下信息，系统将基于「风险与能力匹配决策模型」进行分析</div>'+
+          qHtml+
+          '<button class="ps-run" style="margin-top:8px;width:100%" onclick="runRiskAnalysis()">分析风险与匹配度</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ps-right"><div id="rpReport"></div></div>'+
+    '</div>';
+}
+// ---- 风险与能力匹配决策引擎 ----
+var RISK_SIGNALS = {
+  competition:['竞争','竞品','对手','饱和','红海','多','拥挤','激烈'],
+  cost:['成本','资金','预算','投入','贵','烧钱','亏损','ROI'],
+  brand:['品牌','知名度','信任','认知','口碑'],
+  channel:['渠道','流量','推广','获客','投放','KOL'],
+  tech:['技术','开发','研发','技术门槛','专利','壁垒'],
+  policy:['政策','合规','法规','监管','标准','资质','认证'],
+  team:['团队','人才','人','招人','找人','组建'],
+  time:['时间','周期','长','慢','久','短期','长期'],
+  user:['用户','需求','客户','市场','受众','人群']
+};
+function runRiskAnalysis(){
+  var ids=['rqGoal','rqSuccess','rqAbility','rqExp','rqEnv'];
+  var vals={};
+  ids.forEach(function(id){
+    var el=document.getElementById(id);
+    vals[id]=el?el.value.trim():'';
+  });
+  if(!vals.rqGoal&&!vals.rqEnv){ if(window.toast) toast('请至少填写目标和环境信息'); return; }
+  var el=document.getElementById('rpReport');
+  if(el) el.innerHTML='<div class="ps-loading">正在分析风险与能力匹配度…</div>';
+  var btn=document.querySelector('.ps-run'); if(btn) btn.disabled=true;
+  // 启发式风险分析
+  var text=(vals.rqGoal+' '+vals.rqSuccess+' '+vals.rqAbility+' '+vals.rqExp+' '+vals.rqEnv).toLowerCase();
+  var signals={};
+  Object.keys(RISK_SIGNALS).forEach(function(k){
+    var matched=RISK_SIGNALS[k].filter(function(w){return text.indexOf(w)>-1;});
+    if(matched.length) signals[k]={count:matched.length,words:matched};
+  });
+  // 生成报告
+  var steps=[];
+  // 1.目标定义
+  steps.push({title:'目标定义', n:'01', items:[{k:'目标结果',v:vals.rqGoal||'未填写'},{k:'成功标准',v:vals.rqSuccess||'未填写'}]});
+  // 2.环境状况
+  var envRisks=Object.keys(signals).map(function(k){
+    var labels={competition:'市场竞争',cost:'成本压力',brand:'品牌壁垒',channel:'渠道获客',tech:'技术门槛',policy:'政策合规',team:'团队能力',time:'时间周期',user:'用户需求'};
+    return '<span class="rp-risk-chip">'+escHtml(labels[k]||k)+'</span>';
+  }).join('');
+  steps.push({title:'环境状况分析', n:'02', items:[
+    {k:'用户描述的环境',v:vals.rqEnv||'未填写'},
+    {k:'检测到的风险信号',v:envRisks||'<span style="color:var(--muted)">未检测到明显风险信号，建议补充更多信息</span>'}
+  ]});
+  // 3.能力评估
+  steps.push({title:'能力范围分析', n:'03', items:[
+    {k:'已有能力',v:vals.rqAbility||'未填写'},
+    {k:'相关经验',v:vals.rqExp||'未填写'}
+  ]});
+  // 4.风险分类 + 5.匹配度
+  var matchedItems=[];
+  var unmatchedItems=[];
+  Object.keys(signals).forEach(function(k){
+    var labels={competition:'市场竞争',cost:'成本压力',brand:'品牌壁垒',channel:'渠道获客',tech:'技术门槛',policy:'政策合规',team:'团队能力',time:'时间周期',user:'用户需求'};
+    var inAbility = (vals.rqAbility+vals.rqExp).toLowerCase().indexOf(k)>-1;
+    if(inAbility){
+      matchedItems.push({k:labels[k]||k, v:'能力范围内 — 具备对应经验或资源，覆盖度需进一步量化评估'});
+    } else {
+      unmatchedItems.push({k:labels[k]||k, v:'能力范围外 — 当前无明确覆盖，需要重点判断是否决定结果'});
+    }
+  });
+  if(!matchedItems.length&&!unmatchedItems.length){
+    unmatchedItems.push({k:'暂无明确风险',v:'输入信息不足以识别明确风险，建议补充更多详情'});
+  }
+  steps.push({title:'风险分类与匹配度', n:'04', items:[
+    {k:'能力范围内风险',v:matchedItems.length?matchedItems.map(function(m){return '<b>'+escHtml(m.k)+'</b>：'+escHtml(m.v);}).join('<br><br>'):'<span style="color:var(--muted)">暂无</span>'},
+    {k:'能力范围外风险',v:unmatchedItems.length?unmatchedItems.map(function(m){return '<b>'+escHtml(m.k)+'</b>：'+escHtml(m.v);}).join('<br><br>'):'<span style="color:var(--muted)">暂无</span>'}
+  ]});
+  // 6.是否可达
+  var criticalOutside=unmatchedItems.length;
+  var hasCritical=criticalOutside>0;
+  steps.push({title:'结果是否可达', n:'05', items:[
+    {k:'关键判断',v:hasCritical?'存在 <b>'+criticalOutside+'</b> 个能力外风险可能决定结果':'所有检测到的风险均在能力覆盖范围内'},
+    {k:'逻辑推演',v:hasCritical?'能力外风险 → 决定结果 → 不可解决 → 不建议直接进入':'能力内风险 → 可覆盖 → 建议进入 + 小规模验证'}
+  ]});
+  // 7.逻辑链条表格
+  var chainRows=Object.keys(signals).map(function(k){
+    var labels={competition:'市场竞争',cost:'成本压力',brand:'品牌壁垒',channel:'渠道获客',tech:'技术门槛',policy:'政策合规',team:'团队能力',time:'时间周期',user:'用户需求'};
+    var inAbility = (vals.rqAbility+vals.rqExp).toLowerCase().indexOf(k)>-1;
+    return '<tr><td style="padding:4px 8px;font-size:11px">'+escHtml(labels[k]||k)+'</td><td style="padding:4px 8px;font-size:11px">'+(inAbility?'<span style="color:#10b981">能力内</span>':'<span style="color:#dc2626">能力外</span>')+'</td><td style="padding:4px 8px;font-size:11px">'+(inAbility?'✅ 可解决':'❌ 不可解决')+'</td><td style="padding:4px 8px;font-size:11px">'+(inAbility?'可控':'决定性')+'</td></tr>';
+  }).join('');
+  steps.push({title:'最终建议', n:'06', items:[
+    {k:'建议结论',v:hasCritical?'⚠️ 不建议直接进入 — 当前能力结构与目标结果存在关键缺口，建议先补足能力再评估':'✅ 建议进入 — 能力结构可覆盖检测到的环境风险'},
+    {k:'行动方向',v:hasCritical?'优先处理能力外风险（'+Object.keys(signals).filter(function(k){return (vals.rqAbility+vals.rqExp).toLowerCase().indexOf(k)<0;}).map(function(k){var labels={competition:'市场竞争',cost:'成本压力',brand:'品牌壁垒',channel:'渠道获客',tech:'技术门槛',policy:'政策合规',team:'团队能力',time:'时间周期',user:'用户需求'};return labels[k]||k;}).join('、')+'），可采用MVP小规模验证。':'可制定执行计划，建议PDCA持续迭代优化。'}
+  ]});
+  renderRiskReport(steps, chainRows);
+  if(btn) btn.disabled=false;
+}
+function renderRiskReport(steps, chainRows){
+  var el=document.getElementById('rpReport');
+  if(!el) return;
+  var html=steps.map(function(s){
+    var items=s.items.map(function(it){
+      return '<div class="rp-ri"><div class="rp-rik">'+it.k+'</div><div class="rp-riv">'+it.v+'</div></div>';
+    }).join('');
+    return '<div class="rp-rcard"><div class="rp-rhead"><span class="rp-rn">'+s.n+'</span><span class="rp-rtitle">'+escHtml(s.title)+'</span></div><div class="rp-rbody">'+items+'</div></div>';
+  }).join('');
+  el.innerHTML=
+    '<div class="ps-sec">风险与能力匹配分析报告</div>'+
+    '<div style="font-size:11px;color:var(--muted);margin:-4px 0 8px">基于「风险与能力匹配决策模型」7步分析流程 · 系统论+风险管理+反脆弱</div>'+
+    '<div class="rp-steps">'+html+'</div>'+
+    (chainRows?'<div class="rp-rcard" style="margin-top:10px"><div class="rp-rhead"><span class="rp-rn">LC</span><span class="rp-rtitle">逻辑链条</span></div><div class="rp-rbody"><table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--glass-bg)"><th style="padding:5px 8px;font-size:10px;font-weight:800;text-align:left;color:var(--muted)">风险</th><th style="padding:5px 8px;font-size:10px;font-weight:800;text-align:left;color:var(--muted)">能力</th><th style="padding:5px 8px;font-size:10px;font-weight:800;text-align:left;color:var(--muted)">匹配</th><th style="padding:5px 8px;font-size:10px;font-weight:800;text-align:left;color:var(--muted)">对结果的影响</th></tr></thead><tbody>'+chainRows+'</tbody></table></div></div>':'')+
+    '<div class="ps-verdict caution" style="margin-top:10px;text-align:left;padding:12px 16px"><div style="font-size:11.5px;line-height:1.6;color:var(--ink-2)">以上分析基于启发式规则引擎。接入真实数据后精度可大幅提升。最终判断需结合行业专家经验。</div></div>';
 }
 
 // ---- GTM 社媒监控看板（看板类，外部跳转）----
