@@ -221,7 +221,37 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .sd-hint{margin-top:14px;font-size:12.5px;color:var(--accent-2);background:rgba(202,138,4,.1);border:1px solid rgba(202,138,4,.25);
   border-radius:12px;padding:12px 15px}
 .fw-desc{font-size:14px;color:var(--ink-2);line-height:1.8;background:var(--glass-bg);border:1px solid var(--border);
-  border-radius:14px;padding:18px 20px;margin-bottom:16px}
+  border-radius:14px;padding:18px 20px;margin-bottom:14px}
+.fw-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.fw-meta-chip{font-size:11.5px;color:var(--ink-2);background:var(--glass-bg);border:1px solid var(--border);
+  border-radius:20px;padding:5px 13px}
+.fw-meta-chip b{color:var(--muted);font-weight:800;margin-right:6px;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.fw-secs{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+.fw-sec{background:var(--glass-bg);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.fw-sec-h{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;cursor:pointer;
+  font-size:13.5px;font-weight:800;color:var(--ink);user-select:none;transition:background .15s}
+.fw-sec-h:hover{background:rgba(128,140,164,.06)}
+.fw-sec-t{flex:1;min-width:0}
+.fw-sec-arw{color:var(--fc,var(--accent));font-size:13px;margin-left:10px;flex-shrink:0}
+.fw-sec-b{padding:4px 18px 16px;border-top:1px solid var(--border)}
+.fw-sec-d{font-size:12.5px;color:var(--ink-2);line-height:1.65;margin:10px 0 12px}
+.fw-items{display:flex;flex-direction:column;gap:9px}
+.fw-item{display:flex;gap:12px;align-items:flex-start}
+.fw-item::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--fc,var(--accent));margin-top:6px;flex-shrink:0}
+.fw-ih{font-size:13px;font-weight:800;color:var(--ink);min-width:128px;flex-shrink:0;line-height:1.5}
+.fw-ip{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.fw-extra{background:linear-gradient(135deg,rgba(8,145,178,.05),rgba(8,145,178,.01));border:1px solid rgba(8,145,178,.2);
+  border-radius:14px;padding:18px 20px;margin-bottom:18px}
+.fw-extra-h{font-size:14px;font-weight:900;color:var(--fc,#0891B2);margin-bottom:3px}
+.fw-extra-sub{font-size:11.5px;color:var(--muted);margin-bottom:12px}
+.fw-jtbd-btns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.fw-jtbd-btn{font-size:12px;font-weight:700;padding:7px 15px;border-radius:9px;border:1px solid var(--border);
+  background:var(--glass-bg);color:var(--ink-2);cursor:pointer;font-family:inherit;transition:all .15s}
+.fw-jtbd-btn:hover{border-color:var(--fc,#0891B2);color:var(--fc,#0891B2)}
+.fw-jtbd-btn.on{background:var(--fc,#0891B2);color:#fff;border-color:var(--fc,#0891B2)}
+.fw-jtbd-out{font-size:13px;color:var(--ink-2);line-height:1.7;background:var(--bg);border:1px dashed var(--border);
+  border-radius:10px;padding:12px 14px;min-height:46px}
+.fw-jtbd-out b{color:var(--fc,#0891B2)}
 .fw-note{font-size:12.5px;color:var(--muted);line-height:1.7}
 
 /* Sidebar footer */
@@ -1342,11 +1372,143 @@ var DATA = {
 
   // ---- 共享分析框架（板块2：分析框架板块，两个工作区通用）----
   frameworks:[
-    {id:'quad',name:'需求四象限',desc:'将需求点按「重要度 × 满意度」定位：高重要低满意 = 创新突破口，高重要高满意 = 护城河，低重要低满意 = 暂不投入。'},
-    {id:'jtbd',name:'JTBD 待办任务',desc:'从「用户雇用产品来完成什么任务」出发，识别真实待解决问题，避免被表面功能需求误导。'},
-    {id:'journey',name:'购买旅程',desc:'覆盖认知 → 考虑 → 购买 → 使用 → 忠诚全链路，定位每个触点的体验断点与优化机会。'},
-    {id:'motivation',name:'动机编码',desc:'对语料做动机 / 场景 / 人群编码，聚类出高价值细分群体及其规模与特征。'},
-    {id:'voc',name:'VOC 标签体系',desc:'评论 / 访谈文本的结构化打标（尺寸 / 质量 / 材质 / 噪音等 15 维），支撑所有下游分析。'}
+    {id:'quad',name:'需求四象限',color:'#F59E0B',desc:'将需求点按「重要度 × 满意度」二维定位，识别优先级与创新突破口。',
+      meta:[['目的','需求优先级排序'],['适用','用户洞察 · 竞品分析']],
+      sections:[
+        {t:'二维坐标模型',d:'横轴=满意度（低→高），纵轴=重要度（低→高）。所有 VOC 标签点按出现频率估算后落到对应象限。',items:[
+          {h:'高重要 × 低满意',p:'创新突破口——最值得投入，做了用户立即有体感（列为 P0）'},
+          {h:'高重要 × 高满意',p:'护城河——保持优势，作为核心卖点与差异化'},
+          {h:'低重要 × 低满意',p:'暂不投入——长尾改进，纳入长期 roadmap'},
+          {h:'低重要 × 高满意',p:'效率优化——已满足，减少过度投入'}
+        ]},
+        {t:'落地打法',d:'对每个需求点打「重要度 / 满意度」两分，聚类后输出象限分布图。',items:[
+          {h:'数据来源',p:'VOC 九大模块标签 + 频率统计'},
+          {h:'输出物',p:'象限分布图 + 优先级清单（按频率 × 强度排序）'}
+        ]}
+      ]},
+    {id:'jtbd',name:'JTBD 待办任务',color:'#0891B2',desc:'用户雇用产品是为了「完成某个任务」。从功能性 / 情感性 / 社会性三层识别真实任务，避免被表面功能需求误导。',
+      meta:[['目的','理解用户真正任务'],['适用','产品开发 · 营销洞察 · 文案']],
+      sections:[
+        {t:'三层次任务',d:'每个用户场景都可拆为三层任务。',items:[
+          {h:'功能性任务',p:'用户想完成的具体事（如：私密释放压力、获得真实体验）'},
+          {h:'情感性任务',p:'用户想获得的感受（如：去羞耻化、虚拟陪伴、自我掌控）'},
+          {h:'社会性任务',p:'用户想呈现的社会形象（如：显得正常、有品味）'}
+        ]},
+        {t:'飞机杯案例',d:'基于 Reddit 用户评论的 JTBD 拆解。',items:[
+          {h:'功能性',p:'希望获得真实、不尴尬、私密的释放体验'},
+          {h:'情感性',p:'去羞耻化 / 虚拟陪伴感 / 自我掌控 / 社会认同'},
+          {h:'社会性',p:'在亲密关系中被理解、显得「正常」'}
+        ]}
+      ], interactive:'jtbd'},
+    {id:'journey',name:'购买旅程',color:'#A855F7',desc:'覆盖 认知 → 考虑 → 购买 → 使用 → 忠诚 全链路，定位每个触点的体验断点与优化机会。',
+      meta:[['目的','体验链路诊断'],['适用','用户洞察 · 营销']],
+      sections:[
+        {t:'五阶段触点',d:'沿用户路径逐环诊断体验断点。',items:[
+          {h:'认知',p:'被种草 / 搜索触发，触点：社媒、评测、广告'},
+          {h:'考虑',p:'比价与评估，触点：评价、参数、KOL'},
+          {h:'购买',p:'下单决策，触点：价格、促销、信任'},
+          {h:'使用',p:'真实体验，触点：产品、说明书、客服'},
+          {h:'忠诚',p:'复购与推荐，触点：社群、新品、售后'}
+        ]},
+        {t:'诊断输出',d:'标注每个阶段的正向点与断点，形成旅程地图 + 情感曲线。',items:[
+          {h:'断点',p:'高流失 / 差评集中处 → 优先修复'},
+          {h:'峰值',p:'超预期体验 → 放大为卖点'}
+        ]}
+      ]},
+    {id:'motivation',name:'动机编码',color:'#10B981',desc:'对语料做 动机 / 场景 / 人群 编码，聚类出高价值细分群体及其规模与特征。',
+      meta:[['目的','细分群体识别'],['适用','市场细分 · 用户洞察']],
+      sections:[
+        {t:'编码维度',d:'按三类维度对每条语料贴标签。',items:[
+          {h:'动机',p:'功能驱动 / 情感驱动 / 促销刺激'},
+          {h:'场景',p:'时间 / 空间 / 情境场景'},
+          {h:'人群',p:'人口统计 + 使用经验 + 社群归属'}
+        ]},
+        {t:'聚类输出',d:'交叉维度聚类，输出细分群体画像 + 规模占比。',items:[
+          {h:'高频使用者',p:'每周 3+ 次，重静音 / 便携，愿溢价 30%'},
+          {h:'尝鲜体验者',p:'月 1-2 次，外观驱动，社媒种草触达'}
+        ]}
+      ]},
+    {id:'needs',name:'十三种需求分析',color:'#0EA5E9',desc:'基于马斯洛需求层次的扩展模型，从「身份 → 体验 → 功能 → 必买」四层级解析用户的深层需求驱动。',
+      meta:[['目的','深层需求洞察'],['适用','用户洞察 · 价值主张']],
+      sections:[
+        {t:'身份层 · 自我定义与社会形象',d:'主宰 · 审美 · 目的 · 刺激 · 道德',items:[
+          {h:'主宰 Autonomy',p:'自己决定怎么做、不被限制'},
+          {h:'审美 Beauty',p:'看起来更好、更精致、更自信'},
+          {h:'目的 Purpose',p:'做的事有意义、有方向'},
+          {h:'刺激 Stimulation',p:'生活有新鲜感、好玩的刺激'},
+          {h:'道德 Morality',p:'做对的事、不违背标准'}
+        ]},
+        {t:'体验层 · 互动感受与能力确认',d:'认可 · 亲密 · 胜任 · 影响',items:[
+          {h:'认可 Recognition',p:'被看到、被肯定'},
+          {h:'亲密 Relatedness',p:'有人理解、有人陪伴'},
+          {h:'胜任 Competence',p:'能把事做好、不费劲'},
+          {h:'影响 Impact',p:'能改变 / 影响别人'}
+        ]},
+        {t:'功能层 · 基础保障与归属安稳',d:'安全 · 归属 · 舒适',items:[
+          {h:'安全 Security',p:'无风险、稳定、可预期'},
+          {h:'归属 Community',p:'和志同道合的人在一起'},
+          {h:'舒适 Comfort',p:'轻松、不操心、不费力'}
+        ]},
+        {t:'必买层 · 健康刚需',d:'健康',items:[
+          {h:'健康 Fitness',p:'身体好、精力充沛、不生病'}
+        ]}
+      ]},
+    {id:'compass',name:'产品创意罗盘',color:'#F97316',desc:'以 4 象限 × 20 种打法的创新方法论，系统性生成产品创意方向，避免凭直觉拍脑袋。',
+      meta:[['目的','创新机会生成'],['适用','产品创新']],
+      sections:[
+        {t:'四象限',d:'按「用户价值 × 实现难度」划分机会。',items:[
+          {h:'高价值 × 低难度',p:'立即做（快速见效）'},
+          {h:'高价值 × 高难度',p:'重点投入（建立壁垒）'},
+          {h:'低价值 × 低难度',p:'快速试（低成本验证）'},
+          {h:'低价值 × 高难度',p:'暂搁置'}
+        ]},
+        {t:'20 种打法',d:'在象限内套用已验证的创新打法。',items:[
+          {h:'打法示例',p:'模块化 / 可定制 / 场景扩展 / 订阅化 / 联名 / 极简'},
+          {h:'输出物',p:'创意清单 + 可行性评分'}
+        ]}
+      ]},
+    {id:'triz',name:'TRIZ 创新方法',color:'#14B8A6',desc:'基于 40 个发明原理的系统化创新方法，将技术矛盾转化为可解的方案，而非反复试错。',
+      meta:[['目的','系统化创新'],['适用','产品创新']],
+      sections:[
+        {t:'核心思想',d:'用「矛盾矩阵」定位原理，而非随机头脑风暴。',items:[
+          {h:'技术矛盾',p:'想改善 A 却恶化 B（如：更软 vs 更易变形）'},
+          {h:'发明原理',p:'40 个通用解法对应矛盾（如：分割、预先作用、柔性外壳）'}
+        ]},
+        {t:'常用原理（节选）',d:'与品类强相关的原理。',items:[
+          {h:'分割',p:'将整体拆为独立部分（可拆洗结构）'},
+          {h:'柔性外壳',p:'用软质材料兼顾保护与安全'},
+          {h:'预先作用',p:'提前完成部分功能（预润滑 / 预装）'},
+          {h:'反向',p:'反转操作或流程'}
+        ]}
+      ]},
+    {id:'extreme',name:'极端/领先用户',color:'#8B5CF6',desc:'基于 von Hippel 领先用户理论，识别走在前面的极端用户，提取尚未主流化的深层需求与创新机会。',
+      meta:[['目的','领先用户识别'],['适用','产品创新 · 市场趋势']],
+      sections:[
+        {t:'von Hippel 2×2',d:'按「领先程度 × 收益预期」定位领先用户。',items:[
+          {h:'高领先 × 高收益',p:'核心领先用户——重点深访'},
+          {h:'高领先 × 低收益',p:'边缘探索者——观察方向'},
+          {h:'低领先 × 高收益',p:'高价值主流——规模机会'},
+          {h:'低领先 × 低收益',p:'普通用户——基线'}
+        ]},
+        {t:'识别标准',d:'领先用户的两个信号。',items:[
+          {h:'时间领先',p:'比主流早很久遇到该需求'},
+          {h:'高收益预期',p:'若被满足，收益显著高于常人'}
+        ]}
+      ]},
+    {id:'plutchik',name:'Plutchik 情绪罗盘',color:'#EC4899',desc:'基于 Plutchik 八情绪模型分析用户情感极性，定位情绪驱动的设计点与沟通基调。',
+      meta:[['目的','情绪洞察'],['适用','用户洞察 · 营销']],
+      sections:[
+        {t:'八种基础情绪',d:'成对对立，强度向内递增。',items:[
+          {h:'喜悦 ↔ 悲伤',p:'满意 / 喜爱 vs 失望 / 落差'},
+          {h:'信任 ↔ 厌恶',p:'信赖 / 安心 vs 排斥 / 反感'},
+          {h:'恐惧 ↔ 愤怒',p:'担忧 / 不安 vs 被冒犯 / 愤怒'},
+          {h:'惊讶 ↔ 期待',p:'新奇 / 意外 vs 向往 / 渴望'}
+        ]},
+        {t:'应用',d:'用情绪极性反向设计体验与文案。',items:[
+          {h:'降低',p:'恐惧（隐私）→ 安全承诺'},
+          {h:'放大',p:'喜悦（真实感）→ 卖点强化'}
+        ]}
+      ]}
   ],
 
   // ---- 种子洞察（每个目的的示例洞察卡片）----
@@ -1729,14 +1891,58 @@ function openFramework(fwId){
   $('#topbarTitle').textContent=f.name;
   setView('Framework');
   if(fwId==='voc'){ renderVocTagPage(); return; }
+  // meta 行
+  var metaHtml=(f.meta||[]).map(function(m){
+    return '<span class="fw-meta-chip"><b>'+escHtml(m[0])+'</b>'+escHtml(m[1])+'</span>';
+  }).join('');
+  // 板块（可折叠）
+  var secHtml=(f.sections||[]).map(function(s,i){
+    var items=(s.items||[]).map(function(it){
+      return '<div class="fw-item"><div class="fw-ih">'+escHtml(it.h)+'</div><div class="fw-ip">'+escHtml(it.p)+'</div></div>';
+    }).join('');
+    var desc=s.d?'<div class="fw-sec-d">'+escHtml(s.d)+'</div>':'';
+    return '<div class="fw-sec">'+
+      '<div class="fw-sec-h" onclick="fwSecToggle(this)" style="--fc:'+f.color+'">'+
+        '<span class="fw-sec-t">'+(i+1)+'. '+escHtml(s.t)+'</span><span class="fw-sec-arw">▾</span></div>'+
+      '<div class="fw-sec-b">'+desc+'<div class="fw-items">'+items+'</div></div>'+
+    '</div>';
+  }).join('');
+  // 框架专属交互块
+  var extra='';
+  if(f.interactive==='jtbd'){
+    extra='<div class="fw-extra" style="--fc:'+f.color+'">'+
+      '<div class="fw-extra-h">🎮 JTBD 句式生成器</div>'+
+      '<div class="fw-extra-sub">选一个用户场景，看它如何被拆成三层任务</div>'+
+      '<div class="fw-jtbd-btns">'+
+        '<button class="fw-jtbd-btn" onclick="fwJtbd(this,\'功能性\',\'我希望私密、不尴尬地释放压力，获得接近真实的体验。\')">功能性任务</button>'+
+        '<button class="fw-jtbd-btn" onclick="fwJtbd(this,\'情感性\',\'我希望去羞耻化，获得虚拟陪伴感与自我掌控，并显得「正常」。\')">情感性任务</button>'+
+        '<button class="fw-jtbd-btn" onclick="fwJtbd(this,\'社会性\',\'我希望在亲密关系中被理解，呈现有品味、不被异样的形象。\')">社会性任务</button>'+
+      '</div>'+
+      '<div class="fw-jtbd-out" id="fwJtbdOut">点击上方按钮，生成对应层级的 JTBD 句式…</div>'+
+    '</div>';
+  }
   $('#viewFramework').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openFrameworkGallery()">返回分析框架</button>'+
       '<span class="ws-title">'+escHtml(f.name)+'</span>'+
-      '<span class="ws-tag">分析框架 · 共享</span></div>'+
+      '<span class="ws-tag" style="--fc:'+f.color+'">分析框架 · 共享</span></div>'+
     '<div class="fw-detail">'+
-      '<div class="fw-desc">'+escHtml(f.desc)+'</div>'+
+      '<div class="fw-desc" style="border-left:3px solid '+f.color+'">'+escHtml(f.desc)+'</div>'+
+      (metaHtml?'<div class="fw-meta">'+metaHtml+'</div>':'')+
+      '<div class="fw-secs">'+secHtml+'</div>'+
+      extra+
       '<div class="fw-note">此框架在「目的工作区」的结构化面板与无限画布中被调用，用于组织洞察与推导链路。</div>'+
     '</div>';
+}
+function fwSecToggle(el){
+  var body=el.nextElementSibling;
+  var arw=el.querySelector('.fw-sec-arw');
+  if(body){ body.style.display=(body.style.display==='none'?'':'none'); if(arw) arw.textContent=(body.style.display==='none'?'▸':'▾'); }
+}
+function fwJtbd(btn,layer,sentence){
+  document.querySelectorAll('.fw-jtbd-btn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  var out=document.getElementById('fwJtbdOut');
+  if(out){ out.innerHTML='<b>'+escHtml(layer)+'任务：</b>'+escHtml(sentence); }
 }
 
 // ============================================================
@@ -1994,7 +2200,7 @@ function openFrameworkGallery(){
   }).join('');
   // 数据清洗框架（VOC标签体系）入口卡片
   var dataCleanCard =
-    '<div class="dc-card" onclick="openFramework(\'voc\')"><div class="dc-head">'+
+    '<div class="dc-card" onclick="renderVocTagPage()"><div class="dc-head">'+
       '<div class="dc-ico"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 20 7.4 12 11.8 4 7.4Z"/><path d="M4 7.4 4 16.6 12 21 12 11.8"/><path d="M20 7.4 20 16.6 12 21"/></svg></div>'+
       '<div><div class="dc-title">数据清洗框架</div><div class="dc-sub">VOC 标签体系 · 9 大模块 · 35 子维度 · 类目用户案例</div></div>'+
       '<span class="dc-go">进入</span></div>'+
