@@ -630,6 +630,55 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ci-k{width:48px;font-size:12px;font-weight:800;color:var(--ink);flex-shrink:0}
 .ci-v{font-size:12px;color:var(--ink-2);line-height:1.5}
 
+/* === 原理展厅 · AI 办公全景 === */
+.pano-wrap{padding:22px 26px 40px;animation:fadeInUp .5s var(--rad-easing) both}
+.pano-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.pano-title{font-size:24px;font-weight:850;letter-spacing:-.4px}
+.pano-sub{font-size:13px;color:var(--muted);margin-top:6px;max-width:660px;line-height:1.6}
+.pano-hint{font-size:12px;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.25);padding:7px 13px;border-radius:10px;font-weight:700;white-space:nowrap}
+.pano-stage{position:relative;width:920px;max-width:100%;margin:0 auto;border:1px solid var(--border);border-radius:20px;
+  background:radial-gradient(circle at 18% 10%,rgba(0,212,255,.06),transparent 38%),radial-gradient(circle at 84% 90%,rgba(255,107,157,.06),transparent 42%),var(--glass-bg);
+  padding:18px;overflow:auto}
+.pano-grid{position:relative;width:920px;height:560px;margin:0 auto}
+.pano-flow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.pano-flow path{fill:none;stroke:#c9cfe0;stroke-width:2;stroke-dasharray:6 7;stroke-linecap:round}
+.pano-station{position:absolute;width:130px;transform:translate(-50%,0);text-align:center;cursor:pointer;z-index:2}
+.pano-station:hover{z-index:5}
+.pano-person{position:relative;width:36px;height:56px;margin:0 auto 6px;transition:transform .25s var(--rad-easing);animation:panoBob 3.2s ease-in-out infinite}
+.pano-station:hover .pano-person{transform:translateY(-5px)}
+.pano-station:nth-child(3) .pano-person{animation-delay:.4s}
+.pano-station:nth-child(4) .pano-person{animation-delay:.8s}
+.pano-station:nth-child(5) .pano-person{animation-delay:1.2s}
+.pano-station:nth-child(6) .pano-person{animation-delay:.6s}
+.pano-station:nth-child(7) .pano-person{animation-delay:1s}
+.pano-station:nth-child(8) .pano-person{animation-delay:1.4s}
+.pp-head{position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;
+  background:linear-gradient(135deg,#00d4ff,#a855f7 55%,#ff6b9d);border:2px solid #fff;box-shadow:0 3px 8px rgba(168,85,247,.22)}
+.pp-body{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:24px;height:26px;border-radius:11px 11px 8px 8px;background:#485066;border:2px solid #fff}
+.pp-arm{position:absolute;top:26px;width:6px;height:16px;border-radius:4px;background:linear-gradient(135deg,#00d4ff,#a855f7 55%,#ff6b9d)}
+.pp-arm.l{left:-6px;transform:rotate(18deg)} .pp-arm.r{right:-6px;transform:rotate(-18deg)}
+.pp-leg{position:absolute;bottom:0;width:5px;height:9px;border-radius:3px;background:#3b3b4d}
+.pp-leg.l{left:9px} .pp-leg.r{right:9px}
+.pano-desk{width:112px;height:42px;margin:0 auto;border-radius:11px;background:#fff;border:1.5px solid var(--border);
+  box-shadow:var(--shadow-sm);transition:border-color .25s,box-shadow .25s;position:relative;z-index:1}
+.pano-station:hover .pano-desk{border-color:var(--accent);box-shadow:0 8px 20px rgba(0,195,243,.18)}
+.pano-label{margin-top:9px}
+.pano-label b{display:block;font-size:13.5px;font-weight:800;color:var(--ink)}
+.pano-label span{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+@keyframes panoBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.pano-card-mask{position:fixed;inset:0;background:rgba(15,18,28,.42);backdrop-filter:blur(3px);z-index:9998;display:none;align-items:center;justify-content:center}
+.pano-card-mask.show{display:flex}
+.pano-card{width:344px;max-width:90vw;background:var(--panel-solid);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 24px 60px rgba(20,20,40,.28);animation:fadeInUp .35s var(--rad-easing) both}
+.pc-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#7c3aed;background:rgba(139,92,246,.12);padding:4px 10px;border-radius:14px}
+.pc-name{font-size:19px;font-weight:850;margin:12px 0 2px}
+.pc-sub{font-size:12px;color:var(--muted);margin-bottom:12px}
+.pc-desc{font-size:13px;line-height:1.7;color:var(--ink-2);margin-bottom:18px}
+.pc-actions{display:flex;gap:10px;align-items:center}
+.pc-enter{flex:1;border:none;border-radius:11px;padding:11px 14px;font-size:13px;font-weight:800;color:#fff;cursor:pointer;
+  background:linear-gradient(135deg,#00d4ff,#a855f7 55%,#ff6b9d);box-shadow:0 8px 20px rgba(168,85,247,.28)}
+.pc-enter:hover{filter:brightness(1.05)}
+.pc-close{border:1px solid var(--border);background:var(--glass-bg);border-radius:11px;padding:11px 14px;font-size:13px;font-weight:700;color:var(--ink-2);cursor:pointer}
+
 /* === 未来实验室 · 数字世界虚拟预测 概念介绍页 === */
 .lab-wrap{padding:24px 28px 48px;animation:fadeInUp .5s var(--rad-easing) both}
 .lab-hero{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:20px;padding:34px 30px 30px;
@@ -2269,7 +2318,10 @@ function renderNavPrinciple(){
   $('#navPrinciple').innerHTML=
     '<div class="nav-item" data-nav="nav-pr" onclick="openPrincipleGallery()">'+
       '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg></span>'+
-      '<span class="ni-name">工具原理动画</span></div>';
+      '<span class="ni-name">工具原理动画</span></div>'+
+    '<div class="nav-item" data-nav="nav-pano" onclick="openPano()">'+
+      '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></span>'+
+      '<span class="ni-name">AI 办公全景</span></div>';
 }
 
 function openLabIntro(){
@@ -3230,6 +3282,80 @@ function openPrincipleGallery(){
       '<div class="pr-grid">'+cards+'</div>'+
     '</div>';
 }
+
+// ---- 原理展厅 · AI 办公全景（整站流程办公室）----
+var PANORAMA=[
+  {key:'voc',    name:'用户洞察', sub:'VOC 智能打标', x:150, y:70,  fn:'openTagDemo',
+   desc:'一条评论穿过「标签体系之墙」，9 个维度专员各盖一枚标签——用户画像、动机、场景、痛点一目了然。'},
+  {key:'score',  name:'产品打分', sub:'需求跳远评分', x:380, y:70,  fn:'openScoreDemo',
+   desc:'把一条产品需求化身运动员，连续跳进 4 个维度沙坑，落点越远分越高，末了汇总一个综合分。'},
+  {key:'lab',    name:'数字世界', sub:'虚拟预测',     x:610, y:70,  fn:'openLabIntro',
+   desc:'把 VOC 语料与用户分群，沉淀成上千个会互动的数字智能体。你注入运营杠杆，在沙盒里预演未来。'},
+  {key:'dev',    name:'新品开发', sub:'盲盒选方法',   x:840, y:70,  fn:'openDevDemo',
+   desc:'抽一枚创新方法盲盒（TRIZ / SCAMPER），小人翻开盒子，当场长出 3 条产品开发创意。'},
+  {key:'idea',   name:'新品创意', sub:'抓金矿成图',   x:230, y:320, fn:'openIdeaImgDemo',
+   desc:'小矿工挥镐挖出六维创意金矿（外观/功能/场景/情感/技术/叙事），一块块飞入图框拼成产品创意图。'},
+  {key:'stress', name:'虚拟压力', sub:'用户测试',     x:460, y:320, fn:'openStressTest',
+   desc:'用真实 VOC 驱动一群虚拟用户，对你的产品做挑刺式压力测试，提前暴露风险与反对声音。'},
+  {key:'pr',     name:'原理展厅', sub:'工具画廊',     x:690, y:320, fn:'openPrincipleGallery',
+   desc:'所有工具的「使用 / 看背后工作」双视角演示都集中在这——点进去，看每个工具内部怎么运转。'}
+];
+function panoPerson(){
+  return '<div class="pano-person">'+
+    '<div class="pp-arm l"></div><div class="pp-arm r"></div>'+
+    '<div class="pp-head"></div><div class="pp-body"></div>'+
+    '<div class="pp-leg l"></div><div class="pp-leg r"></div></div>';
+}
+function openPano(){
+  setActiveNav('nav-pano');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='AI 办公全景';
+  setView('Principle');
+  var flowPath='M150 215 H840 V465 H230';
+  var stations=PANORAMA.map(function(p){
+    return '<div class="pano-station" style="left:'+p.x+'px;top:'+p.y+'px" onclick="openPanoCard(\''+p.key+'\')">'+
+      panoPerson()+
+      '<div class="pano-desk"></div>'+
+      '<div class="pano-label"><b>'+escHtml(p.name)+'</b><span>'+escHtml(p.sub)+'</span></div>'+
+    '</div>';
+  }).join('');
+  $('#viewPrinciple').innerHTML=
+    '<div class="pano-wrap">'+
+      '<div class="pano-head"><div>'+
+        '<div class="pano-title">AI 办公全景</div>'+
+        '<div class="pano-sub">整站像一间办公室：每个工位坐着一个小人，代表一个站点模块。<b>点小人</b>看它负责什么、怎么运转，再一键进入演示。</div>'+
+      '</div><div class="pano-hint">点击任意工位的小人 →</div></div>'+
+      '<div class="pano-stage"><div class="pano-grid">'+
+        '<svg class="pano-flow" viewBox="0 0 920 560" preserveAspectRatio="none"><path d="'+flowPath+'"/></svg>'+
+        stations+
+      '</div></div>'+
+    '</div>';
+}
+function openPanoCard(key){
+  var p=null; for(var i=0;i<PANORAMA.length;i++){ if(PANORAMA[i].key===key){ p=PANORAMA[i]; break; } }
+  if(!p) return;
+  var mask=$('#panoCardMask');
+  if(!mask){
+    mask=document.createElement('div'); mask.className='pano-card-mask'; mask.id='panoCardMask';
+    mask.innerHTML=
+      '<div class="pano-card" onclick="event.stopPropagation()">'+
+        '<span class="pc-eyebrow"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg> 工位详情</span>'+
+        '<div class="pc-name" id="pcName"></div>'+
+        '<div class="pc-sub" id="pcSub"></div>'+
+        '<div class="pc-desc" id="pcDesc"></div>'+
+        '<div class="pc-actions"><button class="pc-enter" id="pcEnter">进入演示 →</button><button class="pc-close" onclick="closePanoCard()">关闭</button></div>'+
+      '</div>';
+    mask.addEventListener('click', closePanoCard);
+    document.body.appendChild(mask);
+  }
+  $('#pcName').textContent=p.name;
+  $('#pcSub').textContent=p.sub;
+  $('#pcDesc').textContent=p.desc;
+  $('#pcEnter').onclick=function(){ panoEnter(p); };
+  mask.classList.add('show');
+}
+function closePanoCard(){ var m=$('#panoCardMask'); if(m) m.classList.remove('show'); }
+function panoEnter(p){ closePanoCard(); if(p && window[p.fn]) window[p.fn](); }
 
 // ---- VOC 打标签 · 演示台（使用视角 / 原理视角）----
 // 完整 9 维度标签体系（标签体系之墙的 9 个"洞口/管道"）
