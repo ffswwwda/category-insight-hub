@@ -175,10 +175,14 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .voc-ucards{display:grid;gap:10px}
 .voc-ucards{display:grid;gap:10px} /* keep for fallback */
 .voc-rows{display:grid;gap:10px}
-.voc-row{display:grid;grid-template-columns:1fr 16px 1fr 16px 1.1fr;gap:0;background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+.voc-row{display:grid;grid-template-columns:1fr 78px 1fr 78px 1.08fr;gap:0;background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
   border:1px solid var(--border);border-radius:var(--radius-sm);position:relative;overflow:hidden;padding:0}
 .voc-row::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--uc,var(--accent))}
-.voc-col{padding:12px 14px;min-width:0}
+.voc-col{padding:14px 16px;min-width:0;position:relative}
+/* 三板块切分：底色 + 虚线分隔，分区更明显 */
+.voc-col-user{background:rgba(148,163,184,.035)}
+.voc-col-insight{border-left:1px dashed rgba(0,212,255,.22);background:rgba(0,212,255,.03)}
+.voc-col-actions{border-left:1px dashed rgba(8,145,178,.22);background:rgba(8,145,178,.035)}
 .voc-utop{display:flex;align-items:center;gap:9px;margin-bottom:6px}
 .voc-uavatar{width:30px;height:30px;border-radius:9px;background:var(--rad-grad);color:#fff;font-size:14px;font-weight:900;display:grid;place-items:center;flex-shrink:0}
 .voc-uinfo{flex:1;min-width:0}
@@ -190,9 +194,11 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .voc-us-head{font-size:8.5px;font-weight:800;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-bottom:3px}
 .voc-uhits{display:flex;flex-wrap:wrap;gap:2px}
 .voc-hit{font-size:8.5px;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(139,92,246,.1);color:#7c3aed}
-/* 用户 → 洞察 → 动作 的连接箭头 */
-.voc-arrow{position:relative;background:linear-gradient(to right,transparent,var(--border) 30%,var(--border) 70%,transparent);width:1px;margin:0;justify-self:center}
-.voc-arrow::after{content:'→';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg);color:var(--accent);font-size:14px;font-weight:900;padding:0 4px}
+/* 用户 → 洞察 → 动作 的优雅曲线连接器 */
+.voc-arrow{position:relative;width:100%;height:100%;justify-self:center;display:flex;align-items:center;justify-content:center;overflow:visible}
+.voc-curve-svg{width:100%;height:100%;display:block;overflow:visible}
+.voc-curve{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;opacity:.5;
+  filter:drop-shadow(0 0 3px rgba(0,212,255,.4))}
 /* 洞察列 */
 .voc-insight-label{font-size:9px;font-weight:800;color:var(--accent);letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px}
 .voc-insight-title{font-size:14px;font-weight:900;color:var(--ink);line-height:1.35;margin-bottom:6px;background:linear-gradient(135deg,var(--accent),var(--ink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -1233,6 +1239,9 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 
 <div class="toast" id="toast"></div>
 
+<!-- ===== anime.js v4.5.0 (vendored, UMD global `anime`) ===== -->
+<script src="vendor/anime.umd.min.js"></script>
+
 <script>
 // ============================================================
 // DATA MODEL — 完整架构（截图1）
@@ -1850,6 +1859,8 @@ function renderVocTagPage(){
         '<div id="vocCases" class="voc-cases">'+caseHtml+'</div>'+
       '</div>'+
     '</div>';
+  drawVocConnectors();
+  animateVocRows();
 }
 function renderVocCases(cat){
   var users=VOC_CASES[cat];
@@ -1870,8 +1881,8 @@ function renderVocCases(cat){
         '<div class="voc-udesc">'+escHtml(u.desc)+'</div>'+
         '<div class="voc-usec"><div class="voc-us-head">命中标签板块</div><div class="voc-uhits">'+hits+'</div></div>'+
       '</div>'+
-      // 箭头
-      '<div class="voc-arrow"></div>'+
+      // 优雅曲线连接器
+      vocCurveSvg()+
       // 中：洞察标题
       '<div class="voc-col voc-col-insight">'+
         '<div class="voc-insight-label">用户洞察 → 目的</div>'+
@@ -1879,8 +1890,8 @@ function renderVocCases(cat){
         '<div class="voc-insight-dir">方向：'+escHtml(u.dir)+'</div>'+
         '<div class="voc-insight-aim">'+escHtml(u.aim)+'</div>'+
       '</div>'+
-      // 箭头
-      '<div class="voc-arrow"></div>'+
+      // 优雅曲线连接器
+      vocCurveSvg()+
       // 右：动作卡片
       '<div class="voc-col voc-col-actions">'+
         '<div class="voc-actions-label">我们要做的动作</div>'+
@@ -1889,18 +1900,58 @@ function renderVocCases(cat){
     '</div>';
   }).join('')+'</div>';
 }
+function vocCurveSvg(){
+  return '<div class="voc-arrow"><svg class="voc-curve-svg" viewBox="0 0 100 100" preserveAspectRatio="none">'+
+    '<path class="voc-curve" vector-effect="non-scaling-stroke" d="M3,50 C40,16 60,84 97,50"/></svg></div>';
+}
+// anime.js 描绘曲线：strokeDashoffset 逐段画出
+function drawVocConnectors(){
+  if(!window.anime) return;
+  document.querySelectorAll('.voc-curve').forEach(function(p,i){
+    var len; try{ len=p.getTotalLength(); }catch(e){ len=0; }
+    if(!len) return;
+    p.style.strokeDasharray=len;
+    p.style.strokeDashoffset=len;
+    anime.animate(p, { strokeDashoffset:[len,0], duration:900, delay:180+i*110, ease:'inOutSine' });
+  });
+}
+// 行 + 动作卡 stagger 入场
+function animateVocRows(){
+  if(!window.anime) return;
+  anime.animate('.voc-row', { opacity:[0,1], translateX:[-12,0], duration:520, delay:anime.stagger(90), ease:'outQuad' });
+  anime.animate('.voc-act', { opacity:[0,1], translateY:[8,0], duration:420, delay:anime.stagger(35,{start:260}), ease:'outQuad' });
+}
 function vocToggle(el){
   var body=el.nextElementSibling;
   var arrow=el.querySelector('.voc-arw');
-  if(body){
-    body.style.display=(body.style.display==='none'?'':'none');
-    if(arrow) arrow.textContent=(body.style.display==='none'?'▸':'▾');
+  if(!body) return;
+  var isOpen = body.dataset.open!=='0';
+  if(isOpen){
+    if(window.anime){
+      var h=body.offsetHeight;
+      anime.animate(body, { height:[h,0], opacity:[1,0], duration:260, ease:'inOutQuad',
+        complete:function(){ body.style.display='none'; body.style.height=''; body.style.opacity=''; }});
+    } else { body.style.display='none'; }
+    body.dataset.open='0';
+    if(arrow) arrow.textContent='▸';
+  } else {
+    body.style.display='grid';
+    var h2=body.offsetHeight;
+    if(window.anime){
+      body.style.height='0px'; body.style.opacity='0';
+      anime.animate(body, { height:[0,h2], opacity:[0,1], duration:300, ease:'inOutQuad',
+        complete:function(){ body.style.height=''; body.style.opacity=''; }});
+    }
+    body.dataset.open='1';
+    if(arrow) arrow.textContent='▾';
   }
 }
 function vocSwitchCat(cat, btn){
   document.querySelectorAll('.voc-cat').forEach(function(b){b.classList.remove('on');});
   if(btn) btn.classList.add('on');
   document.getElementById('vocCases').innerHTML=renderVocCases(cat);
+  drawVocConnectors();
+  animateVocRows();
 }
 
 // ---- 板块1：数据源画廊（点击进入单个数据源看板）----
