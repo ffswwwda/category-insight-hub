@@ -630,42 +630,162 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ci-k{width:48px;font-size:12px;font-weight:800;color:var(--ink);flex-shrink:0}
 .ci-v{font-size:12px;color:var(--ink-2);line-height:1.5}
 
-/* === 原理展厅 · AI 办公全景 === */
-.pano-wrap{padding:22px 26px 40px;animation:fadeInUp .5s var(--rad-easing) both}
-.pano-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
-.pano-title{font-size:24px;font-weight:850;letter-spacing:-.4px}
-.pano-sub{font-size:13px;color:var(--muted);margin-top:6px;max-width:660px;line-height:1.6}
-.pano-hint{font-size:12px;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.25);padding:7px 13px;border-radius:10px;font-weight:700;white-space:nowrap}
-.pano-stage{position:relative;width:920px;max-width:100%;margin:0 auto;border:1px solid var(--border);border-radius:20px;
-  background:radial-gradient(circle at 18% 10%,rgba(0,212,255,.06),transparent 38%),radial-gradient(circle at 84% 90%,rgba(255,107,157,.06),transparent 42%),var(--glass-bg);
-  padding:18px;overflow:auto}
-.pano-grid{position:relative;width:920px;height:560px;margin:0 auto}
-.pano-flow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.pano-flow path{fill:none;stroke:#c9cfe0;stroke-width:2;stroke-dasharray:6 7;stroke-linecap:round}
-.pano-station{position:absolute;width:130px;transform:translate(-50%,0);text-align:center;cursor:pointer;z-index:2}
-.pano-station:hover{z-index:5}
-.pano-person{position:relative;width:36px;height:56px;margin:0 auto 6px;transition:transform .25s var(--rad-easing);animation:panoBob 3.2s ease-in-out infinite}
-.pano-station:hover .pano-person{transform:translateY(-5px)}
-.pano-station:nth-child(3) .pano-person{animation-delay:.4s}
-.pano-station:nth-child(4) .pano-person{animation-delay:.8s}
-.pano-station:nth-child(5) .pano-person{animation-delay:1.2s}
-.pano-station:nth-child(6) .pano-person{animation-delay:.6s}
-.pano-station:nth-child(7) .pano-person{animation-delay:1s}
-.pano-station:nth-child(8) .pano-person{animation-delay:1.4s}
-.pp-head{position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;
-  background:linear-gradient(135deg,#00d4ff,#a855f7 55%,#ff6b9d);border:2px solid #fff;box-shadow:0 3px 8px rgba(168,85,247,.22)}
-.pp-body{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:24px;height:26px;border-radius:11px 11px 8px 8px;background:#485066;border:2px solid #fff}
-.pp-arm{position:absolute;top:26px;width:6px;height:16px;border-radius:4px;background:linear-gradient(135deg,#00d4ff,#a855f7 55%,#ff6b9d)}
-.pp-arm.l{left:-6px;transform:rotate(18deg)} .pp-arm.r{right:-6px;transform:rotate(-18deg)}
-.pp-leg{position:absolute;bottom:0;width:5px;height:9px;border-radius:3px;background:#3b3b4d}
-.pp-leg.l{left:9px} .pp-leg.r{right:9px}
-.pano-desk{width:112px;height:42px;margin:0 auto;border-radius:11px;background:#fff;border:1.5px solid var(--border);
-  box-shadow:var(--shadow-sm);transition:border-color .25s,box-shadow .25s;position:relative;z-index:1}
-.pano-station:hover .pano-desk{border-color:var(--accent);box-shadow:0 8px 20px rgba(0,195,243,.18)}
-.pano-label{margin-top:9px}
-.pano-label b{display:block;font-size:13.5px;font-weight:800;color:var(--ink)}
-.pano-label span{display:block;font-size:11px;color:var(--muted);margin-top:1px}
-@keyframes panoBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+/* === 原理展厅 · AI 办公全景（3D 等轴测立体办公室） === */
+.pano-wrap{padding:20px 24px 36px;animation:fadeInUp .5s var(--rad-easing) both}
+.pano-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.pano-title{font-size:23px;font-weight:850;letter-spacing:-.4px}
+.pano-sub{font-size:12.5px;color:var(--muted);margin-top:6px;max-width:600px;line-height:1.6}
+.pano-hint{font-size:11.5px;color:#0ea5e9;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.25);padding:6px 12px;border-radius:10px;font-weight:700;white-space:nowrap}
+
+/* 3D 舞台容器 */
+.pano-stage{position:relative;width:940px;max-width:100%;margin:0 auto;border:1px solid var(--border);border-radius:20px;
+  background:#f0f2f5;overflow:hidden;height:580px;
+  box-shadow:inset 0 0 60px rgba(0,0,0,.03)}
+.pano-world{position:absolute;inset:0;
+  transform-style:preserve-3d;
+  transform:rotateX(58deg) rotateZ(-45deg);
+  transform-origin:center center}
+
+/* ── 地板 ── */
+.pano-floor{position:absolute;left:-80px;top:-80px;width:1100px;height:740px;
+  background:linear-gradient(135deg,#fafbfc 0%,#f2f4f7 30%,#eaecef 70%,#e2e6ec 100%);
+  border-radius:3px;box-shadow:inset 0 0 100px rgba(0,0,0,.02)}
+.pano-floor::before{content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(200,208,220,.3) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,208,220,.3) 1px,transparent 1px);
+  background-size:56px 56px}
+
+/* ── 后墙 ── */
+.pano-wall-back{position:absolute;left:-80px;top:-280px;width:1100px;height:220px;
+  background:linear-gradient(180deg,#f5f3ef 0%,#edeae4 100%);
+  border-radius:3px 3px 0 0;
+  box-shadow:inset 0 -25px 50px rgba(0,0,0,.04),0 -4px 20px rgba(0,0,0,.02)}
+.pano-wall-back::after{content:'';position:absolute;bottom:0;left:0;right:0;height:8px;
+  background:linear-gradient(180deg,#e0dcd4,#d6d0c6)}
+
+/* ── 左墙 ── */
+.pano-wall-left{position:absolute;left:-260px;top:-80px;width:190px;height:740px;
+  background:linear-gradient(90deg,#ebe8e2 0%,#e3dfd7 100%);
+  border-radius:3px 0 0 3px;
+  box-shadow:inset -25px 0 50px rgba(0,0,0,.02)}
+
+/* ── 柜子组（后墙前）── */
+.pano-cabinet{position:absolute;display:flex;gap:7px;padding:10px 14px;z-index:6}
+.pano-cab-unit{width:54px;height:74px;background:linear-gradient(180deg,#eaddcf 0%,#dfd5c3 100%);
+  border-radius:4px;border:1.5px solid rgba(180,168,152,.35);
+  box-shadow:0 2px 8px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,.5);
+  position:relative}
+.pano-cab-unit::before{content:'';position:absolute;top:52%;left:4px;right:4px;height:1px;background:rgba(160,148,130,.22)}
+.pano-cab-unit::after{content:'';position:absolute;top:8px;left:6px;right:6px;height:20px;background:rgba(255,255,255,.14);border-radius:2px}
+
+/* ── 植物 ── */
+.pano-plant{position:absolute;z-index:18}
+.pano-pot{width:28px;height:22px;background:linear-gradient(180deg,#d4a574 0%,#c49464 100%);
+  border-radius:3px 3px 6px 6px;margin:0 auto;
+  border:1.5px solid rgba(160,120,70,.28);
+  box-shadow:0 3px 8px rgba(0,0,0,.09)}
+.pano-leaves{position:relative;width:58px;height:66px;margin-top:-8px}
+.pano-leaf{position:absolute;width:22px;height:34px;border-radius:50% 50% 45% 45%;opacity:.9}
+.pano-leaf:nth-child(1){background:linear-gradient(135deg,#5ba86f,#3d8b4f);left:1px;top:18px;transform:rotate(-26deg)}
+.pano-leaf:nth-child(2){background:linear-gradient(135deg,#4ca661,#2e7d42);left:18px;top:2px;transform:rotate(-4deg);width:27px;height:40px}
+.pano-leaf:nth-child(3){background:linear-gradient(135deg,#5ba86f,#3d8b4f);right:1px;top:17px;transform:rotate(26deg)}
+.pano-leaf:nth-child(4){background:linear-gradient(135deg,#6bc482,#4caf50);left:10px;top:30px;transform:rotate(8deg);width:20px;height:28px}
+
+/* ── 工位 ── */
+.pano-station{position:absolute;cursor:pointer;z-index:10;
+  transition:transform .3s var(--rad-easing),z-index 0s;
+  width:140px;text-align:center}
+.pano-station:hover{z-index:50;transform:translateY(-8px) scale(1.05)}
+
+/* ── 桌子（3D 盒子）── */
+.pano-desk-wrap{position:relative;margin:0 auto;width:104px;height:58px}
+.pano-desk-top{position:absolute;top:0;left:4px;width:96px;height:48px;
+  background:linear-gradient(165deg,#fff 0%,fafbfc 50%,#f0f2f6 100%);
+  border-radius:8px;border:1.5px solid rgba(190,200,215,.5);
+  box-shadow:0 4px 14px rgba(0,0,0,.07),0 1px 3px rgba(0,0,0,.04),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  z-index:2}
+.pano-desk-front{position:absolute;bottom:-7px;left:4px;width:96px;height:9px;
+  background:linear-gradient(180deg,#e4e7ed 0%,#d8dde4 100%);
+  border-radius:0 0 6px 6px;z-index:1;
+  border:1.5px solid rgba(190,200,215,.38);border-top:none}
+.pano-desk-items{position:absolute;top:5px;left:8px;right:8px;height:18px;
+  display:flex;align-items:flex-start;justify-content:center;gap:4px;z-index:3}
+.pano-desk-item{width:11px;height:7px;border-radius:2px;opacity:.55}
+.pano-desk-item.mt{background:linear-gradient(135deg,#00d4ff,#0099cc)}
+.pano-desk-item.pk{background:linear-gradient(135deg,#a855f7,#7c3aed)}
+.pano-desk-item.bk{background:linear-gradient(135deg,#ff6b9d,#e91e63)}
+
+/* ── 椅子 ── */
+.pano-chair{position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);
+  width:36px;height:19px;background:linear-gradient(180deg,#e8ebf1 0%,#dddde4 100%);
+  border-radius:8px 8px 6px 6px;border:1.5px solid rgba(185,192,210,.48);
+  z-index:0;box-shadow:0 2px 7px rgba(0,0,0,.06)}
+
+/* ── 3D 小人（坐姿）── */
+.pano-person{position:relative;width:46px;height:72px;margin:4px auto 0;z-index:5;
+  animation:panoBreathe 3s ease-in-out infinite}
+@keyframes panoBreathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.pp-head{position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(145deg,#ffe4c9,#f5c89a 40%,#edb884);
+  border:2px solid rgba(255,255,255,.7);
+  box-shadow:0 3px 10px rgba(180,130,80,.16),inset 0 -3px 7px rgba(180,130,80,.1);
+  z-index:5}
+.pp-hair{position:absolute;top:-2px;left:50%;transform:translateX(-50%);
+  width:31px;height:17px;border-radius:50% 50% 32% 32%;
+  background:linear-gradient(180deg,#4a3728,#2d2118);z-index:6}
+.pp-eye{position:absolute;top:13px;width:3px;height:3px;border-radius:50%;
+  background:rgba(80,60,40,.2);z-index:6}
+.pp-eye.l{left:7px} .pp-eye.r{right:7px}
+.pp-body{position:absolute;top:26px;left:50%;transform:translateX(-50%);
+  width:27px;height:29px;border-radius:11px 11px 8px 8px;
+  background:linear-gradient(175deg,#5b9eff,#3b82f6 40%,#2563eb);
+  border:1.5px solid rgba(255,255,255,.32);
+  box-shadow:0 3px 10px rgba(59,130,246,.18),inset 0 2px 5px rgba(255,255,255,.18);
+  z-index:4}
+.pp-collar{position:absolute;top:25px;left:50%;transform:translateX(-50%);
+  width:13px;height:6px;background:#fff;border-radius:0 0 7px 7px;z-index:5}
+.pp-arm{position:absolute;top:32px;width:7px;height:21px;border-radius:4px;z-index:3}
+.pp-arm.l{left:1px;transform:rotate(25deg);background:linear-gradient(180deg,#5b9eff,#3b82f6)}
+.pp-arm.r{right:1px;transform:rotate(-25deg);background:linear-gradient(180deg,#5b9eff,#3b82f6)}
+.pp-hand{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);
+  width:8px;height:7px;border-radius:50%;
+  background:linear-gradient(145deg,#ffe4c9,#f5c89a);z-index:4}
+.pp-legs{position:absolute;top:53px;left:50%;transform:translateX(-50%);width:23px;height:18px;z-index:3}
+.pp-leg{position:absolute;bottom:0;width:9px;height:16px;border-radius:4px 4px 5px 5px;
+  background:linear-gradient(180deg,#374151,#1f2937)}
+.pp-leg.l{left:1px} .pp-leg.r{right:1px}
+
+/* ── 头顶标签 ── */
+.pano-tag{position:absolute;top:-24px;left:50%;transform:translateX(-50%);
+  white-space:nowrap;font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;
+  color:#334155;background:rgba(255,255,255,.94);
+  border:1px solid rgba(203,213,225,.55);
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+  z-index:20;pointer-events:none;
+  animation:panoTagFloat 2.6s ease-in-out infinite}
+@keyframes panoTagFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+.pano-tag .tt-name{color:#1e293b;font-weight:800}
+.pano-tag .tt-role{color:#64748b;font-weight:600;margin-left:3px}
+
+/* ── 底部名称 ── */
+.pano-label{margin-top:5px;position:relative;z-index:8}
+.pano-label b{display:block;font-size:12.5px;font-weight:800;color:var(--ink);letter-spacing:-.1px}
+.pano-label span{display:block;font-size:10px;color:var(--muted);margin-top:1px}
+
+/* ── 走动动画 ── */
+.pano-station.walking .pp-arm.l{animation:panoArmL .35s ease-in-out infinite alternate}
+.pano-station.walking .pp-arm.r{animation:panoArmR .35s ease-in-out infinite alternate}
+.pano-station.walking .pp-leg.l{animation:panoLegL .35s ease-in-out infinite alternate}
+.pano-station.walking .pp-leg.r{animation:panoLegR .35s ease-in-out infinite alternate}
+.pano-station.walking .pano-person{animation:panoWalkBob .32s ease-in-out infinite alternate}
+@keyframes panoArmL{from{transform:rotate(25deg)}to{transform:rotate(-15deg)}}
+@keyframes panoArmR{from{transform:rotate(-25deg)}to{transform:rotate(15deg)}}
+@keyframes panoLegL{from{transform:rotate(0)}to{transform:rotate(13deg)}}
+@keyframes panoLegR{from{transform:rotate(0)}to{transform:rotate(-13deg)}}
+@keyframes panoWalkBob{from{transform:translateY(0)}to{transform:translateY(-3px)}}
 .pano-card-mask{position:fixed;inset:0;background:rgba(15,18,28,.42);backdrop-filter:blur(3px);z-index:9998;display:none;align-items:center;justify-content:center}
 .pano-card-mask.show{display:flex}
 .pano-card{width:344px;max-width:90vw;background:var(--panel-solid);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 24px 60px rgba(20,20,40,.28);animation:fadeInUp .35s var(--rad-easing) both}
@@ -3284,51 +3404,104 @@ function openPrincipleGallery(){
 }
 
 // ---- 原理展厅 · AI 办公全景（整站流程办公室）----
+/* ═══ 3D 等轴测办公室 · 工位坐标（等轴测网格系）══
+   坐标为 world 内的 px，经 rotateX(58deg) rotateZ(-45deg) 变换
+   Y 越大 = 越靠近观察者（屏幕下方）= 更高 z-index
+   前排（Y 大）：voc/score/lab/dev   后排（Y 小）：idea/stress/pr
+   ═══ */
 var PANORAMA=[
-  {key:'voc',    name:'用户洞察', sub:'VOC 智能打标', x:150, y:70,  fn:'openTagDemo',
+  {key:'voc',    name:'用户洞察', sub:'VOC 智能打标', x:120, y:260, gx:1, gy:4, fn:'openTagDemo',
    desc:'一条评论穿过「标签体系之墙」，9 个维度专员各盖一枚标签——用户画像、动机、场景、痛点一目了然。'},
-  {key:'score',  name:'产品打分', sub:'需求跳远评分', x:380, y:70,  fn:'openScoreDemo',
+  {key:'score',  name:'产品打分', sub:'需求跳远评分', x:310, y:260, gx:3, gy:4, fn:'openScoreDemo',
    desc:'把一条产品需求化身运动员，连续跳进 4 个维度沙坑，落点越远分越高，末了汇总一个综合分。'},
-  {key:'lab',    name:'数字世界', sub:'虚拟预测',     x:610, y:70,  fn:'openLabIntro',
+  {key:'lab',    name:'数字世界', sub:'虚拟预测',     x:500, y:260, gx:5, gy:4, fn:'openLabIntro',
    desc:'把 VOC 语料与用户分群，沉淀成上千个会互动的数字智能体。你注入运营杠杆，在沙盒里预演未来。'},
-  {key:'dev',    name:'新品开发', sub:'盲盒选方法',   x:840, y:70,  fn:'openDevDemo',
+  {key:'dev',    name:'新品开发', sub:'盲盒选方法',   x:690, y:260, gx:7, gy:4, fn:'openDevDemo',
    desc:'抽一枚创新方法盲盒（TRIZ / SCAMPER），小人翻开盒子，当场长出 3 条产品开发创意。'},
-  {key:'idea',   name:'新品创意', sub:'抓金矿成图',   x:230, y:320, fn:'openIdeaImgDemo',
+  {key:'idea',   name:'新品创意', sub:'抓金矿成图',   x:215, y:100, gx:2, gy:2, fn:'openIdeaImgDemo',
    desc:'小矿工挥镐挖出六维创意金矿（外观/功能/场景/情感/技术/叙事），一块块飞入图框拼成产品创意图。'},
-  {key:'stress', name:'虚拟压力', sub:'用户测试',     x:460, y:320, fn:'openStressTest',
+  {key:'stress', name:'虚拟压力', sub:'用户测试',     x:405, y:100, gx:4, gy:2, fn:'openStressTest',
    desc:'用真实 VOC 驱动一群虚拟用户，对你的产品做挑刺式压力测试，提前暴露风险与反对声音。'},
-  {key:'pr',     name:'原理展厅', sub:'工具画廊',     x:690, y:320, fn:'openPrincipleGallery',
+  {key:'pr',     name:'原理展厅', sub:'工具画廊',     x:595, y:100, gx:6, gy:2, fn:'openPrincipleGallery',
    desc:'所有工具的「使用 / 看背后工作」双视角演示都集中在这——点进去，看每个工具内部怎么运转。'}
 ];
-function panoPerson(){
+
+/* ── 小人 HTML（坐姿 3D 卡通人物）── */
+function panoPerson(name,role){
   return '<div class="pano-person">'+
-    '<div class="pp-arm l"></div><div class="pp-arm r"></div>'+
-    '<div class="pp-head"></div><div class="pp-body"></div>'+
-    '<div class="pp-leg l"></div><div class="pp-leg r"></div></div>';
+    '<div class="pano-tag"><span class="tt-name">'+escHtml(name)+'</span><span class="tt-role">'+escHtml(role)+'</span></div>'+
+    '<div class="pp-hair"></div>'+
+    '<div class="pp-head"><div class="pp-eye l"></div><div class="pp-eye r"></div></div>'+
+    '<div class="pp-collar"></div>'+
+    '<div class="pp-body"></div>'+
+    '<div class="pp-arm l"><div class="pp-hand"></div></div>'+
+    '<div class="pp-arm r"><div class="pp-hand"></div></div>'+
+    '<div class="pp-legs"><div class="pp-leg l"></div><div class="pp-leg r"></div></div>'+
+  '</div>';
 }
+
+/* ── 植物 HTML ── */
+function panoPlant(){
+  return '<div class="pano-leaves">'+
+    '<div class="pano-leaf"></div><div class="pano-leaf"></div>'+
+    '<div class="pano-leaf"></div><div class="pano-leaf"></div>'+
+  '</div>';
+}
+
 function openPano(){
   setActiveNav('nav-pano');
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent='AI 办公全景';
   setView('Principle');
-  var flowPath='M150 215 H840 V465 H230';
+
+  /* 房间结构 */
+  var room =
+    /* 地板 */
+    '<div class="pano-floor"></div>'+
+    /* 后墙 */
+    '<div class="pano-wall-back"></div>'+
+    /* 左墙 */
+    '<div class="pano-wall-left"></div>'+
+    /* 柜子组（后墙前） */
+    '<div class="pano-cabinet" style="left:200px;top:-250px">'+
+      '<div class="pano-cab-unit"></div><div class="pano-cab-unit"></div>'+
+      '<div class="pano-cab-unit"></div><div class="pano-cab-unit"></div>'+
+      '<div class="pano-cab-unit"></div><div class="pano-cab-unit"></div>'+
+    '</div>'+
+    /* 左植物 */
+    '<div class="pano-plant" style="left:-20px;top:180px">'+
+      '<div class="pano-pot"></div>'+panoPlant()+'</div>'+
+    /* 右植物 */
+    '<div class="pano-plant" style="left:780px;top:180px">'+
+      '<div class="pano-pot"></div>'+panoPlant()+'</div>';
+
+  /* 工位 —— z-index = Math.round(y/3) 确保 Y 大的在前面 */
   var stations=PANORAMA.map(function(p){
-    return '<div class="pano-station" style="left:'+p.x+'px;top:'+p.y+'px" onclick="openPanoCard(\''+p.key+'\')">'+
-      panoPerson()+
-      '<div class="pano-desk"></div>'+
+    var zi=Math.round(p.y/3)+8;
+    return '<div class="pano-station" style="left:'+p.x+'px;top:'+p.y+'px;z-index:'+zi+
+      '" onclick="openPanoCard(\''+p.key+'\')">'+
+      panoPerson(p.name,p.sub)+
+      '<div class="pano-desk-wrap">'+
+        '<div class="pano-desk-items">'+
+          '<div class="pano-desk-item mt"></div><div class="pano-desk-item pk"></div><div class="pano-desk-item bk"></div>'+
+        '</div>'+
+        '<div class="pano-desk-top"></div>'+
+        '<div class="pano-desk-front"></div>'+
+        '<div class="pano-chair"></div>'+
+      '</div>'+
       '<div class="pano-label"><b>'+escHtml(p.name)+'</b><span>'+escHtml(p.sub)+'</span></div>'+
     '</div>';
   }).join('');
+
   $('#viewPrinciple').innerHTML=
     '<div class="pano-wrap">'+
       '<div class="pano-head"><div>'+
-        '<div class="pano-title">AI 办公全景</div>'+
-        '<div class="pano-sub">整站像一间办公室：每个工位坐着一个小人，代表一个站点模块。<b>点小人</b>看它负责什么、怎么运转，再一键进入演示。</div>'+
-      '</div><div class="pano-hint">点击任意工位的小人 →</div></div>'+
-      '<div class="pano-stage"><div class="pano-grid">'+
-        '<svg class="pano-flow" viewBox="0 0 920 560" preserveAspectRatio="none"><path d="'+flowPath+'"/></svg>'+
-        stations+
-      '</div></div>'+
+        '<div class="pano-title">🏢 AI 办公全景</div>'+
+        '<div class="pano-sub">整站像一间 3D 办公室：每个工位坐着一位同事，代表一个站点模块。<b>点小人</b>看它负责什么、怎么运转，再一键进入演示。</div>'+
+      '</div><div class="pano-hint">👆 点击任意工位的小人 →</div></div>'+
+      '<div class="pano-stage">'+
+        '<div class="pano-world">'+room+stations+'</div>'+
+      '</div>'+
     '</div>';
 }
 function openPanoCard(key){
