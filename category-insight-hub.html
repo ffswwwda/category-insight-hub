@@ -1282,7 +1282,7 @@ body.dark .lab-path .pt{color:#c4b5fd}
         <div class="nav-sec-body" id="navPurpose"></div>
       </section>
       <section class="nav-sec nav-sec-lab">
-        <div class="nav-sec-head"><span class="nsh-ico">🧪</span><span>未来实验室</span><span class="nav-sec-tag lab">前瞻</span></div>
+        <div class="nav-sec-head"><span class="nsh-ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v18M6 21h8M9 3h6a2 2 0 012 2v4a4 4 0 01-5 3.87A4 4 0 017 9V5a2 2 0 012-2z"/></svg></span><span>未来实验室</span><span class="nav-sec-tag lab">前瞻</span></div>
         <div class="nav-sec-body" id="navLab"></div>
       </section>
     </nav>
@@ -1868,7 +1868,7 @@ function renderNavPurpose(){
 function renderNavLab(){
   $('#navLab').innerHTML=
     '<div class="nav-item" data-nav="nav-lab" onclick="openLabIntro()">'+
-      '<span class="ni-ico">🌐</span>'+
+      '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/></svg></span>'+
       '<span class="ni-name">数字世界虚拟预测</span></div>';
 }
 
@@ -1881,7 +1881,7 @@ function openLabIntro(){
     '<div class="lab-wrap">'+
       // Hero
       '<div class="lab-hero">'+
-        '<span class="lab-eyebrow">🧪 未来实验室 · FUTURE LAB</span>'+
+        '<span class="lab-eyebrow"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v18M6 21h8M9 3h6a2 2 0 012 2v4a4 4 0 01-5 3.87A4 4 0 017 9V5a2 2 0 012-2z"/></svg> 未来实验室 · FUTURE LAB</span>'+
         '<div class="lab-title">数字世界虚拟预测</div>'+
         '<div class="lab-tagline">从现实世界，<span class="accent">排练一个未来</span></div>'+
         '<p class="lab-desc">这是一个基于用户研究体系的预测推演引擎。它把你的 VOC 语料、用户分群与标签体系，沉淀为一张「用户基座」——上千个拥有真实态度、痛点与动机的用户智能体在其中互动、演化。你以「上帝视角」注入营销 / 运营杠杆（定价、卖点、内容、达人投放），在沙盒里反复试错，看清每个「如果」的结果：新品会不会卖、活动会不会爆、品类机会成不成立。</p>'+
@@ -1916,10 +1916,10 @@ function openLabIntro(){
       '<div class="lab-sec">'+
         '<div class="lab-sec-h">在这个数字世界里，你能得到什么</div>'+
         '<div class="lab-cards">'+
-          labCcard('🌍','数字世界','平行社会：每个节点是拥有独立人格的智能体，连线是它们之间的社会关系。以「上帝视角」注入变量，观察群体演化。')+
-          labCcard('🧬','用户基座','仿真的人格来源：8 个分群从你的 VOC 聚类而来（态度 / 活跃度 / 忠诚度 / 价格—品质取向），全部来自真实语料与标签体系。')+
-          labCcard('📊','预测报告','ReportAgent 携带完整工具集，与仿真后的数字世界深度交互，产出结构化预测；你还能直接与世界中的智能体对话。')+
-          labCcard('⚙️','算法引擎','多智能体社会仿真（ABM）：在浏览器内逐时间步运行——激活、推荐、动作决策、观点演化、记忆更新，骨架完整可复算。')+
+          labCcard('<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#7c3aed" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M9.5 10.5l-3-3m8 0l-3 3m-5 7l3-3m5 0l3 3"/></svg>','数字世界','平行社会：每个节点是拥有独立人格的智能体，连线是它们之间的社会关系。以「上帝视角」注入变量，观察群体演化。')+
+          labCcard('<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#7c3aed" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>','用户基座','仿真的人格来源：8 个分群从你的 VOC 聚类而来（态度 / 活跃度 / 忠诚度 / 价格—品质取向），全部来自真实语料与标签体系。')+
+          labCcard('<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#7c3aed" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="11" x2="15" y2="21"/></svg>','预测报告','ReportAgent 携带完整工具集，与仿真后的数字世界深度交互，产出结构化预测；你还能直接与世界中的智能体对话。')+
+          labCcard('<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#7c3aed" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>','算法引擎','多智能体社会仿真（ABM）：在浏览器内逐时间步运行——激活、推荐、动作决策、观点演化、记忆更新，骨架完整可复算。')+
         '</div>'+
       '</div>'+
       // CTA
