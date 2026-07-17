@@ -786,6 +786,56 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 @keyframes panoLegL{from{transform:rotate(0)}to{transform:rotate(13deg)}}
 @keyframes panoLegR{from{transform:rotate(0)}to{transform:rotate(-13deg)}}
 @keyframes panoWalkBob{from{transform:translateY(0)}to{transform:translateY(-3px)}}
+
+/* ═══ 办公室模拟器 · 动态元素 ═══ */
+/* 特殊区域标记（卫生间/茶水间/门口） */
+.pano-zone{position:absolute;z-index:4;text-align:center;pointer-events:none}
+.pano-zone .z-glyph{width:46px;height:46px;margin:0 auto 3px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;opacity:.45;background:rgba(148,163,184,.07);
+  border:1.5px dashed rgba(148,163,184,.28);border-radius:12px}
+.pano-zone .z-name{font-size:10.5px;font-weight:800;color:#78909c;letter-spacing:.3px;white-space:nowrap}
+
+/* 动态小人（在 world 中自由移动） */
+.pano-agent{position:absolute;width:62px;left:0;top:0;margin-left:-31px;margin-top:-34px;z-index:10;cursor:pointer;text-align:center;will-change:left,top}
+.pano-agent:hover{z-index:60}
+.pano-agent .pano-person{margin:0 auto}
+.pano-agent .pano-tag{top:-22px}
+.pano-agent.gone{opacity:0;pointer-events:none;transition:opacity .8s ease}
+.pano-agent.dim{filter:brightness(.55) saturate(.7)}
+
+/* 状态气泡（emoji 表示当前行为） */
+.pano-status{position:absolute;top:-48px;left:50%;transform:translateX(-50%);
+  font-size:13px;background:rgba(255,255,255,.96);border:1.5px solid rgba(203,213,225,.5);
+  border-radius:50%;width:27px;height:27px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 9px rgba(0,0,0,.12);z-index:30;
+  animation:panoStatusPop .3s var(--rad-easing) both}
+.pano-agent.walking .pano-status{animation:panoStatusFloat 1s ease-in-out infinite}
+@keyframes panoStatusPop{from{transform:translateX(-50%) scale(.3);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+@keyframes panoStatusFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}
+
+/* 昼夜遮罩 */
+.pano-night{position:absolute;inset:0;z-index:9000;pointer-events:none;opacity:0;
+  background:linear-gradient(180deg,rgba(15,23,42,.5),rgba(30,41,59,.32));
+  transition:opacity 1.6s ease}
+.pano-night.show{opacity:1}
+.pano-night .moon{position:absolute;top:26px;right:46px;font-size:28px;opacity:.85}
+
+/* 时钟 & 控制 HUD（固定在 stage 底部，不受 3D 变换） */
+.pano-hud{position:absolute;left:50%;bottom:13px;transform:translateX(-50%);z-index:9999;
+  display:flex;align-items:center;gap:12px;padding:7px 15px;border-radius:15px;
+  background:rgba(255,255,255,.92);border:1px solid rgba(203,213,225,.5);
+  box-shadow:0 8px 26px rgba(20,30,50,.13);backdrop-filter:blur(8px);max-width:90%}
+.pano-clock-time{font-size:16px;font-weight:800;color:#334155;font-variant-numeric:tabular-nums;min-width:48px;text-align:center}
+.pano-clock-phase{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:9px;white-space:nowrap}
+.pano-clock-phase.day{color:#b45309;background:rgba(251,191,36,.16)}
+.pano-clock-phase.evening{color:#7c3aed;background:rgba(139,92,246,.14)}
+.pano-clock-phase.night{color:#1e40af;background:rgba(59,130,246,.14)}
+.pano-speed-group{display:flex;gap:5px}
+.pano-speed-btn{border:1px solid var(--border);background:#fff;border-radius:9px;padding:5px 10px;
+  font-size:10.5px;font-weight:800;color:#475569;cursor:pointer;transition:all .2s;white-space:nowrap}
+.pano-speed-btn:hover{border-color:#93c5fd;color:#2563eb}
+.pano-speed-btn.active{background:linear-gradient(135deg,#00d4ff,#a855f7 55%,#ff6b9d);color:#fff;border-color:transparent}
+.pano-hud-sep{width:1px;height:22px;background:rgba(148,163,184,.3)}
 .pano-card-mask{position:fixed;inset:0;background:rgba(15,18,28,.42);backdrop-filter:blur(3px);z-index:9998;display:none;align-items:center;justify-content:center}
 .pano-card-mask.show{display:flex}
 .pano-card{width:344px;max-width:90vw;background:var(--panel-solid);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 24px 60px rgba(20,20,40,.28);animation:fadeInUp .35s var(--rad-easing) both}
@@ -3410,42 +3460,66 @@ function openPrincipleGallery(){
    前排（Y 大）：voc/score/lab/dev   后排（Y 小）：idea/stress/pr
    ═══ */
 var PANORAMA=[
-  {key:'voc',    name:'用户洞察', sub:'VOC 智能打标', x:120, y:260, gx:1, gy:4, fn:'openTagDemo',
+  {key:'voc',    name:'用户洞察', sub:'VOC 智能打标', x:120, y:260, fn:'openTagDemo',
    desc:'一条评论穿过「标签体系之墙」，9 个维度专员各盖一枚标签——用户画像、动机、场景、痛点一目了然。'},
-  {key:'score',  name:'产品打分', sub:'需求跳远评分', x:310, y:260, gx:3, gy:4, fn:'openScoreDemo',
+  {key:'score',  name:'产品打分', sub:'需求跳远评分', x:310, y:260, fn:'openScoreDemo',
    desc:'把一条产品需求化身运动员，连续跳进 4 个维度沙坑，落点越远分越高，末了汇总一个综合分。'},
-  {key:'lab',    name:'数字世界', sub:'虚拟预测',     x:500, y:260, gx:5, gy:4, fn:'openLabIntro',
+  {key:'lab',    name:'数字世界', sub:'虚拟预测',     x:500, y:260, fn:'openLabIntro',
    desc:'把 VOC 语料与用户分群，沉淀成上千个会互动的数字智能体。你注入运营杠杆，在沙盒里预演未来。'},
-  {key:'dev',    name:'新品开发', sub:'盲盒选方法',   x:690, y:260, gx:7, gy:4, fn:'openDevDemo',
+  {key:'dev',    name:'新品开发', sub:'盲盒选方法',   x:690, y:260, fn:'openDevDemo',
    desc:'抽一枚创新方法盲盒（TRIZ / SCAMPER），小人翻开盒子，当场长出 3 条产品开发创意。'},
-  {key:'idea',   name:'新品创意', sub:'抓金矿成图',   x:215, y:100, gx:2, gy:2, fn:'openIdeaImgDemo',
+  {key:'idea',   name:'新品创意', sub:'抓金矿成图',   x:215, y:100, fn:'openIdeaImgDemo',
    desc:'小矿工挥镐挖出六维创意金矿（外观/功能/场景/情感/技术/叙事），一块块飞入图框拼成产品创意图。'},
-  {key:'stress', name:'虚拟压力', sub:'用户测试',     x:405, y:100, gx:4, gy:2, fn:'openStressTest',
+  {key:'stress', name:'虚拟压力', sub:'用户测试',     x:405, y:100, fn:'openStressTest',
    desc:'用真实 VOC 驱动一群虚拟用户，对你的产品做挑刺式压力测试，提前暴露风险与反对声音。'},
-  {key:'pr',     name:'原理展厅', sub:'工具画廊',     x:595, y:100, gx:6, gy:2, fn:'openPrincipleGallery',
+  {key:'pr',     name:'原理展厅', sub:'工具画廊',     x:595, y:100, fn:'openPrincipleGallery',
    desc:'所有工具的「使用 / 看背后工作」双视角演示都集中在这——点进去，看每个工具内部怎么运转。'}
 ];
 
-/* ── 小人 HTML（坐姿 3D 卡通人物）── */
-function panoPerson(name,role){
-  return '<div class="pano-person">'+
-    '<div class="pano-tag"><span class="tt-name">'+escHtml(name)+'</span><span class="tt-role">'+escHtml(role)+'</span></div>'+
-    '<div class="pp-hair"></div>'+
+/* ═══ 模拟器：7 位同事 ═══ */
+var AGENTS=[
+  {id:'a1', name:'小林', role:'用户洞察', hx:120, hy:260, color:'#ff6b9d'},
+  {id:'a2', name:'阿哲', role:'产品打分', hx:310, hy:260, color:'#00d4ff'},
+  {id:'a3', name:'Mia',  role:'数字世界', hx:500, hy:260, color:'#a855f7'},
+  {id:'a4', name:'老王', role:'新品开发', hx:690, hy:260, color:'#f59e0b'},
+  {id:'a5', name:'小野', role:'新品创意', hx:215, hy:100, color:'#10b981'},
+  {id:'a6', name:'陈静', role:'虚拟压力', hx:405, hy:100, color:'#ef4444'},
+  {id:'a7', name:'馆长', role:'原理展厅', hx:595, hy:100, color:'#8b5cf6'}
+];
+var ZONES={
+  restroom:{x:40,  y:18,  glyph:'🚽', name:'卫生间'},
+  pantry:{x:792, y:18,  glyph:'☕', name:'茶水间'},
+  door:{x:420,  y:410, glyph:'🚪', name:'门口'}
+};
+var STATE_EMOJI={work:'💻',visit:'💬',chat:'💬',restroom:'🚽',water:'☕',play:'📱',fish:'🐟',offwork:'🏃'};
+var STATE_LABEL={work:'正在工作',visit:'串门聊天中',chat:'和同事聊天',restroom:'去洗手间',water:'茶水间接水',play:'玩手机',fish:'摸鱼中',offwork:'下班回家'};
+
+function rand(a,b){return a+Math.random()*(b-a);}
+function pickOtherAgent(self){
+  var pool=AGENTS.filter(function(a){return a.id!==self.id;});
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+/* 小人身体结构（坐姿 3D 卡通） */
+function panoBody(){
+  return '<div class="pp-hair"></div>'+
     '<div class="pp-head"><div class="pp-eye l"></div><div class="pp-eye r"></div></div>'+
     '<div class="pp-collar"></div>'+
     '<div class="pp-body"></div>'+
     '<div class="pp-arm l"><div class="pp-hand"></div></div>'+
     '<div class="pp-arm r"><div class="pp-hand"></div></div>'+
-    '<div class="pp-legs"><div class="pp-leg l"></div><div class="pp-leg r"></div></div>'+
-  '</div>';
+    '<div class="pp-legs"><div class="pp-leg l"></div><div class="pp-leg r"></div></div>';
 }
-
 /* ── 植物 HTML ── */
 function panoPlant(){
   return '<div class="pano-leaves">'+
     '<div class="pano-leaf"></div><div class="pano-leaf"></div>'+
     '<div class="pano-leaf"></div><div class="pano-leaf"></div>'+
   '</div>';
+}
+function zoneMarker(key){
+  var z=ZONES[key];
+  return '<div class="pano-zone" style="left:'+z.x+'px;top:'+z.y+'px">'+
+    '<div class="z-glyph">'+z.glyph+'</div><div class="z-name">'+z.name+'</div></div>';
 }
 
 function openPano(){
@@ -3454,42 +3528,42 @@ function openPano(){
   $('#topbarTitle').textContent='AI 办公全景';
   setView('Principle');
 
-  /* 房间结构 */
+  /* 房间结构（静态） */
   var room =
-    /* 地板 */
     '<div class="pano-floor"></div>'+
-    /* 后墙 */
     '<div class="pano-wall-back"></div>'+
-    /* 左墙 */
     '<div class="pano-wall-left"></div>'+
-    /* 柜子组（后墙前） */
     '<div class="pano-cabinet" style="left:200px;top:-250px">'+
       '<div class="pano-cab-unit"></div><div class="pano-cab-unit"></div>'+
       '<div class="pano-cab-unit"></div><div class="pano-cab-unit"></div>'+
       '<div class="pano-cab-unit"></div><div class="pano-cab-unit"></div>'+
     '</div>'+
-    /* 左植物 */
-    '<div class="pano-plant" style="left:-20px;top:180px">'+
-      '<div class="pano-pot"></div>'+panoPlant()+'</div>'+
-    /* 右植物 */
-    '<div class="pano-plant" style="left:780px;top:180px">'+
-      '<div class="pano-pot"></div>'+panoPlant()+'</div>';
+    '<div class="pano-plant" style="left:-20px;top:180px"><div class="pano-pot"></div>'+panoPlant()+'</div>'+
+    '<div class="pano-plant" style="left:780px;top:180px"><div class="pano-pot"></div>'+panoPlant()+'</div>';
 
-  /* 工位 —— z-index = Math.round(y/3) 确保 Y 大的在前面 */
+  /* 特殊区域标记 */
+  var zones=zoneMarker('restroom')+zoneMarker('pantry')+zoneMarker('door');
+
+  /* 空工位（桌面 + 椅子，无小人） */
   var stations=PANORAMA.map(function(p){
     var zi=Math.round(p.y/3)+8;
     return '<div class="pano-station" style="left:'+p.x+'px;top:'+p.y+'px;z-index:'+zi+
       '" onclick="openPanoCard(\''+p.key+'\')">'+
-      panoPerson(p.name,p.sub)+
       '<div class="pano-desk-wrap">'+
         '<div class="pano-desk-items">'+
           '<div class="pano-desk-item mt"></div><div class="pano-desk-item pk"></div><div class="pano-desk-item bk"></div>'+
         '</div>'+
-        '<div class="pano-desk-top"></div>'+
-        '<div class="pano-desk-front"></div>'+
-        '<div class="pano-chair"></div>'+
+        '<div class="pano-desk-top"></div><div class="pano-desk-front"></div><div class="pano-chair"></div>'+
       '</div>'+
-      '<div class="pano-label"><b>'+escHtml(p.name)+'</b><span>'+escHtml(p.sub)+'</span></div>'+
+    '</div>';
+  }).join('');
+
+  /* 动态小人（在 world 中自由移动） */
+  var agentHTML=AGENTS.map(function(a){
+    return '<div class="pano-agent" id="sim-'+a.id+'" style="left:'+a.hx+'px;top:'+a.hy+'px" onclick="openPanoCard(\''+a.id+'\')">'+
+      '<div class="pano-status">💻</div>'+
+      '<div class="pano-person">'+panoBody()+'</div>'+
+      '<div class="pano-tag"><span class="tt-name">'+escHtml(a.name)+'</span><span class="tt-role">'+escHtml(a.role)+'</span></div>'+
     '</div>';
   }).join('');
 
@@ -3497,15 +3571,176 @@ function openPano(){
     '<div class="pano-wrap">'+
       '<div class="pano-head"><div>'+
         '<div class="pano-title">🏢 AI 办公全景</div>'+
-        '<div class="pano-sub">整站像一间 3D 办公室：每个工位坐着一位同事，代表一个站点模块。<b>点小人</b>看它负责什么、怎么运转，再一键进入演示。</div>'+
-      '</div><div class="pano-hint">👆 点击任意工位的小人 →</div></div>'+
-      '<div class="pano-stage">'+
-        '<div class="pano-world">'+room+stations+'</div>'+
+        '<div class="pano-sub">整站像一间会自动运转的 3D 办公室：7 位同事按 <b>100 倍时间流速</b>生活——工作、串门、摸鱼、接水、上厕所、聊天，傍晚陆续下班。点任意小人看它此刻在做什么。</div>'+
+      '</div><div class="pano-hint">👆 点击任意小人 →</div></div>'+
+      '<div class="pano-stage" id="panoStage">'+
+        '<div class="pano-world">'+room+zones+stations+agentHTML+'</div>'+
+        '<div class="pano-night" id="panoNight"><div class="moon">🌙</div></div>'+
+        '<div class="pano-hud" id="panoHud">'+
+          '<div class="pano-clock-time" id="panoTime">09:00</div>'+
+          '<div class="pano-clock-phase day" id="panoPhase">☀️ 白天</div>'+
+          '<div class="pano-hud-sep"></div>'+
+          '<div class="pano-speed-group">'+
+            '<button class="pano-speed-btn" onclick="setSimSpeed(1,this)">1×</button>'+
+            '<button class="pano-speed-btn" onclick="setSimSpeed(20,this)">20×</button>'+
+            '<button class="pano-speed-btn active" onclick="setSimSpeed(100,this)">100×</button>'+
+          '</div>'+
+        '</div>'+
       '</div>'+
     '</div>';
+
+  startOfficeSim();
 }
+
+/* ═══ 办公室模拟引擎 ═══ */
+var officeSim=null;
+function startOfficeSim(){
+  if(officeSim) officeSim.stop();
+  officeSim=new OfficeSim();
+  officeSim.bind();
+  officeSim.start();
+}
+function setSimSpeed(s, btn){
+  if(officeSim) officeSim.speed=s;
+  if(btn && btn.parentNode){
+    btn.parentNode.querySelectorAll('.pano-speed-btn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+  }
+}
+function OfficeSim(){
+  this.t=9*3600;            // 虚拟时间（秒），09:00 起
+  this.speed=100;           // 时间流速倍率
+  this.running=false;
+  this.lastTs=0;
+  this.agents=AGENTS.map(function(a){
+    return {id:a.id,name:a.name,role:a.role,color:a.color,
+      hx:a.hx,hy:a.hy,x:a.hx,y:a.hy,
+      state:'work',bubble:'💻',target:null,timer:rand(2,6)};
+  });
+  this.el={};
+}
+OfficeSim.prototype.bind=function(){
+  this.el.time=document.getElementById('panoTime');
+  this.el.phase=document.getElementById('panoPhase');
+  this.el.night=document.getElementById('panoNight');
+  this.el.agents={};
+  for(var i=0;i<this.agents.length;i++){
+    var id=this.agents[i].id;
+    this.el.agents[id]=document.getElementById('sim-'+id);
+  }
+};
+OfficeSim.prototype.start=function(){
+  if(this.running) return;
+  this.running=true;
+  var self=this;
+  this.lastTs=performance.now();
+  function loop(ts){
+    if(!self.running) return;
+    var dt=(ts-self.lastTs)/1000; self.lastTs=ts;
+    if(dt>0.12) dt=0.12;
+    self.tick(dt);
+    self.render();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+};
+OfficeSim.prototype.stop=function(){ this.running=false; };
+OfficeSim.prototype.tick=function(dt){
+  this.t+=dt*this.speed;
+  if(this.t>=33*3600){           // 次日 09:00 循环：全员回到工位开始新一天
+    this.t=9*3600;
+    for(var i=0;i<this.agents.length;i++){
+      var a=this.agents[i];
+      a.x=a.hx; a.y=a.hy; a.state='work'; a.bubble='💻'; a.target=null; a.timer=rand(3,8);
+    }
+  }
+  var ph=this.phase();
+  for(var j=0;j<this.agents.length;j++) this.updateAgent(this.agents[j],dt,ph);
+};
+OfficeSim.prototype.phase=function(){
+  if(this.t<18*3600) return 'day';
+  if(this.t<21*3600) return 'evening';
+  return 'night';
+};
+OfficeSim.prototype.updateAgent=function(a,dt,ph){
+  a.timer-=dt;
+  if(a.state==='walking'){
+    var dx=a.target.x-a.x, dy=a.target.y-a.y;
+    var dist=Math.hypot(dx,dy);
+    var step=48*dt;   // 真实时间移动速度，与流速无关，保证观感流畅
+    if(dist<=step || dist<1){
+      a.x=a.target.x; a.y=a.target.y;
+      a.state=a.targetState; a.bubble=a.targetBubble;
+      a.timer=rand(3,8); a.target=null;
+    } else { a.x+=dx/dist*step; a.y+=dy/dist*step; }
+    return;
+  }
+  if(a.timer>0) return;
+  this.decide(a,ph);
+};
+OfficeSim.prototype.decide=function(a,ph){
+  if(ph==='night'){
+    if(a.state==='offwork'){ a.timer=rand(8,20); return; }
+    this.goOffwork(a); return;
+  }
+  if(ph==='evening'){
+    if(a.state==='offwork'){ a.timer=rand(8,20); return; }
+    if(Math.random()<0.45){ this.goOffwork(a); return; }
+  }
+  var r=Math.random();
+  if(r<0.50){ a.state='work'; a.bubble='💻'; a.timer=rand(4,10); }
+  else if(r<0.63){ var o=pickOtherAgent(a); a.state='walking'; a.target={x:o.hx,y:o.hy-12}; a.targetState='visit'; a.targetBubble='💬'; a.timer=0; }
+  else if(r<0.70){ a.state='walking'; a.target=ZONES.restroom; a.targetState='restroom'; a.targetBubble='🚽'; a.timer=0; }
+  else if(r<0.77){ a.state='walking'; a.target=ZONES.pantry; a.targetState='water'; a.targetBubble='☕'; a.timer=0; }
+  else if(r<0.85){ a.state='play'; a.bubble='📱'; a.timer=rand(4,9); }
+  else if(r<0.92){ var o2=pickOtherAgent(a); a.state='walking'; a.target={x:o2.hx+18,y:o2.hy+18}; a.targetState='chat'; a.targetBubble='💬'; a.timer=0; }
+  else { a.state='fish'; a.bubble='🐟'; a.timer=rand(3,7); }
+};
+OfficeSim.prototype.goOffwork=function(a){
+  a.state='walking'; a.target=ZONES.door; a.targetState='offwork'; a.targetBubble='🏃'; a.timer=0;
+};
+OfficeSim.prototype.render=function(){
+  var time=this.t;
+  var h=Math.floor(time/3600)%24, m=Math.floor((time%3600)/60);
+  var hh=String(h).padStart(2,'0'), mm=String(m).padStart(2,'0');
+  if(this.el.time) this.el.time.textContent=hh+':'+mm;
+  var ph=this.phase();
+  if(this.el.phase){
+    this.el.phase.textContent = ph==='day'?'☀️ 白天':ph==='evening'?'🌆 傍晚':'🌙 夜晚';
+    this.el.phase.className='pano-clock-phase '+ph;
+  }
+  if(this.el.night) this.el.night.classList.toggle('show', ph==='night');
+  for(var i=0;i<this.agents.length;i++){
+    var a=this.agents[i];
+    var el=this.el.agents[a.id];
+    if(!el) continue;
+    el.style.left=a.x+'px';
+    el.style.top=a.y+'px';
+    el.style.zIndex=Math.round(a.y/3)+10;
+    el.classList.toggle('walking', a.state==='walking');
+    if(a.state==='offwork'){
+      var dd=Math.hypot(a.x-ZONES.door.x, a.y-ZONES.door.y);
+      if(dd<30) el.classList.add('gone');
+    } else { el.classList.remove('gone'); }
+    if(ph==='night' && a.state!=='work') el.classList.add('dim');
+    else el.classList.remove('dim');
+    if(a.bubble!==el._bubble){
+      el._bubble=a.bubble;
+      var s=el.querySelector('.pano-status');
+      if(s) s.textContent=a.bubble;
+    }
+  }
+};
+
 function openPanoCard(key){
   var p=null; for(var i=0;i<PANORAMA.length;i++){ if(PANORAMA[i].key===key){ p=PANORAMA[i]; break; } }
+  if(!p && officeSim){
+    var ag=null;
+    for(var j=0;j<officeSim.agents.length;j++){ if(officeSim.agents[j].id===key){ ag=officeSim.agents[j]; break; } }
+    if(ag){
+      p={name:ag.name, sub:ag.role, desc:simAgentDesc(ag), fn:null};
+    }
+  }
   if(!p) return;
   var mask=$('#panoCardMask');
   if(!mask){
@@ -3524,8 +3759,14 @@ function openPanoCard(key){
   $('#pcName').textContent=p.name;
   $('#pcSub').textContent=p.sub;
   $('#pcDesc').textContent=p.desc;
-  $('#pcEnter').onclick=function(){ panoEnter(p); };
+  var enter=$('#pcEnter');
+  if(p.fn){ enter.style.display=''; enter.onclick=function(){ panoEnter(p); }; }
+  else { enter.style.display='none'; }
   mask.classList.add('show');
+}
+function simAgentDesc(ag){
+  var st=STATE_LABEL[ag.state]||'工作中';
+  return ag.name+'（'+ag.role+'）此刻'+st+'。\n\n这是一间会自动运转的 3D 办公室：7 位同事按 100 倍时间流速生活，会工作、串门、摸鱼、接水、上厕所、聊天，到傍晚就陆续下班，夜晚办公室熄灯，次日 09:00 重新开始。点下方速度按钮可调节时间流速。';
 }
 function closePanoCard(){ var m=$('#panoCardMask'); if(m) m.classList.remove('show'); }
 function panoEnter(p){ closePanoCard(); if(p && window[p.fn]) window[p.fn](); }
