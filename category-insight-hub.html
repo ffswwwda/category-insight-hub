@@ -533,6 +533,55 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ps-lg{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-2)}
 .ps-lg .sw{width:12px;height:12px;border-radius:4px}
 
+/* === 新品开发 · 盲盒选方法 舞台 === */
+.dev-stage{position:relative;width:1060px;height:460px;margin:0 auto}
+.dev-req{position:absolute;left:8px;top:34px;width:150px;border:1px solid var(--border);border-radius:13px;padding:11px 12px;background:var(--glass-bg)}
+.dev-req .dr-h{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.dev-req .dr-t{font-size:13px;font-weight:800;color:var(--accent);line-height:1.4}
+.dev-boxes{position:absolute;left:190px;top:48px;width:680px;height:130px;display:flex;gap:18px;justify-content:center;align-items:center}
+.dev-box{width:94px;height:94px;border-radius:18px;border:1.5px solid var(--border);background:var(--glass-bg);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:transform .45s var(--rad-easing),box-shadow .45s,border-color .45s}
+.dev-box .q{font-size:36px;font-weight:800;color:var(--muted);transition:opacity .3s}
+.dev-box.open{transform:translateY(-8px) scale(1.05);border-color:var(--accent);box-shadow:0 14px 30px rgba(168,85,247,.24)}
+.dev-box.open .q{opacity:0}
+.dev-box .reveal{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .4s}
+.dev-box.open .reveal{opacity:1}
+.dev-box .rb-fam{font-size:8.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+.dev-box .rb-name{font-size:17px;font-weight:850;color:var(--ink);margin-top:3px}
+.dev-method{position:absolute;left:50%;top:196px;transform:translateX(-50%) translateY(12px);width:320px;border:1.5px solid var(--accent);border-radius:16px;background:rgba(168,85,247,.07);padding:14px 16px;opacity:0;transition:opacity .5s,transform .5s;text-align:center;box-shadow:0 12px 30px rgba(168,85,247,.14)}
+.dev-method.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.dev-method .dm-fam{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--accent)}
+.dev-method .dm-name{font-size:22px;font-weight:850;color:var(--ink);margin:4px 0 6px}
+.dev-method .dm-cap{font-size:11.5px;color:var(--muted);line-height:1.5}
+.dev-board{position:absolute;left:190px;top:296px;width:680px;height:150px;display:flex;gap:14px;align-items:stretch}
+.dev-idea{flex:1;border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--panel-solid);opacity:0;transform:translateY(12px);transition:opacity .45s,transform .45s;display:flex;flex-direction:column}
+.dev-idea.in{opacity:1;transform:none}
+.dev-idea .di-idx{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.3px}
+.dev-idea .di-t{font-size:12px;color:var(--ink-2);line-height:1.6;margin-top:7px}
+
+/* === 新品创意图 · 抓金矿 舞台 === */
+.mine-stage{position:relative;width:1060px;height:460px;margin:0 auto}
+.mine-product{position:absolute;left:30px;top:190px;width:150px;height:62px;border:1.5px solid var(--border);border-radius:14px;background:var(--glass-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--ink);text-align:center;padding:0 8px}
+.mine-mountain{position:absolute;left:236px;top:96px;width:580px;height:320px}
+.mine-mountain svg{width:100%;height:100%;display:block}
+.mine-nugget{position:absolute;width:34px;height:34px;border-radius:50%;border:2px solid #fff;box-shadow:0 5px 12px rgba(0,0,0,.16);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;transition:transform .85s cubic-bezier(.4,0,.2,1),opacity .5s;will-change:transform;z-index:6}
+.mine-nugget.float{animation:mineFloat 3.4s ease-in-out infinite}
+@keyframes mineFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+.mine-nugget.caught{opacity:0}
+.mine-claw{position:absolute;width:52px;height:52px;left:420px;top:60px;opacity:0;transition:transform .75s cubic-bezier(.4,0,.2,1),opacity .4s;z-index:9}
+.mine-claw.on{opacity:1}
+.mine-frame{position:absolute;right:34px;top:84px;width:214px;height:288px;border:1.5px dashed var(--border);border-radius:18px;background:rgba(255,255,255,.45);padding:14px 14px 12px;display:flex;flex-direction:column;gap:9px;box-shadow:var(--shadow-sm)}
+.mine-frame .mf-h{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;text-align:center}
+.mine-slot{flex:1;border-radius:10px;background:var(--line);opacity:.32;transition:opacity .5s,background .5s;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--muted);text-align:center;padding:0 4px}
+.mine-slot.fill{opacity:1;color:#fff}
+.mine-frame .mf-cap{font-size:11px;font-weight:800;color:var(--ink);text-align:center}
+.ci-collage{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.ci-block{height:54px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;box-shadow:var(--shadow-sm)}
+.ci-row{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--line)}
+.ci-row:last-child{border-bottom:none}
+.ci-dot{width:11px;height:11px;border-radius:4px;margin-top:3px;flex-shrink:0}
+.ci-k{width:48px;font-size:12px;font-weight:800;color:var(--ink);flex-shrink:0}
+.ci-v{font-size:12px;color:var(--ink-2);line-height:1.5}
+
 /* === 未来实验室 · 数字世界虚拟预测 概念介绍页 === */
 .lab-wrap{padding:24px 28px 48px;animation:fadeInUp .5s var(--rad-easing) both}
 .lab-hero{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:20px;padding:34px 30px 30px;
@@ -3035,8 +3084,10 @@ var PR_TOOLS=[
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2a15 15 0 010 20"/></svg>'},
   {id:'idea', name:'新品创意灵感', ready:false, desc:'趋势+痛点如何碰撞出新品方向？',
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M10 17v4h4v-4"/><path d="M12 3a6 6 0 00-4 10.3V14h8v-.7A6 6 0 0012 3z"/></svg>'},
-  {id:'dev', name:'新品开发', ready:false, desc:'需求四象限×TRIZ 如何组合出方案？',
+  {id:'dev', name:'新品开发', ready:true, fn:'openDevDemo', desc:'抽盲盒抽出创新方法（TRIZ / SCAMPER），不同方法长出不同的产品开发创意。',
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>'},
+  {id:'idea-img', name:'新品创意图', ready:true, fn:'openIdeaImgDemo', desc:'像抓金矿一样，从六维创意矿脉里抓取金块，拼成一张有创意的产品图。',
+   ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M3 20l5.5-7 4 4.2 3.2-3.6L21 20"/><path d="M3 20h18"/><circle cx="17.5" cy="6.5" r="2.2"/><path d="M16.4 5.4l-.3-1.4M18.6 5.4l.3-1.4M17.5 3.7v-1M15.6 6.5h-1.3M19.4 6.5h-1.3"/></svg>'},
   {id:'predict', name:'数字世界预测', ready:false, desc:'上千智能体如何逐步演化出预测？',
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/></svg>'}
 ];
@@ -3058,6 +3109,50 @@ function scoreProduct(text){
   });
   var total=Math.round(dims.reduce(function(a,b){return a+b.score;},0)/dims.length);
   return {dims:dims, total:total};
+}
+
+// ---- 新品开发 · 盲盒选方法 引擎（TRIZ 40 原理 + SCAMPER 七问，演示用）----
+var DEV_METHODS=[
+  {name:'组合', family:'TRIZ', angles:['把{p}与日常高频场景物件组合，形成二合一产品','将{p}的驱动模块与传感模块组合，产生新功能闭环','组合两种使用模式（家用+便携）']},
+  {name:'分割', family:'TRIZ', angles:['将{p}按功能模块分割为可独立使用的单元','把{p}拆成可替换部件，用户自行拼装','按使用场景把{p}分割为子产品系列']},
+  {name:'逆向', family:'TRIZ', angles:['反转{p}的施力方向，让用户从被动变主动','把{p}的"解决"变为"预防"，逆转价值主张','逆向设计：先定理想结果，倒推{p}结构']},
+  {name:'预先作用', family:'TRIZ', angles:['在用户尚未操作前，{p}就预先完成准备','为{p}预置常用场景参数，开机即就绪','预先在{p}中加入耗材/能量，减少后续动作']},
+  {name:'嵌套', family:'TRIZ', angles:['把{p}嵌套进另一产品内部，节省空间','将附属功能嵌套进{p}主体','嵌套式收纳，{p}收起即变另一形态']},
+  {name:'动态化', family:'TRIZ', angles:['让{p}可调节以适应不同用户/场景','{p}从固定形态变为可变形态','动态切换{p}的工作模式以应对多任务']},
+  {name:'局部质量', family:'TRIZ', angles:['针对{p}的局部痛点做专项优化','把{p}某部位升级为高质感材料','局部加功能（如握持处增按摩点）']},
+  {name:'抽取', family:'TRIZ', angles:['从{p}中抽取核心能力，做成独立配件','抽取{p}的数据能力形成服务','把{p}的某模块抽离为可外挂单元']},
+  {name:'替代', family:'SCAMPER', angles:['用新材料/新动力替代{p}原有部件','以数字化方式替代{p}的物理操作','替代{p}的供电/连接方案']},
+  {name:'调整', family:'SCAMPER', angles:['借鉴其他品类的成熟方案调整{p}','把{p}的造型调整为当下审美语言','调整{p}的交互逻辑更贴合直觉']},
+  {name:'放大', family:'SCAMPER', angles:['放大{p}的核心卖点形成记忆点','加大{p}的容量/力度覆盖更多人群','放大某个细节成为标志性设计']},
+  {name:'消除', family:'SCAMPER', angles:['消除{p}最被诟病的冗余步骤','去掉{p}的非必要部件做极简版','消除{p}的使用门槛（免学习）']}
+];
+var DEV_EXAMPLES=['震动按摩器 多功能便携','防水无线蓝牙耳机','可折叠露营咖啡机'];
+function _hash(s){ var h=0; s=''+s; for(var i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))>>>0; } return h; }
+function _fill(t,p){ return (''+t).replace(/\{p\}/g, p); }
+function drawDevMethod(text){
+  var p=(''+text).trim()||DEV_EXAMPLES[0];
+  var m=DEV_METHODS[_hash(p)%DEV_METHODS.length];
+  var ideas=m.angles.map(function(a){ return _fill(a,p); });
+  return {product:p, method:m, ideas:ideas};
+}
+
+// ---- 新品创意图 · 抓金矿 引擎（六维创意，演示用）----
+var CREATIVE_DIMS=[
+  {key:'外观', color:'#BA7517', lines:['流线型 {p} 外壳，撞色拼接传递年轻感','透明材质露出{p}内部结构，科技陈列感','模块化磁吸外壳，用户自定义{p}外观']},
+  {key:'功能', color:'#185FA5', lines:['{p} 增加一键智能场景识别','双模式切换，{p} 兼顾专业与日常','加入自清洁/自维护闭环功能']},
+  {key:'场景', color:'#639922', lines:['{p} 切入差旅通勤场景，折叠即走','绑定居家健身场景，{p} 成固定搭档','户外露营场景下的 {p} 耐用版']},
+  {key:'情感', color:'#993556', lines:['{p} 主打"被照顾"的陪伴感文案','用治愈系配色降低{p} 的机械冷感','以"送自己"的奖赏叙事包装{p}']},
+  {key:'技术', color:'#534AB7', lines:['{p} 搭载低功耗传感+本地算法','用模块化电机架构降低{p} 成本','{p} 接入 app 形成数据闭环']},
+  {key:'叙事', color:'#0F6E56', lines:['{p} 讲"从痛点出发"的品牌故事','以用户共创日记作为{p} 内容资产','把{p} 放进可持续/环保叙事框架']}
+];
+var IDEA_IMG_EXAMPLES=['震动按摩器','防水无线蓝牙耳机','可折叠露营咖啡机'];
+function generateCreative(text){
+  var p=(''+text).trim()||IDEA_IMG_EXAMPLES[0];
+  var dims=CREATIVE_DIMS.map(function(d,i){
+    var idx=_hash(p+i)%d.lines.length;
+    return {key:d.key, color:d.color, text:_fill(d.lines[idx],p)};
+  });
+  return {product:p, dims:dims};
 }
 
 function openPrincipleGallery(){
@@ -3328,7 +3423,7 @@ function playTagDemo(){
 
 // ── 产品需求打分 · 演示台（使用视角 / 原理视角：连续跳远）──
 var _scorePlaying=false, _scoreTimers=[];
-function _spt(fn,delay){ var id=setTimeout(fn,delay); _scoreTimers.push(id); return id; }
+function _spt(fn,delay,store){ var id=setTimeout(fn,delay); (store||_scoreTimers).push(id); return id; }
 function stopScoreDemo(){ _scoreTimers.forEach(clearTimeout); _scoreTimers=[]; _scorePlaying=false; }
 function _setScoreStatus(txt){ var st=$('#scoreStatus'); if(st) st.innerHTML='<span class="sd"></span>'+txt; }
 var _scoreReq=SCORE_EXAMPLES[0];
@@ -3470,6 +3565,284 @@ function playScoreDemo(){
     _setScoreStatus('全部完成 · 综合评分 '+res.total);
     _scorePlaying=false; if(pb) pb.textContent='▶ 再播一次';
   }, endT+700);
+}
+
+// ---- 新品开发 · 盲盒选方法 · 演示台（使用视角 / 原理视角）----
+var _devReq=DEV_EXAMPLES[0], _devPlaying=false, _devTimers=[];
+function stopDevDemo(){ _devTimers.forEach(clearTimeout); _devTimers=[]; _devPlaying=false; }
+function _setDevStatus(txt){ var st=$('#devStatus'); if(st) st.innerHTML='<span class="sd"></span>'+txt; }
+function openDevDemo(){
+  setActiveNav('nav-pr');
+  $('#topbarTitle').textContent='原理动画 · 新品开发';
+  setView('PrDemo');
+  var boxes=[0,1,2,3,4].map(function(i){
+    return '<div class="dev-box" id="devBox'+i+'"><span class="q">?</span>'+
+      '<div class="reveal"><div class="rb-fam" id="devFam'+i+'"></div><div class="rb-name" id="devName'+i+'"></div></div></div>';
+  }).join('');
+  $('#viewPrDemo').innerHTML=
+    '<div class="pr-demo">'+
+      '<div class="prd-bar">'+
+        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<div><div class="prd-title">新品开发 · 原理动画</div>'+
+          '<div class="prd-sub">盲盒抽创新方法 · 长出产品开发创意</div></div>'+
+        '<div class="prd-toggle">'+
+          '<button class="prd-tg" id="tgDevUse" onclick="toggleDevMode(\'use\')">使用视角</button>'+
+          '<button class="prd-tg on" id="tgDevViz" onclick="toggleDevMode(\'viz\')">看背后工作</button>'+
+        '</div>'+
+      '</div>'+
+      '<p class="prd-intro" id="devIntro"><b>看背后工作：</b>把一条产品需求放进盲盒机，<b>抽出一枚创新方法</b>（TRIZ 原理 / SCAMPER 七问）。不同方法像不同的"创意基因"，会<b>长出不同的产品开发创意</b>——同一条需求，抽到不同方法，结果截然不同。</p>'+
+      '<div class="prd-pane on" id="paneDevViz">'+
+        '<div class="pstage"><div class="pstage-inner"><div class="dev-stage" id="devStage">'+
+          '<div class="dev-req"><div class="dr-h">产品需求</div><div class="dr-t" id="devReqLbl">'+escHtml(_devReq)+'</div></div>'+
+          '<div class="dev-boxes">'+boxes+'</div>'+
+          '<div class="dev-method" id="devMethod"><div class="dm-fam" id="devMethFam"></div><div class="dm-name" id="devMethName"></div><div class="dm-cap" id="devMethCap"></div></div>'+
+          '<div class="dev-board" id="devBoard"></div>'+
+        '</div></div></div>'+
+        '<div class="pstage-ctrl">'+
+          '<button class="pstage-btn" id="devPlayBtn" onclick="playDevDemo()">▶ 抽盲盒</button>'+
+          '<button class="pstage-btn ghost" onclick="resetDevStage()">↻ 重置</button>'+
+          '<span class="pstage-status" id="devStatus"><span class="sd"></span>就绪</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="prd-pane" id="paneDevUse">'+
+        '<div class="use-panel">'+
+          '<div class="use-box">'+
+            '<div class="use-lbl">输入一条产品需求</div>'+
+            '<textarea class="use-ta" id="devTa">'+escHtml(DEV_EXAMPLES[0])+'</textarea>'+
+            '<div class="use-ex">'+
+              '<button class="use-ex-btn" onclick="fillDevExample(0)">示例①震动按摩器</button>'+
+              '<button class="use-ex-btn" onclick="fillDevExample(1)">示例②蓝牙耳机</button>'+
+              '<button class="use-ex-btn" onclick="fillDevExample(2)">示例③露营咖啡机</button>'+
+            '</div>'+
+            '<button class="use-gen" onclick="runDevGen()">⚡ 抽盲盒生成</button>'+
+            '<div class="use-hint"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg><span>结果一秒出来——想知道创意是怎么被方法"长"出来的？点右上角 <b>「看背后工作」</b> 看抽盲盒动画。</span></div>'+
+          '</div>'+
+          '<div class="use-box use-result" id="devResult">'+
+            '<div class="use-lbl">输出 · 创新方法 + 产品开发创意</div>'+
+            '<div class="use-empty">点击「抽盲盒生成」查看结果</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  if(window.anime){ try{ anime.animate('.pr-demo > *',{opacity:[0,1],translateY:[14,0],delay:anime.stagger(60),duration:460,easing:'easeOutCubic'}); }catch(e){} }
+}
+function toggleDevMode(mode){
+  var isViz=(mode==='viz');
+  $('#tgDevViz').classList.toggle('on',isViz);
+  $('#tgDevUse').classList.toggle('on',!isViz);
+  $('#paneDevViz').classList.toggle('on',isViz);
+  $('#paneDevUse').classList.toggle('on',!isViz);
+  var intro=$('#devIntro');
+  if(intro) intro.innerHTML = isViz
+    ? '<b>看背后工作：</b>把一条产品需求放进盲盒机，<b>抽出一枚创新方法</b>（TRIZ 原理 / SCAMPER 七问）。不同方法像不同的"创意基因"，会<b>长出不同的产品开发创意</b>——同一条需求，抽到不同方法，结果截然不同。'
+    : '<b>使用视角：</b>输入一条需求、点生成、秒出「创新方法 + 3 条开发创意」。简单到无需理解原理。想知道创意是怎么被方法"长"出来的？切到「看背后工作」。';
+  if(!isViz){ stopDevDemo(); }
+}
+function fillDevExample(i){ var ta=$('#devTa'); if(ta) ta.value=DEV_EXAMPLES[i]; }
+function runDevGen(){
+  var ta=$('#devTa'); var box=$('#devResult'); if(!ta||!box) return;
+  var txt=ta.value.trim()||DEV_EXAMPLES[0];
+  _devReq=txt;
+  var res=drawDevMethod(txt);
+  var ideas=res.ideas.map(function(t,i){
+    return '<div style="border:1px solid var(--line);border-radius:12px;padding:12px 13px;margin-top:10px;background:var(--panel-solid)">'+
+      '<div style="font-size:11px;font-weight:800;color:var(--accent)">创意 '+(i+1)+'</div>'+
+      '<div style="font-size:12.5px;color:var(--ink-2);line-height:1.6;margin-top:5px">'+escHtml(t)+'</div></div>';
+  }).join('');
+  box.innerHTML='<div class="use-lbl">输出 · 创新方法 + 产品开发创意</div>'+
+    '<div style="margin-top:10px;padding:12px 14px;border:1.5px solid var(--accent);border-radius:14px;background:rgba(168,85,247,.07)">'+
+      '<div style="font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--accent)">'+escHtml(res.method.family)+'</div>'+
+      '<div style="font-size:20px;font-weight:850;color:var(--ink);margin:3px 0">'+escHtml(res.method.name)+'</div></div>'+
+    ideas;
+  var rl=$('#devReqLbl'); if(rl) rl.textContent=txt;
+}
+function resetDevStage(){
+  stopDevDemo();
+  for(var i=0;i<5;i++){ var b=$('#devBox'+i); if(b){ b.classList.remove('open'); var f=$('#devFam'+i),n=$('#devName'+i); if(f)f.textContent=''; if(n)n.textContent=''; } }
+  var m=$('#devMethod'); if(m) m.classList.remove('on');
+  var fam=$('#devMethFam'),mn=$('#devMethName'),mc=$('#devMethCap');
+  if(fam)fam.textContent=''; if(mn)mn.textContent=''; if(mc)mc.textContent='';
+  var bd=$('#devBoard'); if(bd) bd.innerHTML='';
+  var st=$('#devStatus'); if(st) st.innerHTML='<span class="sd"></span>就绪';
+  var pb=$('#devPlayBtn'); if(pb) pb.textContent='▶ 抽盲盒';
+}
+function playDevDemo(){
+  if(_devPlaying) return;
+  if(!$('#devStage')) return;
+  resetDevStage();
+  _devPlaying=true;
+  var pb=$('#devPlayBtn'); if(pb) pb.textContent='● 抽取中…';
+  var res=drawDevMethod(_devReq);
+  var pickIdx=_hash(_devReq)%5;
+  var fam=$('#devFam'+pickIdx), nm=$('#devName'+pickIdx);
+  if(fam) fam.textContent=res.method.family; if(nm) nm.textContent=res.method.name;
+  _setDevStatus('投入需求：'+_devReq);
+  _spt(function(){
+    var b=$('#devBox'+pickIdx); if(b) b.classList.add('open');
+    _setDevStatus('盲盒翻开 → '+res.method.family+' · '+res.method.name);
+  }, 700, _devTimers);
+  _spt(function(){
+    var m=$('#devMethod'); if(m) m.classList.add('on');
+    var fam=$('#devMethFam'),mn=$('#devMethName'),mc=$('#devMethCap');
+    if(fam)fam.textContent=res.method.family;
+    if(mn)mn.textContent=res.method.name;
+    if(mc)mc.textContent='这一枚方法，将长出 3 条产品开发创意';
+  }, 1400, _devTimers);
+  var board=$('#devBoard');
+  res.ideas.forEach(function(t,i){
+    _spt(function(){
+      if(!board) return;
+      var card=document.createElement('div');
+      card.className='dev-idea';
+      card.innerHTML='<div class="di-idx">创意 '+(i+1)+'</div><div class="di-t">'+escHtml(t)+'</div>';
+      board.appendChild(card);
+      requestAnimationFrame(function(){ card.classList.add('in'); });
+      _setDevStatus('长出创意 '+(i+1)+'/3');
+    }, 2000 + i*650, _devTimers);
+  });
+  _spt(function(){
+    _setDevStatus('完成 · 抽到「'+res.method.name+'」→ 3 条开发创意');
+    _devPlaying=false; if(pb) pb.textContent='▶ 再抽一次';
+  }, 2000 + res.ideas.length*650 + 400, _devTimers);
+}
+
+// ---- 新品创意图 · 抓金矿 · 演示台（使用视角 / 原理视角）----
+var MINE_NUGGETS=[
+  {x:330,y:170},{x:700,y:195},{x:300,y:350},{x:720,y:345},{x:470,y:128},{x:560,y:395}
+];
+var _ideaReq=IDEA_IMG_EXAMPLES[0], _minePlaying=false, _mineTimers=[];
+function stopMineDemo(){ _mineTimers.forEach(clearTimeout); _mineTimers=[]; _minePlaying=false; }
+function _setMineStatus(txt){ var st=$('#mineStatus'); if(st) st.innerHTML='<span class="sd"></span>'+txt; }
+function openIdeaImgDemo(){
+  setActiveNav('nav-pr');
+  $('#topbarTitle').textContent='原理动画 · 新品创意图';
+  setView('PrDemo');
+  var nuggetsHtml=CREATIVE_DIMS.map(function(d,i){
+    var p=MINE_NUGGETS[i];
+    return '<div class="mine-nugget float" id="mineNug'+i+'" style="left:'+p.x+'px;top:'+p.y+'px;background:'+d.color+'">'+d.key.charAt(0)+'</div>';
+  }).join('');
+  var slotsHtml=CREATIVE_DIMS.map(function(d,i){
+    return '<div class="mine-slot" id="mineSlot'+i+'">'+d.key+'</div>';
+  }).join('');
+  var claw='<div class="mine-claw" id="mineClaw"><svg viewBox="0 0 52 52" width="52" height="52"><path d="M26 4v16" stroke="#5F5E5A" stroke-width="2.5" fill="none"/><path d="M26 20c-11 0-16 9-16 9M26 20c11 0 16 9 16 9" stroke="#5F5E5A" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="26" cy="6" r="3" fill="#5F5E5A"/></svg></div>';
+  $('#viewPrDemo').innerHTML=
+    '<div class="pr-demo">'+
+      '<div class="prd-bar">'+
+        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<div><div class="prd-title">新品创意图 · 原理动画</div>'+
+          '<div class="prd-sub">抓金矿 · 六维创意拼成一张图</div></div>'+
+        '<div class="prd-toggle">'+
+          '<button class="prd-tg" id="tgMineUse" onclick="toggleIdeaImgMode(\'use\')">使用视角</button>'+
+          '<button class="prd-tg on" id="tgMineViz" onclick="toggleIdeaImgMode(\'viz\')">看背后工作</button>'+
+        '</div>'+
+      '</div>'+
+      '<p class="prd-intro" id="mineIntro"><b>看背后工作：</b>把一件产品放进矿场，<b>矿爪下潜抓取六维创意金矿</b>——外观、功能、场景、情感、技术、叙事。每一块金矿飞入右侧图片框，<b>拼成一张有创意的产品图</b>。维度越全，图越有创意。</p>'+
+      '<div class="prd-pane on" id="paneMineViz">'+
+        '<div class="pstage"><div class="pstage-inner"><div class="mine-stage" id="mineStage">'+
+          '<div class="mine-product" id="mineProdLbl">'+escHtml(_ideaReq)+'</div>'+
+          '<div class="mine-mountain"><svg viewBox="0 0 580 320" preserveAspectRatio="none">'+
+            '<polygon points="20,310 560,310 300,40" fill="rgba(186,117,23,.10)" stroke="#BA7517" stroke-width="1.2"/>'+
+            '<text x="300" y="300" text-anchor="middle" font-size="13" fill="#854F0B" font-weight="700">创意矿脉</text></svg></div>'+
+          nuggetsHtml+
+          claw+
+          '<div class="mine-frame" id="mineFrame"><div class="mf-h">合成创意图</div>'+slotsHtml+'<div class="mf-cap" id="mineCap"></div></div>'+
+        '</div></div></div>'+
+        '<div class="pstage-ctrl">'+
+          '<button class="pstage-btn" id="minePlayBtn" onclick="playMineDemo()">▶ 挖创意</button>'+
+          '<button class="pstage-btn ghost" onclick="resetMineStage()">↻ 重置</button>'+
+          '<span class="pstage-status" id="mineStatus"><span class="sd"></span>就绪</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="prd-pane" id="paneMineUse">'+
+        '<div class="use-panel">'+
+          '<div class="use-box">'+
+            '<div class="use-lbl">输入一件产品</div>'+
+            '<textarea class="use-ta" id="ideaTa">'+escHtml(IDEA_IMG_EXAMPLES[0])+'</textarea>'+
+            '<div class="use-ex">'+
+              '<button class="use-ex-btn" onclick="fillIdeaImgExample(0)">示例①震动按摩器</button>'+
+              '<button class="use-ex-btn" onclick="fillIdeaImgExample(1)">示例②蓝牙耳机</button>'+
+              '<button class="use-ex-btn" onclick="fillIdeaImgExample(2)">示例③露营咖啡机</button>'+
+            '</div>'+
+            '<button class="use-gen" onclick="runIdeaImgGen()">⚡ 挖创意成图</button>'+
+            '<div class="use-hint"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg><span>结果一秒出来——想知道这张图是怎么从矿里"挖"出来的？点右上角 <b>「看背后工作」</b> 看抓金矿动画。</span></div>'+
+          '</div>'+
+          '<div class="use-box use-result" id="ideaResult">'+
+            '<div class="use-lbl">输出 · 六维创意方向</div>'+
+            '<div class="use-empty">点击「挖创意成图」查看结果</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  if(window.anime){ try{ anime.animate('.pr-demo > *',{opacity:[0,1],translateY:[14,0],delay:anime.stagger(60),duration:460,easing:'easeOutCubic'}); }catch(e){} }
+}
+function toggleIdeaImgMode(mode){
+  var isViz=(mode==='viz');
+  $('#tgMineViz').classList.toggle('on',isViz);
+  $('#tgMineUse').classList.toggle('on',!isViz);
+  $('#paneMineViz').classList.toggle('on',isViz);
+  $('#paneMineUse').classList.toggle('on',!isViz);
+  var intro=$('#mineIntro');
+  if(intro) intro.innerHTML = isViz
+    ? '<b>看背后工作：</b>把一件产品放进矿场，<b>矿爪下潜抓取六维创意金矿</b>——外观、功能、场景、情感、技术、叙事。每一块金矿飞入右侧图片框，<b>拼成一张有创意的产品图</b>。维度越全，图越有创意。'
+    : '<b>使用视角：</b>输入一件产品、点生成、秒出六维创意方向与一张拼合示意图。简单到无需理解原理。想知道这张图是怎么从矿里"挖"出来的？切到「看背后工作」。';
+  if(!isViz){ stopMineDemo(); }
+}
+function fillIdeaImgExample(i){ var ta=$('#ideaTa'); if(ta) ta.value=IDEA_IMG_EXAMPLES[i]; }
+function runIdeaImgGen(){
+  var ta=$('#ideaTa'); var box=$('#ideaResult'); if(!ta||!box) return;
+  var txt=ta.value.trim()||IDEA_IMG_EXAMPLES[0];
+  _ideaReq=txt;
+  var res=generateCreative(txt);
+  var collage=res.dims.map(function(d){
+    return '<div class="ci-block" style="background:'+d.color+'">'+escHtml(d.key)+'</div>';
+  }).join('');
+  var rows=res.dims.map(function(d){
+    return '<div class="ci-row"><span class="ci-dot" style="background:'+d.color+'"></span><span class="ci-k">'+escHtml(d.key)+'</span><span class="ci-v">'+escHtml(d.text)+'</span></div>';
+  }).join('');
+  box.innerHTML='<div class="use-lbl">输出 · 六维创意方向</div>'+
+    '<div class="ci-collage">'+collage+'</div>'+
+    '<div class="ci-rows">'+rows+'</div>';
+  var pl=$('#mineProdLbl'); if(pl) pl.textContent=txt;
+}
+function resetMineStage(){
+  stopMineDemo();
+  var c=$('#mineClaw'); if(c){ c.classList.remove('on'); c.style.transform=''; }
+  for(var i=0;i<CREATIVE_DIMS.length;i++){
+    var n=$('#mineNug'+i); if(n){ n.classList.add('float'); n.classList.remove('caught'); n.style.transform=''; }
+    var s=$('#mineSlot'+i); if(s){ s.classList.remove('fill'); s.style.background=''; s.textContent=CREATIVE_DIMS[i].key; }
+  }
+  var cap=$('#mineCap'); if(cap) cap.textContent='';
+  var st=$('#mineStatus'); if(st) st.innerHTML='<span class="sd"></span>就绪';
+  var pb=$('#minePlayBtn'); if(pb) pb.textContent='▶ 挖创意';
+}
+function playMineDemo(){
+  if(_minePlaying) return;
+  if(!$('#mineStage')) return;
+  resetMineStage();
+  _minePlaying=true;
+  var pb=$('#minePlayBtn'); if(pb) pb.textContent='● 挖掘中…';
+  var res=generateCreative(_ideaReq);
+  _setMineStatus('投入产品：'+_ideaReq);
+  _spt(function(){ var c=$('#mineClaw'); if(c) c.classList.add('on'); _setMineStatus('矿爪下潜，寻找创意金矿…'); }, 600, _mineTimers);
+  res.dims.forEach(function(d,i){
+    var p=MINE_NUGGETS[i];
+    var dx=820-p.x, dy=110-p.y;
+    _spt(function(){
+      var c=$('#mineClaw'); if(c) c.style.transform='translate('+(p.x-420)+'px,'+(p.y-60)+'px)';
+      _setMineStatus('定位「'+d.key+'」金矿');
+    }, 1100 + i*1000, _mineTimers);
+    _spt(function(){
+      var n=$('#mineNug'+i); if(n){ n.classList.remove('float'); n.classList.add('caught'); n.style.transform='translate('+dx+'px,'+dy+'px) scale(.5)'; }
+      var s=$('#mineSlot'+i); if(s){ s.classList.add('fill'); s.style.background=d.color; s.textContent=d.key; }
+      _setMineStatus('抓出「'+d.key+'」金矿 → 拼入创意图');
+    }, 1100 + i*1000 + 600, _mineTimers);
+  });
+  var endT=1100 + res.dims.length*1000 + 600;
+  _spt(function(){
+    var cap=$('#mineCap'); if(cap) cap.textContent='创意图完成 · 六维已拼合';
+    _setMineStatus('完成 · 六维创意金矿拼成一张图');
+    _minePlaying=false; if(pb) pb.textContent='▶ 再挖一次';
+  }, endT+500, _mineTimers);
 }
 
 // ---- 板块1：数据源画廊（点击进入单个数据源看板）----
