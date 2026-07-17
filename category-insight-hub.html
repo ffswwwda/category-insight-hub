@@ -1819,6 +1819,7 @@ function setView(viewId){
   $$('.view').forEach(function(v){v.classList.remove('active')});
   var t=$( '#view'+viewId.charAt(0).toUpperCase()+viewId.slice(1) );
   if(t)t.classList.add('active');
+  if(window.__onViewChange) window.__onViewChange(viewId);
 }
 
 function switchWorkspace(wsKey){
@@ -5481,34 +5482,30 @@ function init(){
   loadCanvasState();
   initFloatBar();
 }
-// ── 浮动预测工作台入口：仅在「数字世界虚拟预测」页面底部固定显示，滚动到CTA区时自动隐藏 ──
+// ── 浮动预测工作台入口：仅「数字世界虚拟预测」(Lab) 页面底部固定显示；滚动到 CTA 区时自动隐藏 ──
 var _floatBarTimer=null;
+var _curView='';
 function initFloatBar(){
   var bar=document.getElementById('globFloatBar');
   if(!bar) return;
-  bar.classList.add('hidden'); // 初始隐藏，仅在 Lab 页面显示
-  var board=document.getElementById('board');
-  function check(){
-    // 仅当 Lab 视图激活才考虑显示
-    var labView=document.getElementById('viewLab');
-    if(!labView || !labView.classList.contains('active')){ bar.classList.add('hidden'); return; }
+  function update(){
+    // 非 Lab 页面：一律隐藏
+    if(_curView!=='Lab'){ bar.classList.add('hidden'); return; }
+    // Lab 页面：默认显示；当 CTA 区域进入视口下半部时隐藏（用户已看到真正的入口）
     var cta=document.querySelector('.lab-cta');
     if(!cta){ bar.classList.remove('hidden'); return; }
     var r=cta.getBoundingClientRect();
-    // 当 CTA 区域顶部进入视口下半部时，隐藏浮动栏（用户已看到真正的入口）
-    if(r.top < window.innerHeight * .7){
-      bar.classList.add('hidden');
-    }else{
-      bar.classList.remove('hidden');
-    }
+    if(r.top < window.innerHeight * .7){ bar.classList.add('hidden'); }
+    else{ bar.classList.remove('hidden'); }
   }
-  board.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(check,60); }, {passive:true});
-  window.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(check,60); }, {passive:true});
-  // 视图切换时重新检查（通过 MutationObserver 监听 viewLab 的 class 变化）
-  if(window.MutationObserver){
-    new MutationObserver(check).observe(document.getElementById('viewLab'), {attributes:true, attributeFilter:['class']});
-  }
-  check(); // 初始检查
+  // 挂钩 setView：每次视图切换都重新判定
+  window.__onViewChange=function(v){ _curView=v; update(); };
+  var board=document.getElementById('board');
+  board.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(update,60); }, {passive:true});
+  // 初始按当前激活视图判定
+  var labView=document.getElementById('viewLab');
+  _curView = (labView && labView.classList.contains('active')) ? 'Lab' : '';
+  update();
 }
 init();
 </script>
@@ -5609,12 +5606,8 @@ init();
   });
 })();
 </script>
-<!-- 全局浮动预测工作台入口 -->
+<!-- 全局浮动预测工作台入口（所有页面显示） -->
 <div class="glob-float-bar" id="globFloatBar">
-  <div>
-    <div class="gf-label">数字世界虚拟预测</div>
-    <div class="gf-sub">进入预测工作台，跑一遍五步流水线</div>
-  </div>
   <button onclick="openPredictTool()">进入预测工作台 <span>↗</span></button>
 </div>
 
