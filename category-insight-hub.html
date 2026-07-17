@@ -347,6 +347,69 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 
 /* Sidebar footer */
 .sb-foot{padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.6}
+/* 未来实验室 nav 标签（前瞻·紫） */
+.nav-sec-tag.lab{background:linear-gradient(135deg,#8b5cf6,#6366f1);color:#fff}
+.nav-sec-lab:hover{border-color:rgba(139,92,246,.4)}
+
+/* === 未来实验室 · 数字世界虚拟预测 概念介绍页 === */
+.lab-wrap{padding:24px 28px 48px;max-width:980px;animation:fadeInUp .5s var(--rad-easing) both}
+.lab-hero{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:20px;padding:34px 34px 30px;
+  background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(8,145,178,.10));
+  box-shadow:0 18px 50px rgba(99,102,241,.12)}
+body.dark .lab-hero{background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(8,145,178,.16))}
+.lab-hero::after{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(139,92,246,.25),transparent 70%);pointer-events:none}
+.lab-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:1px;
+  text-transform:uppercase;color:#7c3aed;background:rgba(139,92,246,.12);padding:5px 12px;border-radius:20px}
+body.dark .lab-eyebrow{color:#c4b5fd}
+.lab-title{font-size:32px;font-weight:850;margin:14px 0 4px;letter-spacing:-.5px;line-height:1.15}
+.lab-tagline{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:14px}
+.lab-tagline .accent{background:linear-gradient(135deg,#8b5cf6,#0891b2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lab-desc{font-size:13.5px;line-height:1.85;color:var(--ink-2);max-width:760px}
+.lab-stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;position:relative;z-index:1}
+.lab-stat{flex:1;min-width:150px;border:1px solid var(--border);background:var(--glass-bg);border-radius:14px;padding:14px 16px}
+.lab-stat .v{font-size:22px;font-weight:850;background:linear-gradient(135deg,#8b5cf6,#0891b2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-variant-numeric:tabular-nums}
+.lab-stat .k{font-size:11.5px;color:var(--muted);margin-top:3px;font-weight:600}
+.lab-sec{margin-top:34px}
+.lab-sec-h{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;color:var(--ink);margin-bottom:16px}
+.lab-sec-h::before{content:'';width:4px;height:18px;border-radius:3px;background:linear-gradient(135deg,#8b5cf6,#0891b2)}
+/* 5 步流水线 */
+.lab-pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.lab-step{position:relative;border:1px solid var(--border);background:var(--glass-bg);border-radius:14px;padding:16px 14px 14px;overflow:hidden}
+.lab-step::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#8b5cf6,#0891b2)}
+.lab-step .n{font-size:12px;font-weight:850;color:#7c3aed;letter-spacing:1px}
+body.dark .lab-step .n{color:#c4b5fd}
+.lab-step .t{font-size:14px;font-weight:800;margin:6px 0 6px;color:var(--ink)}
+.lab-step .d{font-size:11.5px;line-height:1.65;color:var(--muted)}
+.lab-step .arw{position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:#a78bfa;font-size:18px;z-index:2}
+/* 3 种预测路径 */
+.lab-paths{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.lab-path{border:1px solid var(--border);background:var(--glass-bg);border-radius:16px;padding:18px 16px}
+.lab-path .pn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;
+  font-size:13px;font-weight:850;color:#fff;background:linear-gradient(135deg,#8b5cf6,#6366f1);margin-bottom:10px}
+.lab-path h4{font-size:14px;font-weight:800;margin:0 0 6px}
+.lab-path .pt{font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px}
+body.dark .lab-path .pt{color:#c4b5fd}
+.lab-path p{font-size:12px;line-height:1.7;color:var(--muted);margin:0}
+/* 概念卡 */
+.lab-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.lab-ccard{border:1px solid var(--border);background:var(--glass-bg);border-radius:16px;padding:18px 18px;display:flex;gap:13px;align-items:flex-start}
+.lab-ccard .ci{font-size:22px;flex-shrink:0;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:rgba(139,92,246,.1)}
+.lab-ccard h4{font-size:14px;font-weight:800;margin:2px 0 6px}
+.lab-ccard p{font-size:11.5px;line-height:1.7;color:var(--muted);margin:0}
+/* CTA */
+.lab-cta{margin-top:32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  border:1px solid var(--border);border-radius:18px;padding:22px 24px;background:var(--glass-bg)}
+.lab-cta .ct-txt{flex:1;min-width:220px}
+.lab-cta .ct-txt b{font-size:15px;font-weight:800;display:block;margin-bottom:4px}
+.lab-cta .ct-txt span{font-size:12px;color:var(--muted);line-height:1.6}
+.lab-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:13px;border:none;cursor:pointer;
+  font-family:inherit;font-size:14px;font-weight:800;color:#fff;background:linear-gradient(135deg,#8b5cf6,#0891b2);
+  box-shadow:0 10px 26px rgba(99,102,241,.32);transition:transform .2s var(--rad-easing),box-shadow .2s}
+.lab-btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(99,102,241,.42)}
+.lab-btn .arr{font-size:16px}
+.lab-note{margin-top:18px;font-size:11px;color:var(--muted);line-height:1.6}
+@media(max-width:760px){.lab-pipe{grid-template-columns:repeat(2,1fr)}.lab-paths,.lab-cards{grid-template-columns:1fr}.lab-title{font-size:26px}}
 
 /* === Main === */
 .main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:1}
@@ -1218,6 +1281,10 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
         <div class="nav-sec-head"><span id="navPurposeTitle">目的工作区</span><span class="nav-sec-tag dyn" id="navPurposeTag">洞察</span></div>
         <div class="nav-sec-body" id="navPurpose"></div>
       </section>
+      <section class="nav-sec nav-sec-lab">
+        <div class="nav-sec-head"><span class="nsh-ico">🧪</span><span>未来实验室</span><span class="nav-sec-tag lab">前瞻</span></div>
+        <div class="nav-sec-body" id="navLab"></div>
+      </section>
     </nav>
 
     <div class="sb-foot">源数据 / 逻辑 · 三大板块共享<br>目的工作区 · 随工作区切换</div>
@@ -1325,6 +1392,9 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 
       <!-- ===== VIEW: LEAD-USER FEEDBACK ZONE (平级于 AI 简化工具) ===== -->
       <div class="view" id="viewLfZone"></div>
+
+      <!-- ===== VIEW: FUTURE LAB · 数字世界虚拟预测 (概念介绍页) ===== -->
+      <div class="view" id="viewLab"></div>
 
       <!-- ===== VIEW: PREDICTIVE TOOLS ===== -->
       <div class="view" id="viewInsightTool"></div>
@@ -1794,6 +1864,78 @@ function renderNavPurpose(){
            '<span class="ni-name">'+escHtml(p.name)+'</span></div>';
   }).join('');
 }
+
+function renderNavLab(){
+  $('#navLab').innerHTML=
+    '<div class="nav-item" data-nav="nav-lab" onclick="openLabIntro()">'+
+      '<span class="ni-ico">🌐</span>'+
+      '<span class="ni-name">数字世界虚拟预测</span></div>';
+}
+
+function openLabIntro(){
+  setActiveNav('nav-lab');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='数字世界虚拟预测';
+  setView('Lab');
+  $('#viewLab').innerHTML=
+    '<div class="lab-wrap">'+
+      // Hero
+      '<div class="lab-hero">'+
+        '<span class="lab-eyebrow">🧪 未来实验室 · FUTURE LAB</span>'+
+        '<div class="lab-title">数字世界虚拟预测</div>'+
+        '<div class="lab-tagline">从现实世界，<span class="accent">排练一个未来</span></div>'+
+        '<p class="lab-desc">这是一个基于用户研究体系的预测推演引擎。它把你的 VOC 语料、用户分群与标签体系，沉淀为一张「用户基座」——上千个拥有真实态度、痛点与动机的用户智能体在其中互动、演化。你以「上帝视角」注入营销 / 运营杠杆（定价、卖点、内容、达人投放），在沙盒里反复试错，看清每个「如果」的结果：新品会不会卖、活动会不会爆、品类机会成不成立。</p>'+
+        '<div class="lab-stats">'+
+          statChip('512','数字世界智能体规模')+
+          statChip('上帝视角','注入运营杠杆')+
+          statChip('3 种','预测路径合一')+
+          statChip('蒙特卡洛','复算 ±95%CI')+
+        '</div>'+
+      '</div>'+
+      // 5 步流水线
+      '<div class="lab-sec">'+
+        '<div class="lab-sec-h">引擎流水线 · 五步跑通一个数字世界</div>'+
+        '<div class="lab-pipe">'+
+          labStep('01','图谱构建','种子提取 + 记忆注入，GraphRAG 建关系网')+
+          labStep('02','环境设置','实体关系抽取，人格生成，Agent 配置')+
+          labStep('03','模拟仿真','双平台并行演化，动态时间记忆更新')+
+          labStep('04','报告生成','ReportAgent 深度交互产出预测报告')+
+          labStep('05','深度交互','与世界中任意 Agent 自由对话')+
+        '</div>'+
+      '</div>'+
+      // 3 种预测路径
+      '<div class="lab-sec">'+
+        '<div class="lab-sec-h">三种预测路径 · 一张图说清楚</div>'+
+        '<div class="lab-paths">'+
+          labPath('①','回顾式 · 关键词匹配','历史内容库比对','输入 brief → 关键词提取 → 在历史内容库找相似样本 → 输出「类似的内容历史上跑出多少」。盲区：没相似样本时结果空转。')+
+          labPath('②','预测式 · 推演仿真','多智能体社会演化','输入 brief → 数据基座校准 → 几百个智能体跑社会演化 → 输出爆款率 / 触达 / 翻车风险。盲区：人格先验不准时整体偏移。')+
+          labPath('③','接大模型 · 升维','LLM 补齐最后一公里','前两步先跑，LLM 在分群 / 语义聚类 / 情感建模上补齐。代价：需要 LLM API，不能纯前端。')+
+        '</div>'+
+      '</div>'+
+      // 概念卡
+      '<div class="lab-sec">'+
+        '<div class="lab-sec-h">在这个数字世界里，你能得到什么</div>'+
+        '<div class="lab-cards">'+
+          labCcard('🌍','数字世界','平行社会：每个节点是拥有独立人格的智能体，连线是它们之间的社会关系。以「上帝视角」注入变量，观察群体演化。')+
+          labCcard('🧬','用户基座','仿真的人格来源：8 个分群从你的 VOC 聚类而来（态度 / 活跃度 / 忠诚度 / 价格—品质取向），全部来自真实语料与标签体系。')+
+          labCcard('📊','预测报告','ReportAgent 携带完整工具集，与仿真后的数字世界深度交互，产出结构化预测；你还能直接与世界中的智能体对话。')+
+          labCcard('⚙️','算法引擎','多智能体社会仿真（ABM）：在浏览器内逐时间步运行——激活、推荐、动作决策、观点演化、记忆更新，骨架完整可复算。')+
+        '</div>'+
+      '</div>'+
+      // CTA
+      '<div class="lab-cta">'+
+        '<div class="ct-txt"><b>准备好进入沙盒了吗？</b><span>点击进入预测工作台，投喂你的种子信息与预测需求，亲自跑一遍五步流水线。</span></div>'+
+        '<button class="lab-btn" onclick="openPredictTool()">进入预测工作台 <span class="arr">↗</span></button>'+
+      '</div>'+
+      '<div class="lab-note">数字世界虚拟预测引擎基于 MiroFish / OASIS 多智能体社会仿真架构改造，全部计算在浏览器内完成 · 零后端。概念页内容整理自用户研究预测控制台。</div>'+
+    '</div>';
+  if(window.anime){ try{ anime.animate('.lab-wrap > *',{opacity:[0,1],translateY:[18,0],delay:anime.stagger(70),duration:520,easing:'easeOutCubic'}); }catch(e){} }
+}
+
+function statChip(v,k){return '<div class="lab-stat"><div class="v">'+escHtml(v)+'</div><div class="k">'+escHtml(k)+'</div></div>';}
+function labStep(n,t,d){return '<div class="lab-step"><span class="n">'+escHtml(n)+'</span><div class="t">'+escHtml(t)+'</div><div class="d">'+escHtml(d)+'</div><span class="arw">→</span></div>';}
+function labPath(pn,t,pt,d){return '<div class="lab-path"><span class="pn">'+escHtml(pn)+'</span><h4>'+escHtml(t)+'</h4><div class="pt">'+escHtml(pt)+'</div><p>'+escHtml(d)+'</p></div>';}
+function labCcard(ico,t,d){return '<div class="lab-ccard"><div class="ci">'+ico+'</div><div><h4>'+escHtml(t)+'</h4><p>'+escHtml(d)+'</p></div></div>';}
 
 function setActiveNav(nav){
   $$('.nav-item').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-nav')===nav);});
@@ -2496,7 +2638,6 @@ function openAITools(){
       _c(ICON_SCORE,'产品打分工具','输入自然语言或上传文件，自动拆解类目/客单价/功能/外观 → 匹配数据源 → 三大板块12维度评分，每项附理由、引用源（可点击追溯）与置信度。','打开工具',"openProductScore()")
     },
     {head:'预测类工具', cards:
-      _c(ICON_PREDICT,'数字世界模拟预测','基于历史销售与类目信号，模拟预测趋势与机会窗口，辅助选品与排期决策。跳转至外部预测控制台。','打开控制台 ↗',"openPredictTool()")+
       _c(ICON_INSIGHT,'用户洞察工具','基于用户评论/反馈/社媒数据，识别用户画像、购买动机、使用场景与未满足需求——从数据中提炼可执行的用户洞察。','打开工具',"openInsightTool()")+
       _c(ICON_RISK,'风险预测工具','综合类目趋势、竞品动态、政策变化与供应链信号，预测产品上市/运营的关键风险点与规避策略。','打开工具',"openRiskPredict()")
     },
@@ -5197,6 +5338,7 @@ $('#globalSearch')&&$('#globalSearch').addEventListener('keyup',function(e){
 function init(){
   renderNavShared();
   renderNavPurpose();
+  renderNavLab();
   renderPurposeGrid();
   loadCanvasState();
 }
