@@ -1097,6 +1097,8 @@ body.dark .lab-status{color:#fbbf24}
 .ws-back:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,195,243,.07)}
 .ws-title{font-size:16px;font-weight:800}
 .ws-tag{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;background:rgba(22,163,74,.14);color:var(--green-a)}
+.ws-prin{margin-left:auto;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid rgba(168,85,247,.35);background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(168,85,247,.12));color:var(--accent);cursor:pointer;transition:all .2s;white-space:nowrap}
+.ws-prin:hover{background:linear-gradient(135deg,rgba(0,212,255,.25),rgba(168,85,247,.25));border-color:rgba(168,85,247,.6);transform:translateY(-1px);box-shadow:0 4px 12px rgba(168,85,247,.15)}
 
 /* Mode toggle */
 .mode-toggle{display:flex;background:var(--line);border-radius:11px;padding:3px;margin:12px 24px;flex-shrink:0;z-index:4}
@@ -1487,8 +1489,8 @@ body.dark .lab-status{color:#fbbf24}
 .ai-desc{font-size:12.5px;color:var(--ink-2);line-height:1.65;margin-bottom:14px}
 .ai-go{font-size:12.5px;font-weight:700;color:var(--accent);opacity:.85}
 .ai-go-wrap{display:flex;align-items:center;gap:10px;margin-top:auto}
-.ai-prin{font-size:11px;font-weight:600;color:var(--ink-2);background:var(--glass-bg);border:1px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;transition:all .2s;opacity:.7}
-.ai-prin:hover{opacity:1;background:rgba(0,212,255,.08);border-color:rgba(0,212,255,.3);color:var(--accent)}
+.ai-prin{font-size:12px;font-weight:700;color:var(--accent);background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(168,85,247,.12));border:1px solid rgba(168,85,247,.35);border-radius:8px;padding:5px 12px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ai-prin:hover{background:linear-gradient(135deg,rgba(0,212,255,.25),rgba(168,85,247,.25));border-color:rgba(168,85,247,.6);transform:translateY(-1px)}
 .ai-groups{margin-top:0}
 .ai-group{margin-bottom:20px}
 .ag-head{padding:8px 24px 10px;font-size:15px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:10px}
@@ -4248,6 +4250,36 @@ function simAgentDesc(ag){
   return ag.name+'（'+ag.role+'）此刻'+st+'。\n\n这是一间会自动运转的 3D 办公室：7 位同事按 100 倍时间流速生活，会工作、串门、摸鱼、接水、上厕所、聊天，到傍晚就陆续下班，夜晚办公室熄灯，次日 09:00 重新开始。点下方速度按钮可调节时间流速。';
 }
 function closePanoCard(){ var m=$('#panoCardMask'); if(m) m.classList.remove('show'); }
+
+/* ---- 原理演示浮层：从工具页/卡片点「看原理」弹出，关闭回到工具 ---- */
+var PRINCIPLE_RETURN = 'openAITools()';
+function showDemoOverlay(fnName, returnFn){
+  PRINCIPLE_RETURN = returnFn || 'openAITools()';
+  var view = document.getElementById('viewPrDemo');
+  view.style.position = 'fixed';
+  view.style.inset = '0';
+  view.style.zIndex = '99998';
+  view.style.background = 'var(--bg)';
+  view.style.overflow = 'auto';
+  view.style.display = '';
+  view.classList.add('active');
+  // 调用 demo 函数渲染内容
+  var fn = window[fnName];
+  if(fn) fn();
+}
+function closeDemoOverlay(){
+  var view = document.getElementById('viewPrDemo');
+  view.style.position = '';
+  view.style.inset = '';
+  view.style.zIndex = '';
+  view.style.background = '';
+  view.style.overflow = '';
+  view.classList.remove('active');
+  view.style.display = 'none';
+  // 调用返回函数
+  var fn = window[PRINCIPLE_RETURN];
+  if(fn) fn();
+}
 function panoEnter(p){ closePanoCard(); if(p && window[p.fn]) window[p.fn](); }
 
 // ---- VOC 打标签 · 演示台（使用视角 / 原理视角）----
@@ -4295,7 +4327,7 @@ function openTagDemo(){
   $('#viewPrDemo').innerHTML=
     '<div class="pr-demo">'+
       '<div class="prd-bar">'+
-        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<button class="prd-back" onclick="closeDemoOverlay()">← 返回</button>'+
         '<div><div class="prd-title">VOC 智能打标 · 原理动画</div>'+
           '<div class="prd-sub">规则引擎 · 零依赖 · 可离线</div></div>'+
         '<div class="prd-toggle">'+
@@ -4521,7 +4553,7 @@ function openScoreDemo(){
   $('#viewPrDemo').innerHTML=
     '<div class="pr-demo">'+
       '<div class="prd-bar">'+
-        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<button class="prd-back" onclick="closeDemoOverlay()">← 返回</button>'+
         '<div><div class="prd-title">产品需求打分 · 原理动画</div>'+
           '<div class="prd-sub">逐维度评估 · 综合评分 · 规则引擎</div></div>'+
         '<div class="prd-toggle">'+
@@ -4674,7 +4706,7 @@ function openLabDemo(){
   $('#viewPrDemo').innerHTML=
     '<div class="pr-demo">'+
       '<div class="prd-bar">'+
-        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<button class="prd-back" onclick="closeDemoOverlay()">← 返回</button>'+
         '<div><div class="prd-title">数字世界预测 · Brownian 粒子演化</div>'+
           '<div class="prd-sub">多智能体仿真 · 采纳 / 拒绝 / 转化</div></div>'+
       '</div>'+
@@ -4893,7 +4925,7 @@ function openCorpusDemo(){
   var stage=
     '<div class="pr-demo">'+
       '<div class="prd-bar">'+
-        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<button class="prd-back" onclick="closeDemoOverlay()">← 返回</button>'+
         '<div><div class="prd-title">用户语料分析 · 英语角加工</div>'+
           '<div class="prd-sub">规则引擎 · 零依赖 · 纯本地</div></div>'+
       '</div>'+
@@ -5047,7 +5079,7 @@ function openDevDemo(){
   $('#viewPrDemo').innerHTML=
     '<div class="pr-demo">'+
       '<div class="prd-bar">'+
-        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<button class="prd-back" onclick="closeDemoOverlay()">← 返回</button>'+
         '<div><div class="prd-title">新品开发 · 原理动画</div>'+
           '<div class="prd-sub">盲盒抽创新方法 · 长出产品开发创意</div></div>'+
         '<div class="prd-toggle">'+
@@ -5209,7 +5241,7 @@ function openIdeaImgDemo(){
   $('#viewPrDemo').innerHTML=
     '<div class="pr-demo">'+
       '<div class="prd-bar">'+
-        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<button class="prd-back" onclick="closeDemoOverlay()">← 返回</button>'+
         '<div><div class="prd-title">新品创意图 · 原理动画</div>'+
           '<div class="prd-sub">抓金矿 · 六维创意拼成一张图</div></div>'+
         '<div class="prd-toggle">'+
@@ -5402,17 +5434,16 @@ function openAITools(){
   var ICON_IDEA = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M10 17v4h4v-4"/><path d="M12 3a6 6 0 00-4 10.3V14h8v-.7A6 6 0 0012 3z"/></svg>';
   var ICON_DEV = '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>';
 
-  // 原理演示映射：AI 工具 → 对应的 openXxxDemo 函数
   var PRINCIPLE_MAP = {
-    'VOC 智能打标工具':'openTagDemo()',
-    '用户语料分析工具':'openCorpusDemo()',
-    '产品打分工具':'openScoreDemo()',
-    '新品打造创意灵感':'openIdeaImgDemo()',
-    '新品开发创意工具':'openDevDemo()',
+    'VOC 智能打标工具':{fn:'openTagDemo', icon:'🏷'},
+    '用户语料分析工具':{fn:'openCorpusDemo', icon:'🌐'},
+    '产品打分工具':{fn:'openScoreDemo', icon:'🎯'},
+    '新品打造创意灵感':{fn:'openIdeaImgDemo', icon:'⛏'},
+    '新品开发创意工具':{fn:'openDevDemo', icon:'🎲'},
   };
   function _c(icon,name,desc,go,onclick){
-    var prinFn = PRINCIPLE_MAP[name];
-    var prinBtn = prinFn ? '<span class="ai-prin" onclick="event.stopPropagation();'+prinFn+'" title="查看原理动画">🎬 看原理</span>' : '';
+    var p = PRINCIPLE_MAP[name];
+    var prinBtn = p ? '<span class="ai-prin" onclick="event.stopPropagation();showDemoOverlay(\''+p.fn+'\',\'openAITools()\')">'+p.icon+' 看原理</span>' : '';
     return '<div class="ai-card" onclick="'+onclick+'">'+
       '<div class="ai-ico">'+icon+'</div>'+
       '<div class="ai-name">'+escHtml(name)+'</div>'+
@@ -5510,7 +5541,8 @@ function openVocTool(){
   $('#viewVocTool').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">VOC 打标签工具</span>'+
-      '<span class="ws-tag">单条 · 实时的标签与判断</span></div>'+
+      '<span class="ws-tag">单条 · 实时的标签与判断</span>'+
+      '<button class="ws-prin" onclick="showDemoOverlay(\'openTagDemo\',\'openVocTool()\')">🏷 看原理</button></div>'+
     '<iframe class="voc-frame" src="voc-tagging.html?theme='+th+'" title="VOC 智能打标工具"></iframe>';
 }
 
@@ -5932,7 +5964,8 @@ function openNewIdeaTool(){
   $('#viewNewIdea').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">新品打造创意灵感</span>'+
-      '<span class="ws-tag">趋势 · 痛点 · 领先用户 · 差异化定位</span></div>'+
+      '<span class="ws-tag">趋势 · 痛点 · 领先用户 · 差异化定位</span>'+
+      '<button class="ws-prin" onclick="showDemoOverlay(\'openIdeaImgDemo\',\'openNewIdeaTool()\')">⛏ 看原理</button></div>'+
     '<div class="tool-wrap" style="padding:40px;text-align:center;color:var(--muted)">'+
       '<div style="font-size:40px;margin-bottom:12px;color:var(--accent)"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M10 17v4h4v-4"/><path d="M12 3a6 6 0 00-4 10.3V14h8v-.7A6 6 0 0012 3z"/></svg></div>'+
       '<div style="font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px">新品打造创意灵感</div>'+
@@ -6039,7 +6072,8 @@ function openNewDevelopTool(){
   $('#viewNewDevelop').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">新品开发创意工具</span>'+
-      '<span class="ws-tag">TRIZ 40 原理 · 产品创意罗盘 4象限×20打法</span></div>'+
+      '<span class="ws-tag">TRIZ 40 原理 · 产品创意罗盘 4象限×20打法</span>'+
+      '<button class="ws-prin" onclick="showDemoOverlay(\'openDevDemo\',\'openNewDevelopTool()\')">🎲 看原理</button></div>'+
     '<div class="ps-layout">'+
       '<div class="ps-left" style="flex-basis:380px">'+
         '<div class="ps-input-wrap">'+
@@ -6482,7 +6516,8 @@ function openProductScore(){
   $('#viewProductScore').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">产品打分工具</span>'+
-      '<span class="ws-tag">自然语言拆解 · 数据源匹配 · 可溯源评分</span></div>'+
+      '<span class="ws-tag">自然语言拆解 · 数据源匹配 · 可溯源评分</span>'+
+      '<button class="ws-prin" onclick="showDemoOverlay(\'openScoreDemo\',\'openProductScore()\')">🎯 看原理</button></div>'+
     '<div class="ps-layout">'+
       '<div class="ps-left">'+
         '<div class="ps-input-wrap">'+
@@ -7218,7 +7253,8 @@ function openCorpusTool(){
   $('#viewCorpusTool').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">用户语料分析工具</span>'+
-      '<span class="ws-tag">批量 · 本地 · 情绪分析</span></div>'+
+      '<span class="ws-tag">批量 · 本地 · 情绪分析</span>'+
+      '<button class="ws-prin" onclick="showDemoOverlay(\'openCorpusDemo\',\'openCorpusTool()\')">🌐 看原理</button></div>'+
     '<div class="tool-wrap">'+
       '<div class="tagger-panel">'+
         '<div class="ws-tabs" style="flex-direction:row;gap:8px;margin-bottom:10px">'+
