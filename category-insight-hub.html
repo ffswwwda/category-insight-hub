@@ -254,6 +254,97 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .fw-jtbd-out b{color:var(--fc,#0891B2)}
 .fw-note{font-size:12.5px;color:var(--muted);line-height:1.7}
 
+/* ===== Framework Visualizations ===== */
+.fw-viz{margin:4px 0 20px;background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;position:relative;overflow:hidden}
+.fw-viz::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--fc,#0891B2),transparent)}
+.fw-viz-head{display:flex;align-items:baseline;gap:10px;margin-bottom:2px}
+.fw-viz-kicker{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--fc,#0891B2);opacity:.85}
+.fw-viz-title{font-size:15px;font-weight:800;color:var(--ink)}
+.fw-viz-sub{font-size:12px;color:var(--ink-2);line-height:1.6;margin-bottom:14px;max-width:760px}
+.fw-viz svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.fw-viz-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;font-size:11.5px;color:var(--ink-2)}
+.fw-viz-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.fw-qlabel{font-size:11px;font-weight:700;fill:var(--ink)}
+.fw-qsub{font-size:9.5px;fill:var(--muted)}
+.fw-axis{stroke:var(--border);stroke-width:1.5}
+.fw-grid{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
+.fw-pt-t{font-size:10.5px;font-weight:700;fill:var(--ink)}
+.fw-pt-s{font-size:9px;fill:var(--muted)}
+
+/* Journey */
+.fj-node{fill:var(--panel-solid);stroke:var(--fc,#A855F7);stroke-width:2}
+.fj-num{font-size:15px;font-weight:900;fill:var(--fc,#A855F7);text-anchor:middle}
+.fj-name{font-size:12px;font-weight:800;fill:var(--ink);text-anchor:middle}
+.fj-tp{font-size:9.5px;fill:var(--muted);text-anchor:middle}
+.fj-arrow{stroke:var(--muted);stroke-width:1.6;fill:none}
+.fj-curve{stroke:var(--fc,#A855F7);stroke-width:2.4;fill:none;opacity:.85}
+.fj-baseline{stroke:var(--border);stroke-width:1.2;stroke-dasharray:4 4}
+
+/* Motivation */
+.fm-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.fm-lane{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+.fm-lane-h{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.fm-lane-h i{width:9px;height:9px;border-radius:50%;background:var(--fc,#10B981)}
+.fm-chips{display:flex;flex-wrap:wrap;gap:6px}
+.fm-chip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;background:var(--glass-bg);border:1px solid var(--border);color:var(--ink-2)}
+.fm-seg{border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--bg)}
+.fm-seg-h{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:8px}
+.fm-seg-bar{display:flex;align-items:center;gap:8px;margin:7px 0}
+.fm-seg-name{font-size:11px;font-weight:700;width:88px;flex-shrink:0;color:var(--ink-2)}
+.fm-seg-track{flex:1;height:8px;border-radius:5px;background:rgba(128,140,164,.15);overflow:hidden}
+.fm-seg-fill{height:100%;border-radius:5px;background:var(--fc,#10B981)}
+.fm-seg-pct{font-size:11px;font-weight:700;width:38px;text-align:right;color:var(--ink-2)}
+.fm-seg-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.fm-seg-tag{font-size:10px;padding:2px 8px;border-radius:7px;background:rgba(128,140,164,.12);color:var(--muted)}
+
+/* Needs pyramid + cards */
+.fn-pyr{display:block;margin:0 auto 8px}
+.fn-layer-t{font-size:11px;font-weight:800;fill:#fff}
+.fn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:6px}
+.fn-card{border:1px solid var(--border);border-radius:11px;padding:9px 11px;background:var(--glass-bg);
+  cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.fn-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--fc,#0EA5E9)}
+.fn-card:hover{border-color:var(--fc,#0EA5E9);transform:translateY(-2px)}
+.fn-card.on{border-color:var(--fc,#0EA5E9);background:color-mix(in srgb,var(--fc,#0EA5E9) 12%,var(--glass-bg))}
+.fn-card-k{font-size:9.5px;font-weight:800;color:var(--fc,#0EA5E9);letter-spacing:.04em;text-transform:uppercase}
+.fn-card-n{font-size:13px;font-weight:800;color:var(--ink);margin:1px 0}
+.fn-card-en{font-size:9.5px;color:var(--muted);font-style:italic}
+.fn-card-d{font-size:10.5px;color:var(--ink-2);line-height:1.45;margin-top:3px}
+.fn-out{margin-top:12px;padding:14px 16px;border-radius:12px;border:1px dashed var(--fc,#0EA5E9);
+  background:color-mix(in srgb,var(--fc,#0EA5E9) 7%,transparent);font-size:13px;color:var(--ink);line-height:1.7}
+.fn-out b{color:var(--fc,#0EA5E9)}
+
+/* Compass / Extreme matrix points */
+.fc-pt,.fe-pt{font-size:10px;font-weight:700;fill:var(--ink)}
+.fc-quad-t{font-size:11px;font-weight:800}
+.fc-quad-s{font-size:9px;fill:var(--muted)}
+
+/* TRIZ */
+.ft-contra{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ft-box{flex:1;min-width:150px;border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--bg)}
+.ft-box-h{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.ft-box-v{font-size:13.5px;font-weight:800;color:var(--ink)}
+.ft-badge{font-size:12px;font-weight:900;color:#fff;background:var(--rad-grad);padding:6px 12px;border-radius:20px;white-space:nowrap}
+.ft-pair{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 4px}
+.ft-prin{font-size:11px;font-weight:700;padding:5px 11px;border-radius:9px;background:color-mix(in srgb,var(--fc,#14B8A6) 12%,var(--glass-bg));border:1px solid color-mix(in srgb,var(--fc,#14B8A6) 35%,transparent);color:var(--ink)}
+.ft-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:6px;margin-top:6px}
+.ft-p{font-size:10.5px;font-weight:600;padding:5px 9px;border-radius:8px;background:var(--glass-bg);border:1px solid var(--border);color:var(--ink-2);cursor:default;transition:all .12s}
+.ft-p:hover{border-color:var(--fc,#14B8A6);color:var(--ink);transform:translateY(-1px)}
+.ft-p b{color:var(--fc,#14B8A6);font-weight:800;margin-right:4px}
+
+/* Plutchik */
+.fp-petal{cursor:pointer;transition:opacity .2s,transform .2s;transform-origin:200px 200px}
+.fp-petal:hover{opacity:.9}
+.fp-petal.on{stroke:#fff;stroke-width:2.5}
+.fp-emo{font-size:10px;font-weight:800;fill:var(--ink);text-anchor:middle;pointer-events:none}
+.fp-emo-en{font-size:7.5px;fill:var(--muted);text-anchor:middle;pointer-events:none}
+.fp-out{margin-top:10px;padding:13px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg);font-size:13px;line-height:1.7;color:var(--ink-2)}
+.fp-out b{color:var(--fc,#EC4899)}
+
+/* Responsive */
+@media(max-width:680px){.fm-wrap{grid-template-columns:1fr}.fn-grid{grid-template-columns:repeat(2,1fr)}}
+
 /* Sidebar footer */
 .sb-foot{padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.6}
 
@@ -1927,11 +2018,171 @@ function openFramework(fwId){
       '<span class="ws-tag" style="--fc:'+f.color+'">分析框架 · 共享</span></div>'+
     '<div class="fw-detail">'+
       '<div class="fw-desc" style="border-left:3px solid '+f.color+'">'+escHtml(f.desc)+'</div>'+
+      renderFrameworkViz(fwId,f)+
       (metaHtml?'<div class="fw-meta">'+metaHtml+'</div>':'')+
       '<div class="fw-secs">'+secHtml+'</div>'+
       extra+
       '<div class="fw-note">此框架在「目的工作区」的结构化面板与无限画布中被调用，用于组织洞察与推导链路。</div>'+
     '</div>';
+}
+
+/* ===== 框架可视化分发器 ===== */
+var PLUT={emos:[
+  {n:'喜悦',en:'Joy',c:'#FACC15'},{n:'信任',en:'Trust',c:'#38BDF8'},{n:'恐惧',en:'Fear',c:'#EF4444'},
+  {n:'惊讶',en:'Surprise',c:'#A855F7'},{n:'悲伤',en:'Sadness',c:'#64748B'},{n:'厌恶',en:'Disgust',c:'#84CC16'},
+  {n:'愤怒',en:'Anger',c:'#F97316'},{n:'期待',en:'Anticipation',c:'#EC4899'}
+]};
+function renderFrameworkViz(fwId,f){
+  var c=f.color;
+  var head=function(k,t,s){return '<div class="fw-viz-head"><span class="fw-viz-kicker">'+k+'</span><span class="fw-viz-title">'+t+'</span></div>'+(s?'<div class="fw-viz-sub">'+s+'</div>':'');};
+  var body='';
+  switch(fwId){
+    case 'quad':{
+      var pts=[{l:'静音设计',s:26,i:88},{l:'清洁便利',s:34,i:80},{l:'材质更软',s:30,i:85},{l:'真实外观',s:84,i:86},{l:'伴侣共创',s:82,i:30},{l:'包装 discreet',s:30,i:26}];
+      var X=function(v){return 70+(v/100)*360;}, Y=function(v){return 330-(v/100)*290;};
+      var svg='<svg viewBox="0 0 480 380">';
+      svg+='<rect x="70" y="40" width="180" height="145" fill="'+c+'" opacity="0.05"/><rect x="250" y="40" width="180" height="145" fill="'+c+'" opacity="0.10"/>';
+      svg+='<rect x="70" y="185" width="180" height="145" fill="'+c+'" opacity="0.04"/><rect x="250" y="185" width="180" height="145" fill="'+c+'" opacity="0.07"/>';
+      svg+='<line class="fw-axis" x1="250" y1="40" x2="250" y2="330"/><line class="fw-axis" x1="70" y1="185" x2="430" y2="185"/>';
+      svg+='<text class="fw-qsub" x="250" y="354" text-anchor="middle">满意度 →</text><text class="fw-qsub" x="14" y="185" text-anchor="middle" transform="rotate(-90 14 185)">重要度 →</text>';
+      svg+='<text class="fw-qlabel" x="80" y="58">高重要 · 低满意</text><text class="fw-qsub" x="80" y="72">创新突破口 P0</text>';
+      svg+='<text class="fw-qlabel" x="420" y="58" text-anchor="end">高重要 · 高满意</text><text class="fw-qsub" x="420" y="72" text-anchor="end">护城河</text>';
+      svg+='<text class="fw-qlabel" x="80" y="318">低重要 · 低满意</text><text class="fw-qsub" x="80" y="332">长尾</text>';
+      svg+='<text class="fw-qlabel" x="420" y="318" text-anchor="end">低重要 · 高满意</text><text class="fw-qsub" x="420" y="332" text-anchor="end">效率优化</text>';
+      pts.forEach(function(p){svg+='<circle cx="'+X(p.s)+'" cy="'+Y(p.i)+'" r="7" fill="'+c+'" stroke="#fff" stroke-width="2"/><text class="fw-pt-t" x="'+X(p.s)+'" y="'+(Y(p.i)-12)+'" text-anchor="middle">'+p.l+'</text>';});
+      svg+='</svg>';
+      body=head('二维模型','需求四象限 · 定位图','横轴=满意度，纵轴=重要度。每个 VOC 标签点按出现频率估算后落到对应象限，高重要×低满意即创新突破口（P0）。')+svg+
+        '<div class="fw-viz-legend"><span><i style="background:'+c+'"></i>需求点（按 VOC 频率估算 重要度/满意度）</span></div>';
+      break;
+    }
+    case 'jtbd':{
+      var layers=[{k:'功能性',c:'#0891B2',t:'用户想完成的具体事',ex:'私密释放压力、获得真实体验'},
+        {k:'情感性',c:'#10B981',t:'用户想获得的感受',ex:'去羞耻化、虚拟陪伴、自我掌控'},
+        {k:'社会性',c:'#A855F7',t:'用户想呈现的形象',ex:'显得正常、有品味'}];
+      var cols=layers.map(function(l){return '<div class="fm-lane" style="border-color:'+l.c+'55"><div class="fm-lane-h" style="color:'+l.c+'"><i style="background:'+l.c+'"></i>'+l.k+'任务</div><div class="fm-chip" style="border-color:'+l.c+'55">'+l.t+'</div><div class="fm-chip" style="border-color:'+l.c+'55">'+l.ex+'</div></div>';}).join('');
+      body=head('三层任务','JTBD · 任务分层','每个用户场景都可拆为三层任务：最表层是功能性，往下是情感性，最里层是社会性。由表及里，用户真实雇用产品完成的是层层递进的任务。')+
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">'+cols+'</div>';
+      break;
+    }
+    case 'journey':{
+      var stages=[{n:'认知',tp:'社媒/评测/广告'},{n:'考虑',tp:'评价/参数/KOL'},{n:'购买',tp:'价格/促销/信任'},{n:'使用',tp:'产品/说明书/客服'},{n:'忠诚',tp:'社群/新品/售后'}];
+      var xs=[80,230,380,530,680], svg='<svg viewBox="0 0 760 215">';
+      svg+='<defs><marker id="fjA" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#94a3b8"/></marker></defs>';
+      for(var i=0;i<4;i++){svg+='<path class="fj-arrow" d="M'+(xs[i]+36)+' 80 H'+(xs[i+1]-36)+'" marker-end="url(#fjA)"/>';}
+      stages.forEach(function(s,i){svg+='<circle class="fj-node" cx="'+xs[i]+'" cy="80" r="34"/><text class="fj-num" x="'+xs[i]+'" y="86">'+(i+1)+'</text><text class="fj-name" x="'+xs[i]+'" y="138">'+s.n+'</text><text class="fj-tp" x="'+xs[i]+'" y="154">'+s.tp+'</text>';});
+      svg+='<line class="fj-baseline" x1="80" y1="185" x2="680" y2="185"/>';
+      var cp=[[80,160],[230,118],[380,92],[530,150],[680,128]];
+      svg+='<path class="fj-curve" style="--fc:#A855F7" d="M'+cp.map(function(p){return p[0]+' '+p[1];}).join(' L ')+'"/>';
+      svg+='<text class="fw-qsub" x="80" y="205">情感曲线：考虑期上升 → 购买峰值 → 使用期因痛点回落 → 忠诚期修复</text></svg>';
+      body=head('旅程地图','购买旅程 · 五阶段链路','沿用户路径逐环诊断体验断点，下方情感曲线标注每阶段的正负峰值（断点优先修复，峰值放大为卖点）。')+svg;
+      break;
+    }
+    case 'motivation':{
+      var lanes=[{h:'动机',items:['功能驱动','情感驱动','促销刺激']},{h:'场景',items:['时间场景','空间场景','情境场景']},{h:'人群',items:['人口统计','使用经验','社群归属']}];
+      var laneHtml=lanes.map(function(l){return '<div class="fm-lane"><div class="fm-lane-h"><i></i>'+l.h+' 编码</div><div class="fm-chips">'+l.items.map(function(t){return '<span class="fm-chip">'+t+'</span>';}).join('')+'</div></div>';}).join('');
+      var segs=[{n:'高频使用者',pct:62,tags:['每周3+次','重静音/便携','溢价30%']},{n:'尝鲜体验者',pct:38,tags:['月1-2次','外观驱动','社媒种草']}];
+      var segHtml=segs.map(function(s){return '<div class="fm-seg"><div class="fm-seg-h">'+s.n+'</div><div class="fm-seg-bar"><span class="fm-seg-name">规模占比</span><span class="fm-seg-track"><span class="fm-seg-fill" style="width:'+s.pct+'%"></span></span><span class="fm-seg-pct">'+s.pct+'%</span></div><div class="fm-seg-tags">'+s.tags.map(function(t){return '<span class="fm-seg-tag">'+t+'</span>';}).join('')+'</div></div>';}).join('');
+      body=head('编码 → 聚类','动机编码 · 细分群体','对每条语料贴 动机/场景/人群 三类标签，交叉聚类出高价值细分群体及其规模与特征。')+
+        '<div class="fm-wrap">'+laneHtml+'</div>'+
+        '<div style="margin-top:14px;font-size:12.5px;font-weight:800;color:var(--ink)">聚类输出 · 细分群体</div>'+
+        '<div class="fm-wrap" style="margin-top:8px">'+segHtml+'</div>';
+      break;
+    }
+    case 'needs':{
+      var NEEDS=[{k:'身份',n:'主宰',en:'Autonomy',d:'自己决定怎么做、不被限制'},{k:'身份',n:'审美',en:'Beauty',d:'看起来更好、更精致、更自信'},
+        {k:'身份',n:'目的',en:'Purpose',d:'做的事有意义、有方向'},{k:'身份',n:'刺激',en:'Stimulation',d:'生活有新鲜感、好玩的刺激'},
+        {k:'身份',n:'道德',en:'Morality',d:'做对的事、不违背标准'},{k:'体验',n:'认可',en:'Recognition',d:'被看到、被肯定'},
+        {k:'体验',n:'亲密',en:'Relatedness',d:'有人理解、有人陪伴'},{k:'体验',n:'胜任',en:'Competence',d:'能把事做好、不费劲'},
+        {k:'体验',n:'影响',en:'Impact',d:'能改变/影响别人'},{k:'功能',n:'安全',en:'Security',d:'无风险、稳定、可预期'},
+        {k:'功能',n:'归属',en:'Community',d:'和志同道合的人在一起'},{k:'功能',n:'舒适',en:'Comfort',d:'轻松、不操心、不费力'},
+        {k:'必买',n:'健康',en:'Fitness',d:'身体好、精力充沛、不生病'}];
+      var lyr=[{t:'身份层',pts:'155,20 225,20 245,90 135,90',y:58},{t:'体验层',pts:'132,95 248,95 270,155 110,155',y:128},{t:'功能层',pts:'107,160 273,160 298,220 82,220',y:193},{t:'必买层',pts:'80,225 300,225 325,280 55,280',y:258}];
+      var pyr='<svg viewBox="0 0 380 300" class="fn-pyr" width="300">';
+      lyr.forEach(function(L,idx){pyr+='<polygon points="'+L.pts+'" fill="'+c+'" opacity="'+(1-idx*0.18)+'"/><text class="fn-layer-t" x="190" y="'+L.y+'" text-anchor="middle">'+L.t+'</text>';});
+      pyr+='</svg>';
+      var cards=NEEDS.map(function(n){return '<div class="fn-card" onclick="needsToggle(this)" data-n="'+n.n+'"><div class="fn-card-k">'+n.k+'层</div><div class="fn-card-n">'+n.n+'</div><div class="fn-card-en">'+n.en+'</div><div class="fn-card-d">'+n.d+'</div></div>';}).join('');
+      body=head('四层金字塔','十三种需求 · 核心模型','从「身份→体验→功能→必买」四层级解析深层需求驱动。点击下方卡片，实时合成你的价值主张。')+
+        pyr+'<div class="fn-grid">'+cards+'</div><div class="fn-out" id="needsOut">已选 0 项 · 点击上方需求卡片，合成价值主张预览…</div>';
+      break;
+    }
+    case 'compass':{
+      var ideas=[{l:'静音款',v:82,d:24},{l:'软硅胶',v:85,d:78},{l:'免打孔',v:80,d:30},{l:'极简包装',v:78,d:34},{l:'联名款',v:28,d:26},{l:'APP联动',v:30,d:80}];
+      var X=function(v){return 70+(v/100)*360;}, Y=function(v){return 330-(v/100)*290;};
+      var svg='<svg viewBox="0 0 480 380">';
+      svg+='<rect x="70" y="40" width="180" height="145" fill="'+c+'" opacity="0.10"/><rect x="250" y="40" width="180" height="145" fill="'+c+'" opacity="0.05"/>';
+      svg+='<rect x="70" y="185" width="180" height="145" fill="'+c+'" opacity="0.04"/><rect x="250" y="185" width="180" height="145" fill="'+c+'" opacity="0.07"/>';
+      svg+='<line class="fw-axis" x1="250" y1="40" x2="250" y2="330"/><line class="fw-axis" x1="70" y1="185" x2="430" y2="185"/>';
+      svg+='<text class="fw-qsub" x="250" y="354" text-anchor="middle">实现难度 →</text><text class="fw-qsub" x="14" y="185" text-anchor="middle" transform="rotate(-90 14 185)">用户价值 →</text>';
+      svg+='<text class="fc-quad-t" x="80" y="58" fill="'+c+'">高价值·低难度</text><text class="fc-quad-s" x="80" y="72">立即做</text>';
+      svg+='<text class="fc-quad-t" x="420" y="58" fill="'+c+'" text-anchor="end">高价值·高难度</text><text class="fc-quad-s" x="420" y="72" text-anchor="end">重点投入</text>';
+      svg+='<text class="fc-quad-t" x="80" y="318" fill="'+c+'">低价值·低难度</text><text class="fc-quad-s" x="80" y="332">快速试</text>';
+      svg+='<text class="fc-quad-t" x="420" y="318" fill="'+c+'" text-anchor="end">低价值·高难度</text><text class="fc-quad-s" x="420" y="332" text-anchor="end">暂搁置</text>';
+      ideas.forEach(function(p){svg+='<circle cx="'+X(p.d)+'" cy="'+Y(p.v)+'" r="7" fill="'+c+'" stroke="#fff" stroke-width="2"/><text class="fc-pt" x="'+X(p.d)+'" y="'+(Y(p.v)-12)+'" text-anchor="middle">'+p.l+'</text>';});
+      svg+='</svg>';
+      var taps=['模块化','可定制','场景扩展','订阅化','联名','极简','智能化','环保','便携','可拆洗','情感化','社交化','限量','跨界','可视化','自适应','一键式','隐藏式','可升级','快迭代'];
+      body=head('2×2 机会矩阵','产品创意罗盘 · 机会定位','按「用户价值 × 实现难度」定位机会象限；在象限内套用 20 种已验证打法生成创意方向。')+svg+
+        '<div style="margin-top:6px;font-size:12.5px;font-weight:800;color:var(--ink)">20 种创新打法</div><div class="fm-chips" style="margin-top:8px">'+taps.map(function(t){return '<span class="fm-chip">'+t+'</span>';}).join('')+'</div>';
+      break;
+    }
+    case 'triz':{
+      var names=['分割','取出','局部质量','非对称','合并','多功能','嵌套','配重','预先反作用','预先作用','预先缓冲','等势','反向','曲面化','动态','不足或过度','维度变化','振动','周期作用','有效作用','快速','变害为利','反馈','中介','自服务','复制','廉价替代','机械替代','气动/液压','柔性外壳','多孔','色彩','均质','自弃/恢复','参数变化','相变','热膨胀','强氧化','惰性','复合材料'];
+      var grid=names.map(function(n,i){return '<span class="ft-p"><b>'+(i+1)+'</b>'+n+'</span>';}).join('');
+      body=head('系统化创新','TRIZ · 40 发明原理','将技术矛盾转化为可解方案：先定位矛盾，再查原理，而非随机头脑风暴。')+
+        '<div class="ft-contra"><div class="ft-box"><div class="ft-box-h">想改善</div><div class="ft-box-v">更柔软的触感</div></div><div class="ft-badge">技术矛盾</div><div class="ft-box"><div class="ft-box-h">却恶化</div><div class="ft-box-v">形状保持力</div></div></div>'+
+        '<div style="font-size:12px;font-weight:800;color:var(--ink-2);margin-bottom:4px">匹配原理（节选）</div>'+
+        '<div class="ft-pair"><span class="ft-prin">30 柔性外壳</span><span class="ft-prin">1 分割</span><span class="ft-prin">9 预先反作用</span><span class="ft-prin">13 反向</span><span class="ft-prin">17 维度变化</span></div>'+
+        '<div style="font-size:12px;font-weight:800;color:var(--ink-2);margin:14px 0 4px">40 个发明原理</div><div class="ft-grid">'+grid+'</div>';
+      break;
+    }
+    case 'extreme':{
+      var users=[{n:'极客型',l:90,b:88},{n:'场景定制',l:88,b:60},{n:'审美派',l:85,b:55},{n:'养宠安全',l:88,b:85},{n:'性价比',l:30,b:82},{n:'企业采购',l:28,b:80}];
+      var X=function(v){return 70+(v/100)*360;}, Y=function(v){return 330-(v/100)*290;};
+      var svg='<svg viewBox="0 0 480 380">';
+      svg+='<rect x="70" y="40" width="180" height="145" fill="'+c+'" opacity="0.10"/><rect x="250" y="40" width="180" height="145" fill="'+c+'" opacity="0.05"/>';
+      svg+='<rect x="70" y="185" width="180" height="145" fill="'+c+'" opacity="0.04"/><rect x="250" y="185" width="180" height="145" fill="'+c+'" opacity="0.07"/>';
+      svg+='<line class="fw-axis" x1="250" y1="40" x2="250" y2="330"/><line class="fw-axis" x1="70" y1="185" x2="430" y2="185"/>';
+      svg+='<text class="fw-qsub" x="250" y="354" text-anchor="middle">收益预期 →</text><text class="fw-qsub" x="14" y="185" text-anchor="middle" transform="rotate(-90 14 185)">领先程度 →</text>';
+      svg+='<text class="fc-quad-t" x="80" y="58" fill="'+c+'">高领先·高收益</text><text class="fc-quad-s" x="80" y="72">核心领先用户</text>';
+      svg+='<text class="fc-quad-t" x="420" y="58" fill="'+c+'" text-anchor="end">高领先·低收益</text><text class="fc-quad-s" x="420" y="72" text-anchor="end">边缘探索者</text>';
+      svg+='<text class="fc-quad-t" x="80" y="318" fill="'+c+'">低领先·高收益</text><text class="fc-quad-s" x="80" y="332">高价值主流</text>';
+      svg+='<text class="fc-quad-t" x="420" y="318" fill="'+c+'" text-anchor="end">低领先·低收益</text><text class="fc-quad-s" x="420" y="332" text-anchor="end">普通用户</text>';
+      users.forEach(function(u){svg+='<circle cx="'+X(u.b)+'" cy="'+Y(u.l)+'" r="8" fill="'+c+'" stroke="#fff" stroke-width="2"/><text class="fe-pt" x="'+X(u.b)+'" y="'+(Y(u.l)-13)+'" text-anchor="middle">'+u.n+'</text>';});
+      svg+='</svg>';
+      body=head('von Hippel 2×2','极端/领先用户 · 矩阵','按「领先程度 × 收益预期」定位领先用户。高领先×高收益者重点深访，是创新机会的富矿。')+svg;
+      break;
+    }
+    case 'plutchik':{
+      var svg='<svg viewBox="0 0 400 400">';
+      PLUT.emos.forEach(function(e,i){var ang=i*45,rad=ang*Math.PI/180;
+        svg+='<ellipse class="fp-petal" data-i="'+i+'" cx="200" cy="112" rx="24" ry="74" fill="'+e.c+'" opacity="0.78" transform="rotate('+ang+' 200 200)" onclick="plutchikPick('+i+')"/>';
+        var tx=(200+118*Math.sin(rad)).toFixed(1), ty=(200-118*Math.cos(rad)).toFixed(1);
+        svg+='<text class="fp-emo" x="'+tx+'" y="'+(parseFloat(ty)+3).toFixed(1)+'">'+e.n+'</text><text class="fp-emo-en" x="'+tx+'" y="'+(parseFloat(ty)+13).toFixed(1)+'">'+e.en+'</text>';
+      });
+      svg+='<circle cx="200" cy="200" r="34" fill="var(--panel-solid)" stroke="'+c+'" stroke-width="2"/><text x="200" y="196" text-anchor="middle" font-size="11" font-weight="800" fill="var(--ink)">情绪</text><text x="200" y="210" text-anchor="middle" font-size="8" fill="var(--muted)">8 基础</text></svg>';
+      body=head('八情绪花瓣','Plutchik 情绪罗盘','成对对立、强度向内递增。点击任一情绪，高亮其对立项，并给出应用提示。')+svg+
+        '<div class="fp-out" id="fpOut">点击花瓣查看对立情绪对与应用方向 →</div>';
+      break;
+    }
+    default:
+      body='';
+  }
+  return '<div class="fw-viz" style="--fc:'+c+'">'+body+'</div>';
+}
+function needsToggle(el){
+  el.classList.toggle('on');
+  var sel=Array.prototype.slice.call(document.querySelectorAll('.fn-card.on')).map(function(c){return c.dataset.n;});
+  var out=document.getElementById('needsOut'); if(!out)return;
+  if(sel.length===0){out.innerHTML='已选 0 项 · 点击上方需求卡片，合成价值主张预览…';return;}
+  out.innerHTML='已选 <b>'+sel.length+'</b> 项：'+sel.map(function(s){return '<b>'+s+'</b>';}).join('、')+
+    '<br>👉 价值主张：为「类目用户」提供一种在 <b>'+sel.slice(0,2).join('、')+'</b> 上被满足的体验——让 TA 感到 '+sel.join('、')+'。';
+}
+function plutchikPick(i){
+  document.querySelectorAll('.fp-petal').forEach(function(p){p.classList.remove('on');});
+  var petal=document.querySelector('.fp-petal[data-i="'+i+'"]'); if(petal)petal.classList.add('on');
+  var opp=(i+4)%8, op=document.querySelector('.fp-petal[data-i="'+opp+'"]'); if(op)op.classList.add('on');
+  var out=document.getElementById('fpOut');
+  if(out&&PLUT){var e=PLUT.emos[i],o=PLUT.emos[opp];
+    out.innerHTML='选中：<b>'+e.n+'</b>（'+e.en+'） ↔ 对立：<b>'+o.n+'</b>（'+o.en+'）。<br>应用：降低「'+o.n+'」（如隐私'+ (o.n==='恐惧'?'→安全承诺':'→缓解') +'），放大「'+e.n+'」作为设计点与沟通基调。';}
 }
 function fwSecToggle(el){
   var body=el.nextElementSibling;
