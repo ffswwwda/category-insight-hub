@@ -6212,7 +6212,6 @@ function init(){
   renderNavPrinciple();
   renderPurposeGrid();
   loadCanvasState();
-  initFloatBar();
 }
 // ── 浮动工作台入口：仅「数字世界虚拟预测」(viewLab) 与「虚拟用户压力测试」(viewStress) 页面底部固定显示；滚动到 CTA 区时自动隐藏 ──
 var _floatBarTimer=null;
@@ -6241,10 +6240,10 @@ function initFloatBar(){
   }
   var board=document.getElementById('board');
   if(board) board.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(update,60); }, {passive:true});
-  // MutationObserver：任何 .view 的 active class 变化都会重新判定（涵盖绕过 setView 的页面切换，如德国站/数据源直切）；用 rAF 等布局稳定后再读取 rect
+  // MutationObserver：任何 .view 的 active class 变化都会重新判定（涵盖绕过 setView 的页面切换，如德国站/数据源直切）；同步执行确保进入页面即显示，不依赖 rAF flush（rAF 在部分环境下不触发会导致悬浮窗偶发不出现）
   var views=document.querySelectorAll('.view');
   if(window.MutationObserver && views.length){
-    var mo=new MutationObserver(function(){ requestAnimationFrame(update); });
+    var mo=new MutationObserver(function(){ update(); });
     views.forEach(function(v){ mo.observe(v,{attributes:true,attributeFilter:['class']}); });
   }
   update();
@@ -6352,6 +6351,10 @@ init();
 <div class="glob-float-bar hidden" id="globFloatBar">
   <button onclick="globFloatAction()"><span id="globFloatLabel">进入预测工作台</span> <span>↗</span></button>
 </div>
+<script>
+// 必须在 globFloatBar 元素存在于 DOM 后再初始化（init() 在上方脚本中执行时本元素尚未解析）
+if(typeof initFloatBar==='function') initFloatBar();
+</script>
 
 </body>
 </html>
