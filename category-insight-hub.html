@@ -1817,6 +1817,32 @@ body.dark .lab-status{color:#fbbf24}
 @media(max-width:768px){body{cursor:auto}.custom-cursor,.cursor-glow{display:none}
   .sidebar{position:fixed;transform:translateX(-100%);transition:transform .3s}
   .purpose-cols{grid-template-columns:1fr}}
+
+/* ═══ 语料分析 · 英语角动画 ═══ */
+.ec-wrap{position:relative;width:1060px;height:480px;margin:0 auto;overflow:hidden}
+.ec-park{position:absolute;inset:0;background:linear-gradient(180deg,rgba(168,85,247,.06) 0%,transparent 30%,transparent 70%,rgba(0,212,255,.06) 100%)}
+.ec-path{position:absolute;left:80px;top:220px;width:900px;height:50px;border-radius:25px;background:rgba(255,255,255,.04);border:1px dashed rgba(168,85,247,.15)}
+.ec-expert{position:absolute;width:44px;text-align:center;z-index:2;cursor:default}
+.ec-e-body{width:26px;height:30px;margin:0 auto;border-radius:10px 10px 6px 6px;position:relative}
+.ec-e-head{width:16px;height:16px;border-radius:50%;margin:0 auto -2px;border:2px solid #fff}
+.ec-e-label{font-size:9px;font-weight:700;color:var(--muted);margin-top:3px;line-height:1.2;text-align:center}
+.ec-e-badge{position:absolute;top:-4px;left:50%;transform:translateX(-50%);font-size:7px;padding:1px 5px;border-radius:4px;color:#fff;white-space:nowrap;opacity:0;transition:opacity .3s}
+.ec-expert.active .ec-e-badge{opacity:1}
+.ec-runner{position:absolute;width:50px;height:52px;z-index:3;transition:none}
+.ec-r-head{width:14px;height:14px;border-radius:50%;margin:0 auto -2px;border:2px solid #fff}
+.ec-r-body{width:16px;height:20px;border-radius:7px 7px 4px 4px;margin:0 auto}
+.ec-r-bubble{position:absolute;top:-34px;left:50%;transform:translateX(-50%);font-size:10px;padding:3px 8px;border-radius:7px;background:rgba(255,255,255,.12);color:var(--ink);white-space:nowrap;border:1px solid var(--border);opacity:0;transition:opacity .3s;pointer-events:none}
+.ec-r-bubble.show{opacity:1}
+.ec-output{position:absolute;right:60px;top:160px;width:220px;z-index:2;opacity:0;transition:opacity .5s}
+.ec-output.show{opacity:1}
+.ec-o-box{padding:14px 18px;border-radius:12px;background:var(--panel-solid);border:1px solid var(--accent);box-shadow:0 0 30px rgba(0,212,255,.15)}
+.ec-o-label{font-size:10px;color:var(--accent);font-weight:700;margin-bottom:4px;letter-spacing:.5px}
+.ec-o-text{font-size:13px;line-height:1.5;color:var(--ink)}
+.ec-o-raw{font-size:11px;color:var(--muted);margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.ec-ctrl{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.ec-btn{padding:6px 18px;font-size:12px;font-weight:700;border:1px solid var(--border);border-radius:8px;background:var(--panel-solid);color:var(--ink);cursor:pointer;transition:all .2s}
+.ec-btn:hover{border-color:var(--accent);background:rgba(0,212,255,.08)}
+.ec-btn:disabled{opacity:.4;cursor:default}
 </style>
 </head>
 <body class="dark">
@@ -3342,7 +3368,7 @@ var PR_TOOLS=[
   {id:'voc', name:'VOC 智能打标', ready:true, fn:'openTagDemo',
    desc:'一条评论如何被打上多维标签？看它穿过「标签体系之墙」，每个维度专员各盖一枚标签。',
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 20 7.4 12 11.8 4 7.4Z"/><path d="M4 7.4 4 16.6 12 21 12 11.8"/><path d="M20 7.4 20 16.6 12 21"/></svg>'},
-  {id:'corpus', name:'用户语料分析', ready:false, desc:'批量语料如何汇成频率与机会点？',
+  {id:'corpus', name:'用户语料分析', ready:true, fn:'openCorpusDemo', desc:'批量语料如何汇成频率与机会点？→ 公园英语角：说中式英文的小人走进来，被专员们逐个加工。
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M5 20V11M12 20V5M19 20v-7"/><path d="M3.5 20h17"/></svg>'},
   {id:'score', name:'产品需求打分', ready:true, fn:'openScoreDemo', desc:'一条需求如何按维度逐个打分、汇成综合分？看它连续跳进 4 个维度沙坑。',
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>'},
@@ -4177,6 +4203,183 @@ function _actorSkel(opts){
     '<div class="sr-leg l"></div><div class="sr-leg r"></div>'+
     (opts.pick?'<div class="sr-pick">'+_PICK_SVG+'</div>':'')+'</div>';
   return '<div class="'+opts.cls+'" id="'+opts.id+'" style="'+(opts.style||'transform:translate(20px,140px)')+'">'+inner+'</div>';
+}
+
+// ═══ 语料分析 · 英语角动画 ═══
+var _ecTimers=[], _ecStep=0, _ecRunning=false;
+function stopCorpusDemo(){ _ecTimers.forEach(clearTimeout); _ecTimers=[]; _ecRunning=false; }
+
+/** 英语角专员配置：4 位语料处理专家 */
+var EC_EXPERTS=[
+  {name:'语气校正', color:'#00d4ff', label:'TONE',
+   do:function(s){ return s.replace(/^I think /i,'').replace(/, sir$/i,'') + ' — 语气自然多了。'; }},
+  {name:'本地化', color:'#a855f7', label:'LOCAL',
+   do:function(s){ return s.replace(/ Please/g,', could you please').replace(/very /g,'pretty ')+' — 更地道一些。'; }},
+  {name:'语法修正', color:'#ff6b9d', label:'GRAMMAR',
+   do:function(s){ return s.replace(/ don't has /g," doesn't have ").replace(/good good study/g,'study hard')+' — 语法对了。'; }},
+  {name:'场景适配', color:'#f5c542', label:'CONTEXT',
+   do:function(s){ return s.replace(/can you help me /g,'would you mind helping me ')+' — 现在很自然，像美国人说的话。'; }}
+];
+
+function ecExpertHTML(i,exp){
+  var lefts=[230,380,530,680];
+  return '<div class="ec-expert" id="ecE'+i+'" style="left:'+lefts[i]+'px;top:'+(90+120*(i%2))+'px">'+
+    '<div class="ec-e-badge" style="background:'+exp.color+'">'+escHtml(exp.name)+'</div>'+
+    '<div class="ec-e-head" style="border-color:'+exp.color+'"></div>'+
+    '<div class="ec-e-body" style="background:'+exp.color+'"></div>'+
+    '<div class="ec-e-label">'+escHtml(exp.label)+'</div></div>';
+}
+
+function openCorpusDemo(){
+  stopCorpusDemo();
+  setActiveNav('nav-pr');
+  $('#topbarTitle').textContent='原理动画 · 用户语料分析';
+  setView('PrDemo');
+
+  var intro='<b>看背后工作：</b>一条中式英文走进「公园英语角」，'+
+    '依次经过 4 位语料专员：<b>语气校正</b>调整用词态度 → <b>本地化</b>融入地道表达 → <b>语法修正</b>纠正结构 → <b>场景适配</b>匹配美国人说话习惯。'+
+    '走出英语角，就加工成了一句自然的本土化英文。';
+
+  var stage=
+    '<div class="pr-demo">'+
+      '<div class="prd-bar">'+
+        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<div><div class="prd-title">用户语料分析 · 英语角加工</div>'+
+          '<div class="prd-sub">规则引擎 · 零依赖 · 纯本地</div></div>'+
+      '</div>'+
+      '<p class="prd-intro">'+intro+'</p>'+
+      '<div class="pstage"><div class="pstage-inner">'+
+        '<div class="ec-wrap">'+
+          '<div class="ec-park"></div>'+
+          '<div class="ec-path"></div>'+
+          // 4 位英语角专员
+          EC_EXPERTS.map(function(e,i){ return ecExpertHTML(i,e); }).join('')+
+          // 输入标签
+          '<div class="ps-io ps-in" style="position:absolute;left:50px;top:140px">'+
+            '<div class="ps-io-h"><span class="dot"></span>中式英文输入</div>'+
+            '<div class="ps-review" id="ecInput" style="width:140px;font-size:11px">I think this product very good, sir.</div>'+
+          '</div>'+
+          // 输入方小人（初始在左边）
+          '<div class="ec-runner" id="ecRunner" style="left:50px;top:195px">'+
+            '<div class="ec-r-head" style="border-color:#00d4ff"></div>'+
+            '<div class="ec-r-body" style="background:#00d4ff"></div>'+
+            '<div class="ec-r-bubble" id="ecBubble"></div>'+
+          '</div>'+
+          // 输出面板（右侧）
+          '<div class="ec-output" id="ecOutput">'+
+            '<div class="ec-o-box">'+
+              '<div class="ec-o-label">🏆 本土化输出</div>'+
+              '<div class="ec-o-raw" id="ecRaw">I think this product very good, sir.</div>'+
+              '<div class="ec-o-text" id="ecFinal"></div>'+
+            '</div>'+
+          '</div>'+
+        '</div>'+
+      '</div></div>'+
+      '<div class="ec-ctrl">'+
+        '<button class="ec-btn" id="ecPlayBtn" onclick="playCorpusDemo()">▶ 播放加工过程</button>'+
+        '<button class="ec-btn" onclick="resetCorpusDemo()">🔄 重置</button>'+
+      '</div>'+
+    '</div>';
+
+  $('#viewPrDemo').innerHTML=stage;
+  _ecStep=0;
+  _ecRunning=false;
+}
+
+function resetCorpusDemo(){
+  stopCorpusDemo();
+  _ecStep=0;
+  _ecRunning=false;
+  var r=$('#ecRunner');
+  if(r){ r.style.left='50px'; r.style.top='195px'; r.classList.remove('show-bubble'); }
+  var b=$('#ecBubble');
+  if(b){ b.textContent=''; b.classList.remove('show'); }
+  var o=$('#ecOutput');
+  if(o) o.classList.remove('show');
+  var fi=$('#ecFinal');
+  if(fi) fi.textContent='';
+  [0,1,2,3].forEach(function(i){
+    var e=$('#ecE'+i);
+    if(e) e.classList.remove('active');
+  });
+  var btn=$('#ecPlayBtn');
+  if(btn) btn.disabled=false;
+}
+
+function playCorpusDemo(){
+  if(_ecRunning) return;
+  _ecRunning=true;
+  var btn=$('#ecPlayBtn');
+  if(btn) btn.disabled=true;
+
+  // 中文原文
+  var raw=$('#ecRaw');
+  if(raw) raw.textContent='I think this product very good, sir.';
+
+  // 4 个加工步骤的文案和位置
+  var steps=[
+    {targetX:240, targetY:185, bubble:'I think this product very good, sir. → 先去掉多余的敬语和口头禅', expertIdx:0},
+    {targetX:390, targetY:235, bubble:'This product very good... → 让表达更地道一些', expertIdx:1},
+    {targetX:540, targetY:185, bubble:'This product pretty good → 语法也要检查一下', expertIdx:2},
+    {targetX:690, targetY:235, bubble:'Would you mind... → 现在整句调整，让它像美国人说的话', expertIdx:3},
+  ];
+
+  var runner=$('#ecRunner'), bubble=$('#ecBubble');
+  var finalText='';
+  var currentSentence='I think this product very good, sir.';
+
+  function goStep(idx){
+    if(idx>=steps.length){
+      // 完成：小弹出到右侧→展示最终结果
+      if(runner) runner.style.transition='left 1s cubic-bezier(.4,0,.2,1),top 1s cubic-bezier(.4,0,.2,1)';
+      if(runner){ runner.style.left='870px'; runner.style.top='195px'; }
+      if(bubble){ bubble.textContent=''; bubble.classList.remove('show'); }
+      var o=$('#ecOutput');
+      if(o) o.classList.add('show');
+      var fi=$('#ecFinal');
+      if(fi) fi.textContent='Would you mind helping me study English? This product is pretty good, and I don\'t have any complaints.';
+      _ecRunning=false;
+      if(btn) btn.disabled=false;
+      return;
+    }
+    var s=steps[idx];
+    // 小人走向当前专员
+    if(runner){
+      runner.style.transition='left 1.2s cubic-bezier(.4,0,.2,1),top 1.2s cubic-bezier(.4,0,.2,1)';
+      runner.style.left=s.targetX+'px';
+      runner.style.top=s.targetY+'px';
+    }
+    // 专员高亮
+    var expert=$('#ecE'+s.expertIdx);
+    if(expert) expert.classList.add('active');
+    // 气泡显示加工信息
+    if(bubble){
+      bubble.textContent=s.bubble;
+      bubble.classList.add('show');
+    }
+    // 更新当前句子
+    currentSentence=EC_EXPERTS[s.expertIdx].do(currentSentence);
+    var raw=$('#ecRaw');
+    if(raw) raw.textContent=currentSentence;
+
+    _ecTimers.push(setTimeout(function(){
+      // 取消专员高亮
+      var exp=$('#ecE'+s.expertIdx);
+      if(exp) exp.classList.remove('active');
+      // 继续下一步
+      goStep(idx+1);
+    }, 2000));
+  }
+
+  // 第一步：清理旧状态后开始
+  [0,1,2,3].forEach(function(i){
+    var e=$('#ecE'+i);
+    if(e) e.classList.remove('active');
+  });
+  if(runner){ runner.style.transition='none'; runner.style.left='50px'; runner.style.top='195px'; }
+  if(bubble) bubble.classList.remove('show');
+
+  setTimeout(function(){ goStep(0); }, 400);
 }
 
 // ---- 新品开发 · 盲盒选方法 · 演示台（使用视角 / 原理视角）----
