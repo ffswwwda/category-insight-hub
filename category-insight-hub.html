@@ -637,6 +637,11 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .pano-sub{font-size:12.5px;color:var(--muted);margin-top:6px;max-width:600px;line-height:1.6}
 .pano-hint{font-size:11.5px;color:#0ea5e9;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.25);padding:6px 12px;border-radius:10px;font-weight:700;white-space:nowrap}
 
+.pano-tools{display:flex;gap:8px;margin:10px 0 0;flex-wrap:wrap}
+.pano-tab{padding:7px 16px;font-size:12.5px;font-weight:700;border:1px solid var(--border);border-radius:10px;background:var(--panel-solid);color:var(--muted);cursor:pointer;transition:all .2s}
+.pano-tab:hover{border-color:#0ea5e9;color:#0ea5e9}
+.pano-tab.on{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border-color:transparent;box-shadow:0 6px 18px rgba(14,165,233,.25)}
+
 /* 3D 舞台容器 */
 .pano-stage{position:relative;width:940px;max-width:100%;margin:0 auto;border:1px solid var(--border);border-radius:20px;
   background:#f0f2f5;overflow:hidden;height:580px;
@@ -3598,24 +3603,104 @@ function openPano(){
       '<div class="pano-head"><div>'+
         '<div class="pano-title">🏢 AI 办公全景</div>'+
         '<div class="pano-sub">整站像一间会自动运转的 3D 办公室：7 位同事按 <b>100 倍时间流速</b>生活——工作、串门、摸鱼、接水、上厕所、聊天，傍晚陆续下班。点任意小人看它此刻在做什么。</div>'+
-      '</div><div class="pano-hint">👆 点击任意小人 →</div></div>'+
-      '<div class="pano-stage" id="panoStage">'+
-        '<div class="pano-world">'+room+zones+stations+agentHTML+'</div>'+
-        '<div class="pano-night" id="panoNight"><div class="moon">🌙</div></div>'+
-        '<div class="pano-hud" id="panoHud">'+
-          '<div class="pano-clock-time" id="panoTime">09:00</div>'+
-          '<div class="pano-clock-phase day" id="panoPhase">☀️ 白天</div>'+
-          '<div class="pano-hud-sep"></div>'+
-          '<div class="pano-speed-group">'+
-            '<button class="pano-speed-btn" onclick="setSimSpeed(1,this)">1×</button>'+
-            '<button class="pano-speed-btn" onclick="setSimSpeed(20,this)">20×</button>'+
-            '<button class="pano-speed-btn active" onclick="setSimSpeed(100,this)">100×</button>'+
+      '</div><div class="pano-tools">'+
+        '<button class="pano-tab on" id="panoTabInline" onclick="panoSwitch(\'inline\')">内联版（DOM）</button>'+
+        '<button class="pano-tab" id="panoTab3d" onclick="panoSwitch(\'3d\')">🆕 3D 引擎版（PixiJS）</button>'+
+      '</div></div>'+
+      '<div id="panoInline">'+panoInlineContent()+'</div>'+
+      '<div id="pano3dFrame" style="display:none;position:relative;width:940px;max-width:100%;margin:0 auto">'+
+        '<iframe id="pano3dIframe" src="" style="width:100%;height:640px;border:1px solid var(--border);border-radius:20px;background:#0a0a1a" onload="panoIframeLoaded()" onerror="panoIframeError()"></iframe>'+
+        '<div id="pano3dHint" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:rgba(20,22,36,.92);border-radius:20px;color:var(--ink);text-align:center;padding:20px">'+
+          '<div style="font-size:14px;font-weight:700">⏳ 3D 引擎版加载中…</div>'+
+          '<div style="font-size:12px;color:var(--muted);line-height:1.6;max-width:520px">'+
+            '首次打开请先在另一终端启动：<br>'+
+            '<code style="background:rgba(0,212,255,.1);padding:2px 8px;border-radius:4px;color:#0ea5e9">cd ai-office-3d && npm run dev</code><br>'+
+            '或部署后修改 <code style="background:rgba(0,212,255,.1);padding:2px 8px;border-radius:4px;color:#0ea5e9">PANO_3D_URL</code> 常量指向正式地址。'+
           '</div>'+
         '</div>'+
       '</div>'+
     '</div>';
 
+  panoSwitch('inline');
   startOfficeSim();
+}
+
+var PANO_3D_URL = 'http://localhost:5173/';
+function panoInlineContent(){
+  var room = '<div class="pano-floor"></div><div class="pano-wall-back"></div><div class="pano-wall-left"></div>'+
+    '<div class="pano-cabinet" style="left:200px;top:-250px"><div class="pano-cab-unit"></div><div class="pano-cab-unit"></div><div class="pano-cab-unit"></div><div class="pano-cab-unit"></div><div class="pano-cab-unit"></div><div class="pano-cab-unit"></div></div>'+
+    '<div class="pano-plant" style="left:-20px;top:180px"><div class="pano-pot"></div>'+panoPlant()+'</div>'+
+    '<div class="pano-plant" style="left:780px;top:180px"><div class="pano-pot"></div>'+panoPlant()+'</div>';
+  var zones = zoneMarker('restroom') + zoneMarker('pantry') + zoneMarker('door');
+  var stations = PANORAMA.map(function(p){
+    var zi = Math.round(p.y/3) + 8;
+    return '<div class="pano-station" style="left:'+p.x+'px;top:'+p.y+'px;z-index:'+zi+
+      '" onclick="openPanoCard(\''+p.key+'\')">'+
+      '<div class="pano-desk-wrap">'+
+        '<div class="pano-desk-items">'+
+          '<div class="pano-desk-item mt"></div><div class="pano-desk-item pk"></div><div class="pano-desk-item bk"></div>'+
+        '</div>'+
+        '<div class="pano-desk-top"></div><div class="pano-desk-front"></div><div class="pano-chair"></div>'+
+      '</div>'+
+      panoPerson(p.name, p.sub) +
+      '<div class="pano-label"><b>'+escHtml(p.name)+'</b><span>'+escHtml(p.sub)+'</span></div>'+
+    '</div>';
+  }).join('');
+  var agentHTML = AGENTS.map(function(a){
+    return '<div class="pano-agent" id="sim-'+a.id+'" style="left:'+a.hx+'px;top:'+a.hy+'px" onclick="openPanoCard(\''+a.id+'\')">'+
+      '<div class="pano-status">💻</div>'+
+      '<div class="pano-person">'+panoBody()+'</div>'+
+      '<div class="pano-tag"><span class="tt-name">'+escHtml(a.name)+'</span><span class="tt-role">'+escHtml(a.role)+'</span></div>'+
+    '</div>';
+  }).join('');
+  return '<div class="pano-stage" id="panoStage">'+
+    '<div class="pano-world">'+room+zones+stations+agentHTML+'</div>'+
+    '<div class="pano-night" id="panoNight"><div class="moon">🌙</div></div>'+
+    '<div class="pano-hud" id="panoHud">'+
+      '<div class="pano-clock-time" id="panoTime">09:00</div>'+
+      '<div class="pano-clock-phase day" id="panoPhase">☀️ 白天</div>'+
+      '<div class="pano-hud-sep"></div>'+
+      '<div class="pano-speed-group">'+
+        '<button class="pano-speed-btn" onclick="setSimSpeed(1,this)">1×</button>'+
+        '<button class="pano-speed-btn" onclick="setSimSpeed(20,this)">20×</button>'+
+        '<button class="pano-speed-btn active" onclick="setSimSpeed(100,this)">100×</button>'+
+      '</div>'+
+    '</div></div>';
+}
+
+function panoSwitch(mode){
+  var ti=document.getElementById('panoTabInline');
+  var t3=document.getElementById('panoTab3d');
+  var inline=document.getElementById('panoInline');
+  var frame=document.getElementById('pano3dFrame');
+  if(!ti||!t3) return;
+  if(mode==='3d'){
+    ti.classList.remove('on'); t3.classList.add('on');
+    if(inline) inline.style.display='none';
+    if(frame){
+      frame.style.display='';
+      var f=document.getElementById('pano3dIframe');
+      if(f && !f.src) f.src=PANO_3D_URL;
+    }
+    if(officeSim) officeSim.stop();
+  } else {
+    t3.classList.remove('on'); ti.classList.add('on');
+    if(frame) frame.style.display='none';
+    if(inline) inline.style.display='';
+    if(officeSim) officeSim.start();
+  }
+}
+
+function panoIframeLoaded(){
+  var h=document.getElementById('pano3dHint');
+  if(h) h.style.display='none';
+}
+function panoIframeError(){
+  var h=document.getElementById('pano3dHint');
+  if(h){
+    h.innerHTML='<div style="font-size:14px;font-weight:700;color:#fbbf24">⚠️ 3D 引擎版加载失败</div>'+
+      '<div style="font-size:12px;color:var(--muted);line-height:1.6;max-width:520px">无法访问 <code style="color:#0ea5e9">'+PANO_3D_URL+'</code><br>请确认：1) ai-office-3d 项目的 dev 服务器已启动 2) URL 配置正确</div>';
+  }
 }
 
 /* ═══ 办公室模拟引擎 ═══ */
