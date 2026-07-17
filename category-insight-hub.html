@@ -5414,14 +5414,17 @@ function init(){
   loadCanvasState();
   initFloatBar();
 }
-// ── 浮动预测工作台入口：全局底部固定，滚动到概念页CTA区时自动隐藏 ──
+// ── 浮动预测工作台入口：仅在「数字世界虚拟预测」页面底部固定显示，滚动到CTA区时自动隐藏 ──
 var _floatBarTimer=null;
 function initFloatBar(){
   var bar=document.getElementById('globFloatBar');
   if(!bar) return;
+  bar.classList.add('hidden'); // 初始隐藏，仅在 Lab 页面显示
   var board=document.getElementById('board');
-  // 用节流防抖
   function check(){
+    // 仅当 Lab 视图激活才考虑显示
+    var labView=document.getElementById('viewLab');
+    if(!labView || !labView.classList.contains('active')){ bar.classList.add('hidden'); return; }
     var cta=document.querySelector('.lab-cta');
     if(!cta){ bar.classList.remove('hidden'); return; }
     var r=cta.getBoundingClientRect();
@@ -5434,6 +5437,10 @@ function initFloatBar(){
   }
   board.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(check,60); }, {passive:true});
   window.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(check,60); }, {passive:true});
+  // 视图切换时重新检查（通过 MutationObserver 监听 viewLab 的 class 变化）
+  if(window.MutationObserver){
+    new MutationObserver(check).observe(document.getElementById('viewLab'), {attributes:true, attributeFilter:['class']});
+  }
   check(); // 初始检查
 }
 init();
