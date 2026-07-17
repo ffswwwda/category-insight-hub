@@ -979,6 +979,7 @@ body.dark .lab-path .pt{color:#c4b5fd}
 .lfm-overlay.show{display:flex}
 .lfm-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);width:460px;max-width:94vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.25);animation:fadeInUp .25s both;overflow-y:auto;overflow-x:hidden;position:relative}
 .lfm-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rad-grad);z-index:1}
+.lfm-bar{height:3px;background:var(--rad-grad);border-radius:var(--radius) var(--radius) 0 0;flex-shrink:0}
 .lfm-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
 .lfm-title{font-size:15px;font-weight:800;color:var(--ink);flex:1}
 .lfm-actions{display:flex;gap:8px}
@@ -4060,7 +4061,7 @@ function ensureLfModal(){
   if(document.getElementById('lfModal')) return;
   var ov=document.createElement('div');
   ov.id='lfModal'; ov.className='lfm-overlay';
-  ov.innerHTML='<div class="lfm-box"><div class="lfm-head">'+
+  ov.innerHTML='<div class="lfm-box"><div class="lfm-bar"></div><div class="lfm-head">'+
     '<span class="lfm-title" id="lfmTitle"></span><div class="lfm-actions">'+
     '<button class="lfm-btn" id="lfmExportBtn">导出图片</button>'+
     '<button class="lfm-btn" id="lfmCopyBtn">复制文本</button>'+
@@ -4100,18 +4101,27 @@ function copyLfCard(){
   else prompt('复制失败，手动复制：',t);
 }
 function exportLfCard(){
-  var body=document.getElementById('lfmBody'); if(!body) return;
-  var el=body.querySelector('.lfm-detail')||body;
+  var box=document.querySelector('.lfm-box'); if(!box) return;
   if(typeof window.html2canvas!=='function'){ if(window.toast) toast('导出库未加载'); return; }
   if(window.toast) toast('正在生成卡片图片…');
-  var bg=getComputedStyle(document.querySelector('.lfm-box')||document.body).backgroundColor||'#F7F5F3';
-  window.html2canvas(el,{backgroundColor:bg, scale:2, useCORS:true, logging:false, windowWidth:el.scrollWidth}).then(function(canvas){
+  var head=box.querySelector('.lfm-head');
+  var origHeadDisplay = head ? head.style.display : null;
+  // 临时隐藏工具栏（导出图片不需要按钮）
+  if(head) head.style.display='none';
+  var bg=getComputedStyle(box).backgroundColor||'#F7F5F3';
+  window.html2canvas(box,{backgroundColor:bg, scale:2, useCORS:true, logging:false,
+    windowWidth:box.scrollWidth, windowHeight:box.scrollHeight}).then(function(canvas){
+    // 恢复工具栏
+    if(head) head.style.display = origHeadDisplay||'';
     canvas.toBlob(function(blob){
       var url=URL.createObjectURL(blob); var a=document.createElement('a');
       a.href=url; a.download='insight-card.png'; a.click(); URL.revokeObjectURL(url);
-      if(window.toast) toast('图片已导出（与卡片一致）');
+      if(window.toast) toast('图片已导出');
     },'image/png');
-  }).catch(function(e){ if(window.toast) toast('导出失败：'+(e&&e.message||e)); });
+  }).catch(function(e){
+    if(head) head.style.display = origHeadDisplay||'';
+    if(window.toast) toast('导出失败：'+(e&&e.message||e));
+  });
 }
 function renderLfPortraitDetail(u){
   var arch=LF_ARCH[u.archetype]||{label:'--',desc:''};
@@ -4169,7 +4179,7 @@ function renderLfPortraitDetail(u){
           '<div style="font-size:10px;color:var(--muted);margin-top:3px">VOC / 访谈 / 社媒 · 2025-2026</div>'+
         '</div>'+
         '<div class="lfm-deco" style="padding:10px 14px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-width:80px">'+
-          '<div class="lfm-dlabel" style="justify-content:center">频率</div>'+
+          '<div class="lfm-dlabel" style="justify-content:center">提及频率</div>'+
           '<div style="font-size:20px;font-weight:900;color:var(--ink);line-height:1;margin:2px 0">'+freq+'</div>'+
         '</div>'+
       '</div>'+
