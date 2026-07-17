@@ -514,13 +514,34 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .score-total-box{width:104px;height:66px;margin:0 auto;border-radius:14px;border:1.5px solid var(--accent);background:rgba(168,85,247,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(168,85,247,.18)}
 .score-total-box .t-l{font-size:10px;font-weight:700;color:var(--accent)}
 .score-total-box .t-v{font-size:26px;font-weight:800;color:var(--ink);line-height:1;margin-top:2px}
-.score-runner{position:absolute;left:0;bottom:58px;width:40px;height:64px;z-index:7;transition:transform .65s cubic-bezier(.4,0,.2,1);will-change:transform}
+.score-runner{position:absolute;left:0;bottom:58px;width:52px;height:76px;z-index:7;transition:transform .65s cubic-bezier(.4,0,.2,1);will-change:transform}
 .score-runner .sr-inner{position:absolute;inset:0}
-.score-runner .sr-body{position:absolute;bottom:0;left:2px;width:36px;height:46px;border-radius:16px 16px 11px 11px;background:linear-gradient(135deg,#00d4ff 0%,#a855f7 55%,#ff6b9d 100%);border:2px solid #fff;box-shadow:0 6px 14px rgba(0,0,0,.16)}
-.score-runner .sr-head{position:absolute;top:9px;left:0;right:0;display:flex;justify-content:center;gap:6px}
-.score-runner .sr-eye{width:5px;height:5px;border-radius:50%;background:#fff}
-.score-runner .sr-leg{position:absolute;bottom:-5px;width:5px;height:7px;border-radius:3px;background:#3b3b4d}
-.score-runner .sr-leg.l{left:8px}.score-runner .sr-leg.r{right:8px}
+.score-runner .sr-body{position:absolute;bottom:0;left:3px;width:46px;height:50px;border-radius:18px 18px 14px 14px;background:linear-gradient(135deg,#00d4ff 0%,#a855f7 55%,#ff6b9d 100%);border:2.5px solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.score-runner .sr-face{position:absolute;top:14px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:5px}
+.score-runner .sr-eyes{display:flex;justify-content:center;gap:8px}
+.score-runner .sr-eye{width:6px;height:6px;border-radius:50%;background:#fff}
+.score-runner .sr-mouth{width:12px;height:6px;border:2px solid #fff;border-top:none;border-radius:0 0 10px 10px;margin-top:1px}
+.score-runner .sr-arm{position:absolute;width:5px;height:22px;border-radius:3px;background:linear-gradient(180deg,#00d4ff,#a855f7);border:1.5px solid #fff;top:26px;z-index:-1}
+.score-runner .sr-arm.l{left:-4px;transform:rotate(18deg);transform-origin:top center}
+.score-runner .sr-arm.r{right:-4px;transform:rotate(-18deg);transform-origin:top center}
+.score-runner .sr-leg{position:absolute;bottom:-6px;width:7px;height:11px;border-radius:4px;background:#3b3b4d}
+.score-runner .sr-leg.l{left:10px}.score-runner .sr-leg.r{right:10px}
+/* 跑步动画 */
+.score-runner.run .sr-leg.l{animation:scoreRunL .28s linear infinite}
+.score-runner.run .sr-leg.r{animation:scoreRunR .28s linear infinite}
+.score-runner.run .sr-arm.l{animation:scoreArmL .28s linear infinite}
+.score-runner.run .sr-arm.r{animation:scoreArmR .28s linear infinite}
+/* 跳跃姿态 */
+.score-runner.jump .sr-arm.l{transform:rotate(-60deg)}
+.score-runner.jump .sr-arm.r{transform:rotate(60deg)}
+.score-runner.jump .sr-leg.l{transform:rotate(-30deg)}
+.score-runner.jump .sr-leg.r{transform:rotate(30deg)}
+@keyframes scoreRunL{0%,100%{transform:rotate(22deg)}50%{transform:rotate(-22deg)}}
+@keyframes scoreRunR{0%,100%{transform:rotate(-22deg)}50%{transform:rotate(22deg)}}
+@keyframes scoreArmL{0%,100%{transform:rotate(18deg)}50%{transform:rotate(-40deg)}}
+@keyframes scoreArmR{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(40deg)}}
+/* 运动员头顶的需求标签 */
+.sr-label{position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateX(2px);margin-bottom:8px;font-size:10.5px;font-weight:800;color:var(--accent);background:rgba(168,85,247,.12);border:1.5px solid var(--accent);padding:3px 10px;border-radius:8px;white-space:nowrap;box-shadow:0 4px 12px rgba(168,85,247,.15)}
 /* 使用视角 · 评分结果行 */
 .sc-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
 .sc-row:last-child{border-bottom:none}
@@ -3069,7 +3090,7 @@ function vocSwitchCat(cat, btn){
 // 核心理念：外部看到「输入→生成→结果」，内部看到「一群分工小人协作」
 // ============================================================
 var PR_TOOLS=[
-  {id:'voc', name:'VOC 智能打标', ready:true,
+  {id:'voc', name:'VOC 智能打标', ready:true, fn:'openTagDemo',
    desc:'一条评论如何被打上多维标签？看它穿过「标签体系之墙」，每个维度专员各盖一枚标签。',
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 20 7.4 12 11.8 4 7.4Z"/><path d="M4 7.4 4 16.6 12 21 12 11.8"/><path d="M20 7.4 20 16.6 12 21"/></svg>'},
   {id:'corpus', name:'用户语料分析', ready:false, desc:'批量语料如何汇成频率与机会点？',
@@ -3428,11 +3449,16 @@ function stopScoreDemo(){ _scoreTimers.forEach(clearTimeout); _scoreTimers=[]; _
 function _setScoreStatus(txt){ var st=$('#scoreStatus'); if(st) st.innerHTML='<span class="sd"></span>'+txt; }
 var _scoreReq=SCORE_EXAMPLES[0];
 function jumpRunner(){
-  var inner=document.querySelector('#scoreRunner .sr-inner');
+  var r=$('#scoreRunner'); if(!r) return;
+  // 跳跃姿态：收臂抬腿
+  r.classList.add('jump'); r.classList.remove('run');
+  var inner=r.querySelector('.sr-inner');
   if(inner && inner.animate){
     try{ inner.animate([{transform:'translateY(0)'},{transform:'translateY(-92px)',offset:.45},{transform:'translateY(0)'}],
       {duration:650, easing:'cubic-bezier(.3,.7,.3,1)'}); }catch(e){}
   }
+  // 跳完恢复跑姿
+  setTimeout(function(){ if(r){ r.classList.remove('jump'); r.classList.add('run'); } }, 660);
 }
 function openScoreDemo(){
   setActiveNav('nav-pr');
@@ -3466,7 +3492,10 @@ function openScoreDemo(){
           pits+
           '<div class="score-total" id="scoreTotal" style="left:940px"><div class="score-total-box"><div class="t-l">总分</div><div class="t-v" id="scoreTotalVal">--</div></div></div>'+
           '<div class="score-runner" id="scoreRunner" style="transform:translateX(40px)"><div class="sr-inner">'+
-            '<div class="sr-body"></div><div class="sr-head"><span class="sr-eye"></span><span class="sr-eye"></span></div>'+
+            '<span class="sr-label" id="scoreRunnerLabel">'+escHtml(_scoreReq)+'</span>'+
+            '<div class="sr-body"></div>'+
+            '<div class="sr-face"><div class="sr-eyes"><span class="sr-eye"></span><span class="sr-eye"></span></div><div class="sr-mouth"></div></div>'+
+            '<div class="sr-arm l"></div><div class="sr-arm r"></div>'+
             '<div class="sr-leg l"></div><div class="sr-leg r"></div></div></div>'+
         '</div></div>'+
         '<div class="pstage-ctrl">'+
@@ -3524,10 +3553,11 @@ function runScoreGen(){
     '<div class="sc-wrap">'+rows+'</div>'+
     '<div class="sc-total-row"><span>综合评分</span><b>'+res.total+'</b></div>';
   var sl=$('#scoreStartLbl'); if(sl) sl.textContent=txt;
+  var rl=$('#scoreRunnerLabel'); if(rl) rl.textContent=txt;
 }
 function resetScoreStage(){
   stopScoreDemo();
-  var r=$('#scoreRunner'); if(r) r.style.transform='translateX(40px)';
+  var r=$('#scoreRunner'); if(r){ r.style.transform='translateX(40px)'; r.classList.remove('run','jump'); }
   for(var i=0;i<4;i++){
     var bar=$('#scoreBar'+i); if(bar){ bar.style.width='0'; bar.style.background=''; }
     var sc=$('#scorePitScore'+i); if(sc){ sc.textContent='?'; sc.classList.remove('show'); }
@@ -3545,6 +3575,8 @@ function playScoreDemo(){
   var pb=$('#scorePlayBtn'); if(pb) pb.textContent='● 播放中…';
   var res=scoreProduct(_scoreReq);
   var pitX=[230,410,590,770], totalX=940;
+  // 起跑：加上跑步姿态
+  var r=$('#scoreRunner'); if(r) r.classList.add('run');
   _setScoreStatus('需求入场：'+_scoreReq);
   pitX.forEach(function(x,i){
     var t0=700 + i*1100;
@@ -3558,7 +3590,7 @@ function playScoreDemo(){
     }, t0+680);
   });
   var endT=700 + pitX.length*1100;
-  _spt(function(){ var r=$('#scoreRunner'); if(r){ r.style.transform='translateX('+(totalX-20)+'px)'; jumpRunner(); } }, endT);
+  _spt(function(){ var r=$('#scoreRunner'); if(r){ r.style.transform='translateX('+(totalX-20)+'px)'; r.classList.remove('run'); jumpRunner(); } }, endT);
   _spt(function(){
     var tot=$('#scoreTotal'); if(tot) tot.classList.add('on');
     var tv=$('#scoreTotalVal'); if(tv) tv.textContent=res.total;
