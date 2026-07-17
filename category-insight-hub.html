@@ -426,9 +426,9 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .use-hint b{color:var(--accent)}
 
 /* === 原理视角（头脑特工舞台）=== */
-.pstage{position:relative;border:1px solid var(--border);border-radius:18px;overflow-x:auto;overflow-y:hidden;
+.pstage{position:relative;border:1px solid var(--border);border-radius:18px;overflow-x:auto;overflow-y:visible;
   background:radial-gradient(120% 120% at 50% 0%,rgba(168,85,247,.10),transparent 60%),var(--panel-solid);box-shadow:var(--shadow-sm)}
-.pstage-inner{position:relative;width:1060px;height:460px;margin:0 auto}
+.pstage-inner{position:relative;width:1060px;height:460px;margin:0 auto;overflow:hidden}
 .ps-floor{position:absolute;left:0;right:0;bottom:70px;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
 /* 输入/输出卡 */
 .ps-io{position:absolute;top:56px;width:174px;border:1px solid var(--border);border-radius:13px;padding:12px 13px;background:var(--glass-bg);backdrop-filter:var(--glass-blur)}
