@@ -542,6 +542,33 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 @keyframes scoreArmR{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(40deg)}}
 /* 运动员头顶的需求标签 */
 .sr-label{position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateX(2px);margin-bottom:8px;font-size:10.5px;font-weight:800;color:var(--accent);background:rgba(168,85,247,.12);border:1.5px solid var(--accent);padding:3px 10px;border-radius:8px;white-space:nowrap;box-shadow:0 4px 12px rgba(168,85,247,.15)}
+/* 通用小人角色：盲盒 / 抓金矿 复用（与打分运动员同源，复用 scoreRun/scoreArm 关键帧） */
+.dev-actor, .mine-actor{position:absolute;left:0;top:0;width:52px;height:76px;z-index:8;transition:transform .9s cubic-bezier(.4,0,.2,1);will-change:transform}
+.dev-actor .sr-inner, .mine-actor .sr-inner{position:absolute;inset:0}
+.dev-actor .sr-body, .mine-actor .sr-body{position:absolute;bottom:0;left:3px;width:46px;height:50px;border-radius:18px 18px 14px 14px;background:linear-gradient(135deg,#00d4ff 0%,#a855f7 55%,#ff6b9d 100%);border:2.5px solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.dev-actor .sr-face, .mine-actor .sr-face{position:absolute;top:14px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:5px}
+.dev-actor .sr-eyes, .mine-actor .sr-eyes{display:flex;justify-content:center;gap:8px}
+.dev-actor .sr-eye, .mine-actor .sr-eye{width:6px;height:6px;border-radius:50%;background:#fff}
+.dev-actor .sr-mouth, .mine-actor .sr-mouth{width:12px;height:6px;border:2px solid #fff;border-top:none;border-radius:0 0 10px 10px;margin-top:1px}
+.dev-actor .sr-arm, .mine-actor .sr-arm{position:absolute;width:5px;height:22px;border-radius:3px;background:linear-gradient(180deg,#00d4ff,#a855f7);border:1.5px solid #fff;top:26px;z-index:-1}
+.dev-actor .sr-arm.l, .mine-actor .sr-arm.l{left:-4px;transform:rotate(18deg);transform-origin:top center}
+.dev-actor .sr-arm.r, .mine-actor .sr-arm.r{right:-4px;transform:rotate(-18deg);transform-origin:top center}
+.dev-actor .sr-leg, .mine-actor .sr-leg{position:absolute;bottom:-6px;width:7px;height:11px;border-radius:4px;background:#3b3b4d}
+.dev-actor .sr-leg.l, .mine-actor .sr-leg.l{left:10px}
+.dev-actor .sr-leg.r, .mine-actor .sr-leg.r{right:10px}
+/* 跑步 */
+.dev-actor.run .sr-leg.l, .mine-actor.run .sr-leg.l{animation:scoreRunL .28s linear infinite}
+.dev-actor.run .sr-leg.r, .mine-actor.run .sr-leg.r{animation:scoreRunR .28s linear infinite}
+.dev-actor.run .sr-arm.l, .mine-actor.run .sr-arm.l{animation:scoreArmL .28s linear infinite}
+.dev-actor.run .sr-arm.r, .mine-actor.run .sr-arm.r{animation:scoreArmR .28s linear infinite}
+/* 开挖姿态（收臂下蹲） */
+.dev-actor.dig .sr-arm.l, .mine-actor.dig .sr-arm.l{transform:rotate(-155deg)}
+.dev-actor.dig .sr-arm.r, .mine-actor.dig .sr-arm.r{transform:rotate(155deg)}
+.dev-actor.dig .sr-leg.l, .mine-actor.dig .sr-leg.l{transform:rotate(12deg)}
+.dev-actor.dig .sr-leg.r, .mine-actor.dig .sr-leg.r{transform:rotate(-12deg)}
+/* 矿工手里的镐 */
+.mine-actor .sr-pick{position:absolute;top:18px;right:-22px;width:22px;height:22px;z-index:9;transform:rotate(0);transition:transform .25s}
+.mine-actor.dig .sr-pick{transform:rotate(-60deg)}
 /* 使用视角 · 评分结果行 */
 .sc-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
 .sc-row:last-child{border-bottom:none}
@@ -3599,6 +3626,19 @@ function playScoreDemo(){
   }, endT+700);
 }
 
+// ---- 通用小人骨架（盲盒 / 抓金矿 复用）----
+var _PICK_SVG='<svg viewBox="0 0 22 22" width="22" height="22"><path d="M3 19 L19 3" stroke="#9a6a3a" stroke-width="2.4" stroke-linecap="round"/><path d="M14 4 q4 0 5 4" stroke="#8b5cf6" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>';
+function _actorSkel(opts){
+  opts=opts||{};
+  var inner='<div class="sr-inner">'+
+    '<div class="sr-body"></div>'+
+    '<div class="sr-face"><div class="sr-eyes"><span class="sr-eye"></span><span class="sr-eye"></span></div><div class="sr-mouth"></div></div>'+
+    '<div class="sr-arm l"></div><div class="sr-arm r"></div>'+
+    '<div class="sr-leg l"></div><div class="sr-leg r"></div>'+
+    (opts.pick?'<div class="sr-pick">'+_PICK_SVG+'</div>':'')+'</div>';
+  return '<div class="'+opts.cls+'" id="'+opts.id+'" style="'+(opts.style||'transform:translate(20px,140px)')+'">'+inner+'</div>';
+}
+
 // ---- 新品开发 · 盲盒选方法 · 演示台（使用视角 / 原理视角）----
 var _devReq=DEV_EXAMPLES[0], _devPlaying=false, _devTimers=[];
 function stopDevDemo(){ _devTimers.forEach(clearTimeout); _devTimers=[]; _devPlaying=false; }
@@ -3629,6 +3669,7 @@ function openDevDemo(){
           '<div class="dev-boxes">'+boxes+'</div>'+
           '<div class="dev-method" id="devMethod"><div class="dm-fam" id="devMethFam"></div><div class="dm-name" id="devMethName"></div><div class="dm-cap" id="devMethCap"></div></div>'+
           '<div class="dev-board" id="devBoard"></div>'+
+          _actorSkel({cls:'dev-actor', id:'devActor', style:'transform:translate(40px,150px)'}),
         '</div></div></div>'+
         '<div class="pstage-ctrl">'+
           '<button class="pstage-btn" id="devPlayBtn" onclick="playDevDemo()">▶ 抽盲盒</button>'+
@@ -3695,6 +3736,7 @@ function resetDevStage(){
   var fam=$('#devMethFam'),mn=$('#devMethName'),mc=$('#devMethCap');
   if(fam)fam.textContent=''; if(mn)mn.textContent=''; if(mc)mc.textContent='';
   var bd=$('#devBoard'); if(bd) bd.innerHTML='';
+  var a=$('#devActor'); if(a){ a.className='dev-actor'; a.style.transform='translate(40px,150px)'; }
   var st=$('#devStatus'); if(st) st.innerHTML='<span class="sd"></span>就绪';
   var pb=$('#devPlayBtn'); if(pb) pb.textContent='▶ 抽盲盒';
 }
@@ -3708,18 +3750,32 @@ function playDevDemo(){
   var pickIdx=_hash(_devReq)%5;
   var fam=$('#devFam'+pickIdx), nm=$('#devName'+pickIdx);
   if(fam) fam.textContent=res.method.family; if(nm) nm.textContent=res.method.name;
-  _setDevStatus('投入需求：'+_devReq);
+  var a=$('#devActor');
+  // 盒子 i 中心坐标（舞台内）：left=306+i*112, 顶=95
+  var boxX=306 + pickIdx*112 - 26, boxY=95 - 38;
+  var methX=530 - 26, methY=196 - 76 - 6;
+  _setDevStatus('需求入场：'+_devReq);
+  // 1) 小人走向选中的盲盒
+  _spt(function(){ if(a){ a.classList.add('run'); a.style.transform='translate('+boxX+'px,'+boxY+'px)'; } }, 300, _devTimers);
+  // 2) 到达 → 下蹲开盒
+  _spt(function(){ if(a){ a.classList.remove('run'); a.classList.add('dig'); } _setDevStatus('走到盲盒旁，伸手打开…'); }, 1250, _devTimers);
   _spt(function(){
     var b=$('#devBox'+pickIdx); if(b) b.classList.add('open');
+    if(a) a.classList.remove('dig');
     _setDevStatus('盲盒翻开 → '+res.method.family+' · '+res.method.name);
-  }, 700, _devTimers);
+  }, 1650, _devTimers);
+  // 3) 方法面板亮起
   _spt(function(){
     var m=$('#devMethod'); if(m) m.classList.add('on');
     var fam=$('#devMethFam'),mn=$('#devMethName'),mc=$('#devMethCap');
     if(fam)fam.textContent=res.method.family;
     if(mn)mn.textContent=res.method.name;
     if(mc)mc.textContent='这一枚方法，将长出 3 条产品开发创意';
-  }, 1400, _devTimers);
+  }, 2050, _devTimers);
+  // 4) 小人走向方法面板
+  _spt(function(){ if(a){ a.classList.add('run'); a.style.transform='translate('+methX+'px,'+methY+'px)'; } _setDevStatus('带着方法，走向创意板…'); }, 2400, _devTimers);
+  _spt(function(){ if(a) a.classList.remove('run'); }, 3250, _devTimers);
+  // 5) 逐条长出创意
   var board=$('#devBoard');
   res.ideas.forEach(function(t,i){
     _spt(function(){
@@ -3730,12 +3786,12 @@ function playDevDemo(){
       board.appendChild(card);
       requestAnimationFrame(function(){ card.classList.add('in'); });
       _setDevStatus('长出创意 '+(i+1)+'/3');
-    }, 2000 + i*650, _devTimers);
+    }, 3400 + i*650, _devTimers);
   });
   _spt(function(){
     _setDevStatus('完成 · 抽到「'+res.method.name+'」→ 3 条开发创意');
     _devPlaying=false; if(pb) pb.textContent='▶ 再抽一次';
-  }, 2000 + res.ideas.length*650 + 400, _devTimers);
+  }, 3400 + res.ideas.length*650 + 400, _devTimers);
 }
 
 // ---- 新品创意图 · 抓金矿 · 演示台（使用视角 / 原理视角）----
@@ -3756,7 +3812,7 @@ function openIdeaImgDemo(){
   var slotsHtml=CREATIVE_DIMS.map(function(d,i){
     return '<div class="mine-slot" id="mineSlot'+i+'">'+d.key+'</div>';
   }).join('');
-  var claw='<div class="mine-claw" id="mineClaw"><svg viewBox="0 0 52 52" width="52" height="52"><path d="M26 4v16" stroke="#5F5E5A" stroke-width="2.5" fill="none"/><path d="M26 20c-11 0-16 9-16 9M26 20c11 0 16 9 16 9" stroke="#5F5E5A" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="26" cy="6" r="3" fill="#5F5E5A"/></svg></div>';
+  var claw='';
   $('#viewPrDemo').innerHTML=
     '<div class="pr-demo">'+
       '<div class="prd-bar">'+
@@ -3768,7 +3824,7 @@ function openIdeaImgDemo(){
           '<button class="prd-tg on" id="tgMineViz" onclick="toggleIdeaImgMode(\'viz\')">看背后工作</button>'+
         '</div>'+
       '</div>'+
-      '<p class="prd-intro" id="mineIntro"><b>看背后工作：</b>把一件产品放进矿场，<b>矿爪下潜抓取六维创意金矿</b>——外观、功能、场景、情感、技术、叙事。每一块金矿飞入右侧图片框，<b>拼成一张有创意的产品图</b>。维度越全，图越有创意。</p>'+
+      '<p class="prd-intro" id="mineIntro"><b>看背后工作：</b>把一件产品放进矿场，<b>小矿工走到矿脉前，挥镐挖出六维创意金矿</b>——外观、功能、场景、情感、技术、叙事。每一块金矿飞入右侧图片框，<b>拼成一张有创意的产品图</b>。维度越全，图越有创意。</p>'+
       '<div class="prd-pane on" id="paneMineViz">'+
         '<div class="pstage"><div class="pstage-inner"><div class="mine-stage" id="mineStage">'+
           '<div class="mine-product" id="mineProdLbl">'+escHtml(_ideaReq)+'</div>'+
@@ -3776,7 +3832,7 @@ function openIdeaImgDemo(){
             '<polygon points="20,310 560,310 300,40" fill="rgba(186,117,23,.10)" stroke="#BA7517" stroke-width="1.2"/>'+
             '<text x="300" y="300" text-anchor="middle" font-size="13" fill="#854F0B" font-weight="700">创意矿脉</text></svg></div>'+
           nuggetsHtml+
-          claw+
+          _actorSkel({cls:'mine-actor', id:'mineActor', pick:true, style:'transform:translate(60px,260px)'})+
           '<div class="mine-frame" id="mineFrame"><div class="mf-h">合成创意图</div>'+slotsHtml+'<div class="mf-cap" id="mineCap"></div></div>'+
         '</div></div></div>'+
         '<div class="pstage-ctrl">'+
@@ -3815,7 +3871,7 @@ function toggleIdeaImgMode(mode){
   $('#paneMineUse').classList.toggle('on',!isViz);
   var intro=$('#mineIntro');
   if(intro) intro.innerHTML = isViz
-    ? '<b>看背后工作：</b>把一件产品放进矿场，<b>矿爪下潜抓取六维创意金矿</b>——外观、功能、场景、情感、技术、叙事。每一块金矿飞入右侧图片框，<b>拼成一张有创意的产品图</b>。维度越全，图越有创意。'
+    ? '<b>看背后工作：</b>把一件产品放进矿场，<b>小矿工走到矿脉前，挥镐挖出六维创意金矿</b>——外观、功能、场景、情感、技术、叙事。每一块金矿飞入右侧图片框，<b>拼成一张有创意的产品图</b>。维度越全，图越有创意。'
     : '<b>使用视角：</b>输入一件产品、点生成、秒出六维创意方向与一张拼合示意图。简单到无需理解原理。想知道这张图是怎么从矿里"挖"出来的？切到「看背后工作」。';
   if(!isViz){ stopMineDemo(); }
 }
@@ -3838,7 +3894,7 @@ function runIdeaImgGen(){
 }
 function resetMineStage(){
   stopMineDemo();
-  var c=$('#mineClaw'); if(c){ c.classList.remove('on'); c.style.transform=''; }
+  var a=$('#mineActor'); if(a){ a.className='mine-actor'; a.style.transform='translate(60px,260px)'; }
   for(var i=0;i<CREATIVE_DIMS.length;i++){
     var n=$('#mineNug'+i); if(n){ n.classList.add('float'); n.classList.remove('caught'); n.style.transform=''; }
     var s=$('#mineSlot'+i); if(s){ s.classList.remove('fill'); s.style.background=''; s.textContent=CREATIVE_DIMS[i].key; }
@@ -3854,23 +3910,32 @@ function playMineDemo(){
   _minePlaying=true;
   var pb=$('#minePlayBtn'); if(pb) pb.textContent='● 挖掘中…';
   var res=generateCreative(_ideaReq);
+  var a=$('#mineActor');
   _setMineStatus('投入产品：'+_ideaReq);
-  _spt(function(){ var c=$('#mineClaw'); if(c) c.classList.add('on'); _setMineStatus('矿爪下潜，寻找创意金矿…'); }, 600, _mineTimers);
   res.dims.forEach(function(d,i){
     var p=MINE_NUGGETS[i];
+    var ax=p.x-26, ay=p.y-52;
     var dx=820-p.x, dy=110-p.y;
+    var t0=600 + i*1600;
+    // 1) 矿工走到金矿前
     _spt(function(){
-      var c=$('#mineClaw'); if(c) c.style.transform='translate('+(p.x-420)+'px,'+(p.y-60)+'px)';
-      _setMineStatus('定位「'+d.key+'」金矿');
-    }, 1100 + i*1000, _mineTimers);
+      if(a){ a.classList.add('run'); a.style.transform='translate('+ax+'px,'+ay+'px)'; }
+      _setMineStatus('走到「'+d.key+'」矿脉前…');
+    }, t0, _mineTimers);
+    // 2) 挥镐开挖
+    _spt(function(){ if(a){ a.classList.remove('run'); a.classList.add('dig'); } _setMineStatus('挥镐挖出「'+d.key+'」金矿'); }, t0+950, _mineTimers);
+    // 3) 金矿飞入图框
     _spt(function(){
       var n=$('#mineNug'+i); if(n){ n.classList.remove('float'); n.classList.add('caught'); n.style.transform='translate('+dx+'px,'+dy+'px) scale(.5)'; }
       var s=$('#mineSlot'+i); if(s){ s.classList.add('fill'); s.style.background=d.color; s.textContent=d.key; }
-      _setMineStatus('抓出「'+d.key+'」金矿 → 拼入创意图');
-    }, 1100 + i*1000 + 600, _mineTimers);
+      if(a) a.classList.remove('dig');
+      _setMineStatus('「'+d.key+'」金矿 → 拼入创意图');
+    }, t0+1450, _mineTimers);
   });
-  var endT=1100 + res.dims.length*1000 + 600;
+  var endT=600 + res.dims.length*1600 + 1450;
   _spt(function(){
+    // 矿工回到起点
+    if(a){ a.classList.add('run'); a.style.transform='translate(60px,260px)'; }
     var cap=$('#mineCap'); if(cap) cap.textContent='创意图完成 · 六维已拼合';
     _setMineStatus('完成 · 六维创意金矿拼成一张图');
     _minePlaying=false; if(pb) pb.textContent='▶ 再挖一次';
