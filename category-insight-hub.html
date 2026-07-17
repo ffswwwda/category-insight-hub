@@ -6229,19 +6229,22 @@ function initFloatBar(){
     var isStress=(viewId==='viewStress');
     var lbl=document.getElementById('globFloatLabel');
     if(lbl) lbl.textContent = isStress ? '去生成虚拟用户' : '进入预测工作台';
-    // 仅当当前视图内的 CTA 区域进入视口下半部时隐藏（用户已看到真正的入口）
+    // 默认：进入 Lab / Stress 页面即显示悬浮窗；仅当用户「真正向下滚动」且 CTA 已接近视口时才隐藏（此时用户已看到真正的入口）
     var cta=active.querySelector('.lab-cta');
-    if(!cta){ bar.classList.remove('hidden'); return; }
-    var r=cta.getBoundingClientRect();
-    if(r.top < window.innerHeight * .7){ bar.classList.add('hidden'); }
-    else{ bar.classList.remove('hidden'); }
+    var board=document.getElementById('board');
+    var scrolled=board?board.scrollTop:0;
+    if(cta && scrolled>40){
+      var r=cta.getBoundingClientRect();
+      if(r.top < window.innerHeight * .85){ bar.classList.add('hidden'); return; }
+    }
+    bar.classList.remove('hidden');
   }
   var board=document.getElementById('board');
   if(board) board.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(update,60); }, {passive:true});
-  // MutationObserver：任何 .view 的 active class 变化都会重新判定（涵盖绕过 setView 的页面切换，如德国站/数据源直切）
+  // MutationObserver：任何 .view 的 active class 变化都会重新判定（涵盖绕过 setView 的页面切换，如德国站/数据源直切）；用 rAF 等布局稳定后再读取 rect
   var views=document.querySelectorAll('.view');
   if(window.MutationObserver && views.length){
-    var mo=new MutationObserver(function(){ update(); });
+    var mo=new MutationObserver(function(){ requestAnimationFrame(update); });
     views.forEach(function(v){ mo.observe(v,{attributes:true,attributeFilter:['class']}); });
   }
   update();
