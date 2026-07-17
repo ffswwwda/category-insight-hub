@@ -428,12 +428,12 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 /* === 原理视角（头脑特工舞台）=== */
 .pstage{position:relative;border:1px solid var(--border);border-radius:18px;overflow-x:auto;overflow-y:hidden;
   background:radial-gradient(120% 120% at 50% 0%,rgba(168,85,247,.10),transparent 60%),var(--panel-solid);box-shadow:var(--shadow-sm)}
-.pstage-inner{position:relative;width:860px;height:460px;margin:0 auto}
+.pstage-inner{position:relative;width:1060px;height:460px;margin:0 auto}
 .ps-floor{position:absolute;left:0;right:0;bottom:70px;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
 /* 输入/输出卡 */
 .ps-io{position:absolute;top:56px;width:174px;border:1px solid var(--border);border-radius:13px;padding:12px 13px;background:var(--glass-bg);backdrop-filter:var(--glass-blur)}
 .ps-in{left:8px}
-.ps-out{left:678px;height:344px;display:flex;flex-direction:column}
+.ps-out{left:880px;height:344px;display:flex;flex-direction:column}
 .ps-io-h{font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:9px;display:flex;align-items:center;gap:6px}
 .ps-io-h .dot{width:7px;height:7px;border-radius:50%;background:var(--rad-grad)}
 .ps-review{font-size:12px;color:var(--ink);line-height:1.65;transition:opacity .3s}
@@ -444,7 +444,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ps-orow-tags{display:flex;gap:4px;flex-wrap:wrap}
 .ps-mini{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:5px;color:#fff}
 /* 工厂（标签体系之墙） */
-.ps-factory{position:absolute;left:198px;top:118px;width:468px;height:272px;border:1.5px solid var(--border);border-radius:16px;
+.ps-factory{position:absolute;left:196px;top:118px;width:662px;height:272px;border:1.5px solid var(--border);border-radius:16px;
   background:linear-gradient(180deg,rgba(168,85,247,.06),rgba(0,212,255,.04));overflow:hidden}
 .ps-factory-roof{position:absolute;top:0;left:0;right:0;padding:7px 12px;font-size:10.5px;font-weight:800;color:var(--ink);
   letter-spacing:.3px;background:linear-gradient(90deg,rgba(168,85,247,.14),rgba(0,212,255,.08));border-bottom:1px dashed var(--border);
@@ -452,7 +452,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .ps-factory-roof .rn{font-size:9.5px;font-weight:700;color:var(--muted)}
 /* 工人站台 */
 .ps-worker{position:absolute;bottom:12px;width:70px;display:flex;flex-direction:column;align-items:center;gap:5px}
-.ps-w-sign{font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px;color:#fff;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.14)}
+.ps-w-sign{font-size:8px;font-weight:800;padding:2px 5px;border-radius:6px;color:#fff;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.14)}
 .ps-w-body{position:relative;width:26px;height:34px;transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
 .ps-worker.stamp .ps-w-body{transform:translateY(6px) rotate(-4deg)}
 .ps-w-head{width:18px;height:18px;border-radius:50%;margin:0 auto;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.18)}
@@ -3037,22 +3037,28 @@ function openPrincipleGallery(){
 }
 
 // ---- VOC 打标签 · 演示台（使用视角 / 原理视角）----
-// 5 位维度专员（标签体系之墙的"洞口/管道"）
+// 完整 9 维度标签体系（标签体系之墙的 9 个"洞口/管道"）
 var TAG_WORKERS=[
-  {dim:'用户画像', color:'#D4727A'},
-  {dim:'购买动机', color:'#00C3F3'},
-  {dim:'使用场景', color:'#8b5cf6'},
-  {dim:'使用阻碍', color:'#D4A017'},
-  {dim:'用户忠诚度', color:'#16A34A'}
+  {dim:'用户画像',     color:'#D4727A'},  // 0
+  {dim:'购买动机',     color:'#00C3F3'},  // 1
+  {dim:'购买目的',     color:'#7C8CF8'},  // 2
+  {dim:'使用场景',     color:'#8b5cf6'},  // 3
+  {dim:'使用阻碍',     color:'#D4A017'},  // 4
+  {dim:'克服方式',     color:'#2BB2A8'},  // 5
+  {dim:'用户忠诚度',   color:'#16A34A'},  // 6
+  {dim:'产品改进建议', color:'#E0739B'},  // 7
+  {dim:'十三种需求',   color:'#F2784B'}   // 8
 ];
-// 3 条示例评论：每条经过 5 个专员，命中的维度盖标签，未命中的跳过（体现规则判断）
+// 工人相对工厂左缘的 X 坐标（9 个均匀排布，工厂宽度 662）
+function tagWorkerLeft(i){ return 14 + i*70; }
+// 3 条示例评论：每条经过 9 位专员，命中的维度盖标签，未命中的跳过（体现规则判断）
 var TAG_SAMPLES=[
   {review:'送给老公的情人节礼物，他很喜欢，比之前那个牌子质量好太多。',
-   tags:[{i:0,t:'送礼人群'},{i:1,t:'情感送礼'},{i:4,t:'品牌转换'}]},
+   tags:[{i:0,t:'送礼人群'},{i:1,t:'情感送礼'},{i:2,t:'节日赠礼'},{i:8,t:'品质需求'}]},
   {review:'洗澡的时候用，吸盘吸力一般，用了几天就往下滑，有点失望。',
-   tags:[{i:2,t:'沐浴场景'},{i:3,t:'吸力不足'}]},
+   tags:[{i:3,t:'沐浴场景'},{i:4,t:'吸力不足'},{i:7,t:'增强吸盘'},{i:8,t:'功能需求'}]},
   {review:'第三次回购了，一直用这个牌子，性价比很高，会一直支持。',
-   tags:[{i:0,t:'老用户'},{i:1,t:'性价比'},{i:4,t:'忠实复购'}]}
+   tags:[{i:0,t:'老用户'},{i:1,t:'性价比'},{i:6,t:'忠实复购'},{i:8,t:'价格需求'}]}
 ];
 var _tagPlaying=false, _tagTimers=[];
 
@@ -3061,8 +3067,8 @@ function openTagDemo(){
   $('#topbarTitle').textContent='原理动画 · VOC 智能打标';
   setView('PrDemo');
   var workerHtml=TAG_WORKERS.map(function(w,i){
-    // 5 位工人均匀排布在工厂内（工厂内宽约 468，留边）
-    var left=34+i*86;
+    // 9 位工人均匀排布在工厂内
+    var left=tagWorkerLeft(i);
     return '<div class="ps-worker" id="psW'+i+'" style="left:'+left+'px">'+
       '<div class="ps-w-sign" style="background:'+w.color+'">'+escHtml(w.dim)+'</div>'+
       '<div class="ps-w-body">'+
@@ -3083,7 +3089,7 @@ function openTagDemo(){
           '<button class="prd-tg on" id="tgViz" onclick="togglePrincipleMode(\'viz\')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg> 看背后工作</button>'+
         '</div>'+
       '</div>'+
-      '<p class="prd-intro" id="prdIntro"><b>看背后工作：</b>一条用户评论化身「用户小人」，从左侧走进<b>标签体系之墙</b>——墙里站着 5 位维度专员。小人依次经过，专员判断评论是否符合自己负责的维度：符合就<b>盖一枚标签</b>，不符合就放行。走到右侧，这条评论身上就挂满了它应得的多维标签。</p>'+
+      '<p class="prd-intro" id="prdIntro"><b>看背后工作：</b>一条用户评论化身「用户小人」，从左侧走进<b>标签体系之墙</b>——墙里站着 9 位维度专员。小人依次经过，专员判断评论是否符合自己负责的维度：符合就<b>盖一枚标签</b>，不符合就放行。走到右侧，这条评论身上就挂满了它应得的多维标签。</p>'+
       // ── 原理视角 ──
       '<div class="prd-pane on" id="paneViz">'+
         '<div class="pstage"><div class="pstage-inner" id="pstageInner">'+
@@ -3093,7 +3099,7 @@ function openTagDemo(){
             '<div class="ps-review" id="psReview">准备就绪，点击「播放」开始。</div>'+
           '</div>'+
           '<div class="ps-factory">'+
-            '<div class="ps-factory-roof"><span>标签体系之墙 · 维度专员流水线</span><span class="rn">5 / 共 9 维度</span></div>'+
+            '<div class="ps-factory-roof"><span>标签体系之墙 · 维度专员流水线</span><span class="rn">完整 9 维度标签体系</span></div>'+
             workerHtml+
           '</div>'+
           '<div class="ps-io ps-out">'+
@@ -3143,7 +3149,7 @@ function togglePrincipleMode(mode){
   $('#paneUse').classList.toggle('on',!isViz);
   var intro=$('#prdIntro');
   if(intro) intro.innerHTML= isViz
-    ? '<b>看背后工作：</b>一条用户评论化身「用户小人」，从左侧走进<b>标签体系之墙</b>——墙里站着 5 位维度专员。小人依次经过，专员判断评论是否符合自己负责的维度：符合就<b>盖一枚标签</b>，不符合就放行。走到右侧，这条评论身上就挂满了它应得的多维标签。'
+    ? '<b>看背后工作：</b>一条用户评论化身「用户小人」，从左侧走进<b>标签体系之墙</b>——墙里站着 9 位维度专员。小人依次经过，专员判断评论是否符合自己负责的维度：符合就<b>盖一枚标签</b>，不符合就放行。走到右侧，这条评论身上就挂满了它应得的多维标签。'
     : '<b>使用视角：</b>这就是别人安装 skill 后看到的样子——粘贴评论、点生成、秒出多维标签。简单到无需理解原理。想知道这些标签是怎么来的？切到「看背后工作」。';
   if(!isViz){ stopTagDemo(); }
 }
@@ -3215,12 +3221,12 @@ function playTagDemo(){
     var Y=290; // 站在地面（feet 约 342）
     char.style.transform='translate('+96+'px,'+Y+'px)';
     // 走到工厂入口
-    _pt(function(){ char.style.transform='translate('+210+'px,'+Y+'px)'; }, 260);
-    // 逐个经过 5 个工人（工人 left = 34 + i*86，工厂 left=198，char 宽38→对齐工人中心：innerX = 198+34+i*86 + 35(工人宽70一半) - 19(char一半) ≈ 198+ (34+i*86) +16 ）
-    var baseStep=880;   // 每站间隔（含判定停顿）
-    var startAfter=560; // 进入工厂后到第一个工人
+    _pt(function(){ char.style.transform='translate('+200+'px,'+Y+'px)'; }, 260);
+    // 逐个经过 9 个工人（工人 left = tagWorkerLeft(i)，工厂 left=196，char 宽38→对齐工人中心：innerX = 196+tagWorkerLeft(i) + 35(工人宽70一半) - 19(char一半)）
+    var baseStep=620;   // 每站间隔（含判定停顿）
+    var startAfter=480; // 进入工厂后到第一个工人
     TAG_WORKERS.forEach(function(w,i){
-      var stopX=198 + (34 + i*86) + 35 - 19; // char 中心对齐工人中心
+      var stopX=196 + tagWorkerLeft(i) + 35 - 19; // char 中心对齐工人中心
       var t0=startAfter + i*baseStep;
       // 走到该工人
       _pt(function(){ char.classList.add('run'); char.style.transform='translate('+stopX+'px,'+Y+'px)'; }, t0);
@@ -3242,15 +3248,15 @@ function playTagDemo(){
         _pt(function(){
           var sk=document.createElement('div');
           sk.className='ps-skip'; sk.textContent=w.dim+' · 不符合，放行';
-          sk.style.left=(198+34+i*86)+'px'; sk.style.top='150px';
+          sk.style.left=(196+tagWorkerLeft(i))+'px'; sk.style.top='150px';
           inner.appendChild(sk); _pt(function(){sk.remove();},1000);
         }, t0+560);
       }
     });
     // 走出工厂 → 输出卡
     var outT=startAfter + TAG_WORKERS.length*baseStep;
-    _pt(function(){ char.classList.add('run'); char.style.transform='translate('+660+'px,'+Y+'px)'; }, outT);
-    _pt(function(){ char.classList.remove('run'); char.classList.add('hop'); char.style.transform='translate('+700+'px,'+140+'px)'; char.style.opacity='0.0';
+    _pt(function(){ char.classList.add('run'); char.style.transform='translate('+884+'px,'+Y+'px)'; }, outT);
+    _pt(function(){ char.classList.remove('run'); char.classList.add('hop'); char.style.transform='translate('+924+'px,'+140+'px)'; char.style.opacity='0.0';
       char.style.transition='transform .6s cubic-bezier(.34,1.3,.5,1),opacity .5s ease'; }, outT+700);
     // 追加到输出列表
     _pt(function(){
