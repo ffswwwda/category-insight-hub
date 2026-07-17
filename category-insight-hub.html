@@ -497,6 +497,39 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 @keyframes psPulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.45)}70%{box-shadow:0 0 0 7px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
 /* 图例 */
 .ps-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--glass-bg)}
+
+/* === 产品需求打分 · 连续跳远舞台 === */
+.score-ground{position:absolute;left:0;right:0;bottom:0;height:64px;background:linear-gradient(180deg,rgba(99,102,241,.05),transparent)}
+.score-track{position:absolute;left:24px;right:24px;bottom:62px;height:2px;background:linear-gradient(90deg,transparent,var(--border) 12%,var(--border) 88%,transparent)}
+.score-start{position:absolute;left:60px;bottom:70px;transform:translateX(-50%);font-size:11px;font-weight:800;color:var(--accent);background:var(--glass-bg);border:1px solid var(--border);border-radius:8px;padding:4px 9px;white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.score-pit{position:absolute;bottom:58px;width:130px;transform:translateX(-50%);text-align:center}
+.score-pit-hole{width:92px;height:15px;margin:0 auto;border-radius:0 0 46px 46px;background:rgba(99,102,241,.10);border:1.5px solid var(--border);border-top:none}
+.score-pit-label{font-size:11px;font-weight:700;color:var(--ink);margin-top:9px}
+.score-bar{width:92px;height:9px;margin:7px auto 0;border-radius:5px;background:var(--line);overflow:hidden}
+.score-bar > i{display:block;height:100%;width:0;border-radius:5px;transition:width .6s var(--rad-easing)}
+.score-pit-score{font-size:12px;font-weight:800;color:var(--ink-2);margin-top:5px;opacity:0;transition:opacity .4s}
+.score-pit-score.show{opacity:1}
+.score-total{position:absolute;bottom:62px;width:104px;transform:translateX(-50%);text-align:center;opacity:0;transition:opacity .5s}
+.score-total.on{opacity:1}
+.score-total-box{width:104px;height:66px;margin:0 auto;border-radius:14px;border:1.5px solid var(--accent);background:rgba(168,85,247,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(168,85,247,.18)}
+.score-total-box .t-l{font-size:10px;font-weight:700;color:var(--accent)}
+.score-total-box .t-v{font-size:26px;font-weight:800;color:var(--ink);line-height:1;margin-top:2px}
+.score-runner{position:absolute;left:0;bottom:58px;width:40px;height:64px;z-index:7;transition:transform .65s cubic-bezier(.4,0,.2,1);will-change:transform}
+.score-runner .sr-inner{position:absolute;inset:0}
+.score-runner .sr-body{position:absolute;bottom:0;left:2px;width:36px;height:46px;border-radius:16px 16px 11px 11px;background:linear-gradient(135deg,#00d4ff 0%,#a855f7 55%,#ff6b9d 100%);border:2px solid #fff;box-shadow:0 6px 14px rgba(0,0,0,.16)}
+.score-runner .sr-head{position:absolute;top:9px;left:0;right:0;display:flex;justify-content:center;gap:6px}
+.score-runner .sr-eye{width:5px;height:5px;border-radius:50%;background:#fff}
+.score-runner .sr-leg{position:absolute;bottom:-5px;width:5px;height:7px;border-radius:3px;background:#3b3b4d}
+.score-runner .sr-leg.l{left:8px}.score-runner .sr-leg.r{right:8px}
+/* 使用视角 · 评分结果行 */
+.sc-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.sc-row:last-child{border-bottom:none}
+.sc-dim{width:80px;font-size:12px;font-weight:700;color:var(--ink)}
+.sc-bar{flex:1;height:9px;border-radius:5px;background:var(--line);overflow:hidden}
+.sc-bar > i{display:block;height:100%;width:0;border-radius:5px;transition:width .6s var(--rad-easing)}
+.sc-val{width:34px;text-align:right;font-size:13px;font-weight:800;color:var(--ink-2)}
+.sc-total-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1.5px dashed var(--border);font-size:13px;font-weight:700;color:var(--ink)}
+.sc-total-row b{font-size:22px;color:var(--accent)}
 .ps-lg{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-2)}
 .ps-lg .sw{width:12px;height:12px;border-radius:4px}
 
@@ -2992,7 +3025,7 @@ var PR_TOOLS=[
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 20 7.4 12 11.8 4 7.4Z"/><path d="M4 7.4 4 16.6 12 21 12 11.8"/><path d="M20 7.4 20 16.6 12 21"/></svg>'},
   {id:'corpus', name:'用户语料分析', ready:false, desc:'批量语料如何汇成频率与机会点？',
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M5 20V11M12 20V5M19 20v-7"/><path d="M3.5 20h17"/></svg>'},
-  {id:'score', name:'产品打分', ready:false, desc:'12 维度评分是怎么一项项算出来的？',
+  {id:'score', name:'产品需求打分', ready:true, fn:'openScoreDemo', desc:'一条需求如何按维度逐个打分、汇成综合分？看它连续跳进 4 个维度沙坑。',
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>'},
   {id:'insight', name:'用户洞察', ready:false, desc:'从散落评论到可执行洞察的提炼过程。',
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>'},
@@ -3008,6 +3041,25 @@ var PR_TOOLS=[
    ico:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/></svg>'}
 ];
 
+// ---- 产品需求打分 · 评分引擎（基于关键词词典的轻量规则，演示用）----
+var SCORE_DIMS=[
+  {key:'痛点匹配', color:'#3B6D11', words:['震动','噪音','便携','续航','防水','舒适','轻便','省力','安静','护腰','缠绕','掉落','难用','麻烦']},
+  {key:'技术可行', color:'#185FA5', words:['多功能','eng','智能','自动','模块化','蓝牙','无线','可充电','传感','算法','芯片','电机','app','电路']},
+  {key:'市场机会', color:'#854F0B', words:['热门','趋势','爆款','刚需','需求大','增量','蓝海','放量','旺季','增长','风口']},
+  {key:'竞争差异', color:'#534AB7', words:['首创','独家','专利','差异','颠覆','自研','壁垒','领先','独有']}
+];
+var SCORE_EXAMPLES=['震动·多功能 eng','防水便携蓝牙耳机','首创自研智能模块'];
+function scoreProduct(text){
+  var t=(''+text).toLowerCase();
+  var dims=SCORE_DIMS.map(function(d){
+    var hit=d.words.filter(function(w){return t.indexOf(w.toLowerCase())>=0;}).length;
+    var s=Math.max(50, Math.min(98, 52 + hit*13)); // 基础 52，每命中 +13，封顶 98
+    return {key:d.key, color:d.color, score:s, hit:hit};
+  });
+  var total=Math.round(dims.reduce(function(a,b){return a+b.score;},0)/dims.length);
+  return {dims:dims, total:total};
+}
+
 function openPrincipleGallery(){
   setActiveNav('nav-pr');
   $('#subnav').classList.remove('show');
@@ -3015,7 +3067,7 @@ function openPrincipleGallery(){
   setView('Principle');
   var cards=PR_TOOLS.map(function(t){
     var cls='pr-card'+(t.ready?' on':' soon');
-    var onclick=t.ready?' onclick="openTagDemo()"':'';
+    var onclick=t.ready?(' onclick="'+t.fn+'()"'):'';
     var foot=t.ready
       ? '<span class="pr-c-tag ready">可演示</span><span class="pr-c-go">播放动画 ▶</span>'
       : '<span class="pr-c-tag wip">敬请期待</span>';
@@ -3272,6 +3324,152 @@ function playTagDemo(){
     }, outT+1250);
   }
   runOne(0);
+}
+
+// ── 产品需求打分 · 演示台（使用视角 / 原理视角：连续跳远）──
+var _scorePlaying=false, _scoreTimers=[];
+function _spt(fn,delay){ var id=setTimeout(fn,delay); _scoreTimers.push(id); return id; }
+function stopScoreDemo(){ _scoreTimers.forEach(clearTimeout); _scoreTimers=[]; _scorePlaying=false; }
+function _setScoreStatus(txt){ var st=$('#scoreStatus'); if(st) st.innerHTML='<span class="sd"></span>'+txt; }
+var _scoreReq=SCORE_EXAMPLES[0];
+function jumpRunner(){
+  var inner=document.querySelector('#scoreRunner .sr-inner');
+  if(inner && inner.animate){
+    try{ inner.animate([{transform:'translateY(0)'},{transform:'translateY(-92px)',offset:.45},{transform:'translateY(0)'}],
+      {duration:650, easing:'cubic-bezier(.3,.7,.3,1)'}); }catch(e){}
+  }
+}
+function openScoreDemo(){
+  setActiveNav('nav-pr');
+  $('#topbarTitle').textContent='原理动画 · 产品需求打分';
+  setView('PrDemo');
+  var pits=SCORE_DIMS.map(function(d,i){
+    var left=[230,410,590,770][i];
+    return '<div class="score-pit" id="scorePit'+i+'" style="left:'+left+'px">'+
+      '<div class="score-pit-hole"></div>'+
+      '<div class="score-pit-label">'+escHtml(d.key)+'</div>'+
+      '<div class="score-bar"><i id="scoreBar'+i+'"></i></div>'+
+      '<div class="score-pit-score" id="scorePitScore'+i+'">?</div></div>';
+  }).join('');
+  $('#viewPrDemo').innerHTML=
+    '<div class="pr-demo">'+
+      '<div class="prd-bar">'+
+        '<button class="prd-back" onclick="openPrincipleGallery()">← 返回展厅</button>'+
+        '<div><div class="prd-title">产品需求打分 · 原理动画</div>'+
+          '<div class="prd-sub">逐维度评估 · 综合评分 · 规则引擎</div></div>'+
+        '<div class="prd-toggle">'+
+          '<button class="prd-tg" id="tgScoreUse" onclick="toggleScoreMode(\'use\')">使用视角</button>'+
+          '<button class="prd-tg on" id="tgScoreViz" onclick="toggleScoreMode(\'viz\')">看背后工作</button>'+
+        '</div>'+
+      '</div>'+
+      '<p class="prd-intro" id="scoreIntro"><b>看背后工作：</b>一条产品需求化身「需求小人」，从左侧起跑，<b>连续跳进 4 个维度沙坑</b>——痛点匹配、技术可行、市场机会、竞争差异。每跳落地，弹出一个维度得分（落点越远 = 得分越高）；跳完全程，右侧<b>总分牌</b>汇总综合评分。</p>'+
+      '<div class="prd-pane on" id="paneScoreViz">'+
+        '<div class="pstage"><div class="pstage-inner" id="scoreStage">'+
+          '<div class="score-ground"></div>'+
+          '<div class="score-track"></div>'+
+          '<div class="score-start" id="scoreStartLbl">'+escHtml(_scoreReq)+'</div>'+
+          pits+
+          '<div class="score-total" id="scoreTotal" style="left:940px"><div class="score-total-box"><div class="t-l">总分</div><div class="t-v" id="scoreTotalVal">--</div></div></div>'+
+          '<div class="score-runner" id="scoreRunner" style="transform:translateX(40px)"><div class="sr-inner">'+
+            '<div class="sr-body"></div><div class="sr-head"><span class="sr-eye"></span><span class="sr-eye"></span></div>'+
+            '<div class="sr-leg l"></div><div class="sr-leg r"></div></div></div>'+
+        '</div></div>'+
+        '<div class="pstage-ctrl">'+
+          '<button class="pstage-btn" id="scorePlayBtn" onclick="playScoreDemo()">▶ 播放跳远</button>'+
+          '<button class="pstage-btn ghost" onclick="resetScoreStage()">↻ 重置</button>'+
+          '<span class="pstage-status" id="scoreStatus"><span class="sd"></span>就绪</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="prd-pane" id="paneScoreUse">'+
+        '<div class="use-panel">'+
+          '<div class="use-box">'+
+            '<div class="use-lbl">输入一条产品需求</div>'+
+            '<textarea class="use-ta" id="scoreTa">'+escHtml(SCORE_EXAMPLES[0])+'</textarea>'+
+            '<div class="use-ex">'+
+              '<button class="use-ex-btn" onclick="fillScoreExample(0)">示例①震动多功能</button>'+
+              '<button class="use-ex-btn" onclick="fillScoreExample(1)">示例②防水蓝牙耳机</button>'+
+              '<button class="use-ex-btn" onclick="fillScoreExample(2)">示例③首创自研模块</button>'+
+            '</div>'+
+            '<button class="use-gen" onclick="runScoreGen()">⚡ 生成评分</button>'+
+            '<div class="use-hint"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg><span>结果一秒出来——想知道分数是怎么一项项算出来的？点右上角 <b>「看背后工作」</b> 看连续跳远动画。</span></div>'+
+          '</div>'+
+          '<div class="use-box use-result" id="scoreResult">'+
+            '<div class="use-lbl">输出 · 各维度评分</div>'+
+            '<div class="use-empty">点击「生成评分」查看结果</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  if(window.anime){ try{ anime.animate('.pr-demo > *',{opacity:[0,1],translateY:[14,0],delay:anime.stagger(60),duration:460,easing:'easeOutCubic'}); }catch(e){} }
+}
+function toggleScoreMode(mode){
+  var isViz=(mode==='viz');
+  $('#tgScoreViz').classList.toggle('on',isViz);
+  $('#tgScoreUse').classList.toggle('on',!isViz);
+  $('#paneScoreViz').classList.toggle('on',isViz);
+  $('#paneScoreUse').classList.toggle('on',!isViz);
+  var intro=$('#scoreIntro');
+  if(intro) intro.innerHTML= isViz
+    ? '<b>看背后工作：</b>一条产品需求化身「需求小人」，从左侧起跑，<b>连续跳进 4 个维度沙坑</b>——痛点匹配、技术可行、市场机会、竞争差异。每跳落地，弹出一个维度得分（落点越远 = 得分越高）；跳完全程，右侧<b>总分牌</b>汇总综合评分。'
+    : '<b>使用视角：</b>这就是别人安装 skill 后看到的样子——输入一条需求、点生成、秒出各维度分与综合分。简单到无需理解原理。想知道这些分是怎么来的？切到「看背后工作」。';
+  if(!isViz){ stopScoreDemo(); }
+}
+function fillScoreExample(i){ var ta=$('#scoreTa'); if(ta) ta.value=SCORE_EXAMPLES[i]; }
+function runScoreGen(){
+  var ta=$('#scoreTa'); var box=$('#scoreResult'); if(!ta||!box) return;
+  var txt=ta.value.trim()||SCORE_EXAMPLES[0];
+  _scoreReq=txt;
+  var res=scoreProduct(txt);
+  var rows=res.dims.map(function(d){
+    return '<div class="sc-row"><div class="sc-dim">'+escHtml(d.key)+'</div>'+
+      '<div class="sc-bar"><i style="width:'+d.score+'%;background:'+d.color+'"></i></div>'+
+      '<div class="sc-val">'+d.score+'</div></div>';
+  }).join('');
+  box.innerHTML='<div class="use-lbl">输出 · 各维度评分</div>'+
+    '<div class="sc-wrap">'+rows+'</div>'+
+    '<div class="sc-total-row"><span>综合评分</span><b>'+res.total+'</b></div>';
+  var sl=$('#scoreStartLbl'); if(sl) sl.textContent=txt;
+}
+function resetScoreStage(){
+  stopScoreDemo();
+  var r=$('#scoreRunner'); if(r) r.style.transform='translateX(40px)';
+  for(var i=0;i<4;i++){
+    var bar=$('#scoreBar'+i); if(bar){ bar.style.width='0'; bar.style.background=''; }
+    var sc=$('#scorePitScore'+i); if(sc){ sc.textContent='?'; sc.classList.remove('show'); }
+  }
+  var tot=$('#scoreTotal'); if(tot) tot.classList.remove('on');
+  var tv=$('#scoreTotalVal'); if(tv) tv.textContent='--';
+  var st=$('#scoreStatus'); if(st) st.innerHTML='<span class="sd"></span>就绪';
+  var pb=$('#scorePlayBtn'); if(pb) pb.textContent='▶ 播放跳远';
+}
+function playScoreDemo(){
+  if(_scorePlaying) return;
+  if(!$('#scoreStage')) return;
+  resetScoreStage();
+  _scorePlaying=true;
+  var pb=$('#scorePlayBtn'); if(pb) pb.textContent='● 播放中…';
+  var res=scoreProduct(_scoreReq);
+  var pitX=[230,410,590,770], totalX=940;
+  _setScoreStatus('需求入场：'+_scoreReq);
+  pitX.forEach(function(x,i){
+    var t0=700 + i*1100;
+    _spt(function(){
+      var r=$('#scoreRunner'); if(r){ r.style.transform='translateX('+(x-20)+'px)'; jumpRunner(); }
+      _setScoreStatus('跳进「'+res.dims[i].key+'」→ 落点评分');
+    }, t0);
+    _spt(function(){
+      var bar=$('#scoreBar'+i); if(bar){ bar.style.width=(res.dims[i].score/100*92)+'px'; bar.style.background=res.dims[i].color; }
+      var sc=$('#scorePitScore'+i); if(sc){ sc.textContent=res.dims[i].score; sc.classList.add('show'); }
+    }, t0+680);
+  });
+  var endT=700 + pitX.length*1100;
+  _spt(function(){ var r=$('#scoreRunner'); if(r){ r.style.transform='translateX('+(totalX-20)+'px)'; jumpRunner(); } }, endT);
+  _spt(function(){
+    var tot=$('#scoreTotal'); if(tot) tot.classList.add('on');
+    var tv=$('#scoreTotalVal'); if(tv) tv.textContent=res.total;
+    _setScoreStatus('全部完成 · 综合评分 '+res.total);
+    _scorePlaying=false; if(pb) pb.textContent='▶ 再播一次';
+  }, endT+700);
 }
 
 // ---- 板块1：数据源画廊（点击进入单个数据源看板）----
