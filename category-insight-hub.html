@@ -2033,6 +2033,7 @@ var VOC_CASES = {
 // VOC 基础维度标签（数据源）
 var VOC_BASE = ['类目','品牌','是否产品强相关'];
 function renderVocTagPage(){
+  setView('Framework');
   // 标签体系 HTML
   var modHtml = VOC_MODULES.map(function(m){
     var subs = m.subs.map(function(s){
