@@ -1862,7 +1862,6 @@ function setView(viewId){
   $$('.view').forEach(function(v){v.classList.remove('active')});
   var t=$( '#view'+viewId.charAt(0).toUpperCase()+viewId.slice(1) );
   if(t)t.classList.add('active');
-  if(window.__onViewChange) window.__onViewChange(viewId);
 }
 
 function switchWorkspace(wsKey){
@@ -2933,7 +2932,10 @@ function openStressTool(){
   window.open('https://ffswwwda.github.io/virtual-user-stress-test/','_blank','noopener');
 }
 function globFloatAction(){
-  if(_curView==='Stress'){ openStressTool(); }
+  // 从 DOM 读取当前激活视图（唯一真相源），决定打开哪个工作台
+  var active=document.querySelector('.view.active');
+  var viewId=active?active.id:'';
+  if(viewId==='viewStress'){ openStressTool(); }
   else { openPredictTool(); }
 }
 
@@ -5592,33 +5594,36 @@ function init(){
   loadCanvasState();
   initFloatBar();
 }
-// ── 浮动工作台入口：仅「数字世界虚拟预测」(Lab) 与「虚拟用户压力测试」(Stress) 页面底部固定显示；滚动到 CTA 区时自动隐藏 ──
+// ── 浮动工作台入口：仅「数字世界虚拟预测」(viewLab) 与「虚拟用户压力测试」(viewStress) 页面底部固定显示；滚动到 CTA 区时自动隐藏 ──
 var _floatBarTimer=null;
-var _curView='';
 function initFloatBar(){
   var bar=document.getElementById('globFloatBar');
   if(!bar) return;
   function update(){
+    // 从 DOM 读取当前激活视图（唯一真相源），不依赖 setView 钩子，避免与任何绕过 setView 的页面切换失同步
+    var active=document.querySelector('.view.active');
+    var viewId=active?active.id:'';
     // 非 Lab / Stress 页面：一律隐藏
-    if(_curView!=='Lab' && _curView!=='Stress'){ bar.classList.add('hidden'); return; }
+    if(viewId!=='viewLab' && viewId!=='viewStress'){ bar.classList.add('hidden'); return; }
     // 动态文案与目标：Stress → 去生成虚拟用户；Lab → 进入预测工作台
+    var isStress=(viewId==='viewStress');
     var lbl=document.getElementById('globFloatLabel');
-    if(lbl) lbl.textContent = (_curView==='Stress') ? '去生成虚拟用户' : '进入预测工作台';
+    if(lbl) lbl.textContent = isStress ? '去生成虚拟用户' : '进入预测工作台';
     // 仅当当前视图内的 CTA 区域进入视口下半部时隐藏（用户已看到真正的入口）
-    var viewId = (_curView==='Stress') ? 'viewStress' : 'viewLab';
-    var cta=document.querySelector('#'+viewId+' .lab-cta');
+    var cta=active.querySelector('.lab-cta');
     if(!cta){ bar.classList.remove('hidden'); return; }
     var r=cta.getBoundingClientRect();
     if(r.top < window.innerHeight * .7){ bar.classList.add('hidden'); }
     else{ bar.classList.remove('hidden'); }
   }
-  // 挂钩 setView：每次视图切换都重新判定
-  window.__onViewChange=function(v){ _curView=v; update(); };
   var board=document.getElementById('board');
-  board.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(update,60); }, {passive:true});
-  // 初始按当前激活视图判定
-  var labView=document.getElementById('viewLab');
-  _curView = (labView && labView.classList.contains('active')) ? 'Lab' : '';
+  if(board) board.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(update,60); }, {passive:true});
+  // MutationObserver：任何 .view 的 active class 变化都会重新判定（涵盖绕过 setView 的页面切换，如德国站/数据源直切）
+  var views=document.querySelectorAll('.view');
+  if(window.MutationObserver && views.length){
+    var mo=new MutationObserver(function(){ update(); });
+    views.forEach(function(v){ mo.observe(v,{attributes:true,attributeFilter:['class']}); });
+  }
   update();
 }
 init();
