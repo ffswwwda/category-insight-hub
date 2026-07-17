@@ -503,11 +503,11 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .score-track{position:absolute;left:24px;right:24px;bottom:62px;height:2px;background:linear-gradient(90deg,transparent,var(--border) 12%,var(--border) 88%,transparent)}
 .score-start{position:absolute;left:60px;bottom:70px;transform:translateX(-50%);font-size:11px;font-weight:800;color:var(--accent);background:var(--glass-bg);border:1px solid var(--border);border-radius:8px;padding:4px 9px;white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
 .score-pit{position:absolute;bottom:58px;width:130px;transform:translateX(-50%);text-align:center}
-.score-pit-hole{width:92px;height:15px;margin:0 auto;border-radius:0 0 46px 46px;background:rgba(99,102,241,.10);border:1.5px solid var(--border);border-top:none}
-.score-pit-label{font-size:11px;font-weight:700;color:var(--ink);margin-top:9px}
-.score-bar{width:92px;height:9px;margin:7px auto 0;border-radius:5px;background:var(--line);overflow:hidden}
+.score-pit-hole{width:92px;height:15px;margin:0 auto;border-radius:0 0 46px 46px;background:rgba(99,102,241,.10);border:1.5px solid var(--border);border-top:none;position:relative;z-index:1}
+.score-pit-label{font-size:11px;font-weight:700;color:var(--ink);margin-top:9px;position:relative;z-index:3}
+.score-bar{width:92px;height:9px;margin:7px auto 0;border-radius:5px;background:var(--line);overflow:hidden;position:relative;z-index:3}
 .score-bar > i{display:block;height:100%;width:0;border-radius:5px;transition:width .6s var(--rad-easing)}
-.score-pit-score{font-size:12px;font-weight:800;color:var(--ink-2);margin-top:5px;opacity:0;transition:opacity .4s}
+.score-pit-score{font-size:12px;font-weight:800;color:var(--ink-2);margin-top:5px;opacity:0;transition:opacity .4s;position:relative;z-index:3}
 .score-pit-score.show{opacity:1}
 .score-total{position:absolute;bottom:62px;width:104px;transform:translateX(-50%);text-align:center;opacity:0;transition:opacity .5s}
 .score-total.on{opacity:1}
