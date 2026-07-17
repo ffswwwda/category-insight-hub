@@ -1298,6 +1298,41 @@ body.dark .lab-status{color:#fbbf24}
 .se-report{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--border);
   border-radius:16px;padding:20px 24px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
 .rep-title{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* ═══ 访谈对话模式 ═══ */
+.iv-btn{border:none;background:linear-gradient(135deg,#8b5cf6,#0ea5e9);color:#fff;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.iv-btn:hover{opacity:.85}
+.iv-btn-sm{border:1px solid var(--border);background:var(--glass-bg);backdrop-filter:var(--glass-blur);color:var(--ink);padding:7px 16px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.iv-btn-sm:hover{border-color:#8b5cf6;color:#8b5cf6;background:rgba(139,92,246,.08)}
+.iv-skip{color:var(--muted);border-color:transparent;font-size:11px}
+.iv-skip:hover{color:#ef4444;border-color:#ef4444;background:rgba(239,68,68,.06)}
+
+.iv-header{padding:18px 24px;background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(14,165,233,.06));border-radius:14px;margin-bottom:16px}
+.iv-title{font-size:17px;font-weight:800;color:var(--ink);letter-spacing:-.3px}
+.iv-sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+.iv-cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+.iv-cat{padding:18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;text-align:center}
+.iv-cat:hover{border-color:#8b5cf6;background:rgba(139,92,246,.06);transform:translateY(-2px)}
+.iv-cat-name{font-size:15px;font-weight:700;color:var(--ink)}
+.iv-cat-count{font-size:11px;color:var(--muted);margin-top:3px}
+
+.iv-chat{background:rgba(20,22,36,.3);border:1px solid var(--border);border-radius:16px;padding:20px;;max-height:520px;overflow-y:auto}
+.iv-msg-wrap{display:flex;gap:12px;margin-bottom:16px;animation:fadeInUp .3s var(--rad-easing) both}
+.iv-in{justify-content:flex-start}
+.iv-out{justify-content:flex-end}
+.iv-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
+.iv-avatar-sm{width:32px;height:32px;font-size:13px}
+.iv-bubble{max-width:75%;padding:12px 16px;border-radius:16px 16px 16px 4px;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.2)}
+.iv-bubble-out{background:rgba(14,165,233,.1);border-color:rgba(14,165,233,.2);border-radius:16px 16px 4px 16px}
+.iv-bubble-cont{padding:10px 16px;font-size:13px;line-height:1.6;color:var(--ink)}
+.iv-bubble-name{font-size:11px;font-weight:700;color:#8b5cf6;margin-bottom:4px}
+.iv-bubble-name-out{color:#0ea5e9}
+.iv-bubble-intro{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:10px}
+.iv-bubble-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.iv-end{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+.iv-back{text-align:center;padding:10px;color:#8b5cf6;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px}
+.iv-back:hover{text-decoration:underline}
+.iv-next-wrap{text-align:center;padding:16px}
 .rep-title::before{content:'';width:4px;height:16px;border-radius:2px;background:var(--rad-grad)}
 .rep-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
 .rep-kpi{text-align:center;background:var(--panel-solid);border-radius:12px;padding:12px;transition:all .25s var(--rad-easing);box-shadow:var(--shadow-sm)}
@@ -2828,11 +2863,13 @@ function renderSourceExplorer(srcId){
       '<span class="ws-title">'+escHtml(s.name)+'</span>'+
       '<span class="ws-tag">'+(s.status==='ready'?'已接入':'样本数据')+'</span>'+
       '<div style="margin-left:auto;display:flex;gap:6px">'+
+        (srcId==='s5'?'<button class="ct-btn iv-btn" id="ivModeBtn" onclick="toggleInterviewMode()">💬 对话模式</button>':'')+
         '<button class="ct-btn" onclick="genSourceReport(\''+srcId+'\')">综合报告</button>'+
         '<button class="ct-btn primary" onclick="exportSourceData(\''+srcId+'\')">导出 CSV</button>'+
       '</div>'+
     '</div>'+
-    '<div class="src-explorer">'+
+    '<div class="src-explorer" id="srcExplorer">'+
+      (srcId==='s5'?'<div id="ivChatArea"></div>':'')+
       '<div class="se-meta">'+escHtml(s.desc)+' · 覆盖市场 '+escHtml(s.market)+' · 当前样本 '+rows.length+' 条</div>'+
       '<div class="se-filter">'+
         '<input class="se-search" id="seSearch-'+srcId+'" placeholder="搜索文本，如 噪音 / 尺寸…" value="'+escHtml(f.text)+'" oninput="onSourceFilterInput(\''+srcId+'\')">'+
@@ -2846,7 +2883,7 @@ function renderSourceExplorer(srcId){
         '<div class="se-kpi"><b>'+st.negPct+'%</b><span>负面占比</span></div>'+
         '<div class="se-kpi"><b>'+escHtml(st.topDim)+'</b><span>高频维度</span></div>'+
       '</div>'+
-      '<div class="se-table-wrap"><table class="se-table" id="seTable-'+srcId+'"></table></div>'+
+      '<div class="se-table-wrap" id="seTableWrap"><table class="se-table" id="seTable-'+srcId+'"></table></div>'+
       '<div class="se-report" id="seReport-'+srcId+'" style="display:none"></div>'+
     '</div>';
   applySourceFilter(srcId);
@@ -2923,6 +2960,211 @@ function genSourceReport(srcId){
       '建议在'+(s.status==='ready'?'已接入':'样本')+'状态下结合其他数据源做交叉验证后再下结论。</p></div>'+
     '<div class="rep-note">注：当前为样本/示意数据，接入真实数据源后此处将实时刷新。</div>';
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ═══ 访谈对话模式（数据源 s5 · 用户访谈）═══
+var INTERVIEW_MODE=false;
+
+/** 模拟访谈数据：按类目分组，每段访谈有多个片段 */
+var INTERVIEW_DATA = {
+  '飞机杯': [
+    { id:'iv1', name:'Mike (28, 加州)', avatar:'M', category:'飞机杯',
+      segments:[
+        '你好，我今年28岁，在加州做程序员。说实话，我以前从来没用过飞机杯，因为是室友推荐我才试的。前两次挺尴尬的，但后来就觉得——哎，这东西确实能解决问题。',
+        '我最在意的是材质和清洗的方便程度。第一个买的很便宜，材质硬，洗起来也麻烦，用了几次就扔了。后来换了硅胶的，手感好很多，而且翻过来冲水就干净了。',
+        '我现在一个月用大概三四次吧，主要是工作压力大的时候。不会跟朋友聊这个，但我觉得如果产品做得好的话，其实这个市场可以更大，因为像我这样的人很多。'
+      ]},
+    { id:'iv2', name:'David (25, 纽约)', avatar:'D', category:'飞机杯',
+      segments:[
+        '我是David，在纽约做市场。我觉得市面上的飞机杯最大问题是——太色情了。包装、设计、宣传都很露骨，我就算想买也不好意思下单。',
+        '我想要的是那种设计很干净的、放在桌上不会被发现是飞机杯的产品。最好看起来像一个艺术品或者小摆件。材质必须舒服，但我真的不想收到一个印着裸女的盒子。',
+        '如果我朋友来我家看到这个，我希望他能说"这个摆件好酷"而不是"卧槽你也有这个"。这对我来说很重要。我买得起好的，我缺的是不尴尬的选择。'
+      ]},
+    { id:'iv3', name:'Tom (32, 德州)', avatar:'T', category:'飞机杯',
+      segments:[
+        '嗨，我是Tom，在德州做销售。我用飞机杯有五年了吧，从最便宜的开始一路用上来。我想说的是：震动功能很噱头，真正重要的其实是内壁纹理设计。',
+        '有些产品纹理太夸张了，反而不舒服。最好的体验是那种渐变式的内部设计，入口处松一点，里面慢慢收紧。还有就是加热功能——冬天没有加热根本不想用。',
+        '我最喜欢的一个牌子是XXX，但他们停产了我最想要的那个型号。这就是我对这个市场的看法：好产品太少，大多数都是快消品思维，用完就扔。我需要一个能用一两年的产品。'
+      ]}
+  ],
+  '震动棒': [
+    { id:'iv4', name:'Lisa (30, 芝加哥)', avatar:'L', category:'震动棒',
+      segments:[
+        '你好，我是Lisa，在芝加哥做设计。我用过的震动棒大概有七八个吧。说实话，大多数都让我失望。要么太吵，要么震动模式不实用。',
+        '我最在意的是噪音。我一个人住公寓，虽然邻居听不到，但心理上我就会紧张，觉得别人会知道我在干嘛。有没有那种完全静音的？我肯多花钱。',
+        '还有充电的问题，很多都是专用充电线，丢了就完了。能不能做成无线充电的？放在充电座上就行了。还有就是防水等级要高，我直接拿进浴室用。'
+      ]},
+    { id:'iv5', name:'Amy (26, 洛杉矶)', avatar:'A', category:'震动棒',
+      segments:[
+        '我是Amy，26岁，在洛杉矶做瑜伽教练。我对震动棒的要求可能和大多数人不一样——我主要用来做伴侣前戏，不是自己用。所以它需要两个人用着都舒服。',
+        '形状很重要。太粗的使用起来不好拿，太小的两个人用不方便。我最喜欢的是U形的，可以同时刺激双方。还有就是亲肤材质，别用那种廉价的硅胶味。',
+        '说实话我也挺在意外观的。如果它放在我的床头柜上看起来像一个现代艺术品，我会很开心。现在很多产品设计得太医疗了，像医疗器械一样。'
+      ]}
+  ],
+  '润滑液': [
+    { id:'iv6', name:'Kevin (35, 西雅图)', avatar:'K', category:'润滑液',
+      segments:[
+        '我是Kevin，在西雅图做工程师。润滑液我用得最多了，因为飞机杯必须配合润滑液用。我的痛点是：市面上没有一瓶好用的泵头式润滑液。',
+        '所有润滑液的瓶子都用几次就黏糊糊的，瓶口结块，泵头按不下去。我每次用都要擦瓶口，非常烦。能不能做那种按压式、瓶口不残留的包装？',
+        '还有一个问题：温度敏感。冬天润滑液是冷的，直接涂上去特别不舒服。能不能做那种接触体温后温和发热的配方？不是那种辣的发热，而是自然的温暖感。'
+      ]}
+  ]
+};
+
+// 当前对话状态
+var IV_STATE = { category: '', interviewIdx: 0, segmentIdx: 0, fullText: false };
+
+function toggleInterviewMode(){
+  INTERVIEW_MODE = !INTERVIEW_MODE;
+  var btn = document.getElementById('ivModeBtn');
+  if(btn) btn.textContent = INTERVIEW_MODE ? '📋 表格模式' : '💬 对话模式';
+  var area = document.getElementById('ivChatArea');
+  var wrap = document.getElementById('seTableWrap');
+  if(!area || !wrap) return;
+  if(INTERVIEW_MODE){
+    wrap.style.display = 'none';
+    area.style.display = 'block';
+    document.querySelector('.src-explorer .se-filter').style.display = 'none';
+    document.querySelector('.src-explorer .se-kpis').style.display = 'none';
+    document.querySelector('.src-explorer .se-meta').style.display = 'none';
+    renderInterviewCategories(area);
+  } else {
+    wrap.style.display = '';
+    area.style.display = 'none';
+    document.querySelector('.src-explorer .se-filter').style.display = '';
+    document.querySelector('.src-explorer .se-kpis').style.display = '';
+    document.querySelector('.src-explorer .se-meta').style.display = '';
+    IV_STATE = { category: '', interviewIdx: 0, segmentIdx: 0, fullText: false };
+  }
+}
+
+function renderInterviewCategories(area){
+  var cats = Object.keys(INTERVIEW_DATA);
+  var chat = '<div class="iv-header"><div class="iv-title">💬 对话式访谈阅读</div>'+
+    '<div class="iv-sub">选一个类目，以对话形式浏览真实用户访谈内容</div></div>'+
+    '<div class="iv-cats">';
+  cats.forEach(function(c){
+    chat += '<div class="iv-cat" onclick="startInterviewChat(\''+escHtml(c)+'\')">'+
+      '<div class="iv-cat-name">' + escHtml(c) + '</div>'+
+      '<div class="iv-cat-count">' + INTERVIEW_DATA[c].length + ' 位受访者</div>'+
+    '</div>';
+  });
+  chat += '</div><div id="ivChat" class="iv-chat" style="display:none"></div>';
+  area.innerHTML = chat;
+}
+
+function startInterviewChat(category){
+  IV_STATE = { category: category, interviewIdx: 0, segmentIdx: 0, fullText: false };
+  var cats = document.querySelector('.iv-cats');
+  if(cats) cats.style.display = 'none';
+  var chat = document.getElementById('ivChat');
+  if(chat){
+    chat.style.display = 'block';
+    chat.innerHTML = '';
+    showNextInterview(chat);
+  }
+}
+
+function showNextInterview(chat){
+  var cat = IV_STATE.category;
+  var data = INTERVIEW_DATA[cat];
+  if(!data || IV_STATE.interviewIdx >= data.length){
+    chat.innerHTML += '<div class="iv-end">—— 该类目下的访谈已全部看完 ——</div>'+
+      '<div class="iv-back" onclick="resetInterviewChat()">← 返回选择其他类目</div>';
+    chat.scrollTop = chat.scrollHeight;
+    return;
+  }
+  var iv = data[IV_STATE.interviewIdx];
+  IV_STATE.segmentIdx = 0;
+  IV_STATE.fullText = false;
+  // 开头打招呼
+  chat.innerHTML += '<div class="iv-msg-wrap iv-in"><div class="iv-avatar" style="background:linear-gradient(135deg,#8b5cf6,#0ea5e9)">'+escHtml(iv.avatar)+'</div>'+
+    '<div class="iv-bubble"><div class="iv-bubble-name">'+escHtml(iv.name)+'</div>'+
+    '<div class="iv-bubble-intro">你好，我是 '+escHtml(iv.name)+'，我用过这款产品。如果你有时间，可以听我讲讲我的使用体验吗？</div>'+
+    '<div class="iv-bubble-actions">'+
+      '<button class="iv-btn-sm" onclick="continueInterviewSegment()">👂 继续说，我听着</button>'+
+      '<button class="iv-btn-sm iv-skip" onclick="showFullInterview()">🤷 别bb了，我要看全文</button>'+
+    '</div></div></div>';
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function continueInterviewSegment(){
+  var chat = document.getElementById('ivChat');
+  if(!chat) return;
+  var cat = IV_STATE.category;
+  var data = INTERVIEW_DATA[cat];
+  if(!data) return;
+  var iv = data[IV_STATE.interviewIdx];
+  if(!iv) return;
+
+  // 移除旧的操作按钮
+  var lastActions = chat.querySelectorAll('.iv-bubble-actions');
+  if(lastActions.length) lastActions[lastActions.length-1].remove();
+
+  // 显示下一段
+  var seg = iv.segments[IV_STATE.segmentIdx];
+  if(seg){
+    chat.innerHTML += '<div class="iv-msg-wrap iv-in"><div class="iv-avatar iv-avatar-sm" style="background:linear-gradient(135deg,#8b5cf6,#0ea5e9)">'+escHtml(iv.avatar)+'</div>'+
+      '<div class="iv-bubble iv-bubble-cont">'+escHtml(seg)+'</div></div>';
+    IV_STATE.segmentIdx++;
+  }
+
+  if(IV_STATE.segmentIdx >= iv.segments.length){
+    // 这个受访者说完了
+    chat.innerHTML += '<div class="iv-msg-wrap iv-out"><div class="iv-bubble iv-bubble-out"><div class="iv-bubble-name iv-bubble-name-out">你</div>谢谢分享，很有帮助。</div></div>'+
+      '<div class="iv-next-wrap">'+
+        '<button class="iv-btn" onclick="nextInterview()">👤 听下一位受访者 →</button>'+
+        '<div style="margin-top:10px;font-size:11px;color:var(--muted)">访谈 #'+(IV_STATE.interviewIdx+1)+'/'+data.length+'</div>'+
+      '</div>';
+  } else {
+    // 还有更多
+    chat.innerHTML += '<div class="iv-msg-wrap iv-in"><div class="iv-bubble-actions">'+
+      '<button class="iv-btn-sm" onclick="continueInterviewSegment()">👂 继续往下说</button>'+
+      '<button class="iv-btn-sm iv-skip" onclick="showFullInterview()">🤷 跳过，直接看剩下的</button>'+
+    '</div></div>';
+  }
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function showFullInterview(){
+  var chat = document.getElementById('ivChat');
+  if(!chat) return;
+  var cat = IV_STATE.category;
+  var data = INTERVIEW_DATA[cat];
+  if(!data) return;
+  var iv = data[IV_STATE.interviewIdx];
+  if(!iv) return;
+
+  var lastActions = chat.querySelectorAll('.iv-bubble-actions');
+  if(lastActions.length) lastActions[lastActions.length-1].remove();
+
+  IV_STATE.fullText = true;
+  for(var i = IV_STATE.segmentIdx; i < iv.segments.length; i++){
+    chat.innerHTML += '<div class="iv-msg-wrap iv-in"><div class="iv-avatar iv-avatar-sm" style="background:linear-gradient(135deg,#8b5cf6,#0ea5e9)">'+escHtml(iv.avatar)+'</div>'+
+      '<div class="iv-bubble iv-bubble-cont">'+escHtml(iv.segments[i])+'</div></div>';
+  }
+  chat.innerHTML += '<div class="iv-msg-wrap iv-out"><div class="iv-bubble iv-bubble-out"><div class="iv-bubble-name iv-bubble-name-out">你</div>谢谢分享，很有帮助。</div></div>'+
+    '<div class="iv-next-wrap">'+
+      '<button class="iv-btn" onclick="nextInterview()">👤 听下一位受访者 →</button>'+
+      '<div style="margin-top:10px;font-size:11px;color:var(--muted)">访谈 #'+(IV_STATE.interviewIdx+1)+'/'+data.length+'</div>'+
+    '</div>';
+  IV_STATE.fullText = false;
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function nextInterview(){
+  var chat = document.getElementById('ivChat');
+  if(!chat) return;
+  chat.innerHTML = '';
+  IV_STATE.interviewIdx++;
+  IV_STATE.segmentIdx = 0;
+  showNextInterview(chat);
+}
+
+function resetInterviewChat(){
+  IV_STATE = { category: '', interviewIdx: 0, segmentIdx: 0, fullText: false };
+  var area = document.getElementById('ivChatArea');
+  if(area) renderInterviewCategories(area);
 }
 
 function openFramework(fwId){
