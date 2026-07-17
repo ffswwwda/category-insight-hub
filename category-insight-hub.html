@@ -791,7 +791,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 /* ——领新详情弹窗（modal）—— */
 .lfm-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:9999;display:none;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
 .lfm-overlay.show{display:flex}
-.lfm-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);width:700px;max-width:94vw;max-height:480px;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.25);animation:fadeInUp .25s both;overflow:hidden;position:relative}
+.lfm-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);width:460px;max-width:94vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.25);animation:fadeInUp .25s both;overflow-y:auto;overflow-x:hidden;position:relative}
 .lfm-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rad-grad);z-index:1}
 .lfm-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
 .lfm-title{font-size:15px;font-weight:800;color:var(--ink);flex:1}
@@ -3478,59 +3478,66 @@ function renderLfPortraitDetail(u){
   var traits=u.trait?u.trait.split('·').map(function(t){return '<span class="uid-tag">'+escHtml(t.trim())+'</span>';}).join(''):'';
   var freq = u.id==='u1'?'3.2%':u.id==='u2'?'1.8%':u.id==='u3'?'4.5%':u.id==='u4'?'6.1%':u.id==='u5'?'2.0%':'0.8%';
   return '<div class="lfm-detail" style="display:block">'+
-    // ═══ Hero（横向紧凑）═══
-    '<div class="lfm-hero" style="background:linear-gradient(135deg,'+arch.color+',rgba(0,0,0,.12));padding:16px 20px;border-radius:var(--radius-sm);color:#fff;display:flex;align-items:center;gap:16px">'+
-      '<div style="width:52px;height:52px;border-radius:15px;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:26px;font-weight:900;flex-shrink:0">'+escHtml(u.avatar)+'</div>'+
+    // ═══ Hero：横向紧凑条（头像+信息+指标一行）═══
+    '<div class="lfm-hero" style="background:linear-gradient(135deg,'+arch.color+',rgba(0,0,0,.12));padding:16px 18px;border-radius:var(--radius-sm);color:#fff;display:flex;align-items:center;gap:14px">'+
+      '<div style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:24px;font-weight:900;flex-shrink:0">'+escHtml(u.avatar)+'</div>'+
       '<div style="flex:1;min-width:0">'+
-        '<div style="display:flex;align-items:center;gap:8px">'+
-          '<span style="font-size:18px;font-weight:900;line-height:1.2">'+escHtml(u.name)+'</span>'+
-          '<span style="font-size:10px;font-weight:800;padding:2px 9px;border-radius:7px;background:rgba(255,255,255,.22);flex-shrink:0">'+escHtml(arch.label)+'</span>'+
+        '<div style="display:flex;align-items:center;gap:7px;flex-wrap:nowrap">'+
+          '<span style="font-size:17px;font-weight:900;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(u.name)+'</span>'+
+          '<span style="font-size:9px;font-weight:800;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.22);flex-shrink:0;white-space:nowrap">'+escHtml(arch.label)+'</span>'+
         '</div>'+
-        '<div style="font-size:11px;font-weight:600;opacity:.82;margin-top:3px">'+escHtml(arch.desc)+'</div>'+
+        '<div style="font-size:11px;font-weight:600;opacity:.82;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(arch.desc)+'</div>'+
       '</div>'+
-      '<div style="display:flex;gap:18px;flex-shrink:0;padding-left:16px;border-left:1px solid rgba(255,255,255,.18)">'+
-        '<div style="text-align:center;min-width:52px">'+
-          '<div style="font-size:9px;font-weight:700;opacity:.65;text-transform:uppercase;letter-spacing:.06em">领先性</div>'+
-          '<div style="font-size:17px;font-weight:900;margin-top:2px;line-height:1">'+escHtml(u.lead)+'</div>'+
-          '<div style="width:38px;height:3px;border-radius:2px;background:rgba(255,255,255,.25);margin:4px auto 0;overflow:hidden"><div style="width:'+({高:85,极高:95,中:50,低:20}[u.lead]||50)+'%;height:100%;border-radius:2px;background:#fff"></div></div>'+
+      '<div style="display:flex;gap:14px;flex-shrink:0;padding-left:14px;border-left:1px solid rgba(255,255,255,.18)">'+
+        '<div style="text-align:center;min-width:44px">'+
+          '<div style="font-size:8px;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.05em">领先性</div>'+
+          '<div style="font-size:16px;font-weight:900;margin-top:1px;line-height:1">'+escHtml(u.lead)+'</div>'+
         '</div>'+
-        '<div style="text-align:center;min-width:52px">'+
-          '<div style="font-size:9px;font-weight:700;opacity:.65;text-transform:uppercase;letter-spacing:.06em">收益预期</div>'+
-          '<div style="font-size:17px;font-weight:900;margin-top:2px;line-height:1">'+escHtml(u.benefit)+'</div>'+
-          '<div style="width:38px;height:3px;border-radius:2px;background:rgba(255,255,255,.25);margin:4px auto 0;overflow:hidden"><div style="width:'+({高:85,极高:95,中:50,低:20}[u.benefit]||50)+'%;height:100%;border-radius:2px;background:#fff"></div></div>'+
+        '<div style="text-align:center;min-width:44px">'+
+          '<div style="font-size:8px;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.05em">收益</div>'+
+          '<div style="font-size:16px;font-weight:900;margin-top:1px;line-height:1">'+escHtml(u.benefit)+'</div>'+
         '</div>'+
       '</div>'+
     '</div>'+
 
-    // ═══ 主体：两栏紧凑 ═══
-    '<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
-      // 左栏：信号 / 特点 / 来源+频率
-      '<div style="display:flex;flex-direction:column;gap:10px">'+
-        (sigs?'<div class="lfm-deco" style="padding:10px 12px"><div class="lfm-dlabel">信号</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+sigs+'</div></div>':'')+
-        (traits?'<div class="lfm-deco" style="padding:10px 12px"><div class="lfm-dlabel">用户特点</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+traits+'</div></div>':'')+
+    // ═══ 单列竖向堆叠 ═══
+    '<div style="margin-top:14px;display:flex;flex-direction:column;gap:12px">'+
+
+      // 说了什么
+      '<div style="padding:13px 15px;background:var(--bg-subtle,rgba(128,140,164,.04));border:1px solid var(--border);border-radius:var(--radius-sm)">'+
+        '<div class="lfm-dlabel">说了什么</div>'+
+        '<div style="font-size:13px;line-height:1.7;font-style:italic;color:var(--ink);border-left:3px solid var(--accent);padding-left:12px;margin-top:5px">"'+escHtml(u.said)+'"</div>'+
+      '</div>'+
+
+      // 提供创意
+      '<div style="padding:13px 15px;background:rgba(0,212,255,.035);border:1px solid rgba(0,212,255,.1);border-radius:var(--radius-sm)">'+
+        '<div class="lfm-dlabel" style="--dl-color:var(--accent)">提供创意 / 机会</div>'+
+        '<div style="font-size:13px;font-weight:700;color:var(--accent);line-height:1.65">'+escHtml(u.idea)+'</div>'+
+      '</div>'+
+
+      // 信号 + 特点（并排小卡）
+      ((sigs||traits)?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+        (sigs?'<div class="lfm-deco" style="padding:10px 12px"><div class="lfm-dlabel">信号</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+sigs+'</div></div>':'<div></div>')+
+        (traits?'<div class="lfm-deco" style="padding:10px 12px"><div class="lfm-dlabel">用户特点</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+traits+'</div></div>':'<div></div>')+
+      '</div>':'')+
+
+      // 数据来源 + 出现频率（并排）
+      '<div style="display:grid;grid-template-columns:1fr auto;gap:10px">'+
         '<div class="lfm-deco" style="padding:10px 12px"><div class="lfm-dlabel">数据来源</div>'+
           '<div style="font-size:12px;color:var(--ink-2);line-height:1.45">'+escHtml(u.source)+'</div>'+
           '<div style="font-size:10px;color:var(--muted);margin-top:3px">VOC / 访谈 / 社媒 · 2025-2026</div>'+
         '</div>'+
-        '<div class="lfm-deco" style="padding:10px 12px;display:flex;align-items:center;justify-content:space-between">'+
-          '<div class="lfm-dlabel" style="margin-bottom:0">出现频率</div>'+
-          '<div style="font-size:20px;font-weight:900;color:var(--ink)">'+freq+'</div>'+
+        '<div class="lfm-deco" style="padding:10px 14px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-width:80px">'+
+          '<div class="lfm-dlabel" style="justify-content:center">频率</div>'+
+          '<div style="font-size:20px;font-weight:900;color:var(--ink);line-height:1;margin:2px 0">'+freq+'</div>'+
         '</div>'+
       '</div>'+
-      // 右栏：说了什么 / 提供创意 / 标签行
-      '<div style="display:flex;flex-direction:column;gap:10px">'+
-        '<div style="padding:12px 14px;background:var(--bg-subtle,rgba(128,140,164,.04));border:1px solid var(--border);border-radius:var(--radius-sm)">'+
-          '<div class="lfm-dlabel">说了什么</div>'+
-          '<div style="font-size:13px;line-height:1.65;font-style:italic;color:var(--ink);border-left:3px solid var(--accent);padding-left:12px;margin-top:5px">"'+escHtml(u.said)+'"</div>'+
-        '</div>'+
-        '<div style="padding:12px 14px;background:rgba(0,212,255,.035);border:1px solid rgba(0,212,255,.1);border-radius:var(--radius-sm)">'+
-          '<div class="lfm-dlabel" style="--dl-color:var(--accent)">提供创意 / 机会</div>'+
-          '<div style="font-size:13px;font-weight:700;color:var(--accent);line-height:1.6">'+escHtml(u.idea)+'</div>'+
-        '</div>'+
-        '<div style="display:flex;flex-wrap:wrap;gap:5px;padding-top:2px">'+
-          '<span class="uid-tag">使用阻碍</span><span class="uid-tag">克服方式</span><span class="uid-tag">改进建议</span><span class="uid-tag">忠诚度</span>'+
-        '</div>'+
+
+      // 底部维度标签行
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:2px">'+
+        '<span class="uid-tag">使用阻碍</span><span class="uid-tag">克服方式</span><span class="uid-tag">改进建议</span><span class="uid-tag">忠诚度</span>'+
       '</div>'+
+
     '</div>'+
   '</div>';
 }
