@@ -399,6 +399,12 @@ body.dark .lab-path .pt{color:#c4b5fd}
 .lab-ccard .ci{font-size:22px;flex-shrink:0;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:rgba(139,92,246,.1)}
 .lab-ccard h4{font-size:14px;font-weight:800;margin:2px 0 6px}
 .lab-ccard p{font-size:11.5px;line-height:1.7;color:var(--muted);margin:0}
+.lab-ccard .ico{flex-shrink:0;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(139,92,246,.1)}
+/* 规划中状态横幅 */
+.lab-status{display:flex;align-items:center;gap:10px;margin-top:22px;padding:13px 16px;border-radius:13px;
+  background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.25);font-size:12px;color:#b45309;line-height:1.55}
+body.dark .lab-status{color:#fbbf24}
+.lab-status svg{flex-shrink:0}
 /* CTA */
 .lab-cta{margin-top:32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
   border:1px solid var(--border);border-radius:18px;padding:22px 24px;background:var(--glass-bg)}
@@ -1417,6 +1423,7 @@ body.dark .lab-path .pt{color:#c4b5fd}
 
       <!-- ===== VIEW: FUTURE LAB · 数字世界虚拟预测 (概念介绍页) ===== -->
       <div class="view" id="viewLab"></div>
+      <div class="view" id="viewStress"></div>
 
       <!-- ===== VIEW: PREDICTIVE TOOLS ===== -->
       <div class="view" id="viewInsightTool"></div>
@@ -1891,7 +1898,11 @@ function renderNavLab(){
   $('#navLab').innerHTML=
     '<div class="nav-item" data-nav="nav-lab" onclick="openLabIntro()">'+
       '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/></svg></span>'+
-      '<span class="ni-name">数字世界虚拟预测</span></div>';
+      '<span class="ni-name">数字世界虚拟预测</span></div>'+
+    '<div class="nav-item" data-nav="nav-stress" onclick="openStressTest()">'+
+      '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M9 20V4M14 20v-7M19 20V8"/><path d="M3 20h18"/></svg></span>'+
+      '<span class="ni-name">虚拟用户压力测试</span>'+
+      '<span class="nav-tag lab">规划中</span></div>';
 }
 
 function openLabIntro(){
@@ -1994,6 +2005,62 @@ function openLabIntro(){
   if(window.anime){ try{ anime.animate('.lab-wrap > *',{opacity:[0,1],translateY:[18,0],delay:anime.stagger(70),duration:520,easing:'easeOutCubic'}); }catch(e){} }
 }
 
+// ── 虚拟用户压力测试：规划中概念页（板块由用户开发中，此处陈列设计思路） ──
+function openStressTest(){
+  setActiveNav('nav-stress');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='虚拟用户压力测试';
+  setView('Stress');
+  // 讨论要点卡
+  var pointCard=function(ico,title,body){
+    return '<div class="lab-ccard" style="--fc:#8b5cf6">'+
+      '<div class="ico" style="color:#8b5cf6">'+ico+'</div>'+
+      '<h4>'+escHtml(title)+'</h4><p>'+body+'</p></div>';
+  };
+  $('#viewStress').innerHTML=
+    '<div class="lab-wrap">'+
+      // Hero
+      '<div class="lab-hero">'+
+        '<div class="lab-hero-text">'+
+          '<span class="lab-eyebrow"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M9 20V4M14 20v-7M19 20V8"/><path d="M3 20h18"/></svg> 未来实验室 · FUTURE LAB</span>'+
+          '<div class="lab-title">虚拟用户压力测试</div>'+
+          '<div class="lab-tagline">上市之前，先让 <span class="accent">一批虚拟用户</span> 替你试一遍</div>'+
+          '<p class="lab-desc">基于你的 VOC、差评、社媒语料等源头数据，生成一批「有理论支撑分布」的虚拟用户。把新品上架、社媒内容传播等场景丢给他们，看他们会怎么反应、吐槽、转发——相当于上市前的用户试用与压力测试。与数字世界虚拟预测的关系是：<b>压力测试＝上市前试用评价，虚拟预测＝上市后效果评估</b>。</p>'+
+        '</div>'+
+        '<div class="lab-hero-viz">'+stressViz()+'</div>'+
+      '</div>'+
+      // 状态横幅
+      '<div class="lab-status">'+
+        '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>'+
+        '<span>本板块规划中（开发中）—— 页面与功能由你正在构建，此处仅陈列设计思路供理解板块。</span>'+
+      '</div>'+
+      // 讨论要点
+      '<div class="lab-sec">'+
+        '<div class="lab-sec-h">设计思路 · 待厘清的三个核心问题</div>'+
+        '<div class="lab-cards">'+
+          pointCard('<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M9 20V4M14 20v-7M19 20V8"/><path d="M3 20h18"/></svg>','① 用户选择架构','生成的用户不是随机的，而是按某种<b>分布形态</b>——例如 10% 极端用户、50% 无所谓用户、其余比例的其他类型。需要找到支撑这种分布的理论模型（市场细分 / 人格分布 / 采纳曲线等），保证生成群体在结构上可信。')+
+          pointCard('<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/><circle cx="15" cy="13" r="2"/><path d="M13 15l-2 2"/></svg>','② 虚拟用户卡设计','VOC 里用户会表达「说了什么 / 做了什么 / 想什么 / 内在想法」，但很少暴露年龄、身份。所以用户卡里<b>关键事实信息来自数据、保证正确</b>；缺失维度（年龄、身份等）由算法生成补全，不喧宾夺主。')+
+          pointCard('<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6M15 15l5 5M20 15l-5 5"/></svg>','③ 工具形态','第一性是大模型 skill（需 AI 参与生成）；同时提供<b>纯前端网页简化版</b>（不接大模型）。需明确：哪些环节必须大模型、哪些能用确定性算法（分布采样、规则匹配）替代，两者如何分工。')+
+        '</div>'+
+      '</div>'+
+      '<div class="lab-note">虚拟用户压力测试 = 上市前的用户试用与压力测试；数字世界虚拟预测 = 上市后的效果评估。两者共用同一张「用户基座」，前者看反应、后者看演化。</div>'+
+    '</div>';
+  if(window.anime){ try{ anime.animate('.lab-wrap > *',{opacity:[0,1],translateY:[18,0],delay:anime.stagger(70),duration:520,easing:'easeOutCubic'}); }catch(e){} }
+}
+function stressViz(){
+  // 分布柱状图（呼应"用户分布形态"概念）
+  var bars=[['#8b5cf6',38],['#a855f7',62],['#0891b2',50],['#0ea5e9',26],['#c084fc',14]];
+  return '<svg viewBox="0 0 200 130" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">'+
+    '<defs><linearGradient id="svG" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#0891b2"/></linearGradient></defs>'+
+    '<rect x="0" y="0" width="200" height="130" rx="14" fill="rgba(139,92,246,.06)"/>'+
+    bars.map(function(b,i){
+      var h=b[1]*0.85, x=18+i*36, y=110-h;
+      return '<rect x="'+x+'" y="'+y+'" width="22" height="'+h+'" rx="5" fill="url(#svG)" opacity="'+(0.5+i*0.1)+'"/>'+
+             '<text x="'+(x+11)+'" y="124" font-size="7" text-anchor="middle" fill="var(--muted)">'+(i+1)+'</text>';
+    }).join('')+
+    '<text x="100" y="14" font-size="8" text-anchor="middle" fill="#8b5cf6" font-weight="800">用户分布形态</text>'+
+    '</svg>';
+}
 function statChip(v,k){return '<div class="lab-stat"><div class="v">'+escHtml(v)+'</div><div class="k">'+escHtml(k)+'</div></div>';}
 function labStep(n,t,d){return '<div class="lab-step"><span class="n">'+escHtml(n)+'</span><div class="t">'+escHtml(t)+'</div><div class="d">'+escHtml(d)+'</div><span class="arw">→</span></div>';}
 function labPath(pn,t,pt,d){return '<div class="lab-path"><span class="pn">'+escHtml(pn)+'</span><h4>'+escHtml(t)+'</h4><div class="pt">'+escHtml(pt)+'</div><p>'+escHtml(d)+'</p></div>';}
