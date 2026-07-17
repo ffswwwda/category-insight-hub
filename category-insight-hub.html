@@ -1819,7 +1819,7 @@ body.dark .lab-status{color:#fbbf24}
   .purpose-cols{grid-template-columns:1fr}}
 </style>
 </head>
-<body class="light">
+<body class="dark">
 <!-- ===== Standard SVG icon sprite (three-color gradient #uiGrad · 绝不用 emoji) ===== -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -7462,7 +7462,7 @@ init();
 <!-- ===== Radium interaction layer (cursor / particles / scroll / ripple / theme) ===== -->
 <script>
 (function(){
-  // ---- Theme toggle (default light, per preference) ----
+  // ---- Theme toggle (default dark) ----
   var store = { get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},
                 set:function(k,v){try{localStorage.setItem(k,v);}catch(e){}} };
   var savedTheme = store.get('cih-theme');
