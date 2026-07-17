@@ -441,6 +441,37 @@ body.dark .lab-status{color:#fbbf24}
 .glob-float-bar button:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(99,102,241,.40)}
 .glob-float-bar button span{font-size:14px}
 .lab-note{margin-top:18px;font-size:11px;color:var(--muted);line-height:1.6}
+/* —— 理论详情弹窗（theory-modal）—— */
+.theory-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99999;display:none;justify-content:center;align-items:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.theory-overlay.show{display:flex}
+.theory-modal{background:var(--bg);border:1px solid var(--border);border-radius:16px;width:540px;max-width:94vw;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 28px 72px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.06) inset;animation:fadeInUp .28s cubic-bezier(.22,1,.36,1) both;overflow:hidden;position:relative}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+.theory-modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(135deg,#00d4ff,#a855f7,#ff6b9d);z-index:1;border-radius:16px 16px 0 0}
+.thm-head{display:flex;align-items:center;gap:12px;padding:18px 22px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.thm-head-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(168,85,247,.10));display:flex;align-items:center;justify-content:center;color:#a855f7;flex-shrink:0}
+.thm-head-info{flex:1;min-width:0}
+.thm-head-title{font-size:17px;font-weight:800;color:var(--ink);line-height:1.3}
+.thm-head-sub{font-size:11.5px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px}
+.thm-close{width:32px;height:32px;border-radius:9px;border:none;background:var(--glass-bg);color:var(--muted);font-size:18px;cursor:pointer;display:grid;place-items:center;line-height:1;transition:all .15s;flex-shrink:0}
+.thm-close:hover{background:rgba(220,38,38,.10);color:#dc2626}
+.thm-body{overflow-y:auto;padding:20px 24px 26px;flex:1}
+.thm-section{margin-bottom:18px}
+.thm-section:last-child{margin-bottom:0}
+.thm-slabel{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.thm-slabel::before{content:'';width:3px;height:13px;border-radius:2px;background:linear-gradient(180deg,#00d4ff,#a855f7);flex-shrink:0}
+.thm-stext{font-size:13.5px;color:var(--ink-2);line-height:1.75}
+.thm-stext b,.thm-stext strong{color:var(--ink)}
+.thm-list{list-style:none;padding:0;margin:8px 0 0 0}
+.thm-list li{font-size:13px;color:var(--ink-2);line-height:1.7;padding:7px 0 7px 18px;position:relative;border-bottom:1px solid var(--border);transition:background .15s}
+.thm-list li:last-child{border-bottom:none}
+.thm-list li::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#ff6b9d)}
+.thm-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 9px;border-radius:6px;background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(168,85,247,.10));color:#a855f7;margin-right:5px;margin-bottom:4px}
+.thm-highlight{background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(168,85,247,.08));border:1px solid rgba(168,85,247,.15);border-radius:10px;padding:12px 16px;margin-top:8px;font-size:13px;line-height:1.65;color:var(--ink-2)}
+.thm-highlight strong{color:#a855f7}
+/* 理论卡片可点击提示 */
+.lab-ccard.clickable{cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.lab-ccard.clickable:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(99,102,241,.14);border-color:rgba(99,102,247,.25)}
+.lab-ccard.clickable:active{transform:translateY(-1px)}
 @media(max-width:760px){.lab-pipe{grid-template-columns:repeat(2,1fr)}.lab-paths,.lab-cards{grid-template-columns:1fr}.lab-title{font-size:26px}.lab-hero{flex-direction:column}.lab-hero-viz{width:100%;max-width:280px;margin:0 auto}}
 
 /* === Main === */
@@ -2092,11 +2123,10 @@ function openStressTest(){
       '<div class="lab-sec">'+
         '<div class="lab-sec-h">理论支撑 · 用户群的形态，不是拍脑袋</div>'+
         '<div class="lab-cards">'+
-          labCcard(ic('i-trend'),'Rogers 创新扩散理论','采纳者天然呈钟形偏态五档：创新者 2.5% / 早期采纳 13.5% / 早期大众 34% / 晚期大众 34% / 落后者 16%。它决定了「这 100 人里，多少人会动」。 <b>用在哪：默认群体分布形态。</b>')+
-          labCcard(ic('i-zap'),'von Hippel 领先用户理论','极端 / 领先用户当下的需求，往往是主流市场未来的需求。所以约 10% 的极端用户不是噪声，而是信号——他们定义产品下一步。 <b>用在哪：极端用户标记与需求前瞻。</b>')+
-          labCcard(ic('i-users'),'Pareto / Heavy-Half','哪怕落后者占 16%，真正驱动传播的是前 15%+ 的领先 / 早期采纳者。因此每个用户携带「影响力权重」，不是均匀 1。 <b>用在哪：仿真时的带动力与聚合显著性。</b>')+
-          labCcard(ic('i-swap'),'Ajzen 计划行为 + 社会期望','人「说的」和「私下想的 / 真正做的」常有 gap（say-do gap）。所以卡片分「公开声音（真实）」与「私态度（生成）」，私态度才是动作预测的依据。 <b>用在哪：生成层的私态度与动作倾向。</b>')+
-        '</div>'+
+          '<div class="lab-ccard clickable" data-theory="rogers" onclick="openTheoryModal(\'rogers\')"><div class="ci">'+ic('i-trend')+'</div><div><h4>Rogers 创新扩散理论</h4><p>采纳者天然呈钟形偏态五档：创新者 2.5% / 早期采纳 13.5% / 早期大众 34% / 晚期大众 34% / 落后者 16%。它决定了「这 100 人里，多少人会动」。 <b>用在哪：默认群体分布形态。</b></p></div></div>'+
+          '<div class="lab-ccard clickable" data-theory="vonhippel" onclick="openTheoryModal(\'vonhippel\')"><div class="ci">'+ic('i-zap')+'</div><div><h4>von Hippel 领先用户理论</h4><p>极端 / 领先用户当下的需求，往往是主流市场未来的需求。所以约 10% 的极端用户不是噪声，而是信号——他们定义产品下一步。 <b>用在哪：极端用户标记与需求前瞻。</b></p></div></div>'+
+          '<div class="lab-ccard clickable" data-theory="pareto" onclick="openTheoryModal(\'pareto\')"><div class="ci">'+ic('i-users')+'</div><div><h4>Pareto / Heavy-Half</h4><p>哪怕落后者占 16%，真正驱动传播的是前 15%+ 的领先 / 早期采纳者。因此每个用户携带「影响力权重」，不是均匀 1。 <b>用在哪：仿真时的带动力与聚合显著性。</b></p></div></div>'+
+          '<div class="lab-ccard clickable" data-theory="ajzen" onclick="openTheoryModal(\'ajzen\')"><div class="ci">'+ic('i-swap')+'</div><div><h4>Ajzen 计划行为 + 社会期望</h4><p>人「说的」和「私下想的 / 真正做的」常有 gap（say-do gap）。所以卡片分「公开声音（真实）」与「私态度（生成）」，私态度才是动作预测的依据。 <b>用在哪：生成层的私态度与动作倾向。</b></p></div></div>'+        '</div>'+
       '</div>'+
       // 使用场景
       '<div class="lab-sec">'+
@@ -2937,6 +2967,139 @@ function globFloatAction(){
   var viewId=active?active.id:'';
   if(viewId==='viewStress'){ openStressTool(); }
   else { openPredictTool(); }
+}
+
+// ---- 理论详情弹窗（虚拟用户压力测试 → 理论支撑卡片点击展开）----
+var THEORY_DATA={
+  rogers:{
+    icon:'i-trend',title:'Rogers 创新扩散理论',sub:'Diffusion of Innovations · Everett M. Rogers (1962)',
+    sections:[
+      {label:'核心概念',
+       text:'Rogers 的创新扩散理论是传播学与市场研究中最经典的采纳模型。它指出<b>新产品 / 新观念在社会系统中的传播遵循一条钟形偏态曲线</b>——不同人群对创新的接受速度和动机截然不同，天然形成五档分布。'},
+      {label:'五档采纳者详解',
+       html:'<ul class="thm-list">'+
+         '<li><span class="thm-tag">创新者 2.5%</span> 敢于冒险、热衷尝鲜，往往是科技爱好者或极客。他们愿意承担早期风险，但人数极少，不足以驱动大众市场。</li>'+
+         '<li><span class="thm-tag">早期采纳者 13.5%</span> 意见领袖型人物。他们审慎但有判断力，是社会圈层中的「风向标」。赢得他们就等于赢得了口碑传播的起点。</li>'+
+         '<li><span class="thm-tag">早期大众 34%</span> 务实派。他们需要看到实际证据和社交证明才会行动，是市场规模的主力军。</li>'+
+         '<li><span class="thm-tag">晚期大众 34%</span> 保守且持疑。通常在产品已成熟、价格下降、周围大多数人已采用后才跟进。</li>'+
+         '<li><span class="thm-tag">落后者 16%</span> 对变化有抵触，往往因外部压力（如旧品停产）才被动切换。</li></ul>'},
+      {label:'在压力测试中的应用',
+       text:'当我们生成 100 个虚拟用户时，<b>默认按 Rogers 五档比例分配</b>：约 2-3 个创新者、13-14 个早期采纳者、各 34 个早/晚期大众、16 个落后者。这保证了群体结构在统计上可信——不是随机均匀分布，而是真实社会中的人群形态。',
+       highlight:'压力测试的关键价值：如果你的新品概念连「创新者」都不买账，或者「落后者」反而热情高涨——这两种异常信号都值得深挖，前者说明产品方向可能根本错误，后者可能意味着你低估了产品的普适性。'},
+      {label:'经典引用',
+       quote:'"创新—决策过程包含五个步骤：认知 → 说服 → 决定 → 实施 → 确认。" —— Everett M. Rogers, 《Diffusion of Innovations》'}
+    ]
+  },
+  vonhippel:{
+    icon:'i-zap',title:'von Hippel 领先用户理论',sub:'Lead User Theory · Eric von Hippel (1986)',
+    sections:[
+      {label:'核心概念',
+       text:'Eric von Hippel 在 MIT 提出的领先用户理论颠覆了传统「从主流用户需求出发」的产品开发思路。他指出：<b>极端用户和领先用户今天面临的需求，恰恰是主流市场明天会遇到的问题</b>。这些用户不是噪声——他们是未来需求的提前预告。'},
+      {label:'领先用户的两大标准',
+       html:'<ul class="thm-list">'+
+         '<li><span class="thm-tag">领先于趋势</span> 他们遇到的需求痛点比主流市场<strong>早数月甚至数年</strong>。当大部分人还在用旧方案时，他们已经自己动手拼凑解决方案。</li>'+
+         '<li><span class="thm-tag">高收益预期</span> 他们能从解决方案中获得<strong>显著更高的收益</strong>（因为痛点对他们更痛）。这意味着他们不仅有动力解决，还有动力深度参与。</li></ul>'},
+      {label:'在压力测试中的应用',
+       text:'在生成虚拟用户时，我们标记约 <b>10% 为「领先/极端用户」</b>。他们的 VOC 原话更激进、更具体、更超前——这些不是异常值，而是创新信号的富矿。压力测试中特别关注：',
+       html:'<ul class="thm-list">'+
+         '<li>领先用户是否强烈支持你的卖点？（如果连他们都挑刺，问题严重）</li>'+
+         '<li>领先用户提出的替代方案是什么？（可能指向你未想到的产品方向）</li>'+
+         '<li>领先用户与普通用户的评价差距有多大？（差距越大 = 市场教育成本越高）</li></ul>',
+       highlight:'von Hippel 的精髓：不要把极端差评当成噪音过滤掉——把它们当作领先用户在免费告诉你下一步该往哪走。'},
+      {label:'经典引用',
+       quote:'"预期从一个重要的创新中获得相对更高收益的用户，也就是领先用户，更可能去创新。" —— Eric von Hippel, 《The Sources of Innovation》'}
+    ]
+  },
+  pareto:{
+    icon:'i-users',title:'Pareto / Heavy-Half 原则',sub:'80/20 Rule & Heavy-Half Influence Model',
+    sections:[
+      {label:'核心概念',
+       text:'Pareto 法则（二八定律）大家耳熟能详：<b>20% 的因素贡献 80% 的结果</b>。但在用户传播和影响力研究中，更精确的模型是 <b>"Heavy-Half"</b>：前半部分（Heavy Half）用户贡献了远超半数的传播效果——而这些人正是 Rogers 曲线中的创新者和早期采纳者。'},
+      {label:'影响力权重的分配逻辑',
+       html:'<ul class="thm-list">'+
+         '<li><span class="thm-tag">创新者 ×1.8</span> 虽然人数少，但单位影响力的倍率高——他们是种子传播者。</li>'+
+         '<li><span class="thm-tag">早期采纳者 ×1.4</span> 社交活跃度高，是口碑裂变的核心节点。</li>'+
+         '<li><span class="thm-tag">早期大众 ×0.9</span> 规模大但人均影响力接近均值。</li>'+
+         '<li><span class="thm-tag">晚期大众 ×0.5</span> 跟随型行为，很少主动影响他人。</li>'+
+         '<li><span class="thm-tag">落后者 ×0.2</span> 几乎不参与正向传播，甚至可能产生负向阻力。</li></ul>'},
+      {label:'在压力测试中的应用',
+       text:'每个虚拟用户卡携带一个「影响力权重」字段。当你把一个社媒帖子丢给 100 个用户做压力测试时：<b>不是简单数「多少人点赞」，而是加权聚合</b>——3 个创新者的正面评价可能比 10 个晚期大众更有传播预测力。',
+       highlight:'关键洞察：如果你的内容只被「晚期大众」和「落后者」喜欢，而被「创新者」和「早期采纳者」冷落——短期内销量可能还行，但长期来看缺乏自增长动力（病毒系数低）。这是压力测试能提前暴露的战略级风险。'},
+      {label:'经典引用',
+       quote:'\u201c少数人驱动多数结果——找到那 \u2018Heavy Half\u2019 并理解他们的行为模式，是预测传播效果的捷径。\u201d —— 重构 Pareto 原则于社交媒体传播语境'}
+    ]
+  },
+  ajzen:{
+    icon:'i-swap',title:'Ajzen 计划行为理论 + 社会期望偏差',sub:'Theory of Planned Behavior & Social Desirability Bias',
+    sections:[
+      {label:'核心概念',
+       text:'Icek Ajzen 的计划行为理论（TPB）指出：<b>人的实际行动由三个因子决定：态度（Attitude）、主观规范（Subjective Norm）、感知行为控制（Perceived Behavioral Control）</b>。但在真实世界中，还有一个隐藏变量——<b>社会期望偏差（Social Desirability Bias）</b>让人们「说的」和「做的」不一致。'},
+      {label:'Say-Do Gap 三层拆解',
+       html:'<ul class="thm-list">'+
+         '<li><span class="thm-tag">公开声音（锚定层·来自真实数据）</span> 用户在公开平台（亚马逊评论、Twitter）说的话。这是<b>可信的、可追溯的</b>，作为用户卡的锚定事实。</li>'+
+         '<li><span class="thm-tag">私态度（生成层·AI 推断）</span> 用户内心真正的态度倾向。基于公开声音中的语言模式、情绪强度、矛盾信号推断——这才是动作预测的依据。</li>'+
+         '<li><span class="thm-tag">实际行为（仿真输出）</span> 在压力测试场景中，用户真正会做的动作（转发/忽略/吐槽/购买）。由私态度 + 场景约束共同决定。</li></ul>'},
+      {label:'在压力测试中的应用',
+       text:'每个虚拟用户卡分<b>双层设计</b>：',
+       html:'<ul class="thm-list">'+
+         '<li><b>锚定层（不可篡改）</b>：来自 VOC 真实原话——用户说了什么、给了几星、属于哪个分群、JTBD 是什么。这一层保证「有据可查」。</li>'+
+         '<li><b>生成层（带置信度标注）</b>：私态度、动作倾向、人口代理信息（年龄/身份等缺失维度）。每项附带置信度（高/中/低），明确告知「哪些是数据驱动的、哪些是算法补全的」。</li></ul>',
+       highlight:'如果一个用户公开给了 5 星好评，但私态度分析显示其情绪词存在矛盾信号（"还可以吧""勉强能用"）——这种 say-do gap 正是压力测试要放大的预警：表面好评可能是礼貌性的，复购概率并不高。'},
+      {label:'经典引用',
+       quote:'"行为意向是行为的直接前因，而意向又由态度、主观规范和感知行为控制共同决定。" —— Icek Ajzen, 《From intentions to actions》'}
+    ]
+  }
+};
+function ensureTheoryModal(){
+  if(document.getElementById('theoryOverlay')) return;
+  var ov=document.createElement('div');
+  ov.id='theoryOverlay';
+  ov.className='theory-overlay';
+  ov.innerHTML='<div class="theory-modal"><div class="thm-head"></div><div class="thm-body"></div></div>';
+  document.body.appendChild(ov);
+  // 点击 overlay 背景关闭
+  ov.addEventListener('click', function(e){
+    var box=ov.querySelector('.theory-modal');
+    if(box && !box.contains(e.target)) closeTheoryModal();
+  });
+  // ESC 关闭
+  document.addEventListener('keydown', function thmKd(e){ if(e.key==='Escape') closeTheoryModal(); });
+}
+function openTheoryModal(id){
+  ensureTheoryModal();
+  var d=THEORY_DATA[id]; if(!d) return;
+  var ov=document.getElementById('theoryOverlay');
+  var head=ov.querySelector('.thm-head');
+  var body=ov.querySelector('.thm-body');
+  // 构建头部
+  head.innerHTML=
+    '<div class="thm-head-icon"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#'+d.icon+'"/></svg></div>'+
+    '<div class="thm-head-info">'+
+      '<div class="thm-head-title">'+escHtml(d.title)+'</div>'+
+      '<div class="thm-head-sub">'+escHtml(d.sub)+'</div>'+
+    '</div>'+
+    '<button class="thm-close" onclick="closeTheoryModal()" title="关闭">&times;</button>';
+  // 构建正文
+  var secHtml=d.sections.map(function(s){
+    var h='<div class="thm-section"><div class="thm-slabel">'+escHtml(s.label)+'</div>';
+    if(s.text) h+='<div class="thm-stext">'+s.text+'</div>';
+    if(s.html) h+=s.html;
+    if(s.highlight) h+='<div class="thm-highlight">'+s.highlight+'</div>';
+    if(s.quote) h+='<div class="thm-stext thm-quote">'+s.quote+'</div>';
+    h+='</div>';
+    return h;
+  }).join('');
+  body.innerHTML=secHtml;
+  ov.classList.add('show');
+  // 入场动画
+  var modal=ov.querySelector('.theory-modal');
+  modal.style.animation='none';
+  void modal.offsetWidth; // reflow
+  modal.style.animation='';
+}
+function closeTheoryModal(){
+  var ov=document.getElementById('theoryOverlay');
+  if(ov) ov.classList.remove('show');
 }
 
 // ---- 用户洞察工具（预测类）----
@@ -5725,8 +5888,8 @@ init();
   });
 })();
 </script>
-<!-- 全局浮动预测工作台入口（所有页面显示） -->
-<div class="glob-float-bar" id="globFloatBar">
+<!-- 全局浮动工作台入口（仅 Lab / Stress 页面显示，默认 hidden） -->
+<div class="glob-float-bar hidden" id="globFloatBar">
   <button onclick="globFloatAction()"><span id="globFloatLabel">进入预测工作台</span> <span>↗</span></button>
 </div>
 
