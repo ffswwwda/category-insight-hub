@@ -410,6 +410,25 @@ body.dark .lab-path .pt{color:#c4b5fd}
   box-shadow:0 10px 26px rgba(99,102,241,.32);transition:transform .2s var(--rad-easing),box-shadow .2s}
 .lab-btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(99,102,241,.42)}
 .lab-btn .arr{font-size:16px}
+
+/* ── 全局浮动预测工作台入口（底部固定）── */
+.glob-float-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  z-index:9998;display:flex;align-items:center;gap:14px;
+  padding:12px 22px;border-radius:18px 18px 0 0;
+  background:var(--bg);border:1px solid var(--border);border-bottom:none;
+  box-shadow:0 -8px 32px rgba(0,0,0,.14);
+  transition:opacity .35s var(--rad-easing), transform .35s var(--rad-easing), visibility .35s;
+  opacity:1;visibility:visible}
+.glob-float-bar.hidden{opacity:0;visibility:hidden;transform:translateX(-50%) translateY(20px);pointer-events:none}
+.glob-float-bar .gf-label{font-size:11.5px;font-weight:700;color:var(--ink-2)}
+.glob-float-bar .gf-sub{font-size:10px;color:var(--muted)}
+.glob-float-bar button{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;
+  border-radius:11px;border:none;cursor:pointer;font-family:inherit;
+  font-size:13px;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,#8b5cf6,#0891b2);
+  box-shadow:0 8px 22px rgba(99,102,241,.28);transition:transform .18s,box-shadow .18s}
+.glob-float-bar button:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(99,102,241,.40)}
+.glob-float-bar button span{font-size:14px}
 .lab-note{margin-top:18px;font-size:11px;color:var(--muted);line-height:1.6}
 @media(max-width:760px){.lab-pipe{grid-template-columns:repeat(2,1fr)}.lab-paths,.lab-cards{grid-template-columns:1fr}.lab-title{font-size:26px}.lab-hero{flex-direction:column}.lab-hero-viz{width:100%;max-width:280px;margin:0 auto}}
 
@@ -5393,6 +5412,29 @@ function init(){
   renderNavLab();
   renderPurposeGrid();
   loadCanvasState();
+  initFloatBar();
+}
+// ── 浮动预测工作台入口：全局底部固定，滚动到概念页CTA区时自动隐藏 ──
+var _floatBarTimer=null;
+function initFloatBar(){
+  var bar=document.getElementById('globFloatBar');
+  if(!bar) return;
+  var board=document.getElementById('board');
+  // 用节流防抖
+  function check(){
+    var cta=document.querySelector('.lab-cta');
+    if(!cta){ bar.classList.remove('hidden'); return; }
+    var r=cta.getBoundingClientRect();
+    // 当 CTA 区域顶部进入视口下半部时，隐藏浮动栏（用户已看到真正的入口）
+    if(r.top < window.innerHeight * .7){
+      bar.classList.add('hidden');
+    }else{
+      bar.classList.remove('hidden');
+    }
+  }
+  board.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(check,60); }, {passive:true});
+  window.addEventListener('scroll', function(){ clearTimeout(_floatBarTimer); _floatBarTimer=setTimeout(check,60); }, {passive:true});
+  check(); // 初始检查
 }
 init();
 </script>
@@ -5493,5 +5535,14 @@ init();
   });
 })();
 </script>
+<!-- 全局浮动预测工作台入口 -->
+<div class="glob-float-bar" id="globFloatBar">
+  <div>
+    <div class="gf-label">数字世界虚拟预测</div>
+    <div class="gf-sub">进入预测工作台，跑一遍五步流水线</div>
+  </div>
+  <button onclick="openPredictTool()">进入预测工作台 <span>↗</span></button>
+</div>
+
 </body>
 </html>
