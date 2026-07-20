@@ -2144,6 +2144,16 @@ body.dark .lab-status{color:#fbbf24}
         <iframe class="de-frame" id="redditFrame" src="" title="Reddit 看板"></iframe>
       </div>
 
+      <!-- ===== VIEW: AMZ REVIEW DASHBOARD ===== -->
+      <div class="view" id="viewAmz">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">美亚倒膜 &amp; 名器 · 商品评论看板</span>
+          <span class="ws-tag">已接入 · 28727条 · 7维度</span>
+        </div>
+        <iframe class="de-frame" id="amzFrame" src="" title="美亚评论看板"></iframe>
+      </div>
+
       <!-- ===== VIEW: SOURCE DETAIL ===== -->
       <div class="view" id="viewSource"></div>
 
@@ -2260,7 +2270,10 @@ var DATA = {
         records:0,status:'pending'},
    s12:{id:'s12',name:'Reddit 社媒标签',type:'社媒/用户标签',market:'全球',
         desc:'Reddit 5000 条评论 · 7大模块38子维度用户标签（用户画像/动机/场景/阻碍等）',
-        records:5000,status:'ready',hasDashboard:true,dashboard:'reddit'}
+        records:5000,status:'ready',hasDashboard:true,dashboard:'reddit'},
+   s13:{id:'s13',name:'美亚倒膜&名器评论',type:'商品/VOC',market:'US',
+        desc:'美亚(Amazon US)倒膜&名器类目 28727 条商品评论 · 星级/国家/型号/媒体/类型/月份/关键词 7 维度看板',
+        records:28727,status:'ready',hasDashboard:true,dashboard:'amz'}
   },
 
   // ---- 双工作区定义（截图1）----
@@ -2618,7 +2631,7 @@ function openDeDashboard(){
   $('#viewDe').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
   var f=document.querySelector('#viewDe .de-frame');
-  if(f) f.src='de-dashboard.html?theme='+th;
+  if(f) f.src=ghBase()+'de-dashboard.html?theme='+th;
 }
 
 function openRedditDashboard(){
@@ -2627,7 +2640,27 @@ function openRedditDashboard(){
   $('#viewReddit').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewReddit')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
   var f=document.getElementById('redditFrame');
-  if(f) f.src='reddit-dashboard.html?theme='+th;
+  if(f) f.src=ghBase()+'reddit-dashboard.html?theme='+th;
+}
+
+// GitHub Pages 项目站基址：无论主站以何种方式打开（部署子路径 / 本地 file://），
+// 内嵌看板 iframe 都指向正确的线上绝对地址，避免相对路径解析失败导致"打不开"。
+function ghBase(){
+  if(location.protocol==='file:') return 'https://ffswwwda.github.io/category-insight-hub/';
+  if(location.hostname.indexOf('github.io')>=0){
+    var p=location.pathname;
+    return location.origin+p.substring(0,p.lastIndexOf('/')+1);
+  }
+  return './';
+}
+
+function openAmzDashboard(){
+  state.purposeId=null;
+  setActiveNav('src-s13');
+  $('#viewAmz').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewAmz')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('amzFrame');
+  if(f) f.src=ghBase()+'amz-review-dashboard.html?theme='+th;
 }
 
 // ============================================================
@@ -2931,6 +2964,7 @@ function openSource(srcId){
   $('#topbarTitle').textContent=s.name;
   if(s.hasDashboard){
     if(s.dashboard==='reddit'){ openRedditDashboard(); return; }
+    if(s.dashboard==='amz'){ openAmzDashboard(); return; }
     // Level1：s8 德国商品库 → 专属完整看板（已含筛选/导出/报告）
     $('#viewDe').classList.add('active');
     $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
