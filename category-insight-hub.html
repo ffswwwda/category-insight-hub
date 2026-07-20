@@ -1491,6 +1491,23 @@ body.dark .lab-status{color:#fbbf24}
 .gal-h-title{font-size:22px;font-weight:800;letter-spacing:.1px;background:var(--rad-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .gal-h-sub{font-size:12.5px;color:var(--muted);margin-top:5px;max-width:760px;line-height:1.6}
 .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:6px 24px 40px}
+/* —— 画廊维度切换 —— */
+.gal-dims{display:flex;gap:8px;margin:14px 24px 6px;flex-wrap:wrap}
+.gal-dim{font-size:13px;font-weight:600;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--panel-solid);color:var(--ink-2);cursor:pointer;transition:all .2s}
+.gal-dim:hover{border-color:rgba(0,195,243,.4);color:var(--ink)}
+.gal-dim.on{background:var(--rad-grad);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(168,85,247,.25)}
+.gal-jx-note{font-size:12.5px;color:var(--muted);margin:14px 24px 4px;line-height:1.65;max-width:880px}
+/* —— 购买旅程泳道 —— */
+.journey{display:flex;align-items:stretch;gap:0;padding:12px 24px 44px;overflow-x:auto}
+.jn-stage{flex:1;min-width:232px;display:flex;flex-direction:column}
+.jn-stage-h{display:flex;align-items:center;gap:9px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.jn-num{width:24px;height:24px;border-radius:50%;background:var(--rad-grad);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.jn-stage-name{font-size:15px;font-weight:800;color:var(--ink)}
+.jn-stage-sub{font-size:11px;color:var(--muted)}
+.jn-count{font-size:11px;color:var(--accent);font-weight:700;margin-left:auto;background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(168,85,247,.12));border:1px solid rgba(168,85,247,.3);border-radius:20px;padding:2px 9px}
+.jn-cards{display:flex;flex-direction:column;gap:12px}
+.jn-cards .gal-card{padding:14px 16px;animation:fadeInUp .4s both}
+.jn-arrow{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:20px;padding:0 5px;flex-shrink:0;align-self:flex-start;margin-top:38px}
 /* ——分析框架双板块—— */
 .fg-section{margin-bottom:8px}
 .fg-shead{font-size:13px;font-weight:800;color:var(--ink);margin:0 24px 10px;display:flex;align-items:center;gap:8px}
@@ -5743,7 +5760,8 @@ function playMineDemo(){
   }, endT+500, _mineTimers);
 }
 
-// ---- 板块1：数据源画廊（按类目分类，点击进入单个数据源看板）----
+// ---- 板块1：数据源画廊（多维切换：业务分类 / 购买旅程 / 平铺全部）----
+var galDim='cat'; // cat | journey | flat
 function openSourceGallery(){
   setActiveNav('nav-src');
   $('#subnav').classList.remove('show');
@@ -5769,23 +5787,64 @@ function openSourceGallery(){
       '<div class="gal-foot"><span class="gal-rec">'+ready+' · '+rec+'</span><span class="gal-go">进入</span></div>'+
     '</div>';
   }
-  var sections = CAT_ORDER.map(function(cat){
-    var ids=Object.keys(DATA.sources).filter(function(k){return CAT_MAP[k]===cat;});
-    if(!ids.length) return '';
-    return '<div class="gal-cat" style="margin:28px 0 2px">'+
-      '<div style="display:flex;align-items:center;gap:10px;margin:0 0 14px;padding-bottom:9px;border-bottom:2px solid var(--border)">'+
-        '<span style="width:4px;height:18px;border-radius:3px;background:var(--rad-grad);display:inline-block"></span>'+
-        '<span style="font-size:16px;font-weight:700;color:var(--ink)">'+escHtml(cat)+'</span>'+
-        '<span style="font-size:12px;color:var(--muted);background:var(--panel-2);border:1px solid var(--border);border-radius:20px;padding:2px 10px">'+ids.length+' 个</span>'+
-      '</div>'+
-      '<div class="gal-grid">'+ids.map(card).join('')+'</div></div>';
-  }).join('');
+  // 购买旅程阶段映射（一个源可跨多个阶段）
+  var STAGE_MAP={
+    s1:['决策','评价'], s2:['认知'], s3:['决策'], s4:['认知','决策'], s5:['认知','评价'],
+    s6:['使用','评价'], s7:['购买'], s8:['决策','购买'], s9:['认知'], s10:['认知'],
+    s11:['认知'], s12:['认知','决策'], s13:['决策','评价'], s14:['认知','决策'],
+    s15:['使用','评价'], s16:['认知'], s17:['认知','决策'], s18:['认知','决策'],
+    s19:['购买'], s20:['认知','决策'], s21:['认知']
+  };
+  var JN=[{key:'认知',sub:'Awareness'},{key:'决策',sub:'Decision'},{key:'购买',sub:'Purchase'},{key:'使用',sub:'Use'},{key:'评价',sub:'Evaluate'}];
+  function sectionHeader(title,count){
+    return '<div style="display:flex;align-items:center;gap:10px;margin:0 24px 14px;padding-bottom:9px;border-bottom:2px solid var(--border)">'+
+      '<span style="width:4px;height:18px;border-radius:3px;background:var(--rad-grad);display:inline-block"></span>'+
+      '<span style="font-size:16px;font-weight:700;color:var(--ink)">'+escHtml(title)+'</span>'+
+      '<span style="font-size:12px;color:var(--muted);background:var(--panel-2);border:1px solid var(--border);border-radius:20px;padding:2px 10px">'+count+' 个</span>'+
+    '</div>';
+  }
+  function dimBar(){
+    return '<div class="gal-dims">'+
+      '<button class="gal-dim '+(galDim==='cat'?'on':'')+'" onclick="setGalDim(\'cat\')">业务分类</button>'+
+      '<button class="gal-dim '+(galDim==='journey'?'on':'')+'" onclick="setGalDim(\'journey\')">购买旅程</button>'+
+      '<button class="gal-dim '+(galDim==='flat'?'on':'')+'" onclick="setGalDim(\'flat\')">平铺全部</button>'+
+    '</div>';
+  }
+  function bodyForCat(){
+    return CAT_ORDER.map(function(cat){
+      var ids=Object.keys(DATA.sources).filter(function(k){return CAT_MAP[k]===cat;});
+      if(!ids.length) return '';
+      return '<div class="gal-cat" style="margin:24px 0 2px">'+ sectionHeader(cat,ids.length) +
+        '<div class="gal-grid">'+ids.map(card).join('')+'</div></div>';
+    }).join('');
+  }
+  function bodyForJourney(){
+    JN.forEach(function(st){ st.ids=Object.keys(DATA.sources).filter(function(k){return (STAGE_MAP[k]||[]).indexOf(st.key)>=0;}); });
+    var html='<div class="gal-jx-note">同一批数据源，按「认知 → 决策 → 购买 → 使用 → 评价」的用户购买旅程重新排列：每个源归入其主服务的阶段泳道（可跨阶段）。看清每个阶段靠哪些数据在支撑。</div>'+
+      '<div class="journey">';
+    JN.forEach(function(st,i){
+      html+='<div class="jn-stage"><div class="jn-stage-h"><span class="jn-num">'+(i+1)+'</span><span class="jn-stage-name">'+st.key+'</span><span class="jn-stage-sub">'+st.sub+'</span><span class="jn-count">'+st.ids.length+'</span></div><div class="jn-cards">'+st.ids.map(card).join('')+'</div></div>';
+      if(i<JN.length-1) html+='<div class="jn-arrow">→</div>';
+    });
+    html+='</div>';
+    return html;
+  }
+  function bodyForFlat(){
+    return '<div class="gal-grid">'+Object.keys(DATA.sources).map(card).join('')+'</div>';
+  }
+  var subMap={
+    cat:'共 '+Object.keys(DATA.sources).length+' 个原始数据源，按 7 大类组织；点击任一卡片进入其独立看板（支持筛选 / 导出 CSV / 综合报告）',
+    journey:'同一批数据源，换「用户购买旅程」视角重新排列 —— 从认知到评价，看清每个阶段靠哪些数据在支撑。',
+    flat:'不分组的平铺视图，所有数据源一屏铺开，适合已知目标快速定位。'
+  };
+  var body = galDim==='cat'?bodyForCat() : galDim==='journey'?bodyForJourney() : bodyForFlat();
   setView('SourceGallery');
   $('#viewSourceGallery').innerHTML=
     '<div class="gal-head"><div><div class="gal-h-title">数据源 · 全景</div>'+
-      '<div class="gal-h-sub">共 '+Object.keys(DATA.sources).length+' 个原始数据源，按 7 大类组织；点击任一卡片进入其独立看板（支持筛选 / 导出 CSV / 综合报告）</div></div></div>'+
-    sections;
+      '<div class="gal-h-sub">'+subMap[galDim]+'</div></div></div>'+
+    dimBar()+body;
 }
+function setGalDim(d){ galDim=d; openSourceGallery(); }
 
 // ---- 板块2：分析框架画廊 ----
 function openFrameworkGallery(){
