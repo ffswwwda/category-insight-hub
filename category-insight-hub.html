@@ -492,6 +492,32 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .pstage-btn:hover{transform:translateY(-1px)}
 .pstage-btn.ghost{background:transparent;color:var(--ink-2);border:1px solid var(--border);box-shadow:none}
 .pstage-btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+/* === 通用流水线演示（洞察 / 风险 / GTM 看板）=== */
+.flow-stage{position:relative;width:100%;height:100%}
+.flow-node{position:absolute;border-radius:12px;padding:10px 12px;font-size:12px;font-weight:700;color:#fff;
+  background:var(--rad-grad);box-shadow:0 6px 16px rgba(168,85,247,.25);transition:transform .35s var(--rad-easing),opacity .35s,box-shadow .25s;line-height:1.3}
+.flow-node.dim{opacity:.4;filter:saturate(.5)}
+.flow-node.on{transform:scale(1.07);box-shadow:0 0 0 3px rgba(0,212,255,.45),0 8px 22px rgba(0,212,255,.3)}
+.flow-chip{position:absolute;border-radius:10px;padding:8px 11px;font-size:11.5px;line-height:1.5;color:var(--ink);
+  background:var(--glass-bg);border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:transform .9s cubic-bezier(.45,.05,.55,.95),opacity .4s}
+.flow-out{position:absolute;border-radius:14px;padding:14px 16px;background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(168,85,247,.14));
+  border:1px solid rgba(168,85,247,.4);opacity:0;transform:translateY(10px);transition:all .5s var(--rad-easing)}
+.flow-out.in{opacity:1;transform:none}
+.flow-travel{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--rad-grad);box-shadow:0 0 14px var(--rad-cyan);
+  z-index:8;transition:transform .9s cubic-bezier(.45,.05,.55,.95)}
+.rk-radar{position:absolute;border-radius:50%;border:1.5px solid var(--border);background:radial-gradient(circle,rgba(0,212,255,.07),transparent 70%)}
+.rk-ring{position:absolute;border-radius:50%;border:1px dashed var(--line)}
+.rk-sweep{position:absolute;border-radius:50%;background:conic-gradient(from 0deg,rgba(0,212,255,.38),transparent 70deg);
+  transform-origin:center;animation:rkSpin 2.6s linear infinite}
+@keyframes rkSpin{to{transform:rotate(360deg)}}
+.rk-flag{position:absolute;font-size:11px;font-weight:800;padding:4px 9px;border-radius:8px;color:#fff;opacity:0;transform:scale(.6);transition:all .4s var(--rad-easing)}
+.rk-flag.in{opacity:1;transform:none}
+.rk-flag.red{background:#ef4444}.rk-flag.amber{background:#f59e0b}.rk-flag.green{background:#22c55e}
+.gtm-dash{position:absolute;border-radius:14px;border:1px solid var(--border);background:var(--panel-solid);padding:14px;box-shadow:var(--shadow-sm)}
+.gtm-chart{position:relative;height:90px;border-bottom:1px solid var(--line)}
+.gtm-line{position:absolute;left:0;bottom:0;height:3px;background:var(--rad-grad);border-radius:3px;width:0;transition:width 1.2s var(--rad-easing)}
+.gtm-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-2);padding:6px 0;border-bottom:1px dashed var(--line)}
+.gtm-row .dot{width:7px;height:7px;border-radius:50%;background:var(--rad-grad);flex:0 0 auto}
 .pstage-status{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:7px}
 .pstage-status .sd{width:8px;height:8px;border-radius:50%;background:var(--green-a);box-shadow:0 0 0 0 rgba(22,163,74,.5);animation:psPulse 1.6s infinite}
 @keyframes psPulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.45)}70%{box-shadow:0 0 0 7px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
@@ -4253,12 +4279,19 @@ function closePanoCard(){ var m=$('#panoCardMask'); if(m) m.classList.remove('sh
 
 /* ---- 原理演示浮层：从工具页/卡片点「看原理」弹出，关闭回到工具 ---- */
 var PRINCIPLE_RETURN = 'openAITools()';
+var _demoOrigParent = null;
 function showDemoOverlay(fnName, returnFn){
   PRINCIPLE_RETURN = returnFn || 'openAITools()';
   var view = document.getElementById('viewPrDemo');
+  // 移到 body 顶层：避免浮层被困在 #board 的堆叠上下文里，被侧边栏(topbar/sidebar)遮挡左侧内容
+  _demoOrigParent = view.parentNode;
+  if(view.parentNode !== document.body) document.body.appendChild(view);
   view.style.position = 'fixed';
-  view.style.inset = '0';
-  view.style.zIndex = '99998';
+  view.style.left = '0';
+  view.style.top = '0';
+  view.style.right = '0';
+  view.style.bottom = '0';
+  view.style.zIndex = '100001';
   view.style.background = 'var(--bg)';
   view.style.overflow = 'auto';
   view.style.display = '';
@@ -4270,15 +4303,24 @@ function showDemoOverlay(fnName, returnFn){
 function closeDemoOverlay(){
   var view = document.getElementById('viewPrDemo');
   view.style.position = '';
-  view.style.inset = '';
+  view.style.left = '';
+  view.style.top = '';
+  view.style.right = '';
+  view.style.bottom = '';
   view.style.zIndex = '';
   view.style.background = '';
   view.style.overflow = '';
   view.classList.remove('active');
   view.style.display = 'none';
-  // 调用返回函数
-  var fn = window[PRINCIPLE_RETURN];
-  if(fn) fn();
+  // 还原到原始父节点
+  if(_demoOrigParent && view.parentNode !== _demoOrigParent) _demoOrigParent.appendChild(view);
+  // 调用返回函数（兼容 'fn' 与 'fn()' 两种写法）
+  var expr = (PRINCIPLE_RETURN || '').trim();
+  if(expr){
+    var name = expr.replace(/\(\s*\)$/, '');
+    if(window[name]) window[name]();
+    else { try { (0,eval)(expr); } catch(e){} }
+  }
 }
 function panoEnter(p){ closePanoCard(); if(p && window[p.fn]) window[p.fn](); }
 
@@ -5419,6 +5461,148 @@ function openFrameworkGallery(){
 }
 
 // ---- 板块3：AI 简化工具落地页（四大类分组） ----
+// ---- 用户洞察 · 流水线 · 演示台 ----
+var INSIGHT_STEPS=[
+  {k:'异常发现', d:'奇怪现象/高频问题'},
+  {k:'需求本质', d:'用户真正想要什么'},
+  {k:'默认逻辑', d:'拆解行业惯性'},
+  {k:'重新定义', d:'回到产品原点'},
+  {k:'神之一手', d:'类目级机会'}
+];
+var _insPlaying=false,_insTimers=[];
+function stopInsightDemo(){_insTimers.forEach(clearTimeout);_insTimers=[];_insPlaying=false;}
+function _setInsStatus(t){var s=$('#insStatus');if(s)s.innerHTML='<span class="sd"></span>'+t;}
+function openInsightDemo(){
+  setActiveNav('nav-pr');
+  $('#topbarTitle').textContent='原理动画 · 用户洞察';
+  setView('PrDemo');
+  var stepsHtml=INSIGHT_STEPS.map(function(s,i){
+    var x=300+i*138;
+    return '<div class="flow-node dim" id="insStep'+i+'" style="left:'+x+'px;top:200px;width:120px;text-align:center">'
+      +'<div style="font-size:10px;opacity:.85">0'+(i+1)+'</div>'+s.k+'<div style="font-size:9.5px;font-weight:600;opacity:.8;margin-top:3px">'+s.d+'</div></div>';
+  }).join('');
+  var raws=[
+    '这台机器用了一周就异响，客服也说不清原因。',
+    '买了三件，只有这件退货了，包装太简陋。',
+    '身边好几个朋友都在找能带上飞机的小烤箱。'
+  ].map(function(t,i){return '<div class="flow-chip" id="insRaw'+i+'" style="left:20px;top:'+(70+i*70)+'px;width:250px">'+escHtml(t)+'</div>';}).join('');
+  $('#viewPrDemo').innerHTML=
+    '<div class="pr-demo">'+
+    '<div class="prd-bar"><button class="prd-back" onclick="closeDemoOverlay()">← 返回</button>'+
+      '<div><div class="prd-title">用户洞察 · 原理动画</div><div class="prd-sub">从原始评论到「神之一手」洞察</div></div>'+
+      '<div class="prd-toggle"><button class="prd-tg on" id="tgInsViz" onclick="toggleInsightMode(\'viz\')">看背后工作</button>'+
+      '<button class="prd-tg" id="tgInsUse" onclick="toggleInsightMode(\'use\')">使用视角</button></div></div>'+
+    '<p class="prd-intro" id="insIntro"><b>看背后工作：</b>把一堆零散用户评论倒进<b>洞察提炼流水线</b>——逐道关卡（异常发现 → 需求本质 → 默认逻辑拆解 → 重新定义 → 神之一手）不断逼问，<b>最后吐出类目级的创新机会</b>，而不是又一条产品功能清单。</p>'+
+    '<div class="prd-pane on" id="paneInsViz"><div class="pstage"><div class="pstage-inner"><div class="flow-stage">'+
+      raws+stepsHtml+
+      '<div class="flow-travel" id="insTravel" style="left:20px;top:88px;opacity:0"></div>'+
+      '<div class="flow-out" id="insOut" style="left:850px;top:170px;width:200px"><div style="font-size:11px;font-weight:800;color:var(--accent);margin-bottom:6px">神之一手洞察</div><div id="insOutBody" style="font-size:11.5px;line-height:1.6;color:var(--ink-2)">等待提炼…</div></div>'+
+    '</div></div></div>'+
+    '<div class="pstage-ctrl"><button class="pstage-btn" id="insPlayBtn" onclick="playInsightDemo()">▶ 播放提炼</button>'+
+      '<button class="pstage-btn ghost" onclick="resetInsightStage()">↻ 重置</button>'+
+      '<span class="pstage-status" id="insStatus"><span class="sd"></span>就绪</span></div></div>'+
+    '<div class="prd-pane" id="paneInsUse"><div class="use-panel"><div class="use-box">'+
+      '<div class="use-lbl">粘贴用户评论</div><textarea class="use-ta" id="insTa">'+escHtml('这台机器用了一周就异响，客服也说不清原因。')+'</textarea>'+
+      '<button class="use-gen" onclick="runInsightDemoUse()">⚡ 运行洞察</button>'+
+      '<div class="use-hint"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg><span>贴几条评论，一键得到「神之一手」级别的机会洞察。点右上角 <b>「看背后工作」</b> 看流水线怎么逼出洞察。</span></div>'+
+      '</div><div class="use-box use-result" id="insUseResult"><div class="use-lbl">输出 · 洞察</div><div class="use-empty">点击「运行洞察」查看结果</div></div></div></div>'+
+    '</div>';
+  if(window.anime){try{anime.animate('.pr-demo > *',{opacity:[0,1],translateY:[14,0],delay:anime.stagger(60),duration:460,easing:'easeOutCubic'});}catch(e){}}
+}
+function toggleInsightMode(m){var v=m==='viz';$('#tgInsViz').classList.toggle('on',v);$('#tgInsUse').classList.toggle('on',!v);$('#paneInsViz').classList.toggle('on',v);$('#paneInsUse').classList.toggle('on',!v);var i=$('#insIntro');if(i)i.innerHTML=v?'<b>看背后工作：</b>把一堆零散用户评论倒进<b>洞察提炼流水线</b>——逐道关卡（异常发现 → 需求本质 → 默认逻辑拆解 → 重新定义 → 神之一手）不断逼问，<b>最后吐出类目级的创新机会</b>，而不是又一条产品功能清单。':'<b>使用视角：</b>贴几条评论、点运行、秒出洞察。想知道这些洞察是怎么被「逼」出来的？切到「看背后工作」。';if(!v)stopInsightDemo();}
+function resetInsightStage(){stopInsightDemo();INSIGHT_STEPS.forEach(function(s,i){var n=$('#insStep'+i);if(n){n.classList.add('dim');n.classList.remove('on');}});var o=$('#insOut');if(o)o.classList.remove('in');var b=$('#insOutBody');if(b)b.textContent='等待提炼…';var t=$('#insTravel');if(t)t.style.opacity='0';[0,1,2].forEach(function(i){var r=$('#insRaw'+i);if(r)r.style.transform='';});_setInsStatus('就绪');var pb=$('#insPlayBtn');if(pb)pb.textContent='▶ 播放提炼';}
+function playInsightDemo(){if(_insPlaying)return;_insPlaying=true;resetInsightStage();_insPlaying=true;var pb=$('#insPlayBtn');if(pb)pb.textContent='▶ 提炼中…';var travel=$('#insTravel');if(travel)travel.style.opacity='1';[0,1,2].forEach(function(i){var r=$('#insRaw'+i);if(r)r.style.transform='translate(290px,128px)';});_setInsStatus('评论进入流水线…');
+  INSIGHT_STEPS.forEach(function(s,i){
+    _insTimers.push(setTimeout(function(){var n=$('#insStep'+i);if(n){n.classList.remove('dim');n.classList.add('on');}if(travel)travel.style.transform='translate('+(300+i*138)+'px,208px)';_setInsStatus('第0'+(i+1)+'关 · '+s.k);},700+i*900));
+  });
+  _insTimers.push(setTimeout(function(){var o=$('#insOut');if(o)o.classList.add('in');var b=$('#insOutBody');if(b)b.innerHTML='发现「<b>便携化</b>」类目空白：用户要能带上飞机的小家电，现有产品要么太大、要么包装脆弱。<br>→ 机会：做「旅行迷你系列」。';_setInsStatus('完成 · 神之一手洞察已生成');_insPlaying=false;if(pb)pb.textContent='▶ 再提炼一次';},700+INSIGHT_STEPS.length*900+500));
+}
+function runInsightDemoUse(){var ta=$('#insTa');var box=$('#insUseResult');if(!ta||!box)return;var t=ta.value.trim()||'这台机器用了一周就异响，客服也说不清原因。';box.innerHTML='<div class="use-lbl">输出 · 洞察</div><div class="use-trow in"><div class="use-tdim">异常信号</div><div class="use-tchips"><span class="use-chip" style="background:#ef4444">异响</span><span class="use-chip" style="background:#f59e0b">客服无措</span></div></div><div class="use-trow in" style="margin-top:8px"><div class="use-tdim">神之一手机会</div><div style="font-size:12px;line-height:1.6;color:var(--ink-2)">质量透明化 + 售后可解释 —— 把「说不清原因」变成「实时自检报告」的差异化卖点。</div></div></div>';}
+
+// ---- 风险预测 · 雷达 · 演示台 ----
+var RK_SRCS=['类目趋势 ↑','竞品密集上新','政策收紧','供应链波动'];
+var _rkPlaying=false,_rkTimers=[];
+function stopRiskDemo(){_rkTimers.forEach(clearTimeout);_rkTimers=[];_rkPlaying=false;}
+function _setRkStatus(t){var s=$('#rkStatus');if(s)s.innerHTML='<span class="sd"></span>'+t;}
+function openRiskDemo(){
+  setActiveNav('nav-pr');$('#topbarTitle').textContent='原理动画 · 风险预测';setView('PrDemo');
+  var srcsHtml=RK_SRCS.map(function(t,i){return '<div class="flow-chip" id="rkSrc'+i+'" style="left:20px;top:'+(70+i*78)+'px;width:150px">'+t+'</div>';}).join('');
+  $('#viewPrDemo').innerHTML=
+    '<div class="pr-demo"><div class="prd-bar"><button class="prd-back" onclick="closeDemoOverlay()">← 返回</button>'+
+      '<div><div class="prd-title">风险预测 · 原理动画</div><div class="prd-sub">多源信号 → 风险雷达</div></div>'+
+      '<div class="prd-toggle"><button class="prd-tg on" id="tgRkViz" onclick="toggleRiskMode(\'viz\')">看背后工作</button>'+
+      '<button class="prd-tg" id="tgRkUse" onclick="toggleRiskMode(\'use\')">使用视角</button></div></div>'+
+    '<p class="prd-intro" id="rkIntro"><b>看背后工作：</b>把<b>四类信号</b>（趋势 / 竞品 / 政策 / 供应链）同时喂给<b>风险雷达</b>，雷达扫一圈，<b>红区=高危及早规避，黄区=观察，绿区=安全</b>。风险不是拍脑袋，是信号交叉定位。</p>'+
+    '<div class="prd-pane on" id="paneRkViz"><div class="pstage"><div class="pstage-inner"><div class="flow-stage">'+
+      srcsHtml+
+      '<div class="rk-radar" style="left:470px;top:80px;width:320px;height:320px"><div class="rk-ring" style="inset:60px"></div><div class="rk-ring" style="inset:120px"></div><div class="rk-sweep" id="rkSweep" style="inset:0"></div></div>'+
+      '<div class="rk-flag red" id="rkF0" style="left:560px;top:110px">红 · 政策合规</div>'+
+      '<div class="rk-flag amber" id="rkF1" style="left:700px;top:300px">黄 · 竞品挤压</div>'+
+      '<div class="rk-flag green" id="rkF2" style="left:520px;top:340px">绿 · 供应链稳</div>'+
+    '</div></div></div>'+
+    '<div class="pstage-ctrl"><button class="pstage-btn" id="rkPlayBtn" onclick="playRiskDemo()">▶ 播放扫描</button>'+
+      '<button class="pstage-btn ghost" onclick="resetRiskStage()">↻ 重置</button>'+
+      '<span class="pstage-status" id="rkStatus"><span class="sd"></span>就绪</span></div></div>'+
+    '<div class="prd-pane" id="paneRkUse"><div class="use-panel"><div class="use-box">'+
+      '<div class="use-lbl">填写你的情境</div><textarea class="use-ta" id="rkTa">目标：3 个月做一款便携小家电，预算有限，团队 5 人。</textarea>'+
+      '<button class="use-gen" onclick="runRiskUse()">⚡ 生成风险研判</button>'+
+      '<div class="use-hint"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg><span>填好情境一键出风险研判与规避策略。点右上角 <b>「看背后工作」</b> 看雷达怎么定位风险。</span></div>'+
+      '</div><div class="use-box use-result" id="rkUseResult"><div class="use-lbl">输出 · 风险研判</div><div class="use-empty">点击「生成风险研判」查看结果</div></div></div></div>'+
+    '</div>';
+  if(window.anime){try{anime.animate('.pr-demo > *',{opacity:[0,1],translateY:[14,0],delay:anime.stagger(60),duration:460,easing:'easeOutCubic'});}catch(e){}}
+}
+function toggleRiskMode(m){var v=m==='viz';$('#tgRkViz').classList.toggle('on',v);$('#tgRkUse').classList.toggle('on',!v);$('#paneRkViz').classList.toggle('on',v);$('#paneRkUse').classList.toggle('on',!v);var i=$('#rkIntro');if(i)i.innerHTML=v?'<b>看背后工作：</b>把<b>四类信号</b>（趋势 / 竞品 / 政策 / 供应链）同时喂给<b>风险雷达</b>，雷达扫一圈，<b>红区=高危及早规避，黄区=观察，绿区=安全</b>。风险不是拍脑袋，是信号交叉定位。':'<b>使用视角：</b>填好情境、点生成、秒出风险研判与规避策略。想知道风险是怎么被「定位」出来的？切到「看背后工作」。';if(!v)stopRiskDemo();}
+function resetRiskStage(){stopRiskDemo();['rkF0','rkF1','rkF2'].forEach(function(id){var f=$('#'+id);if(f)f.classList.remove('in');});['rkSrc0','rkSrc1','rkSrc2','rkSrc3'].forEach(function(id){var s=$('#'+id);if(s)s.style.transform='';});_setRkStatus('就绪');var pb=$('#rkPlayBtn');if(pb)pb.textContent='▶ 播放扫描';}
+function playRiskDemo(){if(_rkPlaying)return;_rkPlaying=true;resetRiskStage();_rkPlaying=true;var pb=$('#rkPlayBtn');if(pb)pb.textContent='▶ 扫描中…';_setRkStatus('信号汇入雷达…');
+  ['rkSrc0','rkSrc1','rkSrc2','rkSrc3'].forEach(function(id){var s=$('#'+id);if(s)s.style.transform='translate(420px,150px)';});
+  _rkTimers.push(setTimeout(function(){var f=$('#rkF0');if(f)f.classList.add('in');_setRkStatus('红区点亮 · 政策合规风险');},1300));
+  _rkTimers.push(setTimeout(function(){var f=$('#rkF1');if(f)f.classList.add('in');_setRkStatus('黄区点亮 · 竞品挤压');},2000));
+  _rkTimers.push(setTimeout(function(){var f=$('#rkF2');if(f)f.classList.add('in');_setRkStatus('绿区点亮 · 供应链稳定');},2700));
+  _rkTimers.push(setTimeout(function(){_setRkStatus('完成 · 风险地图已生成');_rkPlaying=false;if(pb)pb.textContent='▶ 再扫描一次';},3300));
+}
+function runRiskUse(){var ta=$('#rkTa');var box=$('#rkUseResult');if(!ta||!box)return;box.innerHTML='<div class="use-lbl">输出 · 风险研判</div><div class="use-trow in"><div class="use-tdim" style="color:#ef4444">红 · 政策合规</div><div style="font-size:12px;color:var(--ink-2);line-height:1.6">便携电器需过航空/充电新规，上市前做合规预审。</div></div><div class="use-trow in" style="margin-top:8px"><div class="use-tdim" style="color:#f59e0b">黄 · 竞品挤压</div><div style="font-size:12px;color:var(--ink-2);line-height:1.6">头部已占性价比心智，建议从「场景细分」切入。</div></div></div>';}
+
+// ---- GTM 社媒监控 · 看板 · 演示台 ----
+var GTM_SRC=['Reddit 讨论','行业论坛','社媒提及','竞品评论'];
+var _gtmPlaying=false,_gtmTimers=[];
+function stopGtmDemo(){_gtmTimers.forEach(clearTimeout);_gtmTimers=[];_gtmPlaying=false;}
+function _setGtmStatus(t){var s=$('#gtmStatus');if(s)s.innerHTML='<span class="sd"></span>'+t;}
+function openGtmDemo(){
+  setActiveNav('nav-pr');$('#topbarTitle').textContent='原理动画 · GTM 社媒监控';setView('PrDemo');
+  var bubHtml=GTM_SRC.map(function(t,i){return '<div class="flow-chip" id="gtmBub'+i+'" style="left:20px;top:'+(70+i*78)+'px;width:140px">'+t+'</div>';}).join('');
+  $('#viewPrDemo').innerHTML=
+    '<div class="pr-demo"><div class="prd-bar"><button class="prd-back" onclick="closeDemoOverlay()">← 返回</button>'+
+      '<div><div class="prd-title">GTM 社媒监控 · 原理动画</div><div class="prd-sub">多源提及 → 监控看板</div></div>'+
+      '<div class="prd-toggle"><button class="prd-tg on" id="tgGtmViz" onclick="toggleGtmMode(\'viz\')">看背后工作</button>'+
+      '<button class="prd-tg" id="tgGtmUse" onclick="toggleGtmMode(\'use\')">使用视角</button></div></div>'+
+    '<p class="prd-intro" id="gtmIntro"><b>看背后工作：</b>散落在 <b>Reddit / 论坛 / 社媒 / 竞品评论</b> 的提及，像泡泡一样不断冒出，被<b>监控看板</b>实时收集，汇成一条<b>声量趋势线</b>和一份<b>高频话题清单</b>——哪路声量在涨，一眼可见。</p>'+
+    '<div class="prd-pane on" id="paneGtmViz"><div class="pstage"><div class="pstage-inner"><div class="flow-stage">'+
+      bubHtml+
+      '<div class="gtm-dash" id="gtmDash" style="left:560px;top:70px;width:470px;height:330px"><div style="font-size:12px;font-weight:800;color:var(--ink);margin-bottom:8px">声量监控看板</div>'+
+        '<div class="gtm-chart" id="gtmChart"><div class="gtm-line" id="gtmLine"></div></div>'+
+        '<div id="gtmList" style="margin-top:14px"></div></div>'+
+    '</div></div></div>'+
+    '<div class="pstage-ctrl"><button class="pstage-btn" id="gtmPlayBtn" onclick="playGtmDemo()">▶ 播放监控</button>'+
+      '<button class="pstage-btn ghost" onclick="resetGtmStage()">↻ 重置</button>'+
+      '<span class="pstage-status" id="gtmStatus"><span class="sd"></span>就绪</span></div></div>'+
+    '<div class="prd-pane" id="paneGtmUse"><div class="use-panel"><div class="use-box">'+
+      '<div class="use-lbl">监控目标</div><textarea class="use-ta" id="gtmTa">品牌：便携小家电 · 渠道：Reddit / 小红书 / 论坛</textarea>'+
+      '<button class="use-gen" onclick="runGtmUse()">⚡ 生成监控摘要</button>'+
+      '<div class="use-hint"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg><span>设好目标一键出声量摘要与机会信号。点右上角 <b>「看背后工作」</b> 看泡泡怎么汇成看板。</span></div>'+
+      '</div><div class="use-box use-result" id="gtmUseResult"><div class="use-lbl">输出 · 监控摘要</div><div class="use-empty">点击「生成监控摘要」查看结果</div></div></div></div>'+
+    '</div>';
+  if(window.anime){try{anime.animate('.pr-demo > *',{opacity:[0,1],translateY:[14,0],delay:anime.stagger(60),duration:460,easing:'easeOutCubic'});}catch(e){}}
+}
+function toggleGtmMode(m){var v=m==='viz';$('#tgGtmViz').classList.toggle('on',v);$('#tgGtmUse').classList.toggle('on',!v);$('#paneGtmViz').classList.toggle('on',v);$('#paneGtmUse').classList.toggle('on',!v);var i=$('#gtmIntro');if(i)i.innerHTML=v?'<b>看背后工作：</b>散落在 <b>Reddit / 论坛 / 社媒 / 竞品评论</b> 的提及，像泡泡一样不断冒出，被<b>监控看板</b>实时收集，汇成一条<b>声量趋势线</b>和一份<b>高频话题清单</b>——哪路声量在涨，一眼可见。':'<b>使用视角：</b>设好监控目标、点生成、秒出声量摘要与机会信号。想知道看板怎么汇总出来的？切到「看背后工作」。';if(!v)stopGtmDemo();}
+function resetGtmStage(){stopGtmDemo();['gtmBub0','gtmBub1','gtmBub2','gtmBub3'].forEach(function(id){var b=$('#'+id);if(b)b.style.transform='';});var l=$('#gtmLine');if(l)l.style.width='0';var list=$('#gtmList');if(list)list.innerHTML='';_setGtmStatus('就绪');var pb=$('#gtmPlayBtn');if(pb)pb.textContent='▶ 播放监控';}
+function playGtmDemo(){if(_gtmPlaying)return;_gtmPlaying=true;resetGtmStage();_gtmPlaying=true;var pb=$('#gtmPlayBtn');if(pb)pb.textContent='▶ 监控中…';_setGtmStatus('收集社媒提及…');['gtmBub0','gtmBub1','gtmBub2','gtmBub3'].forEach(function(id){var b=$('#'+id);if(b)b.style.transform='translate(500px,120px)';});
+  _gtmTimers.push(setTimeout(function(){var l=$('#gtmLine');if(l)l.style.width='100%';_setGtmStatus('声量趋势线生成…');},1200));
+  var topics=['「便携」提及 +180%','「续航焦虑」高频','竞品负面声量上升','「出差党」新人群'];
+  _gtmTimers.push(setTimeout(function(){var list=$('#gtmList');if(list)list.innerHTML=topics.map(function(t){return '<div class="gtm-row"><span class="dot"></span>'+t+'</div>';}).join('');_setGtmStatus('完成 · 高频话题已汇总');_gtmPlaying=false;if(pb)pb.textContent='▶ 再监控一次';},2200));
+}
+function runGtmUse(){var ta=$('#gtmTa');var box=$('#gtmUseResult');if(!ta||!box)return;box.innerHTML='<div class="use-lbl">输出 · 监控摘要</div><div class="use-trow in"><div class="use-tdim">声量趋势</div><div style="font-size:12px;color:var(--ink-2);line-height:1.6">近 7 天品牌声量 +42%，「便携」「出差」为增长关键词。</div></div><div class="use-trow in" style="margin-top:8px"><div class="use-tdim">机会信号</div><div style="font-size:12px;color:var(--ink-2);line-height:1.6">竞品差评集中于「续航」，可主打长续航卖点切入。</div></div></div>';}
+
+
 function openAITools(){
   setActiveNav('nav-ai');
   $('#subnav').classList.remove('show');
@@ -5438,6 +5622,9 @@ function openAITools(){
     'VOC 智能打标工具':{fn:'openTagDemo', icon:'🏷'},
     '用户语料分析工具':{fn:'openCorpusDemo', icon:'🌐'},
     '产品打分工具':{fn:'openScoreDemo', icon:'🎯'},
+    '用户洞察工具':{fn:'openInsightDemo', icon:'🔮'},
+    '风险预测工具':{fn:'openRiskDemo', icon:'⚠️'},
+    'GTM 社媒监控看板':{fn:'openGtmDemo', icon:'📡'},
     '新品打造创意灵感':{fn:'openIdeaImgDemo', icon:'⛏'},
     '新品开发创意工具':{fn:'openDevDemo', icon:'🎲'},
   };
@@ -5720,7 +5907,8 @@ function openInsightTool(){
   $('#viewInsightTool').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">神之一手 · 用户洞察</span>'+
-      '<span class="ws-tag">神之一手洞察系统 · 类目级创新洞察</span></div>'+
+      '<span class="ws-tag">神之一手洞察系统 · 类目级创新洞察</span>'+
+      '<button class="ws-prin" onclick="showDemoOverlay(\'openInsightDemo\',\'openInsightTool()\')">🔮 看原理</button></div>'+
     '<div class="ps-layout">'+
       '<div class="ps-left" style="flex-basis:360px">'+
         '<div class="ps-input-wrap">'+
@@ -5841,7 +6029,8 @@ function openRiskPredict(){
   $('#viewRiskPredict').innerHTML=
     '<div class="ws-bar"><button class="ws-back" onclick="openAITools()">返回工具箱</button>'+
       '<span class="ws-title">风险与能力匹配</span>'+
-      '<span class="ws-tag">风险与能力匹配决策模型 · 7步分析</span></div>'+
+      '<span class="ws-tag">风险与能力匹配决策模型 · 7步分析</span>'+
+      '<button class="ws-prin" onclick="showDemoOverlay(\'openRiskDemo\',\'openRiskPredict()\')">⚠️ 看原理</button></div>'+
     '<div class="ps-layout">'+
       '<div class="ps-left" style="flex-basis:400px">'+
         '<div class="ps-input-wrap" style="padding:12px 14px">'+
