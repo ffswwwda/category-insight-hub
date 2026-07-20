@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>情报系统 · 用户反馈类情报汇总看板</title>
+<title>情报系统 · 用户反馈类情报汇总</title>
 <style>
   :root{
     --bg:#f6f7f9; --panel:rgba(255,255,255,.72); --panel-2:rgba(255,255,255,.5); --border:rgba(0,0,0,.08);
@@ -156,8 +156,8 @@
     </div>
     <div class="src-card">
       <span class="tag">真实数据</span>
-      <h4>情报系统 · 用户反馈类情报汇总</h4>
-      <div class="meta">数据规模：<b>815</b> 条反馈事实<br>关联情报：<b>87</b> 份<br>涵盖：访谈/问卷/社媒风评<br>来源：情报系统导出</div>
+      <h4>用户反馈情报</h4>
+      <div class="meta">数据规模：815 条反馈事实<br>关联情报：87 份<br>涵盖：访谈/问卷/社媒风评<br>来源：情报系统导出</div>
     </div>
     <div class="view-layers" id="viewLayers">
       <div class="vl-head"><span>视图图层</span><span class="vl-count" id="vlCount">0</span></div>
@@ -170,7 +170,7 @@
       <div class="topbar-left">
         <div class="topbar-titlerow">
           <button class="back-btn" onclick="goBack()" title="返回类目洞察中枢">← 返回</button>
-          <div><h1 class="board-title">情报系统 · 用户反馈类情报汇总看板</h1><div class="board-sub">815 条反馈事实（来自 87 份情报）· 情报类型 / 产品 / 市场 / 主题多维钻取</div></div>
+          <div><h1 class="board-title">情报系统 · 用户反馈类情报汇总看板</h1><div class="board-sub">数据规模：815 条反馈事实<br>关联情报：87 份<br>涵盖：访谈/问卷/社媒风评<br>来源：情报系统导出</div></div>
         </div>
       </div>
       <div class="topbar-right">
@@ -384,7 +384,6 @@ function updateCartBtn(){
 function goBack(){ try{ if(window.parent!==window) window.parent.postMessage({type:'cih-go-back'},'*'); }catch(e){} history.back(); }
 function toggleFs(){ var el=document.documentElement; if(!document.fullscreenElement){ el.requestFullscreen&&el.requestFullscreen(); } else { document.exitFullscreen&&document.exitFullscreen(); } }
 
-// 构建模块面板
 (function(){
   var cols=document.getElementById('mod-cols');
   var half=Math.ceil(MODULES.length/2);
@@ -396,17 +395,14 @@ function toggleFs(){ var el=document.documentElement; if(!document.fullscreenEle
   cols.innerHTML='<div>'+left+'</div><div>'+right+'</div>';
 })();
 
-// 预计算搜索串
 ROWS.forEach(function(r){ r.__search=COLS.map(function(c){return r[c.k];}).filter(Boolean).join(' '); });
 
-// 事件绑定
 document.getElementById('saveViewBtn').onclick=saveCurrentView;
 document.getElementById('cartBtn').onclick=addToCart;
 document.getElementById('clear-btn').onclick=clearAll;
 document.getElementById('fsBtn').onclick=toggleFs;
 document.getElementById('nl-input').addEventListener('input',function(e){ setKeyword(e.target.value.trim()); });
 
-// 还原视图
 try{ var sv=JSON.parse(localStorage.getItem('fb_views')||'[]'); if(Array.isArray(sv)) SAVED_VIEWS.push.apply(SAVED_VIEWS,sv); }catch(e){}
 renderSavedViews();
 updateCartBtn();

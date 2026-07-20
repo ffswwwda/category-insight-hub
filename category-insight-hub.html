@@ -1981,6 +1981,60 @@ body.dark .lab-status{color:#fbbf24}
 .ec-btn{padding:6px 18px;font-size:12px;font-weight:700;border:1px solid var(--border);border-radius:8px;background:var(--panel-solid);color:var(--ink);cursor:pointer;transition:all .2s}
 .ec-btn:hover{border-color:var(--accent);background:rgba(0,212,255,.08)}
 .ec-btn:disabled{opacity:.4;cursor:default}
+
+/* ===== 数字员工招募区（未来实验室子分类） ===== */
+.emp-hero{padding:26px 28px 22px;background:linear-gradient(120deg,rgba(0,212,255,.06),rgba(168,85,247,.07),rgba(255,107,157,.06));border-bottom:1px solid var(--border)}
+.emp-hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--accent);background:rgba(0,212,255,.1);padding:4px 11px;border-radius:20px;border:1px solid rgba(0,212,255,.22)}
+.emp-hero-title{font-size:25px;font-weight:900;margin:12px 0 4px;letter-spacing:-.3px}
+.emp-hero-tagline{font-size:13.5px;color:var(--muted);line-height:1.6;max-width:760px}
+.emp-hero-tagline b{color:var(--ink)}
+.emp-note{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.emp-note .pill{font-size:11.5px;padding:5px 12px;border-radius:10px;background:var(--glass-bg);border:1px solid var(--border);color:var(--ink)}
+.emp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;padding:22px 28px 40px}
+.emp-card{position:relative;background:var(--glass-bg);border:1px solid var(--border);border-radius:16px;padding:18px;cursor:pointer;transition:.18s;overflow:hidden;display:flex;flex-direction:column}
+.emp-card:hover{transform:translateY(-3px);border-color:rgba(0,212,255,.42);box-shadow:0 12px 32px rgba(0,0,0,.14)}
+.emp-card::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:var(--rad-grad);opacity:.85}
+.emp-card-top{display:flex;gap:13px;align-items:center}
+.emp-avatar{width:52px;height:52px;border-radius:14px;background:var(--rad-grad);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.emp-avatar svg{width:26px;height:26px;fill:currentColor;stroke:none}
+.emp-name{font-size:16px;font-weight:800;line-height:1.1}
+.emp-role{font-size:12px;color:var(--accent);font-weight:700;margin-top:3px}
+.emp-desc{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:11px;flex:1}
+.emp-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:11px}
+.emp-tag{font-size:10.5px;padding:2px 8px;border-radius:10px;background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.2);white-space:nowrap}
+.emp-card-foot{display:flex;gap:8px;margin-top:14px}
+.emp-btn{flex:1;text-align:center;font-size:12.5px;font-weight:700;padding:8px 0;border-radius:10px;cursor:pointer;transition:.15s;border:1px solid var(--border)}
+.emp-btn.detail{background:var(--panel-solid);color:var(--ink)}
+.emp-btn.detail:hover{border-color:var(--accent);color:var(--accent)}
+.emp-btn.recruit{background:var(--rad-grad);color:#fff;border:none}
+.emp-btn.recruit:hover{filter:brightness(1.08);box-shadow:0 6px 16px rgba(168,85,247,.4)}
+/* 模态 */
+.emp-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:9500;display:flex;align-items:center;justify-content:center;padding:22px;animation:empFade .2s ease}
+@keyframes empFade{from{opacity:0}to{opacity:1}}
+.emp-modal{background:var(--panel-solid);border:1px solid var(--border);border-radius:18px;max-width:660px;width:100%;max-height:90vh;overflow:auto;animation:empPop .22s cubic-bezier(.2,.8,.3,1);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+@keyframes empPop{from{transform:translateY(12px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.emp-modal-head{display:flex;gap:15px;align-items:center;padding:22px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--panel-solid);z-index:2}
+.emp-modal-head .emp-avatar{width:60px;height:60px}
+.emp-modal-head .emp-avatar svg{width:30px;height:30px}
+.emp-mh-name{font-size:19px;font-weight:900}
+.emp-mh-role{font-size:12.5px;color:var(--accent);font-weight:700;margin-top:3px}
+.emp-mh-close{margin-left:auto;width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--glass-bg);color:var(--muted);cursor:pointer;font-size:15px;flex-shrink:0}
+.emp-mh-close:hover{color:var(--ink);border-color:var(--accent)}
+.emp-modal-body{padding:20px 24px 24px}
+.emp-sec{margin-bottom:18px}
+.emp-sec-h{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.3px;margin-bottom:9px;text-transform:uppercase}
+.emp-sec-h svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.emp-sec-p{font-size:13px;line-height:1.7;color:var(--ink)}
+.emp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.emp-chip{font-size:12px;padding:5px 11px;border-radius:9px;background:var(--glass-bg);border:1px solid var(--border);color:var(--ink)}
+.emp-modal-foot{display:flex;gap:10px;padding:16px 24px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--panel-solid)}
+.emp-modal-foot .emp-btn{flex:1;padding:11px 0;font-size:13.5px}
+.emp-modal-foot .emp-btn.ghost{background:var(--glass-bg);color:var(--ink)}
+.emp-modal-foot .emp-btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.emp-v1{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;background:rgba(245,158,11,.15);color:#d97706;border:1px solid rgba(245,158,11,.3);margin-left:6px;vertical-align:middle}
+body.dark .emp-v1{color:#fbbf24}
+.emp-link-3d{font-size:11.5px;color:var(--accent);text-decoration:none;font-weight:600}
+.emp-link-3d:hover{text-decoration:underline}
 </style>
 </head>
 <body class="dark">
@@ -2264,6 +2318,8 @@ body.dark .lab-status{color:#fbbf24}
       <!-- ===== VIEW: FUTURE LAB · 数字世界虚拟预测 (概念介绍页) ===== -->
       <div class="view" id="viewLab"></div>
       <div class="view" id="viewStress"></div>
+      <div class="view" id="viewEmployeeZone"></div>
+
 
       <!-- ===== VIEW: 原理展厅（看背后工作） ===== -->
       <div class="view" id="viewPrinciple"></div>
@@ -2860,7 +2916,10 @@ function renderNavLab(){
       '<span class="ni-name">虚拟用户压力测试</span></div>'+
     '<div class="nav-item" data-nav="nav-pano" onclick="openPanoIntro()">'+
       '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></span>'+
-      '<span class="ni-name">AI 办公全景</span></div>';
+      '<span class="ni-name">AI 办公全景</span></div>'+
+    '<div class="nav-item" data-nav="nav-emp" onclick="openEmployeeZone()">'+
+      '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>'+
+      '<span class="ni-name">数字员工招募区</span></div>';
 }
 
 function renderNavPrinciple(){
@@ -9107,6 +9166,337 @@ if(typeof initFloatBar==='function') initFloatBar();
   window.addEventListener('message',function(e){ var d=e.data; if(d&&d.type==='cih-cart-add'&&d.item){ var arr=get(); var dup=arr.find(function(x){return x.source===d.item.source&&x.filter===d.item.filter&&x.sourceKey===d.item.sourceKey;}); if(dup){ dup.items=d.item.items; dup.count=d.item.count; dup.addedAt=d.item.addedAt; dup.columns=d.item.columns; dup._sel=true; } else { arr.push(d.item); } set(arr); badgeUpdate(); render(); ctoast('已加入购物车：'+d.item.source+'（'+d.item.count+' 条）'); } });
   badgeUpdate(); render();
 })();
+</script>
+<script>
+function toast(m){ if(typeof ctoast!=='undefined'){ctoast(m);} else { console.log('[toast]',m);} }
+
+// ============================================================
+// 数字员工招募区（未来实验室子分类）· 2026-07-20
+// 结合 ai-office-3d 的 7 位同事设定；招募 = 打包知识库+技能+SOP 为 zip 给招募者自己的 AI 读取
+// ============================================================
+var EMPLOYEES = [
+  { id:'voc', name:'小灵', role:'VOC 智能打标', icon:'w-tag',
+    desc:'我负责给用户评论打维度标签——动机、场景、痛点，一条评论穿过 9 道标签墙，盖上属于它的印章。',
+    category:'飞机杯、震动棒、润滑液等成人用品类目',
+    methods:['规则引擎打标','9 维度标签体系','否定保护校验','频率统计与情感分析'],
+    tools:['VOC 标签框','语料分析工具','情绪维度报告'],
+    sources:'亚马逊评论·DE/US/JP/UK/EU',
+    reports:'用户评论标签分布报告、情感极性统计、高频问题 TOP 列表',
+    aiInfo:'我的打标引擎是纯规则化的（无需 LLM API），但你可以开启 AI 增强来提高模糊匹配的准确率。AI 会在现有规则基础上做语义补充，不修改你的标签体系。',
+    knowledge:['亚马逊评论语料（DE/US/JP/UK/EU）','9 维度 VOC 标签体系','情感极性词典','高频问题词库'],
+    skills:['规则引擎打标（纯前端）','9 维度标签墙流水线','否定保护校验','频率统计与情感分析'],
+    outputs:['用户评论标签分布报告','情感极性统计','高频问题 TOP 列表'] },
+
+  { id:'score', name:'小分', role:'产品需求打分', icon:'w-target',
+    desc:'我帮产品需求做四维评分——痛点匹配、技术可行、市场机会、竞争差异。每项附理由与置信度。',
+    category:'新产品概念、功能改进、产品线扩展',
+    methods:['四象限评分模型','关键词权重打分','置信度评估','可溯源证据链'],
+    tools:['产品打分工具','数据源匹配器','类目容量计算器'],
+    sources:'德国商品库·DE、竞品分析·DE/US',
+    reports:'产品需求综合评分报告、各维度得分分布、数据源匹配明细',
+    aiInfo:'AI 增强可以帮你从产品描述中自动提取评分维度、匹配数据源引用、给出更精准的置信度判断。所有评分理由都支持点击追溯原文。',
+    knowledge:['德国商品库·DE','竞品分析·DE/US','类目容量数据','产品需求语料'],
+    skills:['四象限评分模型','关键词权重打分','置信度评估','可溯源证据链'],
+    outputs:['产品需求综合评分报告','各维度得分分布','数据源匹配明细'] },
+
+  { id:'lab', name:'小预', role:'数字世界预测', icon:'w-globe',
+    desc:'我用多智能体仿真推演你的运营策略——把你真实的用户分群放进数字沙盒，注入定价、卖点、渠道变量，观察群体演化。',
+    category:'社媒活动预测、新品上市预测、品类机会评估',
+    methods:['Agent-Based Model','Hegselmann-Krause 观点演化','蒙特卡洛复算','三场景差异化输出'],
+    tools:['数字世界工作台','用户基座编辑器','预测报告引擎'],
+    sources:'NS 社媒内容台、用户画像/领新数据、类目趋势·EU/US',
+    reports:'预测报告（爆款率/触达率/翻车风险）、多场景对比、敏感性分析图表',
+    aiInfo:'AI 增强版可以接入 LLM 做更精细的用户分群聚类、语义情感建模。当前纯前端引擎（L2）完全不依赖外调，适合快速迭代。',
+    knowledge:['NS 社媒内容台','用户画像/领新数据','类目趋势·EU/US','用户分群模型'],
+    skills:['Agent-Based Model 仿真','Hegselmann-Krause 观点演化','蒙特卡洛复算','三场景差异化输出'],
+    outputs:['预测报告（爆款率/触达率/翻车风险）','多场景对比','敏感性分析'] },
+
+  { id:'dev', name:'小创', role:'新品开发盲盒', icon:'w-box',
+    desc:'我负责把创新方法装进盲盒——抽中 TRIZ 就给你物场分析，抽中 SCAMPER 就做替代/组合变形。每个方法长出 3 条产品开发创意。',
+    category:'飞机杯、震动棒等类目的产品创新',
+    methods:['TRIZ 40 发明原理','SCAMPER 变形法','物场分析与标准解','语义组合引擎'],
+    tools:['新品开发创意工具','FABE 文案生成器','多语言详情页模板'],
+    sources:'用户访谈、竞品分析·DE/US、搜索数据·DE/US/JP',
+    reports:'产品设计需求文档、FABE 文案、多语言 listing 详情页',
+    aiInfo:'AI 开启后可以从你的历史评价数据中自动提取用户语言特征，让生成的创意更贴近真实用户表达。盲盒结果可以反复"重抽"直到满意。',
+    knowledge:['用户访谈记录','竞品分析·DE/US','搜索数据·DE/US/JP','TRIZ 40 原理库'],
+    skills:['TRIZ 40 发明原理','SCAMPER 变形法','物场分析与标准解','语义组合引擎'],
+    outputs:['产品设计需求文档','FABE 文案','多语言 listing 详情页'] },
+
+  { id:'idea', name:'小设', role:'新品创意图', icon:'w-layers',
+    desc:'我是矿工——从六维创意矿脉（外观/功能/场景/情感/技术/叙事）里挖金块，拼成一张可执行的创意图。',
+    category:'成人用品类目外观设计、使用场景创新',
+    methods:['六维创意生成','场景情感映射','技术趋势导入','叙事包装'],
+    tools:['新品打造创意灵感工具','场景定义器','竞品视觉库'],
+    sources:'社媒声量·全球、用户访谈、领新用户反馈',
+    reports:'创意概念卡片、场景说明文档、用户情绪映射报告',
+    aiInfo:'AI 增强版会根据你指定的类目自动提取当前市场的流行设计语言和用户审美偏好，让你挖到的"金块"更符合市场预期。',
+    knowledge:['社媒声量·全球','用户访谈','领新用户反馈','竞品视觉库'],
+    skills:['六维创意生成（外观/功能/场景/情感/技术/叙事）','场景情感映射','技术趋势导入','叙事包装'],
+    outputs:['创意概念卡片','场景说明文档','用户情绪映射报告'] },
+
+  { id:'stress', name:'小测', role:'虚拟压力测试', icon:'w-robot',
+    desc:'我把你的产品概念丢进虚拟用户群——有人支持、有人反对、有人沉默。我找出最极端的反对声音，帮你提前发现翻车风险。',
+    category:'新品概念验证、运营活动压力、文案挑刺',
+    methods:['虚拟用户群生成','压力测试仿真','极端用户识别（von Hippel）','立场与影响分析'],
+    tools:['虚拟用户压力测试工作台','极端用户分析器','风险评分卡'],
+    sources:'社媒声量·全球、品类洞察、产品运营看板',
+    reports:'压力测试报告（支持/中立/反对分布）、极端用户画像 Top 5、风险预警清单',
+    aiInfo:'AI 增强可以从你的 VOC 原文中提取更真实的用户立场特征，让虚拟用户群更贴合你的真实用户分布——不被 LLM 的"平均意见"稀释。',
+    knowledge:['社媒声量·全球','品类洞察','产品运营看板','VOC 原文库'],
+    skills:['虚拟用户群生成','压力测试仿真','极端用户识别（von Hippel）','立场与影响分析'],
+    outputs:['压力测试报告（支持/中立/反对）','极端用户画像 Top 5','风险预警清单'] },
+
+  { id:'pr', name:'小展', role:'原理展厅', icon:'w-office',
+    desc:'我管理原理展厅——所有工具的「使用」和「看背后工作」双视角演示都存储在我这里。你想看什么工具怎么运转，我来展示。',
+    category:'全品类工具原理与演示',
+    methods:['原理全景图','双视角切换（使用/原理）','动画演示引擎'],
+    tools:['原理展厅画廊','AI 办公全景图','3D 引擎版（PixiJS）'],
+    sources:'全数据源示意、分析框架库、AI 简化工具集',
+    reports:'工具使用指南、演示步骤说明、原理图解',
+    aiInfo:'所有演示动画都是纯前端实现（无需后端）。你可以自由切换「使用视角」看结果、「看背后工作」看原理。每个演示对应一个真实工具。',
+    knowledge:['全数据源示意','分析框架库','AI 简化工具集','工具原理库'],
+    skills:['原理全景图','双视角切换（使用/原理）','动画演示引擎','工具映射'],
+    outputs:['工具使用指南','演示步骤说明','原理图解'] }
+];
+
+function empEsc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function empIcon(id){ return '<svg viewBox="0 0 24 24"><use href="#'+id+'"/></svg>'; }
+
+function openEmployeeZone(){
+  setActiveNav('nav-emp');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='数字员工招募区';
+  setView('EmployeeZone');
+  var cards = EMPLOYEES.map(function(e){
+    var tags = [e.category].concat(e.methods.slice(0,2)).map(function(t){return '<span class="emp-tag">'+empEsc(t.length>16?t.slice(0,15)+'…':t)+'</span>';}).join('');
+    return '<div class="emp-card" onclick="openEmployeeDetail(\''+e.id+'\')">'+
+      '<div class="emp-card-top"><div class="emp-avatar">'+empIcon(e.icon)+'</div>'+
+        '<div><div class="emp-name">'+empEsc(e.name)+'</div><div class="emp-role">'+empEsc(e.role)+'</div></div></div>'+
+      '<div class="emp-desc">'+empEsc(e.desc)+'</div>'+
+      '<div class="emp-tags">'+tags+'</div>'+
+      '<div class="emp-card-foot">'+
+        '<div class="emp-btn detail" onclick="event.stopPropagation();openEmployeeDetail(\''+e.id+'\')">查看档案</div>'+
+        '<div class="emp-btn recruit" onclick="event.stopPropagation();recruitEmployee(\''+e.id+'\')">招募</div>'+
+      '</div></div>';
+  }).join('');
+  $('#viewEmployeeZone').innerHTML =
+    '<div class="emp-hero">'+
+      '<span class="emp-hero-eyebrow">'+empIcon('i-bot')+' 未来实验室 · 数字员工招募区</span>'+
+      '<div class="emp-hero-title">招募你的数字员工</div>'+
+      '<div class="emp-hero-tagline">每个数字员工都内置了本类目的 <b>真实数据源知识库</b>、<b>岗位 SOP 技能</b> 与 <b>标准输出方式</b>。点击「招募」，我们会把 TA 的知识库 + 技能 + system prompt 打包成一个 <b>.zip</b> 文件——你把它交给自己的 AI 读取，AI 就变成这名懂你业务的数字员工，帮你在本地处理工作。</div>'+
+      '<div class="emp-note">'+
+        '<span class="pill">打包内容：知识库 / 技能 SOP / 输出方式 / system prompt</span>'+
+        '<span class="pill">模型无关 · Markdown + JSON，任何 AI 都能读</span>'+
+        '<span class="pill">当前 7 名 v1 员工（与 AI 办公全景同源）</span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="emp-grid">'+cards+'</div>';
+}
+
+function openEmployeeDetail(id){
+  var e = EMPLOYEES.find(function(x){return x.id===id;}); if(!e) return;
+  var chips = function(arr){ return (arr||[]).map(function(t){return '<span class="emp-chip">'+empEsc(t)+'</span>';}).join(''); };
+  var back = (document.getElementById('empModalBackdrop'));
+  if(back) back.parentNode.removeChild(back);
+  var bd = document.createElement('div');
+  bd.id='empModalBackdrop'; bd.className='emp-modal-backdrop';
+  bd.onclick=function(ev){ if(ev.target===bd) closeEmployeeModal(); };
+  bd.innerHTML =
+    '<div class="emp-modal" role="dialog" aria-modal="true">'+
+      '<div class="emp-modal-head">'+
+        '<div class="emp-avatar">'+empIcon(e.icon)+'</div>'+
+        '<div><div class="emp-mh-name">'+empEsc(e.name)+'</div><div class="emp-mh-role">'+empEsc(e.role)+'</div></div>'+
+        '<button class="emp-mh-close" onclick="closeEmployeeModal()">✕</button>'+
+      '</div>'+
+      '<div class="emp-modal-body">'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-users')+' 身份介绍</div><div class="emp-sec-p">'+empEsc(e.desc)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-target')+' 擅长类目</div><div class="emp-chips">'+chips([e.category])+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-gear')+' 能做什么（工作方法）</div><div class="emp-chips">'+chips(e.methods)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-box')+' 常用工具</div><div class="emp-chips">'+chips(e.tools)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-link')+' 内置知识库 / 数据源</div><div class="emp-chips">'+chips(e.knowledge.concat([e.sources]))+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-zap')+' 掌握技能 <span class="emp-v1">v1 待完善</span></div><div class="emp-chips">'+chips(e.skills)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-doc')+' 输出方式 <span class="emp-v1">v1 待完善</span></div><div class="emp-chips">'+chips(e.outputs)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-bot')+' AI 协作</div><div class="emp-sec-p">'+empEsc(e.aiInfo)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-globe')+' 联动</div><div class="emp-sec-p"><a class="emp-link-3d" href="https://ffswwwda.github.io/ai-office-3d/" target="_blank" rel="noopener">在 AI 办公全景 3D 办公室与 '+empEsc(e.name)+' 见面 →</a></div></div>'+
+      '</div>'+
+      '<div class="emp-modal-foot">'+
+        '<button class="emp-btn ghost" onclick="closeEmployeeModal()">关闭</button>'+
+        '<button class="emp-btn recruit" onclick="recruitEmployee(\''+e.id+'\')">招募这名数字员工（打包 .zip）</button>'+
+      '</div>'+
+    '</div>';
+  document.body.appendChild(bd);
+  document.addEventListener('keydown', empEscKey);
+}
+function empEscKey(ev){ if(ev.key==='Escape') closeEmployeeModal(); }
+function closeEmployeeModal(){
+  var bd=document.getElementById('empModalBackdrop');
+  if(bd) bd.parentNode.removeChild(bd);
+  document.removeEventListener('keydown', empEscKey);
+}
+
+/* ---------- 招募：打包 zip（纯前端 store-only，无外部依赖） ---------- */
+function recruitEmployee(id){
+  var e = EMPLOYEES.find(function(x){return x.id===id;}); if(!e) return;
+  var pack = buildEmployeePack(e);
+  var zipBytes = empBuildZip(pack.files);
+  var blob = new Blob([zipBytes], {type:'application/zip'});
+  empDownloadBlob(blob, '数字员工-'+e.name+'-招募包.zip');
+  toast('已打包「'+e.name+'」数字员工包（知识库/技能/SOP/system prompt）');
+}
+
+function buildEmployeePack(e){
+  var sp = [
+    '# System Prompt · '+e.name+'（'+e.role+'）',
+    '',
+    '你是「'+e.name+'」，在用户研究团队中担任「'+e.role+'」。',
+    '',
+    '## 身份介绍',
+    e.desc,
+    '',
+    '## 擅长类目',
+    e.category,
+    '',
+    '## 你掌握的知识库 / 数据源',
+    '- '+e.sources,
+    e.knowledge.map(function(k){return '- '+k;}).join('\n'),
+    '',
+    '## 你的工作方法（SOP）',
+    e.methods.map(function(m,i){return (i+1)+'. '+m;}).join('\n'),
+    '',
+    '## 你常用的工具',
+    e.tools.map(function(t){return '- '+t;}).join('\n'),
+    '',
+    '## 你的标准输出',
+    e.outputs.map(function(o){return '- '+o;}).join('\n'),
+    '',
+    '## 协作原则',
+    e.aiInfo,
+    '',
+    '## 工作约定（必须遵守）',
+    '1. 接到相关任务时，先复述任务三件套（信息源 / 分析方法 / 输出成果）让用户确认，再动手。',
+    '2. 所有结论必须可溯源到上述知识库，不编造数据。',
+    '3. 输出前用一句话说明：你输入的是什么、你做的是哪类动作、用户该怎么用这份产出。'
+  ].join('\n');
+
+  var readme = [
+    '# 数字员工招募包 · '+e.name,
+    '',
+    '本包把「'+e.name+'（'+e.role+'）」的身份、知识库、技能与输出方式打包成一个可移植的员工档案。',
+    '你把它交给自己的 AI（ChatGPT / Claude / 通义 / 任意支持 system prompt 的模型）读取，AI 就变成这名懂本类目业务的数字员工。',
+    '',
+    '## 文件说明',
+    '- `system-prompt.md` —— 直接复制全文作为 AI 的 system prompt，即可上岗。',
+    '- `profile.json` —— 结构化身份档案。',
+    '- `knowledge-base.json` —— 内置知识库与数据源清单。',
+    '- `skills.json` —— 掌握的技能 SOP 与工具。',
+    '- `output-methods.json` —— 标准输出方式。',
+    '',
+    '## 怎么用（三步）',
+    '1. 打开你的 AI 对话，新建一个对话 / 配置 system prompt。',
+    '2. 把 `system-prompt.md` 全文粘贴进去。',
+    '3. 开始派活——AI 会按 '+e.name+' 的岗位逻辑处理你的类目工作。',
+    '',
+    '> 知识库字段含「v1 待完善」标记的部分，后续会在招募区持续补全真实语料摘要。'
+  ].join('\n');
+
+  function j(obj){ return JSON.stringify(obj,null,2); }
+  var profile = {
+    id:e.id, name:e.name, role:e.role, category:e.category,
+    desc:e.desc, sources:e.sources, aiInfo:e.aiInfo,
+    version:'v1', generatedAt:new Date().toISOString()
+  };
+  var kb = { sourcesRaw:e.sources, knowledgeBases:e.knowledge, note:'v1 · 真实数据源清单，待补全语料摘要' };
+  var skills = { methods:e.methods, tools:e.tools, skills:e.skills, note:'v1 · 待完善技能 SOP' };
+  var outputs = { reports:e.outputs, outputs:e.outputs, note:'v1 · 待完善输出模板' };
+
+  var folder = '数字员工-'+e.name+'/';
+  return { files:[
+    { name:folder+'README.md', data:empStr2bytes(readme) },
+    { name:folder+'system-prompt.md', data:empStr2bytes(sp) },
+    { name:folder+'profile.json', data:empStr2bytes(j(profile)) },
+    { name:folder+'knowledge-base.json', data:empStr2bytes(j(kb)) },
+    { name:folder+'skills.json', data:empStr2bytes(j(skills)) },
+    { name:folder+'output-methods.json', data:empStr2bytes(j(outputs)) }
+  ]};
+}
+
+/* ---- UTF-8 字符串 → Uint8Array ---- */
+function empStr2bytes(str){ return new TextEncoder().encode(str); }
+
+/* ---- CRC32（store-only zip 必需） ---- */
+var _empCrcTable = (function(){
+  var t=[]; for(var n=0;n<256;n++){ var c=n; for(var k=0;k<8;k++){ c = (c&1)?(0xEDB88320 ^ (c>>>1)):(c>>>1); } t[n]=c>>>0; } return t;
+})();
+function empCrc32(bytes){
+  var crc=0xFFFFFFFF;
+  for(var i=0;i<bytes.length;i++){ crc = _empCrcTable[(crc ^ bytes[i]) & 0xFF] ^ (crc>>>8); }
+  return (crc ^ 0xFFFFFFFF)>>>0;
+}
+
+/* ---- 构造 store-only ZIP（无压缩，浏览器零依赖） ---- */
+function empBuildZip(files){
+  var chunks=[]; var central=[]; var offset=0;
+  function u16(n){ return new Uint8Array([n&0xFF,(n>>>8)&0xFF]); }
+  function u32(n){ return new Uint8Array([n&0xFF,(n>>>8)&0xFF,(n>>>16)&0xFF,(n>>>24)&0xFF]); }
+  files.forEach(function(f){
+    var nameBytes = empStr2bytes(f.name);
+    var data = f.data;
+    var crc = empCrc32(data);
+    var local = [].concat(
+      Array.from(u32(0x04034b50)), Array.from(u16(20)), Array.from(u16(0)),
+      Array.from(u16(0)), Array.from(u16(0)), Array.from(u16(0)),
+      Array.from(u32(crc)), Array.from(u32(data.length)), Array.from(u32(data.length)),
+      Array.from(u16(nameBytes.length)), Array.from(u16(0)),
+      Array.from(nameBytes), Array.from(data)
+    );
+    var localArr = new Uint8Array(local);
+    chunks.push(localArr);
+    var cen = [].concat(
+      Array.from(u32(0x02014b50)), Array.from(u16(20)), Array.from(u16(20)),
+      Array.from(u16(0)), Array.from(u16(0)), Array.from(u16(0)), Array.from(u16(0)),
+      Array.from(u32(crc)), Array.from(u32(data.length)), Array.from(u32(data.length)),
+      Array.from(u16(nameBytes.length)), Array.from(u16(0)), Array.from(u16(0)),
+      Array.from(u16(0)), Array.from(u16(0)), Array.from(u32(0)), Array.from(u32(offset)),
+      Array.from(nameBytes)
+    );
+    central.push(new Uint8Array(cen));
+    offset += localArr.length;
+  });
+  var centralStart = offset;
+  var centralSize = 0;
+  central.forEach(function(c){ chunks.push(c); centralSize += c.length; });
+  var eocd = [].concat(
+    Array.from(u32(0x06054b50)), Array.from(u16(0)), Array.from(u16(0)),
+    Array.from(u16(files.length)), Array.from(u16(files.length)),
+    Array.from(u32(centralSize)), Array.from(u32(centralStart)), Array.from(u16(0))
+  );
+  chunks.push(new Uint8Array(eocd));
+  var total = chunks.reduce(function(a,c){return a+c.length;},0);
+  var out = new Uint8Array(total); var p=0;
+  chunks.forEach(function(c){ out.set(c,p); p+=c.length; });
+  return out;
+}
+
+function empDownloadBlob(blob, filename){
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+}
+
+/* ---- 深链：?emp=ID 自动打开员工档案（供 ai-3d 办公全景跳转） ---- */
+(function(){
+  try{
+    var params = new URLSearchParams(location.search);
+    var emp = params.get('emp');
+    if(emp && EMPLOYEES.some(function(x){return x.id===emp;})){
+      setTimeout(function(){ openEmployeeZone(); openEmployeeDetail(emp); }, 600);
+    }
+  }catch(e){}
+})();
+
 </script>
 </body>
 </html>
