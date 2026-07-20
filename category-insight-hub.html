@@ -9444,7 +9444,7 @@ function empBuildZip(files){
     var data = f.data;
     var crc = empCrc32(data);
     var local = [].concat(
-      Array.from(u32(0x04034b50)), Array.from(u16(20)), Array.from(u16(0)),
+      Array.from(u32(0x04034b50)), Array.from(u16(20)), Array.from(u16(0x0800)),
       Array.from(u16(0)), Array.from(u16(0)), Array.from(u16(0)),
       Array.from(u32(crc)), Array.from(u32(data.length)), Array.from(u32(data.length)),
       Array.from(u16(nameBytes.length)), Array.from(u16(0)),
@@ -9454,7 +9454,7 @@ function empBuildZip(files){
     chunks.push(localArr);
     var cen = [].concat(
       Array.from(u32(0x02014b50)), Array.from(u16(20)), Array.from(u16(20)),
-      Array.from(u16(0)), Array.from(u16(0)), Array.from(u16(0)), Array.from(u16(0)),
+      Array.from(u16(0x0800)), Array.from(u16(0)), Array.from(u16(0)), Array.from(u16(0)),
       Array.from(u32(crc)), Array.from(u32(data.length)), Array.from(u32(data.length)),
       Array.from(u16(nameBytes.length)), Array.from(u16(0)), Array.from(u16(0)),
       Array.from(u16(0)), Array.from(u16(0)), Array.from(u32(0)), Array.from(u32(offset)),
