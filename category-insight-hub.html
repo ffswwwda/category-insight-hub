@@ -2154,6 +2154,26 @@ body.dark .lab-status{color:#fbbf24}
         <iframe class="de-frame" id="amzFrame" src="" title="美亚评论看板"></iframe>
       </div>
 
+      <!-- ===== VIEW: SEARCH VOLUME DASHBOARD ===== -->
+      <div class="view" id="viewSearch">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">亚马逊关键词搜索量 · 数据看板</span>
+          <span class="ws-tag">已接入 · 1831词 · 搜索行为</span>
+        </div>
+        <iframe class="de-frame" id="searchFrame" src="" title="搜索量看板"></iframe>
+      </div>
+
+      <!-- ===== VIEW: FEEDBACK INTEL DASHBOARD ===== -->
+      <div class="view" id="viewFeedback">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">用户反馈情报汇总 · 数据看板</span>
+          <span class="ws-tag">已接入 · 87情报/815事实 · 售后反馈</span>
+        </div>
+        <iframe class="de-frame" id="feedbackFrame" src="" title="反馈情报看板"></iframe>
+      </div>
+
       <!-- ===== VIEW: SOURCE DETAIL ===== -->
       <div class="view" id="viewSource"></div>
 
@@ -2272,8 +2292,14 @@ var DATA = {
         desc:'Reddit 5000 条评论 · 7大模块38子维度用户标签（用户画像/动机/场景/阻碍等）',
         records:5000,status:'ready',hasDashboard:true,dashboard:'reddit'},
    s13:{id:'s13',name:'美亚倒膜&名器评论',type:'商品/VOC',market:'US',
-        desc:'美亚(Amazon US)倒膜&名器类目 28727 条商品评论 · 星级/国家/型号/媒体/类型/月份/关键词 7 维度看板',
-        records:28727,status:'ready',hasDashboard:true,dashboard:'amz'}
+        desc:'美亚(Amazon US)倒模&名器类目 28727 条商品评论 · 星级/国家/型号/媒体/类型/月份/关键词 7 维度看板',
+        records:28727,status:'ready',hasDashboard:true,dashboard:'amz'},
+   s14:{id:'s14',name:'亚马逊关键词搜索量',type:'搜索行为',market:'全球',
+        desc:'倒模智能体 · 亚马逊全站点 1831 个关键词 · 月搜索量/购买率/需供比/竞争度 多维钻取看板',
+        records:1831,status:'ready',hasDashboard:true,dashboard:'search'},
+   s15:{id:'s15',name:'用户反馈情报汇总',type:'售后/反馈',market:'全球',
+        desc:'情报系统导出 · 87 份情报 / 815 条反馈事实 · 访谈/问卷/社媒风评 · 情报类型/产品/市场/主题多维钻取看板',
+        records:815,status:'ready',hasDashboard:true,dashboard:'feedback'}
   },
 
   // ---- 双工作区定义（截图1）----
@@ -2663,6 +2689,24 @@ function openAmzDashboard(){
   if(f) f.src=ghBase()+'vendor/amz-review-dashboard.html?theme='+th;
 }
 
+function openSearchDashboard(){
+  state.purposeId=null;
+  setActiveNav('src-s14');
+  $('#viewSearch').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewSearch')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('searchFrame');
+  if(f) f.src=ghBase()+'vendor/search-volume-dashboard.html?theme='+th;
+}
+
+function openFeedbackDashboard(){
+  state.purposeId=null;
+  setActiveNav('src-s15');
+  $('#viewFeedback').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewFeedback')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('feedbackFrame');
+  if(f) f.src=ghBase()+'vendor/feedback-intel-dashboard.html?theme='+th;
+}
+
 // ============================================================
 // LEFT NAV TREE (截图1：三个大板块，第三板块随工作区切换)
 // ============================================================
@@ -2965,6 +3009,8 @@ function openSource(srcId){
   if(s.hasDashboard){
     if(s.dashboard==='reddit'){ openRedditDashboard(); return; }
     if(s.dashboard==='amz'){ openAmzDashboard(); return; }
+    if(s.dashboard==='search'){ openSearchDashboard(); return; }
+    if(s.dashboard==='feedback'){ openFeedbackDashboard(); return; }
     // Level1：s8 德国商品库 → 专属完整看板（已含筛选/导出/报告）
     $('#viewDe').classList.add('active');
     $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
@@ -5510,15 +5556,23 @@ function playMineDemo(){
   }, endT+500, _mineTimers);
 }
 
-// ---- 板块1：数据源画廊（点击进入单个数据源看板）----
+// ---- 板块1：数据源画廊（按类目分类，点击进入单个数据源看板）----
 function openSourceGallery(){
   setActiveNav('nav-src');
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent='数据源 · 全景';
-  var cards=Object.keys(DATA.sources).map(function(k){
+  var CAT_ORDER=['商品销售/卖点数据','商品评价数据','用户搜索行为','社媒讨论','用户访谈','外部趋势信息/数据','售后反馈'];
+  var CAT_MAP={s8:'商品销售/卖点数据',s3:'商品销售/卖点数据',s7:'商品销售/卖点数据',
+    s1:'商品评价数据',s13:'商品评价数据',
+    s4:'用户搜索行为',s14:'用户搜索行为',
+    s2:'社媒讨论',s11:'社媒讨论',s12:'社媒讨论',
+    s5:'用户访谈',
+    s9:'外部趋势信息/数据',s10:'外部趋势信息/数据',
+    s6:'售后反馈',s15:'售后反馈'};
+  function card(k){
     var s=DATA.sources[k];
     var ready=s.status==='ready';
-    var rec = s.records>0 ? s.records+' 条' : '样本';
+    var rec = s.records>0 ? s.records.toLocaleString()+' 条' : '样本';
     return '<div class="gal-card" onclick="openSource(\''+k+'\')">'+
       '<div class="gal-top"><span class="gal-dot '+(ready?'on':'off')+'"></span><span class="gal-name">'+escHtml(s.name)+'</span>'+
         (s.hasDashboard?'<span class="gal-badge">看板</span>':'')+'</div>'+
@@ -5526,12 +5580,23 @@ function openSourceGallery(){
       '<div class="gal-desc">'+escHtml(s.desc)+'</div>'+
       '<div class="gal-foot"><span class="gal-rec">'+ready+' · '+rec+'</span><span class="gal-go">进入</span></div>'+
     '</div>';
+  }
+  var sections = CAT_ORDER.map(function(cat){
+    var ids=Object.keys(DATA.sources).filter(function(k){return CAT_MAP[k]===cat;});
+    if(!ids.length) return '';
+    return '<div class="gal-cat" style="margin:28px 0 2px">'+
+      '<div style="display:flex;align-items:center;gap:10px;margin:0 0 14px;padding-bottom:9px;border-bottom:2px solid var(--border)">'+
+        '<span style="width:4px;height:18px;border-radius:3px;background:var(--rad-grad);display:inline-block"></span>'+
+        '<span style="font-size:16px;font-weight:700;color:var(--ink)">'+escHtml(cat)+'</span>'+
+        '<span style="font-size:12px;color:var(--muted);background:var(--panel-2);border:1px solid var(--border);border-radius:20px;padding:2px 10px">'+ids.length+' 个</span>'+
+      '</div>'+
+      '<div class="gal-grid">'+ids.map(card).join('')+'</div></div>';
   }).join('');
   setView('SourceGallery');
   $('#viewSourceGallery').innerHTML=
     '<div class="gal-head"><div><div class="gal-h-title">数据源 · 全景</div>'+
-      '<div class="gal-h-sub">共 '+Object.keys(DATA.sources).length+' 个原始数据源，点击任一卡片进入其独立看板（支持筛选 / 导出 CSV / 综合报告）</div></div></div>'+
-    '<div class="gal-grid">'+cards+'</div>';
+      '<div class="gal-h-sub">共 '+Object.keys(DATA.sources).length+' 个原始数据源，按 7 大类组织；点击任一卡片进入其独立看板（支持筛选 / 导出 CSV / 综合报告）</div></div></div>'+
+    sections;
 }
 
 // ---- 板块2：分析框架画廊 ----
