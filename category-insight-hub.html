@@ -2025,6 +2025,9 @@ body.dark .lab-status{color:#fbbf24}
 .emp-sec-h{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.3px;margin-bottom:9px;text-transform:uppercase}
 .emp-sec-h svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .emp-sec-p{font-size:13px;line-height:1.7;color:var(--ink)}
+.emp-intro{background:linear-gradient(135deg,rgba(0,212,255,.07),rgba(168,85,247,.07));border-left:3px solid transparent;border-image:linear-gradient(180deg,#00d4ff,#a855f7) 1;border-radius:9px;padding:12px 14px}
+.emp-intro-hi{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:7px}
+.emp-intro .emp-sec-p{margin:0}
 .emp-chips{display:flex;flex-wrap:wrap;gap:6px}
 .emp-chip{font-size:12px;padding:5px 11px;border-radius:9px;background:var(--glass-bg);border:1px solid var(--border);color:var(--ink)}
 .emp-modal-foot{display:flex;gap:10px;padding:16px 24px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--panel-solid)}
@@ -9286,8 +9289,8 @@ function openEmployeeZone(){
       '<div class="emp-hero-title">招募你的数字员工</div>'+
       '<div class="emp-hero-tagline">每个数字员工都内置了本类目的 <b>真实数据源知识库</b>、<b>岗位 SOP 技能</b> 与 <b>标准输出方式</b>。点击「招募」，我们会把 TA 的知识库 + 技能 + system prompt 打包成一个 <b>.zip</b> 文件——你把它交给自己的 AI 读取，AI 就变成这名懂你业务的数字员工，帮你在本地处理工作。</div>'+
       '<div class="emp-note">'+
-        '<span class="pill">打包内容：知识库 / 技能 SOP / 输出方式 / system prompt</span>'+
-        '<span class="pill">模型无关 · Markdown + JSON，任何 AI 都能读</span>'+
+        '<span class="pill">按 5 维度打包：身份 / 知识库 / 技能SOP / 方法逻辑 / 输出结构</span>'+
+        '<span class="pill">含 run.js 本地运行脚手架 · 任意 OpenAI 兼容模型</span>'+
         '<span class="pill">当前 7 名 v1 员工（与 AI 办公全景同源）</span>'+
       '</div>'+
     '</div>'+
@@ -9310,7 +9313,10 @@ function openEmployeeDetail(id){
         '<button class="emp-mh-close" onclick="closeEmployeeModal()">✕</button>'+
       '</div>'+
       '<div class="emp-modal-body">'+
-        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-users')+' 身份介绍</div><div class="emp-sec-p">'+empEsc(e.desc)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-users')+' 自我介绍</div>'+
+          '<div class="emp-intro"><div class="emp-intro-hi">你好，我是 '+empEsc(e.name)+'（'+empEsc(e.role)+'）</div>'+
+          '<div class="emp-sec-p">'+empEsc(e.desc)+'</div></div>'+
+        '</div>'+
         '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-target')+' 擅长类目</div><div class="emp-chips">'+chips([e.category])+'</div></div>'+
         '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-gear')+' 能做什么（工作方法）</div><div class="emp-chips">'+chips(e.methods)+'</div></div>'+
         '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-box')+' 常用工具</div><div class="emp-chips">'+chips(e.tools)+'</div></div>'+
@@ -9346,79 +9352,221 @@ function recruitEmployee(id){
 }
 
 function buildEmployeePack(e){
+  // ===== 五个维度框架（用户定义）=====
+  // 1 身份定义 · 2 知识库数据源头 · 3 skill/理论方法 · 4 擅长领域/分析逻辑 · 5 输出成果
+  function slug(s){ return (s||'').replace(/[\\/:*?"<>|]/g,'-').replace(/\s+/g,'-').slice(0,28); }
+  var folder = '数字员工-'+e.name+'/';
+  var files = [];
+
+  // ---- system-prompt.md：把五个维度写成"可上岗的操作规程" ----
   var sp = [
     '# System Prompt · '+e.name+'（'+e.role+'）',
     '',
     '你是「'+e.name+'」，在用户研究团队中担任「'+e.role+'」。',
+    '你不是一个通用聊天机器人，而是一名**有岗位、有知识库、有 SOP、有交付标准**的数字员工。',
+    '收到任务时，严格按下方五个维度定义的边界工作，不越界、不编造。',
     '',
-    '## 身份介绍',
+    '## ① 身份定义（你是谁）',
     e.desc,
     '',
-    '## 擅长类目',
-    e.category,
+    '## ② 知识库数据源头（你凭什么说话）',
+    '你所有的结论都必须可溯源到以下数据源与知识库，禁止凭空生成数据：',
+    '- 数据源：'+e.sources,
+    e.knowledge.map(function(k){return '- 知识库：'+k;}).join('\n'),
+    '（完整知识库见本包 `knowledge-base.json`，含分类体系与评分规则原文）',
     '',
-    '## 你掌握的知识库 / 数据源',
-    '- '+e.sources,
-    e.knowledge.map(function(k){return '- '+k;}).join('\n'),
+    '## ③ 掌握的 skill / 理论方法（你怎么干）',
+    '每个技能都有独立 SOP 文件（`skills/` 目录），按文件名调用，不要凭印象发挥：',
+    e.skills.map(function(s,i){return (i+1)+'. '+s+' → `skills/'+(i+1<10?'0':'')+(i+1)+'-'+slug(s)+'.md`';}).join('\n'),
     '',
-    '## 你的工作方法（SOP）',
-    e.methods.map(function(m,i){return (i+1)+'. '+m;}).join('\n'),
+    '## ④ 擅长领域 / 分析逻辑（你擅长什么、怎么想）',
+    '分析方法论见 `methods/` 目录，每条方法对应一套可执行逻辑：',
+    e.methods.map(function(m,i){return '- '+m+' → `methods/'+slug(m)+'.md`';}).join('\n'),
     '',
-    '## 你常用的工具',
-    e.tools.map(function(t){return '- '+t;}).join('\n'),
+    '## ⑤ 输出成果（你交付什么）',
+    '你的产出必须符合 `outputs/` 目录里定义的结构与形态，下游才能直接使用：',
+    e.outputs.map(function(o){return '- '+o+' → `outputs/'+slug(o)+'.md`';}).join('\n'),
     '',
-    '## 你的标准输出',
-    e.outputs.map(function(o){return '- '+o;}).join('\n'),
-    '',
-    '## 协作原则',
-    e.aiInfo,
-    '',
-    '## 工作约定（必须遵守）',
-    '1. 接到相关任务时，先复述任务三件套（信息源 / 分析方法 / 输出成果）让用户确认，再动手。',
-    '2. 所有结论必须可溯源到上述知识库，不编造数据。',
-    '3. 输出前用一句话说明：你输入的是什么、你做的是哪类动作、用户该怎么用这份产出。'
+    '## 协作铁律（必须遵守）',
+    '1. 接到任务先复述三件套（信息源 / 分析方法 / 输出成果）让用户确认，再动手。',
+    '2. 每条结论标注来源（哪个知识库/数据源），不可溯源则明确说"无数据支撑"。',
+    '3. 输出前用一句话声明：输入的是什类型 / 你做的是哪类动作 / 用户该怎么用这份产出。',
+    '4. 不知道就明说，不硬编。'
   ].join('\n');
 
+  // ---- README.md ----
   var readme = [
-    '# 数字员工招募包 · '+e.name,
+    '# 数字员工招募包 · '+e.name+'（'+e.role+'）',
     '',
-    '本包把「'+e.name+'（'+e.role+'）」的身份、知识库、技能与输出方式打包成一个可移植的员工档案。',
-    '你把它交给自己的 AI（ChatGPT / Claude / 通义 / 任意支持 system prompt 的模型）读取，AI 就变成这名懂本类目业务的数字员工。',
+    '本包把「'+e.name+'」按**五个维度**打包成可移植的员工档案，交给你的 AI 即可上岗。',
     '',
-    '## 文件说明',
-    '- `system-prompt.md` —— 直接复制全文作为 AI 的 system prompt，即可上岗。',
-    '- `profile.json` —— 结构化身份档案。',
-    '- `knowledge-base.json` —— 内置知识库与数据源清单。',
-    '- `skills.json` —— 掌握的技能 SOP 与工具。',
-    '- `output-methods.json` —— 标准输出方式。',
+    '## 两种用法',
+    '**A. 直接当 prompt（零代码）**：复制 `system-prompt.md` 全文作为 AI 的 system prompt，开始派活。',
+    '**B. 本地运行（可编排）**：`node run.js --input 你的数据.csv --out 结果.md`，',
+    '   脚手架会读取知识库 + 技能 SOP，调用任意 OpenAI 兼容模型，按 output 结构产出。',
     '',
-    '## 怎么用（三步）',
-    '1. 打开你的 AI 对话，新建一个对话 / 配置 system prompt。',
-    '2. 把 `system-prompt.md` 全文粘贴进去。',
-    '3. 开始派活——AI 会按 '+e.name+' 的岗位逻辑处理你的类目工作。',
+    '## 目录结构（五个维度）',
+    '```',
+    'folder/',
+    '├── README.md              本说明',
+    '├── system-prompt.md       ①~⑤ 维度整合成的上岗 prompt',
+    '├── profile.json           ① 身份定义（机器可读）',
+    '├── knowledge-base.json    ② 数据源 + 分类体系/评分规则',
+    '├── skills/                ③ 每个技能一份 SOP（可执行步骤）',
+    '├── methods/               ④ 每个分析方法一份逻辑说明',
+    '├── outputs/               ⑤ 每种产出的结构与模板',
+    '└── run.js                 模型无关运行脚手架',
+    '```',
     '',
-    '> 知识库字段含「v1 待完善」标记的部分，后续会在招募区持续补全真实语料摘要。'
+    '## 为什么这样设计（让 AI 真能跑，而不只是"演"）',
+    '- **prompt 只解决"像谁"**，解决不了"做对"。所以把方法/规则拆成 `skills/`、`methods/` 里的可查阅文件，AI 干活时照章执行。',
+    '- **产出结构在 `outputs/` 定死**，下游系统能直接消费，不被自由文本绑架。',
+    '- **`run.js` 把 prompt+知识+输入+模型 串成一条流水线**，无需手动复制粘贴即可批量跑。',
+    '',
+    '> 当前为 v1：知识库含「待完善」标记处，将在招募区持续补全真实语料与规则原文。'
   ].join('\n');
 
+  // ---- profile.json（维度①）----
   function j(obj){ return JSON.stringify(obj,null,2); }
   var profile = {
     id:e.id, name:e.name, role:e.role, category:e.category,
-    desc:e.desc, sources:e.sources, aiInfo:e.aiInfo,
+    identityStatement:e.desc,
+    dimensions:{
+      '1-identity': e.desc,
+      '2-knowledgeSources': [e.sources].concat(e.knowledge),
+      '3-skills': e.skills,
+      '4-methods': e.methods,
+      '5-outputs': e.outputs
+    },
+    aiCollaboration:e.aiInfo,
     version:'v1', generatedAt:new Date().toISOString()
   };
-  var kb = { sourcesRaw:e.sources, knowledgeBases:e.knowledge, note:'v1 · 真实数据源清单，待补全语料摘要' };
-  var skills = { methods:e.methods, tools:e.tools, skills:e.skills, note:'v1 · 待完善技能 SOP' };
-  var outputs = { reports:e.outputs, outputs:e.outputs, note:'v1 · 待完善输出模板' };
 
-  var folder = '数字员工-'+e.name+'/';
-  return { files:[
-    { name:folder+'README.md', data:empStr2bytes(readme) },
-    { name:folder+'system-prompt.md', data:empStr2bytes(sp) },
-    { name:folder+'profile.json', data:empStr2bytes(j(profile)) },
-    { name:folder+'knowledge-base.json', data:empStr2bytes(j(kb)) },
-    { name:folder+'skills.json', data:empStr2bytes(j(skills)) },
-    { name:folder+'output-methods.json', data:empStr2bytes(j(outputs)) }
-  ]};
+  // ---- knowledge-base.json（维度②）----
+  var kb = {
+    dataSources:[e.sources],
+    knowledgeBases:e.knowledge,
+    taxonomies:[], rubrics:[],
+    loader:'v1 · 数据源为真实清单；完整语料/规则原文待在招募区补全后由本文件加载。',
+    note:'维度②：AI 的一切结论必须可溯源到此处列出的数据源与知识库。'
+  };
+
+  // ---- skills/ 每个技能一份 SOP（维度③）----
+  var skillFiles = e.skills.map(function(s,i){
+    var n=(i+1<10?'0':'')+(i+1);
+    var md = [
+      '# 技能 SOP · '+s,
+      '',
+      '> 维度③：数字员工掌握的 skill / 理论知识方法',
+      '> 所属员工：'+e.name+'（'+e.role+'）',
+      '',
+      '## 适用场景',
+      '当用户派发的任务涉及「'+s+'」时，启用本技能。',
+      '',
+      '## 输入',
+      '- 知识库相关部分：`knowledge-base.json`',
+      '- 用户提供的原始材料（评论 / 数据 / 概念文档）',
+      '',
+      '## 执行步骤',
+      '1. 读取知识库中对应分类体系与规则，确认边界。',
+      '2. 套用相关分析方法（`methods/` 目录）处理输入。',
+      '3. 产出符合 `outputs/` 定义格式的结果。',
+      '',
+      '## 输出',
+      '见 `outputs/` 中对应成果定义；每条结论标注来源。',
+      '',
+      '## 自检',
+      '- 结论可溯源，不编造；',
+      '- 输出前声明：输入类型 / 动作类型 / 用法。',
+      '',
+      '> v1 占位 SOP，真实步骤待补全。'
+    ].join('\n');
+    return { name:folder+'skills/'+n+'-'+slug(s)+'.md', data:empStr2bytes(md) };
+  });
+
+  // ---- methods/ 每个方法一份逻辑（维度④）----
+  var methodFiles = e.methods.map(function(m){
+    var md = [
+      '# 分析方法 · '+m,
+      '',
+      '> 维度④：擅长领域与分析逻辑',
+      '> 所属员工：'+e.name+'（'+e.role+'）',
+      '',
+      '## 核心逻辑',
+      '「'+m+'」是 '+e.name+' 处理此类问题的标准思路。',
+      '',
+      '## 何时用',
+      '当任务落入该员工擅长领域、需要结构化分析时启用。',
+      '',
+      '## 与知识库 / 技能的关系',
+      '依赖 `knowledge-base.json` 提供的真实数据，由 `skills/` 中的技能落地执行。',
+      '',
+      '> v1 占位说明，真实方法论细节待补全。'
+    ].join('\n');
+    return { name:folder+'methods/'+slug(m)+'.md', data:empStr2bytes(md) };
+  });
+
+  // ---- outputs/ 每种产出一份结构（维度⑤）----
+  var outputFiles = e.outputs.map(function(o){
+    var md = [
+      '# 输出成果 · '+o,
+      '',
+      '> 维度⑤：交付物定义',
+      '> 所属员工：'+e.name+'（'+e.role+'）',
+      '',
+      '## 形态',
+      '（表格打标 / 网页前端或工具 / 方案文档 / 分析报告 —— 按实际产出填写）',
+      '',
+      '## 结构（schema）',
+      '```json',
+      JSON.stringify({ type:o, fields:['待定义'], format:'待定义' },null,2),
+      '```',
+      '',
+      '## 使用说明',
+      '接收方（人或系统）按上述结构消费本产出，保证可 Machine-readable。',
+      '',
+      '> v1 占位模板，真实 schema 待补全。'
+    ].join('\n');
+    return { name:folder+'outputs/'+slug(o)+'.md', data:empStr2bytes(md) };
+  });
+
+  // ---- run.js 模型无关运行脚手架 ----
+  var runjs = [
+    '// 数字员工 '+e.name+' 本地运行脚手架（模型无关）',
+    '// 用法：',
+    '//   export OPENAI_API_KEY=sk-xxx',
+    '//   export OPENAI_BASE_URL=https://api.openai.com/v1   # 可换任何兼容端点',
+    '//   node run.js --input 数据.csv --out 结果.md',
+    '// 行为：读取 system-prompt.md + knowledge-base.json + skills/，调用模型，按 outputs/ 结构产出。',
+    "const fs=require('fs'),path=require('path');",
+    "const BASE=process.env.OPENAI_BASE_URL||'https://api.openai.com/v1';",
+    "const KEY=process.env.OPENAI_API_KEY;",
+    "const MODEL=process.env.EMP_MODEL||'gpt-4o-mini';",
+    "const args=process.argv.slice(2).reduce((m,a)=>{const[i,v]=a.split('=');m[i.replace(/^--/,'')]=v;return m;},{});",
+    "const root=__dirname;",
+    "const sys=fs.readFileSync(path.join(root,'system-prompt.md'),'utf8');",
+    "const kb=fs.readFileSync(path.join(root,'knowledge-base.json'),'utf8');",
+    "const input=args.input?fs.readFileSync(args.input,'utf8'):'(请在 --input 提供原始数据)';",
+    "if(!KEY){console.error('缺少 OPENAI_API_KEY 环境变量');process.exit(1);}",
+    "const messages=[{role:'system',content:sys+'\\n\\n## 知识库\\n'+kb},",
+    "  {role:'user',content:'按你的技能 SOP 与 outputs 结构处理以下输入：\\n'+input}];",
+    "(async()=>{",
+    "  const r=await fetch(BASE+'/chat/completions',{method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+KEY},",
+    "    body:JSON.stringify({model:MODEL,messages,temperature:0.2})});",
+    "  const j=await r.json(); const out=j.choices&&j.choices[0].message.content;",
+    "  if(args.out)fs.writeFileSync(args.out,out); console.log(out);",
+    "})().catch(e=>{console.error(e);process.exit(1);});"
+  ].join('\n');
+
+  files.push({ name:folder+'README.md', data:empStr2bytes(readme) });
+  files.push({ name:folder+'system-prompt.md', data:empStr2bytes(sp) });
+  files.push({ name:folder+'profile.json', data:empStr2bytes(j(profile)) });
+  files.push({ name:folder+'knowledge-base.json', data:empStr2bytes(j(kb)) });
+  skillFiles.forEach(function(f){ files.push(f); });
+  methodFiles.forEach(function(f){ files.push(f); });
+  outputFiles.forEach(function(f){ files.push(f); });
+  files.push({ name:folder+'run.js', data:empStr2bytes(runjs) });
+  return { files:files };
 }
 
 /* ---- UTF-8 字符串 → Uint8Array ---- */
