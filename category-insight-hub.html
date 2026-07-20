@@ -127,7 +127,7 @@ body.light .custom-cursor{mix-blend-mode:normal;box-shadow:0 0 14px rgba(0,195,2
 body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .nsh-ico{font-size:13px;color:var(--accent);opacity:.9}
 .nav-sec-tag{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.3px}
-.nav-sec-tag.shared{background:rgba(128,128,128,.14);color:var(--muted)}
+.nav-sec-tag.shared{background:var(--rad-grad);color:#fff}
 .nav-sec-tag.dyn{background:var(--rad-grad);color:#fff}
 .nav-sec-dyn .nsh-ico{color:var(--green-a)}
 .nav-sec-body{padding:7px}
@@ -348,7 +348,7 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 /* Sidebar footer */
 .sb-foot{padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.6}
 /* 未来实验室 nav 标签（前瞻·紫） */
-.nav-sec-tag.lab{background:linear-gradient(135deg,#8b5cf6,#6366f1);color:#fff}
+.nav-sec-tag.lab{background:var(--rad-grad);color:#fff}
 .nav-sec-lab:hover{border-color:rgba(139,92,246,.4)}
 /* 原理展厅 nav 标签 */
 .nav-sec-tag.pr{background:var(--rad-grad);color:#fff}
@@ -2017,7 +2017,7 @@ body.dark .lab-status{color:#fbbf24}
 
     <nav class="nav-tree" id="navTree">
       <section class="nav-sec">
-        <div class="nav-sec-head">用户研究数据源/ai工具<span class="nav-sec-tag shared">共享</span></div>
+        <div class="nav-sec-head">用户研究数据源/ai工具<span class="nav-sec-tag shared">通用</span></div>
         <div class="nav-sec-body" id="navShared"></div>
       </section>
       <section class="nav-sec nav-sec-dyn">
@@ -2034,7 +2034,7 @@ body.dark .lab-status{color:#fbbf24}
       </section>
     </nav>
 
-    <div class="sb-foot">用户研究数据源/ai工具 · 三大板块共享<br>目的工作区 · 随工作区切换</div>
+    <div class="sb-foot">用户研究数据源/ai工具 · 三大板块通用<br>目的工作区 · 随工作区切换</div>
   </aside>
 
   <!-- Main -->
