@@ -3916,7 +3916,7 @@ function openPanoIntro(){
       // CTA
       '<div class="lab-cta">'+
         '<div class="ct-txt"><b>去看看这间会自己跑的办公室？</b><span>点击进入 3D 办公室，7 位 AI 员工正在工位上等你。试试点他们。</span></div>'+
-        '<button class="lab-btn" onclick="openPano()">进入 3D 办公室 <span class="arr">↗</span></button>'+
+        '<button class="lab-btn" onclick="jumpToPano()">进入 3D 办公室 <span class="arr">↗</span></button>'+
       '</div>'+
       '<div class="lab-note">基于 PixiJS v8 + React 19 构建 · 程序化绘制（零图片依赖） · 男女厕所 · 走错厕所随机事件 · GitHub Pages 部署</div>'+
     '</div>';
@@ -5554,11 +5554,17 @@ function openStressTool(){
   window.open('https://ffswwwda.github.io/virtual-user-stress-test/','_blank','noopener');
 }
 function globFloatAction(){
-  // 从 DOM 读取当前激活视图（唯一真相源），决定打开哪个工作台
+  // 从 DOM 读取当前激活导航 / 视图（唯一真相源），决定打开哪个工作台
+  var navEl=document.querySelector('.nav-item.active');
+  var navId=navEl?navEl.getAttribute('data-nav'):'';
+  if(navId==='nav-pano'){ jumpToPano(); return; }
   var active=document.querySelector('.view.active');
   var viewId=active?active.id:'';
   if(viewId==='viewStress'){ openStressTool(); }
   else { openPredictTool(); }
+}
+function jumpToPano(){
+  window.open(PANO_3D_URL,'_blank','noopener');
 }
 
 // ---- 理论详情弹窗（虚拟用户压力测试 → 理论支撑卡片点击展开）----
@@ -8362,17 +8368,25 @@ function initFloatBar(){
     // 从 DOM 读取当前激活视图（唯一真相源），不依赖 setView 钩子，避免与任何绕过 setView 的页面切换失同步
     var active=document.querySelector('.view.active');
     var viewId=active?active.id:'';
-    // 非 Lab / Stress 页面：一律隐藏
-    if(viewId!=='viewLab' && viewId!=='viewStress'){ bar.classList.add('hidden'); return; }
-    // 动态文案与目标：Stress → 去生成虚拟用户；Lab → 进入预测工作台
+    // 当前激活导航（AI 办公全景用 nav-pano 标记，其视图同为 viewPrinciple，需靠 nav 区分于原理展厅）
+    var navEl=document.querySelector('.nav-item.active');
+    var navId=navEl?navEl.getAttribute('data-nav'):'';
+    // 非 Lab / Stress / AI 办公全景 页面：一律隐藏
+    if(viewId!=='viewLab' && viewId!=='viewStress' && navId!=='nav-pano'){ bar.classList.add('hidden'); return; }
+    // 动态文案与目标：Stress → 去生成虚拟用户；Lab → 进入预测工作台；Pano → 进入 3D 办公室
     var isStress=(viewId==='viewStress');
+    var isPano=(navId==='nav-pano');
     var lbl=document.getElementById('globFloatLabel');
-    if(lbl) lbl.textContent = isStress ? '去生成虚拟用户' : '进入预测工作台';
-    // 默认：进入 Lab / Stress 页面即显示悬浮窗；仅当用户「真正向下滚动」且 CTA 已接近视口时才隐藏（此时用户已看到真正的入口）
+    if(lbl){
+      if(isPano) lbl.textContent='进入 3D 办公室';
+      else lbl.textContent = isStress ? '去生成虚拟用户' : '进入预测工作台';
+    }
+    // 默认：进入页面即显示悬浮窗；Lab / Stress 在「真正向下滚动」且 CTA 接近视口时隐藏（用户已看到入口）；
+    // AI 办公全景则始终保留——它本身就是跳转入口，不应被滚动隐藏
     var cta=active.querySelector('.lab-cta');
     var board=document.getElementById('board');
     var scrolled=board?board.scrollTop:0;
-    if(cta && scrolled>40){
+    if(cta && !isPano && scrolled>40){
       var r=cta.getBoundingClientRect();
       if(r.top < window.innerHeight * .85){ bar.classList.add('hidden'); return; }
     }
