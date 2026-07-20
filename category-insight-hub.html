@@ -1465,7 +1465,7 @@ body.dark .lab-status{color:#fbbf24}
 .j-pain{font-size:10px;color:#b91c1c;margin-top:3px}
 .j-arrow{align-self:center;color:var(--muted);font-size:14px}
 
-/* ============ GALLERIES (源数据/逻辑 三大板块 → 右侧) ============ */
+/* ============ GALLERIES (用户研究数据源/ai工具 三大板块 → 右侧) ============ */
 .gal-head{padding:22px 24px 14px}
 .gal-h-title{font-size:22px;font-weight:800;letter-spacing:.1px;background:var(--rad-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .gal-h-sub{font-size:12.5px;color:var(--muted);margin-top:5px;max-width:760px;line-height:1.6}
@@ -2017,7 +2017,7 @@ body.dark .lab-status{color:#fbbf24}
 
     <nav class="nav-tree" id="navTree">
       <section class="nav-sec">
-        <div class="nav-sec-head">源数据 / 逻辑<span class="nav-sec-tag shared">共享</span></div>
+        <div class="nav-sec-head">用户研究数据源/ai工具<span class="nav-sec-tag shared">共享</span></div>
         <div class="nav-sec-body" id="navShared"></div>
       </section>
       <section class="nav-sec nav-sec-dyn">
@@ -2034,7 +2034,7 @@ body.dark .lab-status{color:#fbbf24}
       </section>
     </nav>
 
-    <div class="sb-foot">源数据 / 逻辑 · 三大板块共享<br>目的工作区 · 随工作区切换</div>
+    <div class="sb-foot">用户研究数据源/ai工具 · 三大板块共享<br>目的工作区 · 随工作区切换</div>
   </aside>
 
   <!-- Main -->
@@ -2591,16 +2591,16 @@ function openDeDashboard(){
 // LEFT NAV TREE (截图1：三个大板块，第三板块随工作区切换)
 // ============================================================
 function renderNavShared(){
-  // 源数据/逻辑 三大板块（共享，点击切右侧画廊/工具）
+  // 用户研究数据源/ai工具 三大板块（共享，点击切右侧画廊/工具）
   var srcN=Object.keys(DATA.sources).length;
   var fwN=DATA.frameworks.length;
   var html=
     '<div class="nav-item" data-nav="nav-src" onclick="openSourceGallery()">'+
       '<span class="ni-name">类目/用户数据看板</span><span class="ni-sub">'+srcN+' 个</span></div>'+
-    '<div class="nav-item" data-nav="nav-ai" onclick="openAITools()">'+
-      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">9 个</span></div>'+
     '<div class="nav-item" data-nav="nav-lf" onclick="openLfZone()">'+
-      '<span class="ni-name">领新用户反馈专区</span><span class="ni-sub">画像+反馈</span></div>';
+      '<span class="ni-name">领先用户专区</span><span class="ni-sub">画像+反馈</span></div>'+
+    '<div class="nav-item" data-nav="nav-ai" onclick="openAITools()">'+
+      '<span class="ni-name">AI 简化工具</span><span class="ni-sub">9 个</span></div>';
   $('#navShared').innerHTML=html;
 }
 
@@ -5701,14 +5701,14 @@ function toggleFrameworkCollapse(head){
   arrow.textContent=isOpen?'▸':'▾';
 }
 
-// ---- 领新用户反馈专区（与 AI 简化工具平级的独立入口） ----
+// ---- 领先用户专区（与 AI 简化工具平级的独立入口） ----
 function openLfZone(){
   setActiveNav('nav-lf');
   $('#subnav').classList.remove('show');
-  $('#topbarTitle').textContent='领新用户反馈专区';
+  $('#topbarTitle').textContent='领先用户专区';
   setView('LfZone');
   $('#viewLfZone').innerHTML=
-    '<div class="gal-head"><div><div class="gal-h-title">领新用户反馈专区</div>'+
+    '<div class="gal-head"><div><div class="gal-h-title">领先用户专区</div>'+
       '<div class="gal-h-sub">基于领先用户理论：从 VOC 小众长评与访谈特别反馈中识别超前需求与创意信号。可切换「领先用户身份卡」与「领先需求评估」。</div></div></div>'+
     '<div class="lf-zone lf-page"><div class="ss-head">领新用户反馈</div>'+
       '<div class="lf-tabs">'+
@@ -6941,7 +6941,7 @@ function buildPSRadar(dimScores){
 }
 
 // ============================================================
-// 领新用户反馈专区（结构化模式左栏）
+// 领先用户专区（结构化模式左栏）
 // ============================================================
 // ===== 领先用户理论框架常量（von Hippel 两大标准 + 2×2 矩阵 + 信号）=====
 var LF_ARCH = {
@@ -7844,7 +7844,7 @@ function renderStructPanel(p){
   sp.innerHTML=
     /* ===== 左栏：数据源 + 洞察 + 领新反馈 ===== */
     '<div class="struct-col struct-col-left"><div class="col-header">数据源</div>'+srcHtml+insHtml+
-    '<div class="struct-section lf-zone"><div class="ss-head">领新用户反馈专区</div>'+
+    '<div class="struct-section lf-zone"><div class="ss-head">领先用户专区</div>'+
     '<div class="lf-tabs">'+
       '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">领先用户身份卡</div>'+
       '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">领先需求评估</div>'+
@@ -7862,7 +7862,7 @@ function renderStructPanel(p){
   renderSegments(p);
   renderJourney(p);
   var _lz = sp.querySelector('.struct-col-left .lf-zone');
-  if(_lz) renderLfBody(_lz); // 领新用户反馈专区
+  if(_lz) renderLfBody(_lz); // 领先用户专区
 }
 
 // ============================================================
