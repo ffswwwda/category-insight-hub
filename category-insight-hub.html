@@ -8711,5 +8711,127 @@ init();
 if(typeof initFloatBar==='function') initFloatBar();
 </script>
 
+<!-- ══ 全局数据购物车（跨数据源保存 / 统一下载）══ -->
+<style>
+  #cartFab{position:fixed;right:22px;bottom:22px;z-index:100050;width:56px;height:56px;border-radius:18px;background:var(--rad-grad);border:none;cursor:auto;box-shadow:0 10px 34px rgba(124,58,237,.45);display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s}
+  #cartFab:hover{transform:translateY(-2px) scale(1.04)}
+  #cartFab svg{width:27px;height:27px}
+  #cartBadge{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#ff3b6b;color:#fff;font-size:12px;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff;box-sizing:border-box}
+  #cartPanel{position:fixed;top:0;right:0;height:100%;width:384px;max-width:94vw;z-index:100052;background:rgba(16,16,26,.975);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:-12px 0 44px rgba(0,0,0,.55);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;color:#fff;cursor:auto;font-family:inherit}
+  #cartPanel.open{transform:translateX(0)}
+  .cart-head{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between}
+  .cart-head h3{margin:0;font-size:16px;font-weight:700;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+  .cart-head h3 svg{width:20px;height:20px}
+  #cartClose{background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer;line-height:1;padding:0 4px}
+  #cartClose:hover{color:#fff}
+  .cart-body{flex:1;overflow-y:auto;padding:14px 16px}
+  .cart-empty{color:rgba(255,255,255,.5);text-align:center;padding:48px 14px;font-size:13px;line-height:1.9}
+  .cart-empty svg{width:42px;height:42px;opacity:.4;margin-bottom:10px}
+  .cart-item{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 13px;margin-bottom:11px;transition:border-color .2s}
+  .cart-item:hover{border-color:rgba(168,85,247,.5)}
+  .cart-item-top{display:flex;align-items:flex-start;gap:10px}
+  .cart-item input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:#a855f7;cursor:pointer;flex-shrink:0}
+  .cart-item-info{flex:1;min-width:0}
+  .cart-item-src{font-size:10.5px;font-weight:800;color:#c084fc;letter-spacing:.4px;text-transform:uppercase}
+  .cart-item-filter{font-size:12.5px;font-weight:600;margin:3px 0 2px;word-break:break-word;line-height:1.4}
+  .cart-item-meta{font-size:11px;color:rgba(255,255,255,.5)}
+  .cart-item-del{background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:15px;padding:0 3px;flex-shrink:0}
+  .cart-item-del:hover{color:#ff3b6b}
+  .cart-foot{border-top:1px solid rgba(255,255,255,.1);padding:14px 16px;background:rgba(0,0,0,.28)}
+  .cart-foot-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;font-size:12px}
+  .cart-foot-row label{cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none}
+  .cart-fmt{display:flex;gap:6px;margin-left:auto}
+  .cart-fmt button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;transition:.15s}
+  .cart-fmt button.on{background:var(--rad-grad);border-color:transparent;font-weight:700}
+  #cartDl{width:100%;background:var(--rad-grad);border:none;color:#fff;font-size:13.5px;font-weight:700;padding:12px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+  #cartDl:hover{filter:brightness(1.08)}
+  #cartDl:disabled{opacity:.45;cursor:not-allowed;filter:none}
+  #cartDl svg{width:17px;height:17px}
+  #cartClearBtn{width:100%;margin-top:9px;background:none;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);font-size:12px;padding:9px;border-radius:10px;cursor:pointer;transition:.15s}
+  #cartClearBtn:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+  #cartBackdrop{position:fixed;inset:0;z-index:100051;background:rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:opacity .3s}
+  #cartBackdrop.open{opacity:1;visibility:visible}
+</style>
+<div id="cartBackdrop"></div>
+<button id="cartFab" title="数据购物车">
+  <svg viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>
+  <span id="cartBadge">0</span>
+</button>
+<div id="cartPanel">
+  <div class="cart-head">
+    <h3><svg viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>数据购物车</h3>
+    <button id="cartClose">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-foot">
+    <div class="cart-foot-row">
+      <label><input type="checkbox" id="cartSelAll"> 全选</label>
+      <div class="cart-fmt">
+        <button data-fmt="merge" class="on">合并CSV</button>
+        <button data-fmt="multi">分文件CSV</button>
+        <button data-fmt="json">JSON</button>
+      </div>
+    </div>
+    <button id="cartDl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg><span id="cartDlLabel">下载选中</span></button>
+    <button id="cartClearBtn">清空购物车</button>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='cih_cart_v1';
+  var fmt='merge';
+  function get(){ try{return JSON.parse(localStorage.getItem(KEY))||[];}catch(e){return[];} }
+  function set(a){ try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){} }
+  function ctoast(m){ var t=document.getElementById('toast'); if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:100060;padding:9px 18px;border-radius:10px;font-size:12.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);pointer-events:none;opacity:0;transition:opacity .25s';document.body.appendChild(t);} t.textContent=m;t.style.opacity='1';clearTimeout(t._tm);t._tm=setTimeout(function(){t.style.opacity='0';},2200); }
+  function saveBlob(blob,name){ var u=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},1500); }
+  function safeName(s){ return String(s).replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,' ').slice(0,60); }
+  function csvCell(v){ if(v===null||v===undefined)v=''; v=String(v); if(/[",\n\r]/.test(v))v='"'+v.replace(/"/g,'""')+'"'; return v; }
+  function toCSV(rows,cols){ var h=cols.map(function(c){return csvCell(c.label);}).join(','); var b=rows.map(function(r){return cols.map(function(c){return csvCell(r[c.key]);}).join(',');}).join('\n'); return h+'\n'+b; }
+  function unionCols(sel){ var seen={},cols=[{key:'__source',label:'来源'},{key:'__filter',label:'筛选条件'}]; sel.forEach(function(x){x.columns.forEach(function(c){if(!seen[c.key]){seen[c.key]=1;cols.push(c);}});}); return cols; }
+  function mergeRows(sel){ var rows=[]; sel.forEach(function(x){x.items.forEach(function(r){var nr={__source:x.source,__filter:x.filter};x.columns.forEach(function(c){nr[c.key]=r[c.key];});rows.push(nr);});}); return rows; }
+  function stamp(){ var d=new Date(); function p(n){return (n<10?'0':'')+n;} return ''+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds()); }
+  var fab=document.getElementById('cartFab'), panel=document.getElementById('cartPanel'), backdrop=document.getElementById('cartBackdrop'), body=document.getElementById('cartBody'), badge=document.getElementById('cartBadge'), selAll=document.getElementById('cartSelAll'), dlBtn=document.getElementById('cartDl'), dlLabel=document.getElementById('cartDlLabel'), clearBtn=document.getElementById('cartClearBtn');
+  function open(){ panel.classList.add('open'); backdrop.classList.add('open'); }
+  function close(){ panel.classList.remove('open'); backdrop.classList.remove('open'); }
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function badgeUpdate(){ var a=get(); var n=a.length; if(n>0){badge.style.display='flex';badge.textContent=n>99?'99+':n;}else{badge.style.display='none';} }
+  function updateDlLabel(){ var n=get().filter(function(z){return z._sel!==false;}).length; dlLabel.textContent='下载选中（'+n+'）'; dlBtn.disabled=n===0; }
+  function render(){
+    var a=get();
+    if(!a.length){ body.innerHTML='<div class="cart-empty"><svg viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg><div>购物车是空的</div><div style="font-size:11px;margin-top:6px;opacity:.8">在任意数据源筛选后点「加入购物车」<br>即可跨数据源汇总，最后统一下载</div></div>';
+      selAll.checked=false; updateDlLabel(); return; }
+    body.innerHTML=a.map(function(x){
+      var d=''; try{d=new Date(x.addedAt).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(e){}
+      return '<div class="cart-item" data-id="'+x.id+'"><div class="cart-item-top">'+
+        '<input type="checkbox" class="cart-chk" '+(x._sel!==false?'checked':'')+' data-id="'+x.id+'">'+
+        '<div class="cart-item-info"><div class="cart-item-src">'+esc(x.source)+'</div>'+
+        '<div class="cart-item-filter">'+esc(x.filter||'全部')+'</div>'+
+        '<div class="cart-item-meta">'+x.count+' 条 · '+d+'</div></div>'+
+        '<button class="cart-item-del" data-id="'+x.id+'" title="移除">✕</button></div></div>';
+    }).join('');
+    body.querySelectorAll('.cart-chk').forEach(function(c){ c.addEventListener('change',function(){ var id=c.dataset.id; var arr=get(); var it=arr.find(function(z){return z.id===id;}); if(it){it._sel=c.checked; set(arr);} updateDlLabel(); selAll.checked=arr.every(function(z){return z._sel!==false;}); }); });
+    body.querySelectorAll('.cart-item-del').forEach(function(b){ b.addEventListener('click',function(){ var id=b.dataset.id; set(get().filter(function(z){return z.id!==id;})); render(); badgeUpdate(); }); });
+    selAll.checked=a.every(function(z){return z._sel!==false;});
+    updateDlLabel();
+  }
+  function download(){
+    var a=get(); var sel=a.filter(function(z){return z._sel!==false;});
+    if(!sel.length){ ctoast('请先勾选要下载的项'); return; }
+    var ts=stamp();
+    if(fmt==='json'){ var blob=new Blob([JSON.stringify(sel,null,2)],{type:'application/json'}); saveBlob(blob,'cih_export_'+ts+'.json'); ctoast('已下载 JSON（'+sel.length+' 组）'); }
+    else if(fmt==='multi'){ sel.forEach(function(x,i){ var csv=toCSV(x.items,x.columns); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); setTimeout(function(){saveBlob(blob,safeName(x.source+'_'+x.filter)+'_'+ts+'.csv');},i*400); }); ctoast('已分批下载 '+sel.length+' 个 CSV'); }
+    else { var cols=unionCols(sel); var rows=mergeRows(sel); var csv=toCSV(rows,cols); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); saveBlob(blob,'cih_export_merge_'+ts+'.csv'); ctoast('已下载合并 CSV（'+rows.length+' 行）'); }
+  }
+  fab.addEventListener('click',open);
+  document.getElementById('cartClose').addEventListener('click',close);
+  backdrop.addEventListener('click',close);
+  selAll.addEventListener('change',function(){ var arr=get(); arr.forEach(function(z){z._sel=selAll.checked;}); set(arr); render(); });
+  dlBtn.addEventListener('click',download);
+  clearBtn.addEventListener('click',function(){ if(!get().length)return; if(confirm('确定清空购物车？此操作不可撤销。')){ set([]); render(); badgeUpdate(); ctoast('购物车已清空'); } });
+  document.querySelectorAll('.cart-fmt button').forEach(function(b){ b.addEventListener('click',function(){ document.querySelectorAll('.cart-fmt button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); fmt=b.dataset.fmt; }); });
+  window.addEventListener('message',function(e){ var d=e.data; if(d&&d.type==='cih-cart-add'&&d.item){ var arr=get(); var dup=arr.find(function(x){return x.source===d.item.source&&x.filter===d.item.filter&&x.sourceKey===d.item.sourceKey;}); if(dup){ dup.items=d.item.items; dup.count=d.item.count; dup.addedAt=d.item.addedAt; dup.columns=d.item.columns; dup._sel=true; } else { arr.push(d.item); } set(arr); badgeUpdate(); render(); ctoast('已加入购物车：'+d.item.source+'（'+d.item.count+' 条）'); } });
+  badgeUpdate(); render();
+})();
+</script>
 </body>
 </html>
