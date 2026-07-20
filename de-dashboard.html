@@ -277,7 +277,8 @@
             </select>
           </div>
           <span class="clearbtn" id="clear-btn">清除全部筛选</span>
-          <button class="save-view-btn" id="saveViewBtn" title="将当前筛选条件保存为一个新视图">💾 保存为新视图</button>
+          <button class="save-view-btn" id="saveViewBtn" title="将当前筛选条件保存为一个新视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存为新视图</button>
+          <button class="save-view-btn" id="cartBtn" title="把当前筛选结果加入购物车，跨数据源汇总后可统一下载"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>加入购物车</button>
         </div>
         <div class="understood" id="understood"></div>
       </div>
@@ -761,6 +762,48 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
 
   // 绑定保存按钮
   $("#saveViewBtn").addEventListener("click", saveCurrentView);
+
+  // ── 加入购物车（跨数据源保存 / 统一下载）──
+  var CART_COLUMNS = [
+    {key:'asin',label:'ASIN'},{key:'sku',label:'SKU'},{key:'brand',label:'品牌'},
+    {key:'title',label:'标题'},{key:'cat',label:'子类目'},{key:'price',label:'价格(€)'},
+    {key:'star',label:'星级'},{key:'sales',label:'月销'},{key:'ratings',label:'评分数'},
+    {key:'video',label:'视频'},{key:'aplus',label:'A+页面'},{key:'ship',label:'发货'},
+    {key:'seller',label:'卖家'},{key:'isCN',label:'中国卖家'},{key:'gm',label:'毛利率'},
+    {key:'bsr',label:'BSR'},{key:'variants',label:'变体数'},{key:'weight',label:'重量'},
+    {key:'size',label:'尺寸'},{key:'launch',label:'上架'},{key:'catPath',label:'类目路径'}
+  ];
+  function addToCart(){
+    var arr = filtered();
+    if(!arr.length){ toast('当前筛选结果为空，无法加入购物车'); return; }
+    var items = arr.map(function(r){ var o={}; CART_COLUMNS.forEach(function(c){ o[c.key]=r[c.key]; }); return o; });
+    var item = {
+      id: 'cart_'+Date.now()+'_'+Math.floor(Math.random()*9999),
+      source: '德国站 · 男性倒模',
+      sourceKey: 'de',
+      filter: generateViewName(),
+      count: arr.length,
+      addedAt: new Date().toISOString(),
+      columns: CART_COLUMNS,
+      items: items,
+      _sel: true
+    };
+    // 通知父窗口（主站购物车面板）。同源 iframe 下也直接写 localStorage，父窗口会刷新
+    try{ window.parent.postMessage({type:'cih-cart-add', item:item}, '*'); }catch(e){}
+    if(window.parent===window){
+      // 独立打开（非 iframe）时降级：直接写共享 localStorage
+      var key='cih_cart_v1'; var a=[];
+      try{ a=JSON.parse(localStorage.getItem(key))||[]; }catch(e){}
+      var dup=a.find(function(x){return x.source===item.source && x.filter===item.filter;});
+      if(dup){ dup.items=item.items; dup.count=item.count; dup.addedAt=item.addedAt; }
+      else a.push(item);
+      try{ localStorage.setItem(key, JSON.stringify(a)); }catch(e){}
+      toast('已加入购物车（'+arr.length+' 条）');
+    } else {
+      toast('已发送到购物车');
+    }
+  }
+  $("#cartBtn").addEventListener("click", addToCart);
 
   // ---- 初始化 ----
   renderChips();
