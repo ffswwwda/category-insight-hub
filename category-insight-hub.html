@@ -2660,7 +2660,7 @@ function openAmzDashboard(){
   $('#viewAmz').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewAmz')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
   var f=document.getElementById('amzFrame');
-  if(f) f.src=ghBase()+'amz-review-dashboard.html?theme='+th;
+  if(f) f.src=ghBase()+'vendor/amz-review-dashboard.html?theme='+th;
 }
 
 // ============================================================
