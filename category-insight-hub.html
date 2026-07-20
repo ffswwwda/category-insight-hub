@@ -2134,6 +2134,16 @@ body.dark .lab-status{color:#fbbf24}
         <iframe class="de-frame" src="de-dashboard.html" title="德国看板"></iframe>
       </div>
 
+      <!-- ===== VIEW: REDDIT DASHBOARD ===== -->
+      <div class="view" id="viewReddit">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">Reddit 社媒 · 用户标签看板</span>
+          <span class="ws-tag">已接入 · 5000条 · 7模块38子维度</span>
+        </div>
+        <iframe class="de-frame" id="redditFrame" src="" title="Reddit 看板"></iframe>
+      </div>
+
       <!-- ===== VIEW: SOURCE DETAIL ===== -->
       <div class="view" id="viewSource"></div>
 
@@ -2247,7 +2257,10 @@ var DATA = {
         records:0,status:'pending'},
    s11:{id:'s11',name:'品牌监测',type:'社媒',market:'全球',
         desc:'品牌提及追踪、KOL 合作效果、舆情事件记录',
-        records:0,status:'pending'}
+        records:0,status:'pending'},
+   s12:{id:'s12',name:'Reddit 社媒标签',type:'社媒/用户标签',market:'全球',
+        desc:'Reddit 5000 条评论 · 7大模块38子维度用户标签（用户画像/动机/场景/阻碍等）',
+        records:5000,status:'ready',hasDashboard:true,dashboard:'reddit'}
   },
 
   // ---- 双工作区定义（截图1）----
@@ -2608,6 +2621,15 @@ function openDeDashboard(){
   if(f) f.src='de-dashboard.html?theme='+th;
 }
 
+function openRedditDashboard(){
+  state.purposeId=null;
+  setActiveNav('src-s12');
+  $('#viewReddit').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewReddit')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('redditFrame');
+  if(f) f.src='reddit-dashboard.html?theme='+th;
+}
+
 // ============================================================
 // LEFT NAV TREE (截图1：三个大板块，第三板块随工作区切换)
 // ============================================================
@@ -2908,6 +2930,7 @@ function openSource(srcId){
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent=s.name;
   if(s.hasDashboard){
+    if(s.dashboard==='reddit'){ openRedditDashboard(); return; }
     // Level1：s8 德国商品库 → 专属完整看板（已含筛选/导出/报告）
     $('#viewDe').classList.add('active');
     $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
