@@ -106,6 +106,8 @@ body.light .topbar{background:rgba(255,255,255,.82);}
 .vl-item:hover{border-color:rgba(0,195,243,.3);background:rgba(0,195,243,.05)}
 .vl-item.active{border-color:var(--accent);background:var(--accent-weak);box-shadow:var(--glow)}
 .vl-item .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.vl-item .vl-meta{font-size:9.5px;color:var(--muted);flex-shrink:0}
+.vl-item .vl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#00d4ff,#a855f7,#ff6b9d)}
 .vl-item .vl-del{opacity:0;font-size:13px;color:var(--muted);cursor:pointer;flex-shrink:0;padding:2px 4px;
   border-radius:4px;transition:.12s;pointer-events:auto}
 .vl-item:hover .vl-del{opacity:1}
@@ -159,7 +161,8 @@ body.light .topbar{background:rgba(255,255,255,.82);}
 .dc-action:hover{text-decoration:underline}
 
 /* 社区分布条形图 */
-.comm-row{display:flex;align-items:center;gap:10px;padding:4px 0;font-size:12.5px}
+.comm-row{display:flex;align-items:center;gap:10px;padding:4px 0;font-size:12.5px;cursor:pointer;transition:.12s;border-radius:5px}
+.comm-row:hover{background:var(--accent-weak)}
 .comm-row .cn{width:140px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text);font-weight:500}
 .comm-row .cb{flex:1;height:22px;background:var(--panel-2);border-radius:6px;overflow:hidden;position:relative}
 .comm-row .cf{height:100%;border-radius:6px;transition:width .5s ease;
@@ -210,7 +213,9 @@ body.light .topbar{background:rgba(255,255,255,.82);}
 .sb-title .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
 
 /* 类型A：横条图（值多时用） */
-.bar-row{display:flex;align-items:center;gap:10px;padding:3px 0;font-size:12.5px}
+.bar-row{display:flex;align-items:center;gap:10px;padding:3px 0;font-size:12.5px;cursor:pointer;transition:.12s;border-radius:5px}
+.bar-row:hover{background:var(--accent-weak)}
+.bar-row.filtered{background:rgba(0,195,243,.1)}
 .bar-row .bl{width:120px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
 .bar-row .bt{flex:1;height:20px;background:var(--panel-2);border-radius:5px;overflow:hidden;position:relative}
 .bar-row .bf{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:5px;transition:width .5s ease}
@@ -219,10 +224,12 @@ body.light .topbar{background:rgba(255,255,255,.82);}
 /* 类型B：标签云/药丸式（分类少、文本短时用） */
 .pill-cloud{display:flex;flex-wrap:wrap;gap:6px}
 .pill-tag{display:inline-flex;align-items:center;gap:4px;background:var(--accent-weak);color:var(--accent);
-  border:1px solid rgba(0,195,243,.2);padding:4px 10px;border-radius:16px;font-size:12px;transition:.12s;cursor:default}
+  border:1px solid rgba(0,195,243,.2);padding:4px 10px;border-radius:16px;font-size:12px;transition:.12s;cursor:pointer;user-select:none}
 .pill-tag:hover{background:rgba(0,195,243,.18);transform:scale(1.03)}
+.pill-tag.filtered{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(0,195,243,.25)}
 .pill-tag .pt-n{font-weight:600}
 .pill-tag .pt-c{font-size:10.5px;color:var(--muted);opacity:.7}
+.pill-tag.filtered .pt-c{color:rgba(255,255,255,.7)}
 
 /* 类型C：迷你统计卡组 */
 .mini-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:8px}
@@ -552,6 +559,7 @@ function toggleVal(m,s,cb){
 /* ---------- 视图切换 ---------- */
 function setAll(){
   mode='all'; activeModule=null; filters={}; openModules={}; openSubs={};
+  _lastCommunity=''; ACTIVE_VIEW_ID=null; _cartFp='';
   document.getElementById('treeAll').classList.add('active');
   var items=document.querySelectorAll('#moduleTree .tree-item');
   for(var i=0;i<items.length;i++) items[i].classList.remove('active');
@@ -576,7 +584,7 @@ function setMode(mm,mod){
     if(nm&&nm.textContent===mod) items[i].classList.add('active');
     else items[i].classList.remove('active');
   }
-  document.getElementById('fbTitle').textContent=mode==='all'?'全部数据':mod;
+  document.getElementById('fbTitle').textContent=(mode==='all'&&!_lastCommunity)?'全部数据':(_lastCommunity?'社区 · '+_lastCommunity:(mode==='module'?mod:'全部'));
   _cartAdded=false; updateCartBtn();
   render();
 }
@@ -593,6 +601,7 @@ function rowMatches(r){
     }
     if(anySel&&!ok) return false;
   }
+  if(_lastCommunity && (r[colIndex['\u793e\u533a\u540d\u79f0']]||'').trim()!==_lastCommunity) return false;
   return true;
 }
 function searchMatch(r){
@@ -664,7 +673,7 @@ function renderDashAll(arr){
   var topComms=Object.entries(commMap).sort(function(a,b){return b[1]-a[1]}).slice(0,10);
   var maxC=topComms.length?topComms[0][1]:1;
   var commHtml=topComms.map(function(en){
-    return '<div class="comm-row"><div class="cn" title="'+esc(en[0])+'">'+esc(en[0])+'</div>'+
+    return '<div class="comm-row'+(_lastCommunity===en[0]?' filtered':'')+'" onclick="drillCommunity(\''+esc(en[0]).replace("'","\\'")+'\')" title="\u70b9\u51fb\u7b5b\u9009\u8be5\u793e\u533a"><div class="cn" title="'+esc(en[0])+'">'+esc(en[0])+(_lastCommunity===en[0]?' \u2696':'')+'</div>'+
       '<div class="cb"><div class="cf" style="width:'+(en[1]/maxC*100)+'%"></div></div>'+
       '<div class="cv">'+en[1].toLocaleString()+'</div></div>';
   }).join('');
@@ -743,10 +752,11 @@ function renderDist(arr){
 
     var inner='';
     if(entries.length<=8 && entries.every(function(e){return e[0].length<=15;})){
-      /* 类型B：药丸云（值少且文本短时用） */
+      /* 类型B：药丸云（值少且文本短时用） — 每个药丸可点击筛选 */
       inner='<div class="pill-cloud">'+entries.map(function(en){
         var pct=Math.round(en[1]/total*100);
-        return '<span class="pill-tag" title="'+esc(en[0])+' : '+en[1].toLocaleString()+' \u6761 ('+pct+'%)">'+
+        var isFiltered=filters[m]&&filters[m][s]&&filters[m][s].has(en[0]);
+        return '<span class="pill-tag'+(isFiltered?' filtered':'')+'" title="'+esc(en[0])+' : '+en[1].toLocaleString()+' \u6761 ('+pct+'%)\n\u70b9\u51fb '+(!isFiltered?'\u7b5b\u9009':'\u53d6\u6d88\u7b5e\u9009')+'" onclick="drillToggle(\''+esc(m)+'\',\''+esc(s)+'\',\''+esc(en[0]).replace(/\'/g,"\\'")+'\')">'+
           '<span class="pt-n">'+esc(en[0])+'</span><span class="pt-c">'+en[1].toLocaleString()+'</span></span>';
       }).join('')+'</div>';
       /* 加迷你统计卡 */
@@ -757,10 +767,11 @@ function renderDist(arr){
           }).join('')+'</div>';
       }
     } else {
-      /* 类型A：横条图（值多或文本长时用） */
+      /* 类型A：横条图（值多或文本长时用） — 每行可点击筛选 */
       var max=entries.length?entries[0][1]:1;
       var bars=entries.slice(0,12).map(function(en){
-        return '<div class="bar-row"><div class="bl" title="'+esc(en[0])+'">'+esc(en[0])+'</div>'+
+        var isFiltered=filters[m]&&filters[m][s]&&filters[m][s].has(en[0]);
+        return '<div class="bar-row'+(isFiltered?' filtered':'')+'" title="'+esc(en[0])+' : '+en[1].toLocaleString()+'\n\u70b9\u51fb '+(!isFiltered?'\u7b5b\u9009':'\u53d6\u6d88\u7b5e\u9009')+'" onclick="drillToggle(\''+esc(m)+'\',\''+esc(s)+'\',\''+esc(en[0]).replace(/\'/g,"\\'")+'\')"><div class="bl" title="'+esc(en[0])+'">'+esc(en[0])+'</div>'+
           '<div class="bt"><div class="bf" style="width:'+(en[1]/max*100)+'%"></div></div>'+
           '<div class="bv">'+en[1].toLocaleString()+'</div></div>';
       }).join('');
@@ -835,41 +846,126 @@ function onSort(v){ var parts=v.split('_'); sortKey=parts[0]; sortDir=parts[1]==
 
 /* ---------- 保存视图 ---------- */
 function saveCurrentView(){
-  var name=prompt('\u4e3a\u5f53\u524d\u89c6\u56fe\u547d\u540d\uff08\u5c06\u8bb0\u5f55\u5f53\u524d\u6a21\u5757\u4e0e\u7b5b\u9009\u6761\u4ef6\uff09:', fbTitleText());
-  if(!name) return;
+  var fp=generateViewFingerprint();
+  var dup=SAVED_VIEWS.find(function(v){return v.fp===fp;});
+  if(dup){ toast('\u8be5\u7b5b\u9009\u7ec4\u5408\u5df2\u5b58\u5728\uff1a'+dup.name); loadView(dup.id); return; }
   var fcopy={};
   for(const mod in filters){ fcopy[mod]={}; for(const sub in filters[mod]) fcopy[mod][sub]=[...filters[mod][sub]]; }
-  var view={id:Date.now(),name:name,mode:mode,activeModule:activeModule,filters:fcopy};
-  SAVED_VIEWS.push(view); localStorage.setItem('reddit_views',JSON.stringify(SAVED_VIEWS));
+  var arr=getFiltered();
+  var view={id:Date.now(),name:fp,mode:mode,activeModule:activeModule,filters:fcopy,community:_lastCommunity||null,hitCount:arr.length,fp:fp,createdAt:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})};
+  SAVED_VIEWS.push(view);
+  localStorage.setItem('reddit_views',JSON.stringify(SAVED_VIEWS));
+  ACTIVE_VIEW_ID=view.id;
   renderSavedViews();
+  toast('\u5df2\u4fdd\u5b58\u89c6\u56fe\uff1a'+view.name);
 }
-function fbTitleText(){ if(mode==='all') return '\u5168\u90e8\u6570\u636e'; var parts=[]; for(const mod in filters) for(const sub in filters[mod]) filters[mod][sub].forEach(function(v){ parts.push(mod+'·'+sub+'='+v); }); return parts.length?parts.join(' / '):activeModule; }
+
+function fbTitleText(){ return generateViewFingerprint(); }
 function renderSavedViews(){
   var box=document.getElementById('savedTree');
-  if(!SAVED_VIEWS.length){ box.innerHTML='<div class="vl-empty">\u6682\u65e0\u4fdd\u5b58\u7684\u89c6\u56fe</div>'; return; }
+  if(!SAVED_VIEWS.length){
+    box.innerHTML='<div class="vl-item">\u7b5b\u9009\u540e\u70b9\u300c\u4fdd\u5b58\u89c6\u56fe\u300d<br>\u53ef\u4ee5\u5728\u6b64\u4fdd\u5b58\u591a\u7ec4\u7b5b\u9009\u6761\u4ef6</div>';
+    return;
+  }
   box.innerHTML=SAVED_VIEWS.map(function(v){
-    return '<div class="vl-item" data-vid="'+v.id+'"><span class="nm">'+esc(v.name)+'</span><span class="vl-del" onclick="delView(event,'+v.id+')">\u2715</span></div>';
+    var isActive=(v.id===ACTIVE_VIEW_ID);
+    return '<div class="vl-item'+(isActive?' active':'')+'" data-vid="'+v.id+'" role="button" tabindex="0">'+
+      '<span class="nm" title="'+esc(v.name)+'">'+esc(v.name.length>30?v.name.slice(0,29)+'...':v.name)+'</span>'+
+      '<span class="vl-meta">'+v.hitCount.toLocaleString()+" \u6761</span>"+
+      '<span class="vl-del" onclick="delView(event,'+v.id+')">\u2715</span></div>';
   }).join('');
-  /* 事件委托：排除 vl-del */
   box.onclick=function(e){
     if(e.target.closest('.vl-del')) return;
     var item=e.target.closest('.vl-item');
     if(!item) return;
     loadView(+item.dataset.vid);
   };
+  box.onkeydown=function(e){
+    if(e.key!=='Enter'&&e.key!==' ') return;
+    var item=e.target.closest('.vl-item');
+    if(!item) return;
+    e.preventDefault();
+    loadView(+item.dataset.vid);
+  };
 }
+
+
 function loadView(id){
   var v=SAVED_VIEWS.find(function(x){return x.id===id}); if(!v) return;
   filters={};
   for(const mod in (v.filters||{})){ filters[mod]={}; for(const sub in v.filters[mod]) filters[mod][sub]=new Set(v.filters[mod][sub]); }
   openModules={}; openSubs={};
+  _lastCommunity=v.community||'';
   if(v.mode==='module'&&v.activeModule){ openModules[v.activeModule]=true; }
   buildTree();
   if(v.mode==='module'&&v.activeModule){ var ci=document.getElementById('mc-'+v.activeModule); if(ci){ci.style.display='block';buildSubList(v.activeModule);} }
   setMode(v.mode,v.activeModule);
+  ACTIVE_VIEW_ID=id;
+  _cartAdded=false; updateCartBtn(); render();
   document.querySelectorAll('#savedTree .vl-item').forEach(function(el){ el.classList.toggle('active',+el.dataset.vid===id); });
 }
 function delView(e,id){ e.stopPropagation(); SAVED_VIEWS=SAVED_VIEWS.filter(function(x){return x.id!==id}); localStorage.setItem('reddit_views',JSON.stringify(SAVED_VIEWS)); renderSavedViews(); }
+
+
+/* ========== 钻取与交互增强（对齐 de 看板） ========== */
+
+/* 钻取：点击分布图中的药丸/横条 切换筛选 */
+function drillToggle(mod, sub, val){
+  filters[mod]=filters[mod]||{};
+  filters[mod][sub]=filters[mod][sub]||new Set();
+  if(filters[mod][sub].has(val)){
+    filters[mod][sub].delete(val);
+    if(filters[mod][sub].size===0){ delete filters[mod][sub]; }
+    if(!Object.keys(filters[mod]).length){ delete filters[mod]; }
+  } else {
+    filters[mod][sub].add(val);
+  }
+  /* 自动展开到该模块 */
+  if(mode!=='module'||activeModule!==mod){
+    openModules[mod]=true;
+    var ci=document.getElementById('mc-'+mod);
+    if(ci){ ci.style.display='block'; buildSubList(mod); }
+    var items=document.querySelectorAll('#moduleTree > .tree-item');
+    for(var i=0;i<items.length;i++){
+      var nm=items[i].querySelector('.nm');
+      if(nm&&nm.textContent===mod){ items[i].classList.remove('collapsed'); break; }
+    }
+    setMode('module', mod);
+  }
+  ACTIVE_VIEW_ID=null; _cartAdded=false; updateCartBtn(); render();
+}
+
+/* 社区钻取：点击社区条 筛选该社区 */
+var _lastCommunity='';
+function drillCommunity(comm){
+  _lastCommunity=(_lastCommunity===comm)?'':comm; /* toggle */
+  ACTIVE_VIEW_ID=null; _cartAdded=false; updateCartBtn(); render();
+}
+
+/* 覆盖 rowModels 加入社区筛选 */
+_origRowMatches = typeof rowMatches !== 'undefined' ? rowMatches : null;
+
+/* 生成视图指纹（用于自动命名 + 购物车去重） */
+function generateViewFingerprint(){
+  var parts=[];
+  if(mode!=='all') parts.push(activeModule||'\u5168\u90e8');
+  if(_lastCommunity) parts.push('\u793e\u533a='+_lastCommunity);
+  for(const mod in filters){ for(const sub in filters[mod]) filters[mod][sub].forEach(function(v){ parts.push(mod+'\u00b7'+sub+'='+v); }); }
+  return parts.length?parts.join(' + '):'\u5168\u90e8\u6570\u636e\uff08\u65e0\u7b5b\u9009\uff09';
+}
+
+/* Toast 提示（对齐 de 看板） */
+function toast(msg){
+  var t=document.getElementById('rdToast');
+  if(!t){
+    t=document.createElement('div'); t.id='rdToast';
+    t.style.cssText='position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;padding:8px 18px;border-radius:10px;font-size:12.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.76);backdrop-filter:blur(8px);pointer-events:none;opacity:0;transition:opacity .25s';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(toast._tm);
+  toast._tm=setTimeout(function(){ t.style.opacity='0'; }, 2000);
+}
 
 /* ---------- 全屏 ---------- */
 function toggleFS(){
@@ -878,12 +974,15 @@ function toggleFS(){
 }
 
 /* ---------- 购物车（含已加入状态） ---------- */
+var _cartFp='';
 function updateCartBtn(){
   var btn=document.getElementById('cartBtn');
-  if(_cartAdded){
+  var curFp=generateViewFingerprint();
+  if(_cartAdded && _cartFp===curFp){
     btn.className='icon-btn cart-added';
     btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> \u5df2\u52a0\u5165';
   } else {
+    if(_cartFp!==curFp){ _cartFp=curFp; _cartAdded=false; }
     btn.className='icon-btn';
     btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.4 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L22 7H6"/></svg>\u8d2d\u7269\u8f66';
   }
@@ -891,11 +990,33 @@ function updateCartBtn(){
 function addToCart(){
   if(_cartAdded) return;
   var arr=getFiltered();
+  if(!arr.length){ toast('\u5f53\u524d\u7b5b\u9009\u7ed3\u679c\u4e3a\u7a7a\uff0c\u65e0\u6cd5\u52a0\u5165\u8d2d\u7269\u8f66'); return; }
   var rows=arr.map(function(r){ var o={}; REDDIT_COLS.forEach(function(c){ o[c]=r[colIndex[c]]; }); return o; });
-  var item={source:'Reddit\u793e\u5a92\u6807\u7b7e',columns:REDDIT_COLS,rows:rows};
-  try{ parent.postMessage({type:'cih-cart-add',item:item},'*'); }catch(e){}
+  var item={
+    id:'cart_'+Date.now()+'_'+Math.floor(Math.random()*9999),
+    source:'Reddit \u793e\u5a92 \u00b7 \u7528\u6237\u6807\u7b7e',
+    sourceKey:'reddit',
+    filter: generateViewFingerprint(),
+    count: arr.length,
+    addedAt: new Date().toISOString(),
+    columns: REDDIT_COLS,
+    rows: rows,
+    _sel: true
+  };
+  try{ parent.postMessage({type:'cih-cart-add', item:item}, '*'); }catch(e){}
   _cartAdded=true;
   updateCartBtn();
+  if(window.parent===window){
+    var key='cih_cart_v1'; var a=[];
+    try{ a=JSON.parse(localStorage.getItem(key))||[]; }catch(e){}
+    var dup=a.find(function(x){return x.source===item.source && x.filter===item.filter;});
+    if(dup){ dup.rows=item.rows; dup.count=item.count; dup.addedAt=item.addedAt; }
+    else a.push(item);
+    try{ localStorage.setItem(key, JSON.stringify(a)); }catch(e){}
+    toast('\u5df2\u52a0\u5165\u8d2d\u7269\u8f66\uff08'+arr.length+' \u6761\uff09');
+  } else {
+    toast('\u5df2\u53d1\u9001\u5230\u8d2d\u7269\u8f66');
+  }
 }
 
 /* ---------- 返回 ---------- */
