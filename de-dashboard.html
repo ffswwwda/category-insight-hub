@@ -42,6 +42,7 @@
   body.dark ::-webkit-scrollbar-thumb:hover{background:#3a4768;}
   body.dark .sidebar{background:rgba(20,28,48,.6);}
   body.dark .topbar{background:rgba(20,28,48,.6);}
+  body.dark .filterbar{background:rgba(20,28,48,.7);}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{margin:0;background-color:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;
@@ -93,11 +94,16 @@
     border-radius:10px;padding:8px 12px;width:340px}
   .search-box input{border:0;outline:0;background:transparent;font-size:13px;width:100%;color:var(--ink);font-family:var(--font)}
   .search-box .ico{color:var(--accent)}
+  .fs-btn{appearance:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);background:var(--panel);color:var(--ink-2);
+    font-family:var(--font);font-size:12px;font-weight:600;padding:7px 11px;border-radius:9px;cursor:pointer;
+    transition:background .15s,border-color .15s,color .15s;white-space:nowrap;flex-shrink:0}
+  .fs-btn:hover{background:var(--accent-weak);border-color:var(--accent);color:var(--accent)}
+  .fs-btn svg{width:14px;height:14px;flex-shrink:0}
 
   .board{flex:1;padding:22px 26px 60px;overflow:auto}
 
   /* Filter chips */
-  .filterbar{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;box-shadow:var(--shadow)}
+  .filterbar{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;box-shadow:var(--shadow);position:sticky;top:60px;z-index:19}
   .fb-hint{font-size:12px;color:var(--muted);margin-bottom:10px}
   .fb-hint code{background:var(--line);padding:1px 6px;border-radius:5px;font-family:var(--mono);font-size:11.5px}
   .chips{display:flex;flex-wrap:wrap;gap:7px}
@@ -122,7 +128,7 @@
   .vl-item .vl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--rad-grad)}
   .vl-item .vl-name{flex:1;font-size:11.5px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .vl-item .vl-meta{font-size:9.5px;color:var(--muted);flex-shrink:0}
-  .vl-item .vl-del{opacity:0;font-size:13px;color:var(--muted);cursor:pointer;flex-shrink:0;padding:2px 4px;border-radius:4px;transition:all .12s}
+  .vl-item .vl-del{opacity:0;font-size:13px;color:var(--muted);cursor:pointer;flex-shrink:0;padding:2px 4px;border-radius:4px;transition:all .12s;pointer-events:auto}
   .vl-item:hover .vl-del{opacity:.6}
   .vl-item .vl-del:hover{opacity:1;color:var(--danger)}
   .vl-empty{color:var(--muted);font-size:11.5px;text-align:center;padding:18px 8px;line-height:1.6}
@@ -256,6 +262,7 @@
         </div>
       </div>
       <div class="topbar-right">
+        <button class="fs-btn" id="fsBtn" title="全屏查看看板（按 ESC 退出）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>全屏</button>
         <div class="search-box">
           <span class="ico">⌕</span>
           <input id="nl-input" type="text" placeholder="自然语言筛选，如：20欧以下 FBA 中国卖家 有视频" autocomplete="off">
@@ -858,6 +865,29 @@ function goBack(){
     window.location.href='category-insight-hub.html';
   }
 }
+
+// ---- 全屏切换（ESC 退出）----
+(function(){
+  var btn = document.getElementById('fsBtn');
+  if(!btn) return;
+  var fsIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
+  var exitIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6"/><path d="M20 10h-6V4"/><path d="M14 10l7-7"/><path d="M3 21l7-7"/></svg>';
+  function updateIcon(){
+    var isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+    btn.innerHTML = (isFS ? exitIcon : fsIcon) + (isFS ? '退出全屏' : '全屏');
+    btn.title = isFS ? '退出全屏（或按 ESC）' : '全屏查看看板';
+  }
+  btn.addEventListener('click', function(){
+    if(!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement){
+      var el = document.documentElement;
+      (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || function(){}).call(el);
+    }else{
+      (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || function(){}).call(document);
+    }
+  });
+  document.addEventListener('fullscreenchange', updateIcon);
+  document.addEventListener('webkitfullscreenchange', updateIcon);
+})();
 </script>
 </body>
 </html>
