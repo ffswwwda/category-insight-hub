@@ -720,7 +720,7 @@ function renderDashAll(arr){
     '<div class="dash-grid">'+
       '<div class="dash-card">'+
         '<div class="dc-head"><div class="dc-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>\u65f6\u95f4\u5206\u5e03</div></div>'+timeHtml+
-        '<div style="margin-top:8px;font-size:11px;color:var(--muted);text-align:center">'+(tEntries.length?\u5171 '+tEntries.length+' \u4e2a\u6708\u4efd':'\u65e0\u65f6\u95f4\u6570\u636e')+'</div></div>'+
+        '<div style="margin-top:8px;font-size:11px;color:var(--muted);text-align:center">'+(tEntries.length?'共 '+tEntries.length+' 个月份':'无时间数据')+'</div></div>'+
       '<div class="dash-card">'+
         '<div class="dc-head"><div class="dc-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>\u6700\u65b0\u52a8\u6001</div></div>'+
         '<div class="feed-list">'+feedHtml+'</div></div>'+
@@ -768,7 +768,7 @@ function renderDist(arr){
     }
 
     box.innerHTML+='<div class="sub-block"><div class="sb-title"><span class="dot"></span>'+esc(s)+
-      '<span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400">'+entries.length+' \u4e2a\u503c · '+total.toLocaleString()+" \u6761</span></div>"+inner+'</div>";
+      '<span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400">'+entries.length+' \u4e2a\u503c · '+total.toLocaleString()+" \u6761</span></div>"+inner+'</div>';
   });
 }
 function enterModule(m){
@@ -810,7 +810,7 @@ function renderTable(arr){
   var slice=arr.slice(page*PAGE,page*PAGE+PAGE);
   tb.innerHTML=slice.map(function(r,i){
     var idx=page*PAGE+i;
-    var tags=REDDIT_COLS.filter(function(c){return c.includes('_')}).map(function(c){ return {c:c,v:(r[colIndex[c]]||'').trim'}; }).filter(function(o){return o.v&&o.v!=='\u672a\u63d0\u53ca'&&o.v!=='\u65e0'});
+    var tags=REDDIT_COLS.filter(function(c){return c.includes('_')}).map(function(c){ return {c:c,v:(r[colIndex[c]]||'').trim()}; }).filter(function(o){return o.v&&o.v!=='\u672a\u63d0\u53ca'&&o.v!=='\u65e0'});
     var pills=tags.map(function(o){return '<span class="tg-pill" title="'+esc(o.c)+'">'+esc(o.v)+'</span>'}).join('')||'<span class="tg-pill empty">\u65e0</span>';
     return '<tr><td class="td-meta">'+esc(r[colIndex['\u793e\u533a\u540d\u79f0']]||'')+'</td>'+
       '<td class="td-comm">'+esc(r[colIndex['\u8bc4\u8bba\u5185\u5bb9']]||'')+'</td>'+
