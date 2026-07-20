@@ -357,6 +357,22 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .nav-sec-pr .nav-sec-head{cursor:pointer;user-select:none}
 .nav-sec-pr .nav-sec-head::after{content:'▸';margin-left:auto;font-size:10px;color:var(--muted);transition:transform .2s;flex-shrink:0}
 .nav-sec-pr:not(.collapsed) .nav-sec-head::after{transform:rotate(90deg)}
+/* 原理展厅 · 侧边栏工具卡片列表 */
+.pr-tool-list{padding:4px 0}
+.pr-tool-list .vl-item{display:flex;align-items:center;gap:8px;padding:7px 8px;margin:3px 0;border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}
+.pr-tool-list .vl-item:hover{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.18)}
+.pr-tool-list .vl-item.soon{opacity:.5;cursor:default}
+.pr-tool-list .vl-item.soon:hover{background:none;border-color:transparent}
+.pr-tool-list .vl-ico{flex-shrink:0;width:28px;height:28px;border-radius:6px;background:var(--rad-grad);display:flex;align-items:center;justify-content:center}
+.pr-tool-list .vl-ico svg{width:16px;height:16px}
+.pr-tool-list .vl-info{flex:1;min-width:0}
+.pr-tool-list .vl-name{font-size:11.5px;font-weight:600;color:var(--text);line-height:1.3}
+.pr-tool-list .vl-desc{font-size:10px;color:var(--muted);line-height:1.3;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-tool-list .vl-action{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pr-tool-list .vl-tag{font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;letter-spacing:.3px}
+.pr-tool-list .vl-tag.on{background:rgba(0,212,255,.12);color:#00d4ff}
+.pr-tool-list .vl-tag.off{background:rgba(140,140,140,.1);color:var(--muted)}
+.pr-tool-list .vl-go{font-size:10px;color:#a855f7}
 
 /* ======================================================
    原理展厅（看背后工作） · 展厅列表 + 头脑特工动画演示台
@@ -2634,8 +2650,23 @@ function renderNavLab(){
 }
 
 function renderNavPrinciple(){
-  // 原理动画已嵌入 AI 简化工具中，此板块保留为空（后续可扩展）
-  $('#navPrinciple').innerHTML='';
+  var $body = $('#navPrinciple');
+  // 渲染工具卡片列表（紧凑版，每个可点击播放原理动画）
+  var cards = PR_TOOLS.map(function(t){
+    var cls = 'vl-item' + (t.ready ? ' ready' : ' soon');
+    var onclick = t.ready ? (' onclick="showDemoOverlay(\''+t.fn+'\',\'openAITools()\')"') : '';
+    var tag = t.ready ? '<span class="vl-tag on">可演示</span>' : '<span class="vl-tag off">敬请期待</span>';
+    return '<div class="'+cls+'"'+onclick+'>'+
+      '<div class="vl-ico">'+(t.ico||'')+'</div>'+
+      '<div class="vl-info">'+
+        '<div class="vl-name">'+escHtml(t.name)+'</div>'+
+        '<div class="vl-desc">'+escHtml(t.desc)+'</div>'+
+      '</div>'+
+      '<div class="vl-action">'+tag+(t.ready?'<span class="vl-go">▶</span>':'')+'</div>'+
+    '</div>';
+  }).join('');
+  $body.innerHTML = '<div class="pr-tool-list">'+cards+'</div>';
+
   // 折叠/展开切换
   var prSec=document.querySelector('.nav-sec-pr');
   if(prSec){
