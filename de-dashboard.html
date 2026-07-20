@@ -134,6 +134,7 @@
   .vl-empty{color:var(--muted);font-size:11.5px;text-align:center;padding:18px 8px;line-height:1.6}
   .save-view-btn{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:5px 13px;border:1px solid var(--accent);border-radius:9px;background:var(--accent-weak);color:var(--accent);cursor:pointer;transition:all .15s;user-select:none;white-space:nowrap}
   .save-view-btn:hover{background:var(--accent);color:#fff}
+  #cartBtn.cart-added{border-color:#10b981;background:#ecfdf5;color:#059669;cursor:default;pointer-events:none;opacity:.8}
 
   .countline{font-size:13px;color:var(--ink-2);margin:0 2px 14px}
   .countline b{color:var(--accent);font-size:15px;font-weight:700}
@@ -781,6 +782,8 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
 
   // 视图图层点击委托（vl-item 点击 = 加载视图）
   $("#vlList").addEventListener("click", function(e){
+    // 点了删除按钮时不触发视图切换（由内联 onclick 处理）
+    if(e.target.closest('.vl-del')) return;
     var item = e.target.closest('.vl-item');
     if(!item) return;
     var vid = Number(item.dataset.vid);
@@ -821,6 +824,28 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     {key:'bsr',label:'BSR'},{key:'variants',label:'变体数'},{key:'weight',label:'重量'},
     {key:'size',label:'尺寸'},{key:'launch',label:'上架'},{key:'catPath',label:'类目路径'}
   ];
+  // ── 购物车状态管理 ──
+  var _cartAddedFilter = ''; // 记录当前已加入购物车的筛选指纹
+  function updateCartButtonState(){
+    var btn = document.getElementById('cartBtn');
+    var curFp = generateViewName();
+    if(_cartAddedFilter && _cartAddedFilter === curFp){
+      btn.classList.add('cart-added');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M20 6L9 17l-5-5"/></svg>已加入购物车';
+    } else {
+      btn.classList.remove('cart-added');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>加入购物车';
+    }
+  }
+  // 每次渲染后检查是否需要重置状态（筛选条件变了）
+  var _lastRenderFp = '';
+  var _origRender = render;
+  render = function(){
+    _origRender();
+    var fp = generateViewName();
+    if(fp !== _lastRenderFp){ _lastRenderFp = fp; updateCartButtonState(); }
+  };
+
   function addToCart(){
     var arr = filtered();
     if(!arr.length){ toast('当前筛选结果为空，无法加入购物车'); return; }
@@ -838,6 +863,8 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     };
     // 通知父窗口（主站购物车面板）。同源 iframe 下也直接写 localStorage，父窗口会刷新
     try{ window.parent.postMessage({type:'cih-cart-add', item:item}, '*'); }catch(e){}
+    _cartAddedFilter = generateViewName();
+    updateCartButtonState();
     if(window.parent===window){
       // 独立打开（非 iframe）时降级：直接写共享 localStorage
       var key='cih_cart_v1'; var a=[];
