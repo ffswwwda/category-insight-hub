@@ -2174,6 +2174,66 @@ body.dark .lab-status{color:#fbbf24}
         <iframe class="de-frame" id="feedbackFrame" src="" title="反馈情报看板"></iframe>
       </div>
 
+      <!-- ===== VIEW: PORNHUB DASHBOARD ===== -->
+      <div class="view" id="viewPornhub">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">P站类目播放数据 · 数据看板</span>
+          <span class="ws-tag">已接入 · 116类目 · 外部趋势</span>
+        </div>
+        <iframe class="de-frame" id="pornhubFrame" src="" title="P站看板"></iframe>
+      </div>
+
+      <!-- ===== VIEW: YOUTUBE DASHBOARD ===== -->
+      <div class="view" id="viewYoutube">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">YouTube 测评视频 · 数据看板</span>
+          <span class="ws-tag">已接入 · 258视频 · 外部趋势</span>
+        </div>
+        <iframe class="de-frame" id="youtubeFrame" src="" title="YouTube看板"></iframe>
+      </div>
+
+      <!-- ===== VIEW: BEDBIBLE DASHBOARD ===== -->
+      <div class="view" id="viewBedbible">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">Bedbible 测评文章 · 数据看板</span>
+          <span class="ws-tag">已接入 · 693段落 · 外部趋势</span>
+        </div>
+        <iframe class="de-frame" id="bedbibleFrame" src="" title="Bedbible看板"></iframe>
+      </div>
+
+      <!-- ===== VIEW: SUPPLIER DASHBOARD ===== -->
+      <div class="view" id="viewSupplier">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">供应商主体情报 · 数据看板</span>
+          <span class="ws-tag">已接入 · 84供应商 · 供应链</span>
+        </div>
+        <iframe class="de-frame" id="supplierFrame" src="" title="供应商看板"></iframe>
+      </div>
+
+      <!-- ===== VIEW: COMPETITOR DASHBOARD ===== -->
+      <div class="view" id="viewCompetitor">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">核心竞品 KOL 合作 · 数据看板</span>
+          <span class="ws-tag">已接入 · 747内容 · 商品/卖点</span>
+        </div>
+        <iframe class="de-frame" id="competitorFrame" src="" title="竞品看板"></iframe>
+      </div>
+
+      <!-- ===== VIEW: SOCIAL MONITOR DASHBOARD ===== -->
+      <div class="view" id="viewSocial">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToGrid()">返回</button>
+          <span class="ws-title">社媒监控品牌账号 · 数据看板</span>
+          <span class="ws-tag">已接入 · 50账号 · 社媒讨论</span>
+        </div>
+        <iframe class="de-frame" id="socialFrame" src="" title="社媒监控看板"></iframe>
+      </div>
+
       <!-- ===== VIEW: SOURCE DETAIL ===== -->
       <div class="view" id="viewSource"></div>
 
@@ -2299,7 +2359,25 @@ var DATA = {
         records:1831,status:'ready',hasDashboard:true,dashboard:'search'},
    s15:{id:'s15',name:'用户反馈情报汇总',type:'售后/反馈',market:'全球',
         desc:'情报系统导出 · 87 份情报 / 815 条反馈事实 · 访谈/问卷/社媒风评 · 情报类型/产品/市场/主题多维钻取看板',
-        records:815,status:'ready',hasDashboard:true,dashboard:'feedback'}
+        records:815,status:'ready',hasDashboard:true,dashboard:'feedback'},
+   s16:{id:'s16',name:'P站类目播放数据',type:'外部趋势',market:'全球',
+        desc:'P站类目播放数据 116 个类目 · 播放量/展示视频数/相关搜索词/限流 多维钻取看板',
+        records:116,status:'ready',hasDashboard:true,dashboard:'pornhub'},
+   s17:{id:'s17',name:'YouTube 测评视频',type:'外部趋势',market:'全球',
+        desc:'YouTube 倒膜测评视频 258 条 · 视频类型/作者/观看量/语言/转写 多维钻取看板',
+        records:258,status:'ready',hasDashboard:true,dashboard:'youtube'},
+   s18:{id:'s18',name:'Bedbible 测评文章',type:'外部趋势',market:'全球',
+        desc:'Bedbible 测评站正文 693 个段落 · 文章/段落类型/关键词/字数 多维钻取看板',
+        records:693,status:'ready',hasDashboard:true,dashboard:'bedbible'},
+   s19:{id:'s19',name:'供应商主体情报',type:'供应链',market:'中国',
+        desc:'情报系统供应商合并 · 84 家供应商 · 类型/产品类目/质量问题/技术事实 多维钻取看板',
+        records:84,status:'ready',hasDashboard:true,dashboard:'supplier'},
+   s20:{id:'s20',name:'核心竞品 KOL 合作',type:'商品/卖点',market:'全球',
+        desc:'核心竞品数据 · 747 条 KOL 合作内容 · 品牌/媒体/内容类型/播放量/点赞 多维钻取看板',
+        records:747,status:'ready',hasDashboard:true,dashboard:'competitor'},
+   s21:{id:'s21',name:'社媒监控品牌账号',type:'社媒',market:'全球',
+        desc:'社媒监控数据库 · 50 个品牌账号 · 品牌/类目/平台/粉丝数 多维钻取看板',
+        records:50,status:'ready',hasDashboard:true,dashboard:'social'}
   },
 
   // ---- 双工作区定义（截图1）----
@@ -2707,6 +2785,43 @@ function openFeedbackDashboard(){
   if(f) f.src=ghBase()+'vendor/feedback-intel-dashboard.html?theme='+th;
 }
 
+function openPornhubDashboard(){
+  state.purposeId=null; setActiveNav('src-s16');
+  $('#viewPornhub').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewPornhub')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('pornhubFrame'); if(f) f.src=ghBase()+'vendor/pornhub-tags-dashboard.html?theme='+th;
+}
+function openYoutubeDashboard(){
+  state.purposeId=null; setActiveNav('src-s17');
+  $('#viewYoutube').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewYoutube')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('youtubeFrame'); if(f) f.src=ghBase()+'vendor/youtube-review-dashboard.html?theme='+th;
+}
+function openBedbibleDashboard(){
+  state.purposeId=null; setActiveNav('src-s18');
+  $('#viewBedbible').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewBedbible')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('bedbibleFrame'); if(f) f.src=ghBase()+'vendor/bedbible-review-dashboard.html?theme='+th;
+}
+function openSupplierDashboard(){
+  state.purposeId=null; setActiveNav('src-s19');
+  $('#viewSupplier').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewSupplier')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('supplierFrame'); if(f) f.src=ghBase()+'vendor/supplier-intel-dashboard.html?theme='+th;
+}
+function openCompetitorDashboard(){
+  state.purposeId=null; setActiveNav('src-s20');
+  $('#viewCompetitor').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewCompetitor')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('competitorFrame'); if(f) f.src=ghBase()+'vendor/competitor-kol-dashboard.html?theme='+th;
+}
+function openSocialDashboard(){
+  state.purposeId=null; setActiveNav('src-s21');
+  $('#viewSocial').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewSocial')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('socialFrame'); if(f) f.src=ghBase()+'vendor/social-monitor-dashboard.html?theme='+th;
+}
+
 // ============================================================
 // LEFT NAV TREE (截图1：三个大板块，第三板块随工作区切换)
 // ============================================================
@@ -3011,6 +3126,12 @@ function openSource(srcId){
     if(s.dashboard==='amz'){ openAmzDashboard(); return; }
     if(s.dashboard==='search'){ openSearchDashboard(); return; }
     if(s.dashboard==='feedback'){ openFeedbackDashboard(); return; }
+    if(s.dashboard==='pornhub'){ openPornhubDashboard(); return; }
+    if(s.dashboard==='youtube'){ openYoutubeDashboard(); return; }
+    if(s.dashboard==='bedbible'){ openBedbibleDashboard(); return; }
+    if(s.dashboard==='supplier'){ openSupplierDashboard(); return; }
+    if(s.dashboard==='competitor'){ openCompetitorDashboard(); return; }
+    if(s.dashboard==='social'){ openSocialDashboard(); return; }
     // Level1：s8 德国商品库 → 专属完整看板（已含筛选/导出/报告）
     $('#viewDe').classList.add('active');
     $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
@@ -5561,13 +5682,14 @@ function openSourceGallery(){
   setActiveNav('nav-src');
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent='数据源 · 全景';
-  var CAT_ORDER=['商品销售/卖点数据','商品评价数据','用户搜索行为','社媒讨论','用户访谈','外部趋势信息/数据','售后反馈'];
-  var CAT_MAP={s8:'商品销售/卖点数据',s3:'商品销售/卖点数据',s7:'商品销售/卖点数据',
+  var CAT_ORDER=['商品销售/卖点数据','商品评价数据','用户搜索行为','社媒讨论','用户访谈','外部趋势信息/数据','供应商/供应链情报','售后反馈'];
+  var CAT_MAP={s8:'商品销售/卖点数据',s3:'商品销售/卖点数据',s7:'商品销售/卖点数据',s20:'商品销售/卖点数据',
     s1:'商品评价数据',s13:'商品评价数据',
     s4:'用户搜索行为',s14:'用户搜索行为',
-    s2:'社媒讨论',s11:'社媒讨论',s12:'社媒讨论',
+    s2:'社媒讨论',s11:'社媒讨论',s12:'社媒讨论',s21:'社媒讨论',
     s5:'用户访谈',
-    s9:'外部趋势信息/数据',s10:'外部趋势信息/数据',
+    s9:'外部趋势信息/数据',s10:'外部趋势信息/数据',s16:'外部趋势信息/数据',s17:'外部趋势信息/数据',s18:'外部趋势信息/数据',
+    s19:'供应商/供应链情报',
     s6:'售后反馈',s15:'售后反馈'};
   function card(k){
     var s=DATA.sources[k];

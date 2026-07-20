@@ -1,286 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-通用维度看板生成器（多规格版）
-===========================
-复用 de-dashboard.html 的 CSS 外壳（视觉一致），内核是通用维度引擎：
-- MODULES 配置驱动分布面板（pill 云 / 横条图）
-- 点击药丸/横条 = 钻取筛选（toggle）
-- 同维度多选 = 并集(OR)；跨维度 = 交集(AND)
-- 保存视图自动命名（去 prompt）+ 购物车指纹跟踪
-读取多个 xlsx，循环输出到 vendor/。
-"""
-import openpyxl, json, re
-
-OUT_DIR = "/Users/fsw/WorkBuddy/2026-07-15-08-51-27"
-VENDOR = OUT_DIR + "/vendor"
-
-SRC = {
-    'search':   "/Users/fsw/Downloads/4、倒模智能体关键词搜索量数据.xlsx",
-    'feedback': "/Users/fsw/Downloads/8、情报系统-用户反馈类情报汇总.xlsx",
-    'pornhub':  "/Users/fsw/Documents/3、P站标签&历年报告.xlsx",
-    'tube':     "/Users/fsw/Documents/5、倒膜测评YouTube&Bedbible.xlsx",
-    'supplier': "/Users/fsw/Documents/6、情报系统——供应商主体情报合并.xlsx",
-    'comp':     "/Users/fsw/Documents/7、倒膜核心竞品数据.xlsx",
-    'social':   "/Users/fsw/Documents/社媒监控数据库（测试、含倒膜）.xlsx",
-}
-
-# ----------------------------------------------------------------------------
-# 工具
-# ----------------------------------------------------------------------------
-def num(v):
-    if v is None: return None
-    if isinstance(v,(int,float)): return float(v)
-    s = re.sub(r'[^\d.\-]','',str(v))
-    if s in ('','-','.'): return None
-    try: return float(s)
-    except: return None
-
-def sheet_rows(fp, sh):
-    wb = openpyxl.load_workbook(fp, data_only=True)
-    ws = wb[sh]
-    rows = list(ws.iter_rows(values_only=True))
-    hdr = [(str(h).strip() if h is not None else '') for h in rows[0]]
-    out = []
-    for r in rows[1:]:
-        if not r or all(c is None for c in r): continue
-        d = {}
-        for i,h in enumerate(hdr):
-            if h=='': continue
-            d[h] = r[i]
-        out.append(d)
-    wb.close()
-    return out
-
-def bucket(v, edges, labels):
-    """edges: [e1,e2,...] 升序；labels: [l0,l1,...,ln]，len=len(edges)+1"""
-    n = num(v)
-    if n is None: return labels[-1]
-    for i,e in enumerate(edges):
-        if n < e: return labels[i]
-    return labels[-1]
-
-# ----------------------------------------------------------------------------
-# 加载器：返回 spec 子集（rows/cols/modules/kpis）
-# ----------------------------------------------------------------------------
-def load_search():
-    rows0 = sheet_rows(SRC['search'], '数据表')
-    out=[]
-    for r in rows0:
-        kw = r.get('关键词')
-        if kw is None: continue
-        vol = num(r.get('月搜索量')) or 0
-        buy = num(r.get('购买率'))
-        supply = num(r.get('需供比'))
-        comp = num(r.get('商品数'))
-        out.append({
-            'kw': str(kw), 'kw_cn': str(r.get('关键词翻译') or ''),
-            'type': str(r.get('流量词类型') or '未标注'),
-            'vol': vol, 'buy': buy, 'supply': supply, 'comp': comp, 'ppc': r.get('PPC竞价'),
-            'vol_b': bucket(vol,[1000,10000,100000],['<1k','1k–1万','1万–10万','>10万']),
-            'sup_b': bucket(supply,[10,50,200],['<10 红海','10–50','50–200','>200 蓝海'] if supply is not None else ['未知']),
-            'br_b': bucket(buy,[0.005,0.02],['<0.5%','0.5%–2%','>2%'] if buy is not None else ['未知']),
-            'comp_b': bucket(comp,[1000,10000],['<1k','1k–1万','>1万'] if comp is not None else ['未知']),
-        })
-    cols=[{'k':'kw','label':'关键词','cls':'ttitle'},{'k':'kw_cn','label':'翻译'},{'k':'type','label':'词类型'},
-          {'k':'vol','label':'月搜索量','fmt':'num'},{'k':'buy','label':'购买率','fmt':'pct'},
-          {'k':'supply','label':'需供比','fmt':'num'},{'k':'comp','label':'商品数','fmt':'num'},{'k':'ppc','label':'PPC竞价'}]
-    modules=[{'key':'type','label':'流量词类型','field':'type','kind':'pill'},
-             {'key':'kw_cn','label':'关键词翻译（Top 15）','field':'kw_cn','kind':'bar','top':15},
-             {'key':'vol_b','label':'月搜索量档位','field':'vol_b','kind':'bar','order':['<1k','1k–1万','1万–10万','>10万']},
-             {'key':'sup_b','label':'需供比档位（蓝海机会）','field':'sup_b','kind':'bar','order':['<10 红海','10–50','50–200','>200 蓝海']},
-             {'key':'br_b','label':'购买率档位','field':'br_b','kind':'bar','order':['<0.5%','0.5%–2%','>2%']},
-             {'key':'comp_b','label':'商品数档位（竞争度）','field':'comp_b','kind':'bar','order':['<1k','1k–1万','>1万']}]
-    kpis=[{'label':'关键词总数','calc':'count'},{'label':'总月搜索量','calc':'sum','field':'vol','fmt':'num'},
-          {'label':'平均购买率','calc':'avg','field':'buy','fmt':'pct'},{'label':'总商品数（竞争池）','calc':'sum','field':'comp','fmt':'num'},
-          {'label':'蓝海词（需供比>200）','calc':'where','field':'supply','op':'>','val':200},
-          {'label':'高购买率词（>2%）','calc':'where','field':'buy','op':'>','val':0.02}]
-    return {'rows':out,'cols':cols,'modules':modules,'kpis':kpis}
-
-def load_feedback():
-    wb = openpyxl.load_workbook(SRC['feedback'], data_only=True)
-    ws1 = wb['用户反馈情报主表1']; r1=list(ws1.iter_rows(values_only=True))
-    h1=[str(h).strip() if h else '' for h in r1[0]]; i1={h:i for i,h in enumerate(h1)}
-    g1=lambda row,k: row[i1.get(k,'')] if k in i1 else None
-    main={}
-    for r in r1[1:]:
-        if not r or all(c is None for c in r): continue
-        iid=g1(r,'情报ID')
-        if iid is None: continue
-        main[str(iid)]={'intelType':str(g1(r,'情报类型') or '未标注'),'dept':str(g1(r,'部门') or '未标注'),
-                        'market':str(g1(r,'市场标签') or ''),'platform':str(g1(r,'平台标签') or ''),'title':str(g1(r,'情报标题') or '')}
-    ws2=wb['反馈事实明细表1']; r2=list(ws2.iter_rows(values_only=True))
-    h2=[str(h).strip() if h else '' for h in r2[0]]; i2={h:i for i,h in enumerate(h2)}
-    g2=lambda row,k: row[i2.get(k,'')] if k in i2 else None
-    out=[]
-    for r in r2[1:]:
-        if not r or all(c is None for c in r): continue
-        fid=g2(r,'反馈事实ID')
-        if fid is None: continue
-        iid=str(g2(r,'关联情报ID') or ''); p=main.get(iid,{})
-        out.append({'fid':str(fid),'intelId':iid,'intelTitle':p.get('title',''),'intelType':p.get('intelType','未标注'),
-            'dept':p.get('dept','未标注'),'market':p.get('market',''),'platform':p.get('platform',''),
-            'product':str(g2(r,'产品|SKU') or ''),'theme':str(g2(r,'反馈内容主题') or ''),'nature':str(g2(r,'内容性质') or ''),
-            'tendency':str(g2(r,'反馈倾向') or '未判断'),'need':str(g2(r,'涉及问题|需求') or ''),
-            'suggest':str(g2(r,'产品改进建议') or ''),'excerpt':str(g2(r,'原始反馈摘录') or ''),'std':str(g2(r,'标准化反馈事实') or '')})
-    wb.close()
-    cols=[{'k':'fid','label':'事实ID'},{'k':'intelTitle','label':'关联情报','cls':'ttitle'},{'k':'product','label':'产品|SKU'},
-          {'k':'theme','label':'反馈主题'},{'k':'tendency','label':'反馈倾向'},{'k':'std','label':'标准化事实'},
-          {'k':'need','label':'涉及问题/需求'},{'k':'suggest','label':'改进建议'}]
-    modules=[{'key':'intelType','label':'情报类型','field':'intelType','kind':'pill'},{'key':'dept','label':'提交部门','field':'dept','kind':'pill'},
-             {'key':'market','label':'市场标签（Top 15）','field':'market','kind':'bar','top':15,'split':True},{'key':'platform','label':'平台标签','field':'platform','kind':'pill'},
-             {'key':'product','label':'产品|SKU（Top 15）','field':'product','kind':'bar','top':15,'split':True},{'key':'theme','label':'反馈内容主题（Top 15）','field':'theme','kind':'bar','top':15,'split':True},
-             {'key':'tendency','label':'反馈倾向','field':'tendency','kind':'pill'},{'key':'nature','label':'内容性质','field':'nature','kind':'pill'}]
-    kpis=[{'label':'反馈事实总数','calc':'count'},{'label':'关联情报数','calc':'distinct','field':'intelId'},
-          {'label':'涉及产品数','calc':'distinct','field':'product'},{'label':'覆盖市场数','calc':'distinct','field':'market'},
-          {'label':'含改进建议','calc':'where','field':'suggest','op':'nonempty'},{'label':'含问题/需求','calc':'where','field':'need','op':'nonempty'}]
-    return {'rows':out,'cols':cols,'modules':modules,'kpis':kpis}
-
-def load_pornhub():
-    rows0 = sheet_rows(SRC['pornhub'], 'category播放数据排名')
-    out=[]
-    for r in rows0:
-        name = r.get('category_name')
-        if name is None: continue
-        dvc = num(r.get('displayed_video_count'))
-        fpe = num(r.get('first_page_views_estim'))
-        rsp = num(r.get('related_search_pill_co'))
-        capped = str(r.get('count_is_capped') or '')
-        out.append({'cat':str(name),'url':str(r.get('category_url') or ''),'dvc':dvc,'fpe':fpe,'rsp':rsp,'capped':capped,
-            'dvc_b':bucket(dvc,[1000,10000,50000],['<1k','1k–1万','1万–5万','>5万'] if dvc is not None else ['未知']),
-            'fpe_b':bucket(fpe,[1e8,5e8],['<1亿','1亿–5亿','>5亿'] if fpe is not None else ['未知']),
-            'rsp_b':bucket(rsp,[5,10,20],['<5','5–10','10–20','>20'] if rsp is not None else ['未知'])})
-    cols=[{'k':'cat','label':'类目名','cls':'ttitle'},{'k':'dvc','label':'展示视频数','fmt':'num'},{'k':'fpe','label':'首屏播放估算','fmt':'num'},
-          {'k':'rsp','label':'相关搜索词数','fmt':'num'},{'k':'capped','label':'是否限流'},{'k':'url','label':'链接'}]
-    modules=[{'key':'cat','label':'类目（Top 15 按播放）','field':'cat','kind':'bar','top':15},
-             {'key':'capped','label':'是否限流','field':'capped','kind':'pill'},
-             {'key':'dvc_b','label':'展示视频数档位','field':'dvc_b','kind':'bar','order':['<1k','1k–1万','1万–5万','>5万','未知']},
-             {'key':'fpe_b','label':'首屏播放估算档位','field':'fpe_b','kind':'bar','order':['<1亿','1亿–5亿','>5亿','未知']},
-             {'key':'rsp_b','label':'相关搜索词档位','field':'rsp_b','kind':'bar','order':['<5','5–10','10–20','>20','未知']}]
-    kpis=[{'label':'类目总数','calc':'count'},{'label':'首屏播放估算总和','calc':'sum','field':'fpe','fmt':'num'},
-          {'label':'平均单类目播放','calc':'avg','field':'fpe','fmt':'num'},{'label':'被限流类目','calc':'where','field':'capped','op':'eq','val':'true'},
-          {'label':'高播放类目（>5亿）','calc':'where','field':'fpe','op':'>','val':5e8}]
-    return {'rows':out,'cols':cols,'modules':modules,'kpis':kpis}
-
-def load_youtube():
-    rows0 = sheet_rows(SRC['tube'], 'YOUTUBE测评视频文案')
-    out=[]
-    for r in rows0:
-        title = r.get('标题')
-        if title is None: continue
-        views = num(r.get('观看量'))
-        out.append({'title':str(title),'title_cn':str(r.get('标题翻译') or ''),'author':str(r.get('作者') or ''),
-            'vtype':str(r.get('视频类型') or '未标注'),'views':views,'pub':str(r.get('发布时间') or ''),
-            'dur':str(r.get('时长') or ''),'lang':str(r.get('检测语言') or ''),'trans_status':str(r.get('转写状态') or ''),
-            'trans_q':str(r.get('转写质量') or ''),'views_b':bucket(views,[1e5,1e6,1e7],['<10万','10万–100万','100万–1000万','>1000万'] if views is not None else ['未知'])})
-    cols=[{'k':'title','label':'标题','cls':'ttitle'},{'k':'title_cn','label':'标题翻译'},{'k':'author','label':'作者'},
-          {'k':'vtype','label':'视频类型'},{'k':'views','label':'观看量','fmt':'num'},{'k':'pub','label':'发布时间'},{'k':'dur','label':'时长'},{'k':'lang','label':'检测语言'}]
-    modules=[{'key':'vtype','label':'视频类型','field':'vtype','kind':'pill'},{'key':'author','label':'作者（Top 15）','field':'author','kind':'bar','top':15},
-             {'key':'lang','label':'检测语言','field':'lang','kind':'pill'},{'key':'views_b','label':'观看量档位','field':'views_b','kind':'bar','order':['<10万','10万–100万','100万–1000万','>1000万','未知']},
-             {'key':'trans_q','label':'转写质量','field':'trans_q','kind':'pill'}]
-    kpis=[{'label':'测评视频总数','calc':'count'},{'label':'总观看量','calc':'sum','field':'views','fmt':'num'},
-          {'label':'平均观看量','calc':'avg','field':'views','fmt':'num'},{'label':'开箱测评类','calc':'where','field':'vtype','op':'eq','val':'开箱测评类'},
-          {'label':'已高质量转写','calc':'where','field':'trans_q','op':'contains','val':'high'}]
-    return {'rows':out,'cols':cols,'modules':modules,'kpis':kpis}
-
-def load_bedbible():
-    rows0 = sheet_rows(SRC['tube'], 'bedbible测评文章-正文分模块')
-    out=[]
-    for r in rows0:
-        aid = r.get('article_id')
-        if aid is None: continue
-        wc = num(r.get('word_count'))
-        out.append({'aid':str(aid),'atitle':str(r.get('article_title') or ''),'heading':str(r.get('heading') or ''),
-            'stype':str(r.get('section_type') or 'other'),'keywords':str(r.get('keywords') or ''),'wc':wc,
-            'wc_b':bucket(wc,[100,300,600],['<100','100–300','300–600','>600'] if wc is not None else ['未知'])})
-    cols=[{'k':'atitle','label':'文章标题','cls':'ttitle'},{'k':'heading','label':'段落标题'},{'k':'stype','label':'段落类型'},
-          {'k':'keywords','label':'关键词'},{'k':'wc','label':'字数','fmt':'num'}]
-    modules=[{'key':'atitle','label':'文章（Top 15 按段落数）','field':'atitle','kind':'bar','top':15},
-             {'key':'stype','label':'段落类型','field':'stype','kind':'pill'},
-             {'key':'keywords','label':'关键词（Top 15）','field':'keywords','kind':'pill','top':15,'split':True},
-             {'key':'wc_b','label':'段落字数档位','field':'wc_b','kind':'bar','order':['<100','100–300','300–600','>600','未知']}]
-    kpis=[{'label':'正文段落总数','calc':'count'},{'label':'关联文章数','calc':'distinct','field':'aid'},
-          {'label':'平均段落字数','calc':'avg','field':'wc','fmt':'num'},{'label':'含材质段落','calc':'where','field':'stype','op':'eq','val':'materials'},
-          {'label':'含结论段落','calc':'where','field':'stype','op':'eq','val':'verdict'}]
-    return {'rows':out,'cols':cols,'modules':modules,'kpis':kpis}
-
-def load_supplier():
-    rows0 = sheet_rows(SRC['supplier'], '供应商当前报告')
-    out=[]
-    for r in rows0:
-        name = r.get('供应商主体')
-        if name is None: continue
-        rec = num(r.get('主体记录总数'))
-        qfacts = r.get('质量问题及处理事实（时间倒序）')
-        tfacts = r.get('产品与技术事实（时间倒序）')
-        out.append({'name':str(name),'type':str(r.get('供应商类型') or '未标注'),'cats':str(r.get('已记录产品类目') or ''),
-            'pending':str(r.get('名称待复核') or ''),'rec':rec,'rdate':str(r.get('报告日期') or ''),'udate':str(r.get('最新情报日期') or ''),
-            'qfacts':str(qfacts or ''),'tfacts':str(tfacts or ''),'summary':str(r.get('当前事实摘要（0-3个月）') or ''),
-            'rec_b':bucket(rec,[5,10],['<5','5–10','>10'] if rec is not None else ['未知']),
-            'hasQ':('有' if (qfacts and str(qfacts).strip()) else '无'),'hasT':('有' if (tfacts and str(tfacts).strip()) else '无')})
-    cols=[{'k':'name','label':'供应商主体','cls':'ttitle'},{'k':'type','label':'供应商类型'},{'k':'cats','label':'已记录产品类目'},
-          {'k':'pending','label':'名称待复核'},{'k':'rec','label':'记录总数','fmt':'num'},{'k':'rdate','label':'报告日期'},{'k':'udate','label':'最新情报'},
-          {'k':'summary','label':'当前事实摘要'}]
-    modules=[{'key':'type','label':'供应商类型','field':'type','kind':'pill'},{'key':'cats','label':'已记录产品类目（Top 15）','field':'cats','kind':'pill','top':15,'split':True},
-             {'key':'pending','label':'名称待复核','field':'pending','kind':'pill'},{'key':'rec_b','label':'记录总数档位','field':'rec_b','kind':'bar','order':['<5','5–10','>10','未知']},
-             {'key':'hasQ','label':'含质量问题记录','field':'hasQ','kind':'pill'},{'key':'hasT','label':'含产品技术事实','field':'hasT','kind':'pill'}]
-    kpis=[{'label':'供应商总数','calc':'count'},{'label':'制造商','calc':'where','field':'type','op':'contains','val':'制造商'},
-          {'label':'含质量问题','calc':'where','field':'qfacts','op':'nonempty'},{'label':'含产品技术事实','calc':'where','field':'tfacts','op':'nonempty'},
-          {'label':'名称待复核','calc':'where','field':'pending','op':'nonempty'}]
-    return {'rows':out,'cols':cols,'modules':modules,'kpis':kpis}
-
-def load_competitor():
-    rows0 = sheet_rows(SRC['comp'], 'KOL合作数据')
-    out=[]
-    for r in rows0:
-        brand = r.get('品牌')
-        if brand is None: continue
-        views = num(r.get('播放量|浏览量'))
-        likes = num(r.get('点赞'))
-        out.append({'brand':str(brand),'media':str(r.get('媒体') or ''),'ctype':str(r.get('内容类型') or ''),
-            'author':str(r.get('作者|账号') or ''),'views':views,'likes':likes,'reposts':num(r.get('转发')),'replies':num(r.get('回复')),
-            'pdate':str(r.get('发布日期') or ''),'views_b':bucket(views,[1000,10000,100000],['<1k','1k–1万','1万–10万','>10万'] if views is not None else ['未知']),
-            'likes_b':bucket(likes,[10,100,1000],['<10','10–100','100–1000','>1000'] if likes is not None else ['未知'])})
-    cols=[{'k':'brand','label':'品牌','cls':'ttitle'},{'k':'media','label':'媒体'},{'k':'ctype','label':'内容类型'},{'k':'author','label':'作者/账号'},
-          {'k':'views','label':'播放量','fmt':'num'},{'k':'likes','label':'点赞','fmt':'num'},{'k':'reposts','label':'转发','fmt':'num'},{'k':'replies','label':'回复','fmt':'num'},{'k':'pdate','label':'发布日期'}]
-    modules=[{'key':'brand','label':'品牌（Top 15）','field':'brand','kind':'bar','top':15},{'key':'media','label':'媒体平台','field':'media','kind':'pill'},
-             {'key':'ctype','label':'内容类型','field':'ctype','kind':'pill'},{'key':'views_b','label':'播放量档位','field':'views_b','kind':'bar','order':['<1k','1k–1万','1万–10万','>10万','未知']},
-             {'key':'likes_b','label':'点赞档位','field':'likes_b','kind':'bar','order':['<10','10–100','100–1000','>1000','未知']}]
-    kpis=[{'label':'合作内容总数','calc':'count'},{'label':'总播放量','calc':'sum','field':'views','fmt':'num'},
-          {'label':'总点赞','calc':'sum','field':'likes','fmt':'num'},{'label':'总转发','calc':'sum','field':'reposts','fmt':'num'},
-          {'label':'高播放内容（>1万）','calc':'where','field':'views','op':'>','val':10000}]
-    return {'rows':out,'cols':cols,'modules':modules,'kpis':kpis}
-
-def load_social():
-    rows0 = sheet_rows(SRC['social'], '账号数据记录-X')
-    out=[]
-    for r in rows0:
-        brand = r.get('品牌')
-        if brand is None: continue
-        fol = num(r.get('Followers'))
-        out.append({'brand':str(brand),'cat':str(r.get('类目') or ''),'subcat':str(r.get('子类目') or ''),
-            'platform':str(r.get('社媒平台') or ''),'acc':str(r.get('账号名') or ''),'fol':fol,'foll':num(r.get('Following')),
-            'posts':num(r.get('总帖数')),'date':str(r.get('数据日期') or ''),
-            'fol_b':bucket(fol,[10000,100000,1000000],['<1万','1万–10万','10万–100万','>100万'] if fol is not None else ['未知'])})
-    cols=[{'k':'brand','label':'品牌','cls':'ttitle'},{'k':'cat','label':'类目'},{'k':'subcat','label':'子类目'},{'k':'platform','label':'社媒平台'},
-          {'k':'acc','label':'账号名'},{'k':'fol','label':'粉丝数','fmt':'num'},{'k':'foll','label':'关注数','fmt':'num'},{'k':'posts','label':'总帖数','fmt':'num'}]
-    modules=[{'key':'brand','label':'品牌（Top 15）','field':'brand','kind':'bar','top':15},{'key':'cat','label':'类目','field':'cat','kind':'pill'},
-             {'key':'platform','label':'社媒平台','field':'platform','kind':'pill'},{'key':'subcat','label':'子类目（Top 15）','field':'subcat','kind':'bar','top':15},
-             {'key':'fol_b','label':'粉丝数档位','field':'fol_b','kind':'bar','order':['<1万','1万–10万','10万–100万','>100万','未知']}]
-    kpis=[{'label':'监控账号数','calc':'count'},{'label':'覆盖品牌数','calc':'distinct','field':'brand'},
-          {'label':'总粉丝数','calc':'sum','field':'fol','fmt':'num'},{'label':'平均粉丝数','calc':'avg','field':'fol','fmt':'num'},
-          {'label':'万粉以上账号','calc':'where','field':'fol','op':'>','val':10000}]
-    return {'rows':out,'cols':cols,'modules':modules,'kpis':kpis}
-
-# ----------------------------------------------------------------------------
-# HTML 模板（与之前一致，__ROWS__ / __MODULES__ / __KPIS__ / __COLS__ 占位）
-# ----------------------------------------------------------------------------
-TPL = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>__TITLE__</title>
+<title>社媒监控 · 品牌账号看板</title>
 <style>
   :root{
     --bg:#f6f7f9; --panel:rgba(255,255,255,.72); --panel-2:rgba(255,255,255,.5); --border:rgba(0,0,0,.08);
@@ -428,13 +151,13 @@ TPL = r"""<!DOCTYPE html>
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark">__MARK__</div>
+      <div class="brand-mark">SM</div>
       <div><div class="brand-name">类目数据看板</div><div class="brand-sub">CATEGORY INSIGHT</div></div>
     </div>
     <div class="src-card">
       <span class="tag">真实数据</span>
-      <h4>__SRC_TITLE__</h4>
-      <div class="meta">__SRC_META__</div>
+      <h4>社媒监控账号</h4>
+      <div class="meta">数据规模：50 个监控账号<br>维度：品牌/类目/平台/粉丝数<br>来源：社媒监控数据库</div>
     </div>
     <div class="view-layers" id="viewLayers">
       <div class="vl-head"><span>视图图层</span><span class="vl-count" id="vlCount">0</span></div>
@@ -447,7 +170,7 @@ TPL = r"""<!DOCTYPE html>
       <div class="topbar-left">
         <div class="topbar-titlerow">
           <button class="back-btn" onclick="goBack()" title="返回类目洞察中枢">← 返回</button>
-          <div><h1 class="board-title">__BOARD_TITLE__</h1><div class="board-sub">__BOARD_SUB__</div></div>
+          <div><h1 class="board-title">社媒监控 · 品牌账号维度钻取看板</h1><div class="board-sub">数据规模：50 个监控账号<br>维度：品牌/类目/平台/粉丝数<br>来源：社媒监控数据库</div></div>
         </div>
       </div>
       <div class="topbar-right">
@@ -481,10 +204,10 @@ TPL = r"""<!DOCTYPE html>
   </main>
 </div>
 <script>
-var ROWS = __ROWS__;
-var MODULES = __MODULES__;
-var KPIS = __KPIS__;
-var COLS = __COLS__;
+var ROWS = [{"brand": "Aneros", "cat": "Anal", "subcat": "前列腺按摩器/Prostate", "platform": "X", "acc": "@aneros", "fol": 9109.0, "foll": 1491.0, "posts": 5353.0, "date": "2026-07-08 00:00:00", "fol_b": "<1万"}, {"brand": "Dame", "cat": "vibrators", "subcat": "女性 wellness 振动器/Wellness", "platform": "X", "acc": "@dameproducts", "fol": 3704.0, "foll": 532.0, "posts": 4552.0, "date": "2026-07-08 00:00:00", "fol_b": "<1万"}, {"brand": "Fleshlight", "cat": "Male Masturbators", "subcat": "手动飞机杯/Stroker", "platform": "X", "acc": "@fleshlight", "fol": 197746.0, "foll": 264.0, "posts": 37743.0, "date": "2026-07-08 00:00:00", "fol_b": "10万–100万"}, {"brand": "Hismith", "cat": "sexmachine", "subcat": "性爱机器/Fucking Machine", "platform": "X", "acc": "@hismithglobal", "fol": 5862.0, "foll": 11.0, "posts": 556.0, "date": "2026-07-08 00:00:00", "fol_b": "<1万"}, {"brand": "Kiiroo", "cat": "Male Masturbators", "subcat": "互动飞机杯/Interactive", "platform": "X", "acc": "@Kiiroo", "fol": 17890.0, "foll": 4634.0, "posts": 22848.0, "date": "2026-07-08 00:00:00", "fol_b": "1万–10万"}, {"brand": "LELO", "cat": "vibrators", "subcat": "高端振动器/Luxury", "platform": "X", "acc": "@Lelo_Official", "fol": 54959.0, "foll": 565.0, "posts": 3496.0, "date": "2026-07-08 00:00:00", "fol_b": "1万–10万"}, {"brand": "Lovehoney", "cat": "Anal", "subcat": "综合成人用品/Retailer", "platform": "X", "acc": "@Lovehoney_com", "fol": 21650.0, "foll": 874.0, "posts": 9050.0, "date": "2026-07-08 00:00:00", "fol_b": "1万–10万"}, {"brand": "Lovense", "cat": "vibrators", "subcat": "远程控制振动器/App-Controlled", "platform": "X", "acc": "@Lovense", "fol": 141403.0, "foll": 862.0, "posts": 9825.0, "date": "2026-07-08 00:00:00", "fol_b": "10万–100万"}, {"brand": "Motorbunny", "cat": "sexmachine", "subcat": "骑乘式性爱机器/Sybian", "platform": "X", "acc": "@motorbunny", "fol": 12027.0, "foll": 1943.0, "posts": 5825.0, "date": "2026-07-08 00:00:00", "fol_b": "1万–10万"}, {"brand": "POKEFIME", "cat": "sexdoll", "subcat": "", "platform": "X", "acc": "@DANAYU360733", "fol": 465.0, "foll": 3501.0, "posts": 3478.0, "date": "2026-07-09 00:00:00", "fol_b": "<1万"}, {"brand": "RealDoll", "cat": "sexdoll", "subcat": "实体娃娃/Full Body", "platform": "X", "acc": "@RealdollHQ", "fol": 21972.0, "foll": 100.0, "posts": 4684.0, "date": "2026-07-08 00:00:00", "fol_b": "1万–10万"}, {"brand": "RosemaryDoll", "cat": "sexdoll", "subcat": "实体娃娃/Full Body", "platform": "X", "acc": "@Rosemary_dolls", "fol": 2702.0, "foll": 182.0, "posts": 2505.0, "date": "2026-07-08 00:00:00", "fol_b": "<1万"}, {"brand": "TENGA", "cat": "Male Masturbators", "subcat": "一次性飞机杯/Disposable", "platform": "X", "acc": "@TENGA_Global", "fol": 24642.0, "foll": 911.0, "posts": 6788.0, "date": "2026-07-08 00:00:00", "fol_b": "1万–10万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@TantalyGlobal", "fol": 19656.0, "foll": 605.0, "posts": 2822.0, "date": "2026-07-08 00:00:00", "fol_b": "1万–10万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@TantalyHub", "fol": 15855.0, "foll": 231.0, "posts": 2034.0, "date": "2026-07-09 00:00:00", "fol_b": "1万–10万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@gaynorfwg691", "fol": 330.0, "foll": 147.0, "posts": 34.0, "date": "2026-07-09 00:00:00", "fol_b": "<1万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@tantalysamantha", "fol": 2323.0, "foll": 492.0, "posts": 968.0, "date": "2026-07-09 00:00:00", "fol_b": "<1万"}, {"brand": "The Handy", "cat": "Male Masturbators", "subcat": "自动飞机杯/Automatic", "platform": "X", "acc": "@itsthehandy", "fol": 4677.0, "foll": 134.0, "posts": 618.0, "date": "2026-07-08 00:00:00", "fol_b": "<1万"}, {"brand": "Tracy's Dog", "cat": "vibrators", "subcat": "吸吮按摩器/Clitoral", "platform": "X", "acc": "@iLoveTracysDog", "fol": 2310.0, "foll": 523.0, "posts": 771.0, "date": "2026-07-08 00:00:00", "fol_b": "<1万"}, {"brand": "bigshocked", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@Big_shocked", "fol": 20389.0, "foll": 658.0, "posts": 569.0, "date": "2026-07-09 00:00:00", "fol_b": "1万–10万"}, {"brand": "bigshocked", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@bigsexdolls", "fol": 3808.0, "foll": 2272.0, "posts": 356.0, "date": "2026-07-09 00:00:00", "fol_b": "<1万"}, {"brand": "Aneros", "cat": "Anal", "subcat": "前列腺按摩器/Prostate", "platform": "X", "acc": "@aneros", "fol": 9136.0, "foll": 1486.0, "posts": 5353.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}, {"brand": "Dame", "cat": "vibrators", "subcat": "女性 wellness 振动器/Wellness", "platform": "X", "acc": "@dameproducts", "fol": 3703.0, "foll": 532.0, "posts": 4552.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}, {"brand": "Fleshlight", "cat": "Male Masturbators", "subcat": "手动飞机杯/Stroker", "platform": "X", "acc": "@fleshlight", "fol": 198194.0, "foll": 266.0, "posts": 37762.0, "date": "2026-07-20 00:00:00", "fol_b": "10万–100万"}, {"brand": "Hismith", "cat": "sexmachine", "subcat": "性爱机器/Fucking Machine", "platform": "X", "acc": "@hismithglobal", "fol": 5874.0, "foll": 11.0, "posts": 561.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}, {"brand": "Kiiroo", "cat": "Male Masturbators", "subcat": "互动飞机杯/Interactive", "platform": "X", "acc": "@Kiiroo", "fol": 18015.0, "foll": 4637.0, "posts": 22887.0, "date": "2026-07-20 00:00:00", "fol_b": "1万–10万"}, {"brand": "LELO", "cat": "vibrators", "subcat": "高端振动器/Luxury", "platform": "X", "acc": "@Lelo_Official", "fol": 54923.0, "foll": 565.0, "posts": 3505.0, "date": "2026-07-20 00:00:00", "fol_b": "1万–10万"}, {"brand": "Lovehoney", "cat": "Anal", "subcat": "综合成人用品/Retailer", "platform": "X", "acc": "@Lovehoney_com", "fol": 21635.0, "foll": 874.0, "posts": 9050.0, "date": "2026-07-20 00:00:00", "fol_b": "1万–10万"}, {"brand": "Lovense", "cat": "vibrators", "subcat": "远程控制振动器/App-Controlled", "platform": "X", "acc": "@Lovense", "fol": 141860.0, "foll": 861.0, "posts": 9857.0, "date": "2026-07-20 00:00:00", "fol_b": "10万–100万"}, {"brand": "Motorbunny", "cat": "sexmachine", "subcat": "骑乘式性爱机器/Sybian", "platform": "X", "acc": "@motorbunny", "fol": 12033.0, "foll": 1941.0, "posts": 5825.0, "date": "2026-07-20 00:00:00", "fol_b": "1万–10万"}, {"brand": "POKEFIME", "cat": "sexdoll", "subcat": "", "platform": "X", "acc": "@DANAYU360733", "fol": 455.0, "foll": 3502.0, "posts": 3496.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}, {"brand": "RealDoll", "cat": "sexdoll", "subcat": "实体娃娃/Full Body", "platform": "X", "acc": "@RealdollHQ", "fol": 21952.0, "foll": 108.0, "posts": 4685.0, "date": "2026-07-20 00:00:00", "fol_b": "1万–10万"}, {"brand": "RosemaryDoll", "cat": "sexdoll", "subcat": "实体娃娃/Full Body", "platform": "X", "acc": "@Rosemary_dolls", "fol": 2711.0, "foll": 182.0, "posts": 2524.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}, {"brand": "TENGA", "cat": "Male Masturbators", "subcat": "一次性飞机杯/Disposable", "platform": "X", "acc": "@TENGA_Global", "fol": 24633.0, "foll": 913.0, "posts": 6792.0, "date": "2026-07-20 00:00:00", "fol_b": "1万–10万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@GopalMahat30951", "fol": 67.0, "foll": 79.0, "posts": 4.0, "date": "2026-07-10 00:00:00", "fol_b": "<1万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@Samanth_tantaly", "fol": 412.0, "foll": 13.0, "posts": 54.0, "date": "2026-07-10 00:00:00", "fol_b": "<1万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@Simone_service", "fol": 326.0, "foll": 1.0, "posts": 19.0, "date": "2026-07-10 00:00:00", "fol_b": "<1万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@TantalyCollab", "fol": 102.0, "foll": 3.0, "posts": 8.0, "date": "2026-07-10 00:00:00", "fol_b": "<1万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@TantalyGlobal", "fol": 20527.0, "foll": 605.0, "posts": 2987.0, "date": "2026-07-20 00:00:00", "fol_b": "1万–10万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@TantalyHub", "fol": 15906.0, "foll": 231.0, "posts": 2056.0, "date": "2026-07-20 00:00:00", "fol_b": "1万–10万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@Tantaly_Dreams", "fol": 154.0, "foll": 6.0, "posts": 31.0, "date": "2026-07-10 00:00:00", "fol_b": "<1万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@Tantaly_Japan", "fol": 72.0, "foll": 118.0, "posts": 102.0, "date": "2026-07-10 00:00:00", "fol_b": "<1万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@gaynorfwg691", "fol": 334.0, "foll": 153.0, "posts": 35.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@tantaly_boneca", "fol": 70.0, "foll": 1.0, "posts": 10.0, "date": "2026-07-10 00:00:00", "fol_b": "<1万"}, {"brand": "Tantaly", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@tantalysamantha", "fol": 2324.0, "foll": 491.0, "posts": 969.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}, {"brand": "The Handy", "cat": "Male Masturbators", "subcat": "自动飞机杯/Automatic", "platform": "X", "acc": "@itsthehandy", "fol": 4672.0, "foll": 134.0, "posts": 623.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}, {"brand": "Tracy's Dog", "cat": "vibrators", "subcat": "吸吮按摩器/Clitoral", "platform": "X", "acc": "@iLoveTracysDog", "fol": 2310.0, "foll": 524.0, "posts": 771.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}, {"brand": "bigshocked", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@Big_shocked", "fol": 20370.0, "foll": 657.0, "posts": 579.0, "date": "2026-07-20 00:00:00", "fol_b": "1万–10万"}, {"brand": "bigshocked", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@Bigs_hockedO", "fol": 385.0, "foll": 422.0, "posts": 7.0, "date": "2026-07-10 00:00:00", "fol_b": "<1万"}, {"brand": "bigshocked", "cat": "sexdoll", "subcat": "半身倒模/Torso", "platform": "X", "acc": "@bigsexdolls", "fol": 3808.0, "foll": 2270.0, "posts": 356.0, "date": "2026-07-20 00:00:00", "fol_b": "<1万"}];
+var MODULES = [{"key": "brand", "label": "品牌（Top 15）", "field": "brand", "kind": "bar", "top": 15}, {"key": "cat", "label": "类目", "field": "cat", "kind": "pill"}, {"key": "platform", "label": "社媒平台", "field": "platform", "kind": "pill"}, {"key": "subcat", "label": "子类目（Top 15）", "field": "subcat", "kind": "bar", "top": 15}, {"key": "fol_b", "label": "粉丝数档位", "field": "fol_b", "kind": "bar", "order": ["<1万", "1万–10万", "10万–100万", ">100万", "未知"]}];
+var KPIS = [{"label": "监控账号数", "calc": "count"}, {"label": "覆盖品牌数", "calc": "distinct", "field": "brand"}, {"label": "总粉丝数", "calc": "sum", "field": "fol", "fmt": "num"}, {"label": "平均粉丝数", "calc": "avg", "field": "fol", "fmt": "num"}, {"label": "万粉以上账号", "calc": "where", "field": "fol", "op": ">", "val": 10000}];
+var COLS = [{"k": "brand", "label": "品牌", "cls": "ttitle"}, {"k": "cat", "label": "类目"}, {"k": "subcat", "label": "子类目"}, {"k": "platform", "label": "社媒平台"}, {"k": "acc", "label": "账号名"}, {"k": "fol", "label": "粉丝数", "fmt": "num"}, {"k": "foll", "label": "关注数", "fmt": "num"}, {"k": "posts", "label": "总帖数", "fmt": "num"}];
 var SAVED_VIEWS = [];
 var ACTIVE_VIEW_ID = null;
 var filters = {};
@@ -617,7 +340,7 @@ function saveCurrentView(){
   if(dup){ toast('该筛选组合已存在：'+dup.name); loadView(dup.id); return; }
   var fcopy={}; for(var k in filters){ fcopy[k]=[...filters[k]]; }
   var view={id:Date.now(),name:fp,filters:fcopy,keyword:curKeyword,hitCount:getFiltered().length,fp:fp,createdAt:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})};
-  SAVED_VIEWS.push(view); try{localStorage.setItem('__LSKEY__',JSON.stringify(SAVED_VIEWS));}catch(e){}
+  SAVED_VIEWS.push(view); try{localStorage.setItem('sm_views',JSON.stringify(SAVED_VIEWS));}catch(e){}
   ACTIVE_VIEW_ID=view.id; renderSavedViews(); toast('已保存视图：'+view.name);
 }
 function loadView(id){
@@ -639,11 +362,11 @@ function renderSavedViews(){
   box.onclick=function(e){ if(e.target.closest('.vl-del')) return; var it=e.target.closest('.vl-item'); if(it) loadView(+it.dataset.vid); };
   box.onkeydown=function(e){ if(e.key!=='Enter'&&e.key!==' ') return; var it=e.target.closest('.vl-item'); if(it){ e.preventDefault(); loadView(+it.dataset.vid); } };
 }
-function delView(e,id){ e.stopPropagation(); SAVED_VIEWS=SAVED_VIEWS.filter(function(v){return v.id!==id;}); try{localStorage.setItem('__LSKEY__',JSON.stringify(SAVED_VIEWS));}catch(x){} renderSavedViews(); }
+function delView(e,id){ e.stopPropagation(); SAVED_VIEWS=SAVED_VIEWS.filter(function(v){return v.id!==id;}); try{localStorage.setItem('sm_views',JSON.stringify(SAVED_VIEWS));}catch(x){} renderSavedViews(); }
 function addToCart(){
   if(_cartAdded) return;
   var arr=getFiltered(); if(!arr.length){ toast('当前筛选结果为空，无法加入购物车'); return; }
-  var item={ id:'cart_'+Date.now(), source:'__CART_SRC__', sourceKey:'__CART_KEY__', filter:generateViewFingerprint(), count:arr.length, addedAt:new Date().toISOString(), columns:COLS.map(function(c){return c.k;}), rows:arr.map(function(r){ var o={}; COLS.forEach(function(c){ if(c.k!=='__search') o[c.k]=r[c.k]; }); return o; }) };
+  var item={ id:'cart_'+Date.now(), source:'社媒监控账号', sourceKey:'social', filter:generateViewFingerprint(), count:arr.length, addedAt:new Date().toISOString(), columns:COLS.map(function(c){return c.k;}), rows:arr.map(function(r){ var o={}; COLS.forEach(function(c){ if(c.k!=='__search') o[c.k]=r[c.k]; }); return o; }) };
   try{ parent.postMessage({type:'cih-cart-add',item:item},'*'); }catch(e){}
   _cartAdded=true; _cartFp=generateViewFingerprint(); updateCartBtn();
   if(window.parent===window){
@@ -680,66 +403,10 @@ document.getElementById('clear-btn').onclick=clearAll;
 document.getElementById('fsBtn').onclick=toggleFs;
 document.getElementById('nl-input').addEventListener('input',function(e){ setKeyword(e.target.value.trim()); });
 
-try{ var sv=JSON.parse(localStorage.getItem('__LSKEY__')||'[]'); if(Array.isArray(sv)) SAVED_VIEWS.push.apply(SAVED_VIEWS,sv); }catch(e){}
+try{ var sv=JSON.parse(localStorage.getItem('sm_views')||'[]'); if(Array.isArray(sv)) SAVED_VIEWS.push.apply(SAVED_VIEWS,sv); }catch(e){}
 renderSavedViews();
 updateCartBtn();
 render();
 </script>
 </body>
 </html>
-"""
-
-def build(spec, meta, title, board_title, board_sub, mark, lskey, cart_src, cart_key, outfile):
-    html = TPL
-    html = html.replace('__TITLE__', title)
-    html = html.replace('__MARK__', mark)
-    html = html.replace('__SRC_TITLE__', meta['title'])
-    html = html.replace('__SRC_META__', meta['meta'])
-    html = html.replace('__BOARD_TITLE__', board_title)
-    html = html.replace('__BOARD_SUB__', board_sub)
-    html = html.replace('__ROWS__', json.dumps(spec['rows'], ensure_ascii=False))
-    html = html.replace('__MODULES__', json.dumps(spec['modules'], ensure_ascii=False))
-    html = html.replace('__KPIS__', json.dumps(spec['kpis'], ensure_ascii=False))
-    html = html.replace('__COLS__', json.dumps(spec['cols'], ensure_ascii=False))
-    html = html.replace('__LSKEY__', lskey)
-    html = html.replace('__CART_SRC__', cart_src)
-    html = html.replace('__CART_KEY__', cart_key)
-    with open(outfile,'w') as f:
-        f.write(html)
-    print('wrote', outfile.split('/')[-1], len(html), 'bytes | rows', len(spec['rows']), '| modules', len(spec['modules']))
-
-def main():
-    SPECS = [
-        ('search', load_search, 'vendor/search-volume-dashboard.html', 'KW', 'kw_views', '亚马逊关键词搜索量', 'search',
-         '倒模智能体 · 亚马逊关键词搜索量', '倒模智能体 · 亚马逊关键词搜索量看板',
-         '数据规模：{n} 个关键词<br>覆盖：亚马逊全站点<br>维度：搜索量/购买率/需供比/竞争<br>来源：卖家精灵关键词库'),
-        ('feedback', load_feedback, 'vendor/feedback-intel-dashboard.html', 'FB', 'fb_views', '用户反馈情报', 'feedback',
-         '情报系统 · 用户反馈类情报汇总', '情报系统 · 用户反馈类情报汇总看板',
-         '数据规模：{n} 条反馈事实<br>关联情报：87 份<br>涵盖：访谈/问卷/社媒风评<br>来源：情报系统导出'),
-        ('pornhub', load_pornhub, 'vendor/pornhub-tags-dashboard.html', 'PZ', 'pz_views', 'P站标签&历年报告', 'pornhub',
-         'P站 · 类目播放数据看板', 'P站 · 类目播放数据维度钻取看板',
-         '数据规模：{n} 个类目<br>维度：播放量/展示视频数/相关搜索词/限流<br>来源：P站类目抓取'),
-        ('tube', load_youtube, 'vendor/youtube-review-dashboard.html', 'YT', 'yt_views', 'YouTube 测评视频', 'youtube',
-         'YouTube · 倒膜测评视频看板', 'YouTube · 倒膜测评视频维度钻取看板',
-         '数据规模：{n} 条测评视频<br>维度：视频类型/作者/观看量/语言/转写<br>来源：YouTube 测评抓取'),
-        ('bedbible', load_bedbible, 'vendor/bedbible-review-dashboard.html', 'BB', 'bb_views', 'Bedbible 测评文章', 'bedbible',
-         'Bedbible · 测评文章正文看板', 'Bedbible · 测评文章正文分段钻取看板',
-         '数据规模：{n} 个正文段落<br>维度：文章/段落类型/关键词/字数<br>来源：Bedbible 测评站'),
-        ('supplier', load_supplier, 'vendor/supplier-intel-dashboard.html', 'SP', 'sp_views', '供应商主体情报', 'supplier',
-         '供应商主体情报看板', '供应商主体情报维度钻取看板',
-         '数据规模：{n} 家供应商<br>维度：类型/产品类目/质量问题/技术事实<br>来源：情报系统供应商合并'),
-        ('comp', load_competitor, 'vendor/competitor-kol-dashboard.html', 'CP', 'cp_views', '核心竞品 KOL 合作', 'competitor',
-         '核心竞品 · KOL 合作数据看板', '核心竞品 · KOL 合作数据维度钻取看板',
-         '数据规模：{n} 条合作内容<br>维度：品牌/媒体/内容类型/播放量/点赞<br>来源：竞品情报系统'),
-        ('social', load_social, 'vendor/social-monitor-dashboard.html', 'SM', 'sm_views', '社媒监控账号', 'social',
-         '社媒监控 · 品牌账号看板', '社媒监控 · 品牌账号维度钻取看板',
-         '数据规模：{n} 个监控账号<br>维度：品牌/类目/平台/粉丝数<br>来源：社媒监控数据库'),
-    ]
-    for key, loader, out, mark, lskey, cart_src, cart_key, title, board_title, sub_tpl in SPECS:
-        spec = loader()
-        n = len(spec['rows'])
-        meta = {'title': cart_src, 'meta': sub_tpl.format(n=n)}
-        build(spec, meta, title, board_title, sub_tpl.format(n=n), mark, lskey, cart_src, cart_key, OUT_DIR+'/'+out)
-
-if __name__=='__main__':
-    main()
