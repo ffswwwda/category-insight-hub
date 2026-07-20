@@ -126,7 +126,7 @@ body.light .custom-cursor{mix-blend-mode:normal;box-shadow:0 0 14px rgba(0,195,2
   border-bottom:1px solid var(--line);background:rgba(255,255,255,.4)}
 body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .nsh-ico{font-size:13px;color:var(--accent);opacity:.9}
-.nav-sec-tag{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.3px}
+.nav-sec-tag{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.3px;white-space:nowrap;flex-shrink:0}
 .nav-sec-tag.shared{background:var(--rad-grad);color:#fff}
 .nav-sec-tag.dyn{background:var(--rad-grad);color:#fff}
 .nav-sec-dyn .nsh-ico{color:var(--green-a)}
@@ -352,6 +352,11 @@ body.dark .nav-sec-head{background:rgba(255,255,255,.04)}
 .nav-sec-lab:hover{border-color:rgba(139,92,246,.4)}
 /* 原理展厅 nav 标签 */
 .nav-sec-tag.pr{background:var(--rad-grad);color:#fff}
+/* 原理展厅默认折叠 */
+.nav-sec-pr.collapsed .nav-sec-body{display:none}
+.nav-sec-pr .nav-sec-head{cursor:pointer;user-select:none}
+.nav-sec-pr .nav-sec-head::after{content:'▸';margin-left:auto;font-size:10px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+.nav-sec-pr:not(.collapsed) .nav-sec-head::after{transform:rotate(90deg)}
 
 /* ======================================================
    原理展厅（看背后工作） · 展厅列表 + 头脑特工动画演示台
@@ -2028,7 +2033,7 @@ body.dark .lab-status{color:#fbbf24}
         <div class="nav-sec-head"><span class="nsh-ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v18M6 21h8M9 3h6a2 2 0 012 2v4a4 4 0 01-5 3.87A4 4 0 017 9V5a2 2 0 012-2z"/></svg></span><span>未来实验室</span><span class="nav-sec-tag lab">前瞻</span></div>
         <div class="nav-sec-body" id="navLab"></div>
       </section>
-      <section class="nav-sec nav-sec-pr">
+      <section class="nav-sec nav-sec-pr collapsed">
         <div class="nav-sec-head"><span class="nsh-ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg></span><span>原理展厅</span><span class="nav-sec-tag pr">看背后</span></div>
         <div class="nav-sec-body" id="navPrinciple"></div>
       </section>
@@ -2631,6 +2636,13 @@ function renderNavLab(){
 function renderNavPrinciple(){
   // 原理动画已嵌入 AI 简化工具中，此板块保留为空（后续可扩展）
   $('#navPrinciple').innerHTML='';
+  // 折叠/展开切换
+  var prSec=document.querySelector('.nav-sec-pr');
+  if(prSec){
+    prSec.querySelector('.nav-sec-head').addEventListener('click',function(){
+      prSec.classList.toggle('collapsed');
+    });
+  }
 }
 
 function openLabIntro(){
@@ -4294,6 +4306,7 @@ function showDemoOverlay(fnName, returnFn){
   view.style.zIndex = '100001';
   view.style.background = 'var(--bg)';
   view.style.overflow = 'auto';
+  view.style.cursor = 'auto';
   view.style.display = '';
   view.classList.add('active');
   // 调用 demo 函数渲染内容
