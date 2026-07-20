@@ -109,6 +109,24 @@
   .clearbtn{margin-left:auto;font-size:12.5px;color:var(--muted);cursor:pointer;text-decoration:underline}
   .understood{font-size:12px;color:var(--accent);font-weight:600;margin-top:8px;min-height:16px}
 
+  /* ── 视图图层面板（PS 图层式多视图）── */
+  .view-layers{margin:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--panel-2);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);overflow:hidden}
+  .vl-head{display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--line);user-select:none}
+  .vl-head .vl-count{margin-left:auto;background:var(--rad-grad);color:#fff;font-size:9.5px;padding:1px 7px;border-radius:8px;font-weight:700}
+  .vl-list{padding:6px;max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+  .vl-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;border:1px solid transparent;cursor:pointer;transition:all .15s;background:var(--panel);user-select:none}
+  .vl-item:hover{border-color:rgba(0,195,243,.3);background:rgba(0,195,243,.05)}
+  .vl-item.active{border-color:var(--accent);background:var(--accent-weak);box-shadow:0 0 0 1px rgba(0,195,243,.15)}
+  .vl-item .vl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--rad-grad)}
+  .vl-item .vl-name{flex:1;font-size:11.5px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vl-item .vl-meta{font-size:9.5px;color:var(--muted);flex-shrink:0}
+  .vl-item .vl-del{opacity:0;font-size:13px;color:var(--muted);cursor:pointer;flex-shrink:0;padding:2px 4px;border-radius:4px;transition:all .12s}
+  .vl-item:hover .vl-del{opacity:.6}
+  .vl-item .vl-del:hover{opacity:1;color:var(--danger)}
+  .vl-empty{color:var(--muted);font-size:11.5px;text-align:center;padding:18px 8px;line-height:1.6}
+  .save-view-btn{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:5px 13px;border:1px solid var(--accent);border-radius:9px;background:var(--accent-weak);color:var(--accent);cursor:pointer;transition:all .15s;user-select:none;white-space:nowrap}
+  .save-view-btn:hover{background:var(--accent);color:#fff}
+
   .countline{font-size:13px;color:var(--ink-2);margin:0 2px 14px}
   .countline b{color:var(--accent);font-size:15px;font-weight:700}
 
@@ -212,8 +230,15 @@
         卖家结构：<b>中国 211 / 本土 37</b>
       </div>
     </div>
+
+    <!-- 视图图层（PS 图层式多视图） -->
+    <div class="view-layers" id="viewLayers">
+      <div class="vl-head"><span>📑 视图图层</span><span class="vl-count" id="vlCount">0</span></div>
+      <div class="vl-list" id="vlList"><div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div></div>
+    </div>
+
     <div class="sidebar-foot">
-      数据已内联进本文件，可离线双击打开。<br>支持自然语言筛选与多维分析。
+      点击视图卡片可切换筛选<br>对比不同条件下的数据分布
     </div>
   </aside>
 
@@ -252,6 +277,7 @@
             </select>
           </div>
           <span class="clearbtn" id="clear-btn">清除全部筛选</span>
+          <button class="save-view-btn" id="saveViewBtn" title="将当前筛选条件保存为一个新视图">💾 保存为新视图</button>
         </div>
         <div class="understood" id="understood"></div>
       </div>
@@ -620,6 +646,121 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     renderChips();
     render();
   });
+
+  // ── 视图图层系统（PS 图层式多视图保存/切换）──
+  var SAVED_VIEWS = [];
+  var ACTIVE_VIEW_ID = null;
+  var _viewIdCounter = 0;
+
+  // 深拷贝 facets 对象
+  function cloneFacets(f){
+    return JSON.parse(JSON.stringify(f));
+  }
+  // 深拷贝 chipState
+  function cloneChipState(cs){
+    var o={};
+    Object.keys(cs).forEach(function(k){o[k]=cs[k];});
+    return o;
+  }
+
+  // 从当前筛选状态生成视图名称
+  function generateViewName(){
+    var parts = facetsToText(state.facets);
+    if(!parts.length) return "全部商品（无筛选）";
+    return parts.join(" + ");
+  }
+
+  // 保存当前为新视图
+  function saveCurrentView(){
+    // 检查是否有重复（相同 facets+sort）
+    var currentKey = JSON.stringify({f:state.facets,s:state.sort});
+    var dup = SAVED_VIEWS.find(function(v){return v.key===currentKey;});
+    if(dup){ toast("该筛选组合已存在："+dup.name); setActiveView(dup.id); return; }
+    _viewIdCounter++;
+    var view = {
+      id: _viewIdCounter,
+      name: generateViewName(),
+      facets: cloneFacets(state.facets),
+      sort: state.sort,
+      chipState: cloneChipState(chipState),
+      hitCount: filtered().length,
+      key: currentKey,
+      createdAt: new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})
+    };
+    SAVED_VIEWS.push(view);
+    setActiveView(view.id);
+    renderViewLayers();
+    toast("已保存视图："+view.name);
+  }
+
+  // 加载视图（恢复筛选状态）
+  function loadView(id){
+    var view = SAVED_VIEWS.find(function(v){return v.id===id;});
+    if(!view) return;
+    state.facets = cloneFacets(view.facets);
+    state.sort = view.sort || "sales_desc";
+    // 恢复 chipState
+    Object.keys(chipState).forEach(function(k){chipState[k]=false;});
+    Object.keys(view.chipState).forEach(function(k){if(view.chipState[k])chipState[k]=true;});
+    // 清空自然语言输入
+    $("#nl-input").value = "";
+    showUnderstood();
+    renderChips();
+    render();
+    setActiveView(id);
+  }
+
+  // 删除视图
+  function deleteView(id, e){
+    if(e)e.stopPropagation();
+    SAVED_VIEWS = SAVED_VIEWS.filter(function(v){return v.id!==id;});
+    if(ACTIVE_VIEW_ID===id) ACTIVE_VIEW_ID=null;
+    renderViewLayers();
+  }
+
+  // 设为活跃视图（高亮）
+  function setActiveView(id){
+    ACTIVE_VIEW_ID=id;
+    document.querySelectorAll('.vl-item').forEach(function(el){
+      el.classList.toggle('active', el.dataset.vid===String(id));
+    });
+  }
+
+  // 渲染视图图层列表
+  function renderViewLayers(){
+    var list = $("#vlList");
+    var countEl = $("#vlCount");
+    countEl.textContent = String(SAVED_VIEWS.length);
+    if(!SAVED_VIEWS.length){
+      list.innerHTML = '<div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div>';
+      return;
+    }
+    list.innerHTML = SAVED_VIEWS.map(function(v){
+      var isActive=(v.id===ACTIVE_VIEW_ID);
+      return '<div class="vl-item'+(isActive?' active':'')+'" data-vid="'+v.id+'" onclick="loadView('+v.id+')">'+
+        '<span class="vl-dot"></span>'+
+        '<span class="vl-name" title="'+escapeHtml(v.name)+'">'+escapeHtml(v.name)+'</span>'+
+        '<span class="vl-meta">'+v.hitCount+'款</span>'+
+        '<span class="vl-del" onclick="deleteView('+v.id+',event)" title="删除此视图">✕</span>'+
+        '</div>';
+    }).join("");
+  }
+
+  // 简易提示
+  function toast(msg){
+    var t=document.getElementById('toast');
+    if(!t){
+      t=document.createElement('div');t.id='toast';
+      t.style.cssText='position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;padding:8px 18px;border-radius:10px;font-size:12.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.76);backdrop-filter:blur(8px);pointer-events:none;opacity:0;transition:opacity .25s';
+      document.body.appendChild(t);
+    }
+    t.textContent=msg;t.style.opacity='1';
+    clearTimeout(toast._tm);
+    toast._tm=setTimeout(function(){t.style.opacity='0';},2000);
+  }
+
+  // 绑定保存按钮
+  $("#saveViewBtn").addEventListener("click", saveCurrentView);
 
   // ---- 初始化 ----
   renderChips();
