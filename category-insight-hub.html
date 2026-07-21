@@ -1519,6 +1519,11 @@ body.dark .lab-status{color:#fbbf24}
 .eo-footer{display:flex;flex-direction:column;gap:7px}
 .eo-footer-text{font-size:10.5px;color:var(--muted);line-height:1.5}
 .eo-detail-btn{align-self:flex-end;margin-top:2px;padding:7px 18px;font-size:11.5px}
+.eo-summary{padding:2px 0}
+.eo-summary-list{display:flex;flex-direction:column;gap:6px}
+.eo-summary-item{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-2);line-height:1.5}
+.eo-si-icon{flex-shrink:0;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(0,212,255,.08);color:var(--accent);font-size:12px}
+.eo-si-text{flex:1;min-width:0}
 
 /* 完整方案详情面板 */
 .pd-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
@@ -9774,6 +9779,28 @@ function renderExportOverview(p){
       '<div class="eo-footer-text">导出方案包将包含：数据源文档 · 分析框架 Skill · AI 提示词 · 筛选条件</div>'+
       '<button class="sf-btn primary eo-detail-btn" onclick="openPlanDetailModal()">查看完整方案</button>'+
     '</div>';
+}
+
+// ===== 方案简要总结 =====
+function renderSummaryBox(p){
+  var box=$('#summaryBox');
+  if(!box) return;
+  var steps=(p.methods||'').split('/').map(function(m){return m.trim();}).filter(Boolean);
+  var fwIds=state.selectedFrameworks||[];
+  var readySrcs=(p.sources||[]).filter(function(sid){var s=DATA.sources[sid];return s&&s.status==='ready';});
+  var score=Math.min(98,30+readySrcs.length*12+fwIds.length*8+steps.length*3);
+  var items=[];
+  items.push({icon:'i-target',text:'目的：'+escHtml(p.name)+'（'+(p.desc||'').slice(0,60)+'）'});
+  items.push({icon:'i-layers',text:'数据源：'+(p.sources||[]).length+' 个（'+readySrcs.length+' 已就绪）'});
+  items.push({icon:'i-steps',text:'分析链路：'+(steps.join(' → ')||'未配置')});
+  if(fwIds.length>0){
+    var fwNames=fwIds.map(function(fid){var f=DATA.frameworks.find(function(x){return x.id===fid;});return f?f.name:fid;}).join('、');
+    items.push({icon:'i-gear',text:'框架：'+fwNames});
+  }
+  items.push({icon:'i-trend',text:'预估达成度：'+score+'%'+(score>=75?' · 配置较完善':score>=50?' · 基本可用':' · 建议补充')});
+  box.innerHTML='<div class="eo-summary-list">'+items.map(function(it){
+    return '<div class="eo-summary-item"><span class="eo-si-icon">'+empIcon(it.icon)+'</span><span class="eo-si-text">'+it.text+'</span></div>';
+  }).join('')+'</div>';
 }
 
 // ===== 完整方案详情面板 =====
