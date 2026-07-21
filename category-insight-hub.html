@@ -2123,7 +2123,7 @@ body.dark .lab-status{color:#fbbf24}
 
 /* ===== 数字员工招募区（未来实验室子分类） ===== */
 .emp-hero{padding:26px 28px 22px;background:linear-gradient(120deg,rgba(0,212,255,.06),rgba(168,85,247,.07),rgba(255,107,157,.06));border-bottom:1px solid var(--border)}
-.emp-hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--accent);background:rgba(0,212,255,.1);padding:4px 11px;border-radius:20px;border:1px solid rgba(0,212,255,.22)}
+.emp-hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--accent);background:rgba(0,212,255,.1);padding:4px 11px;border-radius:20px;border:1px solid rgba(0,212,255,.22);white-space:nowrap}
 .emp-hero-title{font-size:25px;font-weight:900;margin:12px 0 4px;letter-spacing:-.3px}
 .emp-hero-sub{font-size:13px;font-weight:700;color:var(--accent);margin:0 0 10px}
 .emp-hero-tagline{font-size:13.5px;color:var(--muted);line-height:1.6;max-width:760px}
@@ -2135,7 +2135,7 @@ body.dark .lab-status{color:#fbbf24}
 .emp-card:hover{transform:translateY(-3px);border-color:rgba(0,212,255,.42);box-shadow:0 12px 32px rgba(0,0,0,.14)}
 .emp-card::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:var(--rad-grad);opacity:.85}
 .emp-card-top{display:flex;gap:13px;align-items:center}
-.emp-avatar{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(168,85,247,.13));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--accent);flex-shrink:0;padding:6px}
+.emp-avatar{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(168,85,247,.13));display:grid;grid-template-rows:auto auto;place-items:center;gap:2px;color:var(--accent);flex-shrink:0;padding:5px;box-sizing:border-box}
 .emp-avatar-ic{display:flex;align-items:center;justify-content:center;line-height:0}
 .emp-avatar-ic svg{width:22px;height:22px}
 .emp-avatar-nm{font-size:14px;font-weight:800;line-height:1;letter-spacing:.5px;white-space:nowrap}
