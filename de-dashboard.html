@@ -100,10 +100,12 @@
   .fs-btn:hover{background:var(--accent-weak);border-color:var(--accent);color:var(--accent)}
   .fs-btn svg{width:14px;height:14px;flex-shrink:0}
 
-  .board{flex:1;padding:22px 26px 60px;overflow:auto}
+  .board{flex:1;padding:0 26px 60px;overflow:auto}
+  /* 筛选栏上方紧凑间距 */
+  .board > .filterbar{margin-top:14px}
 
   /* Filter chips */
-  .filterbar{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;box-shadow:var(--shadow);position:sticky;top:60px;z-index:19}
+  .filterbar{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;box-shadow:var(--shadow);position:sticky;top:60px;z-index:19}
   .fb-hint{font-size:12px;color:var(--muted);margin-bottom:10px}
   .fb-hint code{background:var(--line);padding:1px 6px;border-radius:5px;font-family:var(--mono);font-size:11.5px}
   .chips{display:flex;flex-wrap:wrap;gap:7px}
@@ -115,7 +117,7 @@
   .sortsel{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
   .sortsel select{border:1px solid var(--border);border-radius:8px;padding:5px 8px;font-size:12.5px;font-family:var(--font);background:var(--panel);color:var(--ink);outline:0}
   .clearbtn{margin-left:auto;font-size:12.5px;color:var(--muted);cursor:pointer;text-decoration:underline}
-  .understood{font-size:12px;color:var(--accent);font-weight:600;margin-top:8px;min-height:16px}
+  .understood{font-size:12px;color:var(--accent);font-weight:600;margin-top:6px;min-height:0}
 
   /* ── 视图图层面板（PS 图层式多视图）── */
   .view-layers{margin:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--panel-2);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);overflow:hidden}
@@ -161,6 +163,12 @@
 
   /* Distribution bars */
   .dist-row{display:flex;align-items:center;gap:12px;padding:6px 0;font-size:13px}
+  .dist-row.filterable{cursor:pointer;border-radius:6px;padding:6px 8px;margin:0 -8px;transition:background .12s}
+  .dist-row.filterable:hover{background:var(--accent-weak)}
+  .dist-row.filterable .lab{color:var(--ink)}
+  .dist-row.filterable:hover .lab{color:var(--accent)}
+  .dist-row.filterable::after{content:'⊕';font-size:11px;color:var(--muted);margin-left:auto;opacity:0;transition:opacity .12s}
+  .dist-row.filterable:hover::after{opacity:.7}
   .dist-row .lab{width:170px;flex:0 0 170px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .dist-row .track{flex:1;height:9px;background:var(--line);border-radius:6px;overflow:hidden}
   .dist-row .track .fill{display:block;height:100%;background:var(--rad-grad);border-radius:6px;transition:width .3s}
@@ -491,32 +499,62 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     $("#kpis").innerHTML = cards.map(c=>`<div class="stat"><div class="n">${c.n}</div><div class="l">${c.l}</div><div class="s">${c.s}</div></div>`).join("");
   }
 
-  // ---- 渲染：分布 ----
-  function distBars(containerId, pairs){
+  // ---- 渲染：分布（支持点击筛选）----
+  function distBars(containerId, pairs, type){
     const max = Math.max(1, ...pairs.map(p=>p.v));
     $(containerId).innerHTML = pairs.map(p=>`
-      <div class="dist-row">
-        <span class="lab" title="${p.k}">${p.k}</span>
+      <div class="dist-row filterable" data-dist="${type}" data-val="${escAttr(p.k)}" title="点击按「${p.k}」筛选">
+        <span class="lab">${p.k}</span>
         <span class="track"><span class="fill" style="width:${Math.round(p.v/max*100)}%"></span></span>
         <span class="num">${p.v}</span>
       </div>`).join("");
+    // 绑定点击：将分布值转为对应筛选条件加入 chips
+    $(containerId).querySelectorAll('.dist-row.filterable').forEach(function(el){
+      el.addEventListener('click', function(){
+        var t = this.dataset.dist;
+        var v = this.dataset.val;
+        applyDistFilter(t, v);
+      });
+    });
+  }
+
+  // 分布条目点击 → 转为筛选条件
+  function applyDistFilter(type, val){
+    if(type === 'loc'){
+      // 卖家来源：中国→cn chip，其他/DE/GB等→local chip 或 NL
+      if(val === '中国') { toggleChip('cn'); return; }
+      if(val !== '中国'){ toggleChip('local'); return; }
+    }
+    if(type === 'price'){
+      // 价格带：按区间映射到已有 chip
+      if(val === '<10' || val === '10-20'){ toggleChip('priceMax20'); return; }
+      if(val === '20-30'){ toggleChip('priceMax30'); return; }
+    }
+    if(type === 'star'){
+      // 星级：低星→starLow，高星→starHigh
+      if(val.indexOf('2') >= 0 && val.indexOf('星') >= 0){ toggleChip('starLow'); return; }
+      if(val.indexOf('4') >= 0 && val.indexOf('星') >= 0){ toggleChip('starHigh'); return; }
+    }
+    // cat（子类目）或未匹配：回退到 NL 输入
+    var nl = $('#nl-input');
+    if(nl){ nl.value = val; nl.dispatchEvent(new Event('input')); nl.dispatchEvent(new Event('change')); }
   }
 
   function renderDist(arr){
     // 子类目
     const catMap={}; arr.forEach(r=>{catMap[r.cat]=(catMap[r.cat]||0)+1;});
     const catPairs = Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>({k,v}));
-    distBars("#dist-cat", catPairs);
+    distBars("#dist-cat", catPairs, "cat");
     // 卖家来源
     const locMap={}; arr.forEach(r=>{const k=r.isCN?"中国":(r.sellerLoc||"其他");locMap[k]=(locMap[k]||0)+1;});
     const locPairs = Object.entries(locMap).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({k,v}));
-    distBars("#dist-loc", locPairs);
+    distBars("#dist-loc", locPairs, "loc");
     // 价格带
     const buckets=[["<10",r=>r.price!=null&&r.price<10],["10-20",r=>r.price>=10&&r.price<20],["20-30",r=>r.price>=20&&r.price<30],["30-50",r=>r.price>=30&&r.price<50],["50+",r=>r.price>=50]];
-    distBars("#dist-price", buckets.map(([k,fn])=>({k,v:arr.filter(fn).length})));
+    distBars("#dist-price", buckets.map(([k,fn])=>({k,v:arr.filter(fn).length})), "price");
     // 星级带
     const sb=[["≤2星",r=>r.star!=null&&r.star<=2],["2-3星",r=>r.star!=null&&r.star>2&&r.star<=3],["3-4星",r=>r.star!=null&&r.star>3&&r.star<=4],["4-4.5星",r=>r.star!=null&&r.star>4&&r.star<=4.5],["4.5-5星",r=>r.star!=null&&r.star>4.5],["无评分",r=>r.star==null]];
-    distBars("#dist-star", sb.map(([k,fn])=>({k,v:arr.filter(fn).length})));
+    distBars("#dist-star", sb.map(([k,fn])=>({k,v:arr.filter(fn).length})), "star");
   }
 
   // ---- 低分洼地 ----
@@ -587,6 +625,21 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
 
   function kv(k,v){return `<div class="kv"><span class="k">${escapeHtml(k)}</span><span class="v">${escapeHtml(String(v||"—"))}</span></div>`;}
   function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  function escAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt'); }
+  // 模拟点击 chip（供分布条目调用）
+  function toggleChip(key){
+    if(!CHIP_DEFS.find(function(c){return c.key===key;})) return;
+    chipState[key] = !chipState[key];
+    const f = blankFacets();
+    CHIP_DEFS.filter(function(c){return chipState[c.key];}).forEach(function(c){c.apply(f);});
+    state.facets = f;
+    ACTIVE_VIEW_ID = null;
+    document.querySelector('.src-card')?.classList.remove('active');
+    document.querySelectorAll('.vl-item').forEach(function(el){el.classList.remove('active');});
+    showUnderstood();
+    renderChips();
+    render();
+  }
 
   // ---- 主渲染 ----
   function render(){

@@ -1055,7 +1055,7 @@ body.dark .lab-status{color:#fbbf24}
 .lab-ccard.clickable{cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
 .lab-ccard.clickable:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(99,102,241,.14);border-color:rgba(99,102,247,.25)}
 .lab-ccard.clickable:active{transform:translateY(-1px)}
-@media(max-width:760px){.lab-pipe{grid-template-columns:repeat(2,1fr)}.lab-paths,.lab-cards{grid-template-columns:1fr}.lab-title{font-size:26px}.lab-hero{flex-direction:column}.lab-hero-viz{width:100%;max-width:280px;margin:0 auto}}
+@media(max-width:760px){.lab-pipe{grid-template-columns:repeat(2,1fr)}.lab-paths,.lab-cards{grid-template-columns:1fr}.lab-title{font-size:26px}.lab-hero{flex-direction:column}.lab-hero-viz{width:100%;max-width:280px;margin:0 auto}.emp-hero{flex-direction:column}.emp-hero-viz{width:100%;max-width:260px;margin:12px auto 0}}
 
 /* === Main === */
 .main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:1}
@@ -2122,9 +2122,11 @@ body.dark .lab-status{color:#fbbf24}
 .ec-btn:disabled{opacity:.4;cursor:default}
 
 /* ===== 数字员工招募区（未来实验室子分类） ===== */
-.emp-hero{padding:26px 28px 22px;background:linear-gradient(120deg,rgba(0,212,255,.06),rgba(168,85,247,.07),rgba(255,107,157,.06));border-bottom:1px solid var(--border)}
+.emp-hero{padding:26px 28px 22px;background:linear-gradient(120deg,rgba(0,212,255,.06),rgba(168,85,247,.07),rgba(255,107,157,.06));border-bottom:1px solid var(--border);display:flex;gap:28px;align-items:center}
+.emp-hero-text{flex:1;min-width:0}
+.emp-hero-viz{width:240px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .emp-hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--accent);background:rgba(0,212,255,.1);padding:4px 11px;border-radius:20px;border:1px solid rgba(0,212,255,.22)}
-.emp-hero-eyebrow svg{flex-shrink:0;width:14px;height:14px}
+.emp-hero-eyebrow svg{flex-shrink:0;width:16px;height:16px;overflow:visible}
 .emp-hero-title{font-size:25px;font-weight:900;margin:12px 0 4px;letter-spacing:-.3px}
 .emp-hero-sub{font-size:13px;font-weight:700;color:var(--accent);margin:0 0 10px}
 .emp-hero-tagline{font-size:13.5px;color:var(--muted);line-height:1.6;max-width:760px}
@@ -2136,10 +2138,7 @@ body.dark .lab-status{color:#fbbf24}
 .emp-card:hover{transform:translateY(-3px);border-color:rgba(0,212,255,.42);box-shadow:0 12px 32px rgba(0,0,0,.14)}
 .emp-card::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:var(--rad-grad);opacity:.85}
 .emp-card-top{display:flex;gap:13px;align-items:center}
-.emp-avatar{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(168,85,247,.13));display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0}
-.emp-avatar-ic{display:flex;align-items:center;justify-content:center;line-height:0}
-.emp-avatar-ic svg{width:22px;height:22px}
-.emp-avatar-nm{font-size:14px;font-weight:800;line-height:1;letter-spacing:.5px;white-space:nowrap}
+.emp-avatar{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(168,85,247,.13));display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;font-size:26px;font-weight:900;letter-spacing:-.5px;align-self:center}
 .emp-name{font-size:16px;font-weight:800;line-height:1.1}
 .emp-role{font-size:12px;color:var(--accent);font-weight:700;margin-top:3px}
 .emp-desc{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:11px;flex:1}
@@ -2157,9 +2156,7 @@ body.dark .lab-status{color:#fbbf24}
 .emp-modal{background:var(--panel-solid);border:1px solid var(--border);border-radius:18px;max-width:660px;width:100%;max-height:90vh;overflow:auto;animation:empPop .22s cubic-bezier(.2,.8,.3,1);box-shadow:0 30px 80px rgba(0,0,0,.4)}
 @keyframes empPop{from{transform:translateY(12px) scale(.98);opacity:0}to{transform:none;opacity:1}}
 .emp-modal-head{display:flex;gap:15px;align-items:center;padding:22px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--panel-solid);z-index:2}
-.emp-modal-head .emp-avatar{width:66px;height:66px}
-.emp-modal-head .emp-avatar-ic svg{width:24px;height:24px}
-.emp-modal-head .emp-avatar-nm{font-size:14px}
+.emp-modal-head .emp-avatar{width:66px;height:66px;font-size:30px}
 .emp-mh-name{font-size:19px;font-weight:900}
 .emp-mh-role{font-size:12.5px;color:var(--accent);font-weight:700;margin-top:3px}
 .emp-mh-close{margin-left:auto;width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--glass-bg);color:var(--muted);cursor:pointer;font-size:15px;flex-shrink:0}
@@ -5945,11 +5942,13 @@ function playMineDemo(){
 }
 
 // ---- 板块1：数据源画廊（多维切换：业务分类 / 购买旅程 / 平铺全部）----
-var galDim='cat'; // cat | journey | flat
+var galDim='journey'; // cat | journey | flat
 function openSourceGallery(){
   setActiveNav('nav-src');
   $('#subnav').classList.remove('show');
   $('#topbarTitle').textContent='数据源 · 全景';
+  // 只展示用户实际发送过数据的源（status==='ready'），pending 暂隐藏
+  var READY=Object.keys(DATA.sources).filter(function(k){return DATA.sources[k].status==='ready';});
   var CAT_ORDER=['商品销售/卖点数据','商品评价数据','用户搜索行为','社媒讨论','用户访谈','外部趋势信息/数据','供应商/供应链情报','售后反馈'];
   var CAT_MAP={s8:'商品销售/卖点数据',s3:'商品销售/卖点数据',s7:'商品销售/卖点数据',s20:'商品销售/卖点数据',
     s1:'商品评价数据',s13:'商品评价数据',
@@ -5996,28 +5995,29 @@ function openSourceGallery(){
   }
   function bodyForCat(){
     return CAT_ORDER.map(function(cat){
-      var ids=Object.keys(DATA.sources).filter(function(k){return CAT_MAP[k]===cat;});
+      var ids=READY.filter(function(k){return CAT_MAP[k]===cat;});
       if(!ids.length) return '';
       return '<div class="gal-cat" style="margin:24px 0 2px">'+ sectionHeader(cat,ids.length) +
         '<div class="gal-grid">'+ids.map(card).join('')+'</div></div>';
     }).join('');
   }
   function bodyForJourney(){
-    JN.forEach(function(st){ st.ids=Object.keys(DATA.sources).filter(function(k){return (STAGE_MAP[k]||[]).indexOf(st.key)>=0;}); });
+    JN.forEach(function(st){ st.ids=READY.filter(function(k){return (STAGE_MAP[k]||[]).indexOf(st.key)>=0;}); });
     var html='<div class="gal-jx-note">同一批数据源，按「认知 → 决策 → 购买 → 使用 → 评价」的用户购买旅程重新排列：每个源归入其主服务的阶段泳道（可跨阶段）。看清每个阶段靠哪些数据在支撑。</div>'+
       '<div class="journey">';
-    JN.forEach(function(st,i){
+    var shown=JN.filter(function(st){return st.ids.length>0;});
+    shown.forEach(function(st,i){
       html+='<div class="jn-stage"><div class="jn-stage-h"><span class="jn-num">'+(i+1)+'</span><span class="jn-stage-name">'+st.key+'</span><span class="jn-stage-sub">'+st.sub+'</span><span class="jn-count">'+st.ids.length+'</span></div><div class="jn-cards">'+st.ids.map(card).join('')+'</div></div>';
-      if(i<JN.length-1) html+='<div class="jn-arrow">→</div>';
+      if(i<shown.length-1) html+='<div class="jn-arrow">→</div>';
     });
     html+='</div>';
     return html;
   }
   function bodyForFlat(){
-    return '<div class="gal-grid">'+Object.keys(DATA.sources).map(card).join('')+'</div>';
+    return '<div class="gal-grid">'+READY.map(card).join('')+'</div>';
   }
   var subMap={
-    cat:'共 '+Object.keys(DATA.sources).length+' 个原始数据源，按 7 大类组织；点击任一卡片进入其独立看板（支持筛选 / 导出 CSV / 综合报告）',
+    cat:'共 '+READY.length+' 个原始数据源（已发送数据），按 7 大类组织；点击任一卡片进入其独立看板（支持筛选 / 导出 CSV / 综合报告）',
     journey:'同一批数据源，换「用户购买旅程」视角重新排列 —— 从认知到评价，看清每个阶段靠哪些数据在支撑。',
     flat:'不分组的平铺视图，所有数据源一屏铺开，适合已知目标快速定位。'
   };
@@ -8346,9 +8346,10 @@ function renderPurposeGrid(){
   var ws=DATA.workspaces[state.ws];
   var container=$('#purposeGridContent');
 
-  // Source pool bar
-  var srcPool='<div class="src-pool-bar"><div class="spb-label">原始数据源池 · DATA.sources（'+Object.keys(DATA.sources).length+' 个）</div><div class="spb-sources">';
-  Object.keys(DATA.sources).forEach(function(k){
+  // Source pool bar —— 只显示已发数据的源
+  var READY=Object.keys(DATA.sources).filter(function(k){return DATA.sources[k].status==='ready';});
+  var srcPool='<div class="src-pool-bar"><div class="spb-label">原始数据源池 · DATA.sources（'+READY.length+' 个）</div><div class="spb-sources">';
+  READY.forEach(function(k){
     var s=DATA.sources[k];
     srcPool+='<span class="spb-chip">'+escHtml(s.name)+'<span style="opacity:.5">·</span>'+escHtml(s.type)+'</span>';
   });
@@ -10537,7 +10538,7 @@ function openEmployeeZone(){
   var cards = EMPLOYEES.map(function(e){
     var tags = [e.category].concat(e.methods.slice(0,2)).map(function(t){return '<span class="emp-tag">'+empEsc(t.length>16?t.slice(0,15)+'…':t)+'</span>';}).join('');
     return '<div class="emp-card" onclick="openEmployeeDetail(\''+e.id+'\')">'+
-      '<div class="emp-card-top"><div class="emp-avatar"><span class="emp-avatar-ic">'+empIcon(e.icon)+'</span><span class="emp-avatar-nm">'+empEsc(e.name)+'</span></div>'+
+      '<div class="emp-card-top"><div class="emp-avatar">'+empEsc(e.name.charAt(1))+'</div>'+
         '<div><div class="emp-name">'+empEsc(e.name)+'</div><div class="emp-role">'+empEsc(e.role)+'</div></div></div>'+
       '<div class="emp-desc">'+empEsc(e.desc)+'</div>'+
       '<div class="emp-tags">'+tags+'</div>'+
@@ -10548,15 +10549,44 @@ function openEmployeeZone(){
   }).join('');
   $('#viewEmployeeZone').innerHTML =
     '<div class="emp-hero">'+
-      '<span class="emp-hero-eyebrow">倒模类目 · 数字员工招募区 '+empIcon('i-bot')+'</span>'+
-      '<div class="emp-hero-title">招募你的数字员工</div>'+
-      '<div class="emp-hero-sub">倒模类目专属 · 7 位懂倒模业务的数字员工已就位</div>'+
-      '<div class="emp-hero-tagline">本招募区的数字员工全部围绕 <b>倒模类目</b> 构建——TA 们的知识库、技能与标准输出，都来自倒模品类的真实数据源与一线运营实践。每个员工都内置了本类目的 <b>真实数据源知识库</b>、<b>岗位 SOP 技能</b> 与 <b>标准输出方式</b>。点击「招募」，我们会把 TA 的知识库 + 技能 + system prompt 打包成一个 <b>.zip</b> 文件——你把它交给自己的 AI 读取，AI 就变成这名懂倒模业务的数字员工，帮你在本地处理工作。</div>'+
-      '<div class="emp-note">'+
-        '<span class="pill">按 5 维度打包：身份 / 知识库 / 技能SOP / 方法逻辑 / 输出结构</span>'+
-        '<span class="pill">含 run.js 本地运行脚手架 · 任意 OpenAI 兼容模型</span>'+
-        '<span class="pill">当前 7 名 倒模类目 数字员工</span>'+
+      '<div class="emp-hero-text">'+
+        '<span class="emp-hero-eyebrow">倒模类目 · 数字员工招募区</span>'+
+        '<div class="emp-hero-title">招募你的数字员工</div>'+
+        '<div class="emp-hero-sub">倒模类目专属 · 7 位懂倒模业务的数字员工已就位</div>'+
+        '<div class="emp-hero-tagline">本招募区的数字员工全部围绕 <b>倒模类目</b> 构建——TA 们的知识库、技能与标准输出，都来自倒模品类的真实数据源与一线运营实践。每个员工都内置了本类目的 <b>真实数据源知识库</b>、<b>岗位 SOP 技能</b> 与 <b>标准输出方式</b>。点击「招募」，我们会把 TA 的知识库 + 技能 + system prompt 打包成一个 <b>.zip</b> 文件——你把它交给自己的 AI 读取，AI 就变成这名懂倒模业务的数字员工，帮你在本地处理工作。</div>'+
+        '<div class="emp-note">'+
+          '<span class="pill">按 5 维度打包：身份 / 知识库 / 技能SOP / 方法逻辑 / 输出结构</span>'+
+          '<span class="pill">含 run.js 本地运行脚手架 · 任意 OpenAI 兼容模型</span>'+
+          '<span class="pill">当前 7 名 倒模类目 数字员工</span>'+
+        '</div>'+
       '</div>'+
+      '<div class="emp-hero-viz"><svg viewBox="0 0 220 180" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">'+
+        '<defs>'+
+          '<radialGradient id="empGlow"><stop offset="0%" stop-color="#a855f7" stop-opacity=".18"/><stop offset="100%" stop-color="#a855f7" stop-opacity="0"/></radialGradient>'+
+          '<linearGradient id="empGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00d4ff"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#ff6b9d"/></linearGradient>'+
+        '</defs>'+
+        '<circle cx="110" cy="90" r="75" fill="url(#empGlow)"/>'+
+        '<g stroke="url(#empGrad)" stroke-width="1.2" stroke-dasharray="3 4" stroke-opacity=".35">'+
+          '<line x1="110" y1="90" x2="50" y2="40"/>'+
+          '<line x1="110" y1="90" x2="170" y2="40"/>'+
+          '<line x1="110" y1="90" x2="35" y2="95"/>'+
+          '<line x1="110" y1="90" x2="185" y2="95"/>'+
+          '<line x1="110" y1="90" x2="60" y2="150"/>'+
+          '<line x1="110" y1="90" x2="160" y2="150"/>'+
+          '<line x1="110" y1="90" x2="110" y2="30"/>'+
+        '</g>'+
+        '<g fill="none" stroke="url(#empGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+
+          '<circle cx="110" cy="90" r="20" fill="rgba(168,85,247,.12)"/><svg x="98" y="78" width="24" height="24" viewBox="0 0 24 24"><use href="#i-bot"/></svg>'+
+          '<circle cx="50" cy="40" r="14" fill="rgba(0,212,255,.10)"/><svg x="41" y="31" width="18" height="18" viewBox="0 0 24 24"><use href="#i-tag"/></svg>'+
+          '<circle cx="170" cy="40" r="14" fill="rgba(168,85,247,.10)"/><svg x="161" y="31" width="18" height="18" viewBox="0 0 24 24"><use href="#i-target"/></svg>'+
+          '<circle cx="35" cy="95" r="14" fill="rgba(0,212,255,.10)"/><svg x="26" y="86" width="18" height="18" viewBox="0 0 24 24"><use href="#i-globe"/></svg>'+
+          '<circle cx="185" cy="95" r="14" fill="rgba(255,107,157,.10)"/><svg x="176" y="86" width="18" height="18" viewBox="0 0 24 24"><use href="#i-box"/></svg>'+
+          '<circle cx="60" cy="150" r="14" fill="rgba(168,85,247,.10)"/><svg x="51" y="141" width="18" height="18" viewBox="0 0 24 24"><use href="#i-layers"/></svg>'+
+          '<circle cx="160" cy="150" r="14" fill="rgba(0,212,255,.10)"/><svg x="151" y="141" width="18" height="18" viewBox="0 0 24 24"><use href="#i-bar"/></svg>'+
+          '<circle cx="110" cy="30" r="12" fill="rgba(255,107,157,.10)"/><svg x="102" y="22" width="16" height="16" viewBox="0 0 24 24"><use href="#i-zap"/></svg>'+
+        '</g>'+
+        '<text x="110" y="172" text-anchor="middle" fill="var(--muted)" font-size="9.5" font-weight="600" letter-spacing=".5">7 位数字员工已就位</text>'+
+      '</svg></div>'+
     '</div>'+
     '<div class="emp-grid">'+cards+'</div>';
 }
@@ -10573,7 +10603,7 @@ function openEmployeeDetail(id){
   bd.innerHTML =
     '<div class="emp-modal" role="dialog" aria-modal="true">'+
       '<div class="emp-modal-head">'+
-        '<div class="emp-avatar"><span class="emp-avatar-ic">'+empIcon(e.icon)+'</span><span class="emp-avatar-nm">'+empEsc(e.name)+'</span></div>'+
+        '<div class="emp-avatar">'+empEsc(e.name.charAt(1))+'</div>'+
         '<div><div class="emp-mh-name">'+empEsc(e.name)+'</div><div class="emp-mh-role">'+empEsc(e.role)+'</div></div>'+
         '<button class="emp-mh-close" onclick="closeEmployeeModal()">✕</button>'+
       '</div>'+
@@ -10617,7 +10647,7 @@ function openEmployeeDetailV2(e){
   bd.innerHTML =
     '<div class="emp-modal v2" role="dialog" aria-modal="true" style="--emp-ac:'+ac+'">'+
       '<div class="emp-modal-head">'+
-        '<div class="emp-avatar"><span class="emp-avatar-ic">'+empIcon(e.icon)+'</span><span class="emp-avatar-nm">'+empEsc(e.name)+'</span></div>'+
+        '<div class="emp-avatar">'+empEsc(e.name.charAt(1))+'</div>'+
         '<div><div class="emp-mh-name">'+empEsc(e.name)+'</div><div class="emp-mh-role">'+empEsc(e.role)+'</div>'+
           '<span class="emp-mh-ribbon">'+empIcon('i-tag')+' '+empEsc(e.category)+'</span></div>'+
         '<button class="emp-mh-close" onclick="closeEmployeeModal()">✕</button>'+
