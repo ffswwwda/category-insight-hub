@@ -1188,6 +1188,11 @@ body.dark .lab-status{color:#fbbf24}
   transition:all .2s;z-index:2;padding:0}
 .s-card:hover .sc-rm{opacity:1}
 .sc-rm:hover{background:#ff5064;color:#fff}
+.sc-filter-badge{font-size:11px;color:var(--accent);display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:4px;padding:6px 9px;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.18);border-radius:7px;line-height:1.5}
+.sc-filter-dot{width:8px;height:8px;border-radius:50%;background:var(--rad-grad);flex-shrink:0;animation:pulse-dot 1.6s infinite}
+.sc-filter-clear{margin-left:auto;font-size:10px;color:var(--muted);background:none;border:none;border-bottom:1px solid transparent;cursor:pointer;padding:0 3px;transition:border-color .15s}
+.sc-filter-clear:hover{color:#ff5064;border-color:#ff5064}
+@keyframes pulse-dot{0%,100%{opacity:.6}50%{opacity:1}}
 
 .i-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
   padding:13px 15px;margin-bottom:9px;border-left:3px solid var(--purple);transition:all .25s var(--rad-easing)}
@@ -8312,11 +8317,20 @@ function renderStructPanel(p){
     var s=getSource(sid);
     if(!s)return;
     var concl=s.status==='ready'?(s.hasDashboard?'248款德国商品已分析':'数据就绪'):'待接入';
+    var pf=p._srcFilters&&p._srcFilters[sid];
+    var fBadge='';
+    if(pf && Object.keys(pf.filters).length>0){
+      var fKeys=Object.keys(pf.filters);
+      var fTotal=fKeys.reduce(function(sum,k){return sum+pf.filters[k].length;},0);
+      var fBits=fKeys.slice(0,3).map(function(k){return pf.filters[k].slice(0,2).join(',');}).filter(Boolean);
+      fBadge='<div class="sc-filter-badge"><span class="sc-filter-dot"></span><b>'+fTotal+'</b> 项筛选已应用'+(fBits.length?' · '+escHtml(fBits.join(' | ')):'')+'<button class="sc-filter-clear" onclick="event.stopPropagation();confirmSourceFilter(\''+sid+'\')" title="清除筛选">清除</button></div>';
+      concl='已筛选 · 点击查看详情';
+    }
     srcHtml+='<div class="s-card" onclick="openSourceFilter(\''+sid+'\')" title="点击筛选数据">'+
       '<button class="sc-rm" onclick="event.stopPropagation();removeSourceFromPurpose(\''+sid+'\')" title="移除此数据源">×</button>'+
       '<div class="sc-name">'+escHtml(s.name)+'</div>'+
       '<div class="sc-type">'+escHtml(s.type)+' · '+escHtml(s.market)+(s.records?' · '+s.records+' 条':'')+'</div>'+
-      '<div class="sc-concl">'+escHtml(concl)+'</div>'+
+      (fBadge?fBadge:'<div class="sc-concl">'+escHtml(concl)+'</div>')+
     '</div>';
   });
   srcHtml+='<button class="sc-add-src" onclick="event.stopPropagation();openSourcePicker()">+ 添加 / 管理数据源</button>';
@@ -8784,6 +8798,24 @@ function bindFilterInputs(sid){
     inp.addEventListener('input',function(){ updateFilterCount(sid); });
     inp.addEventListener('change',function(){ updateFilterCount(sid); });
   });
+  // 回填已保存的筛选条件
+  var p=getPurpose(state.ws,state.purposeId);
+  var saved=p&&p._srcFilters&&p._srcFilters[sid];
+  if(saved && saved.filters){
+    Object.keys(saved.filters).forEach(function(g){
+      var vals=saved.filters[g];
+      modal.querySelectorAll('.sf-cb[data-group="'+g+'"]').forEach(function(cb){
+        cb.checked=vals.indexOf(cb.value)>=0;
+      });
+      modal.querySelectorAll('.sf-sel[data-group="'+g+'"]').forEach(function(sel){
+        sel.value=vals[0]||'all';
+      });
+      modal.querySelectorAll('.sf-text[data-group="'+g+'"]').forEach(function(inp){
+        inp.value=vals[vals.length-1]||'';
+      });
+    });
+    updateFilterCount(sid);
+  }
 }
 
 function updateFilterCount(sid){
@@ -8830,11 +8862,11 @@ function applyAndPreview(sid){
   var filters=collectFilters(sid);
   var pane=document.getElementById('srcFilt_'+sid+'_pane_preview');
   if(!pane)return;
-  pane.innerHTML=buildPreviewPanel(s,filters);
+  pane.innerHTML=buildPreviewPanel(s,filters,sid);
   switchSfTab(sid,'preview');
 }
 
-function buildPreviewPanel(s,filters){
+function buildPreviewPanel(s,filters,sid){
   var rows=getMockSampleRows(s,5);
   var total = s.records? parseInt(String(s.records).replace(/[^\d]/g,''))||0 : 0;
   var baseN = total>0? total : 240;
@@ -8858,7 +8890,8 @@ function buildPreviewPanel(s,filters){
     +'<div class="pv-match"><span class="pv-num">'+matchN.toLocaleString()+'</span><span class="pv-unit">条匹配记录</span>'+(total>0?'<span class="pv-badge">占总量 '+pct+'%</span>':'')+'</div>'
     +'<div class="pv-stats">'+stats+'</div>'
     +'<div class="pv-table-wrap"><table class="pv-table"><thead><tr>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>'
-    +'<div class="pv-note">展示前 '+rows.length+' 条样例 · 完整数据请在对应数据源看板中查看（接入真实数据后此处为实时筛选结果）</div>';
+    +'<div class="pv-note">展示前 '+rows.length+' 条样例 · 完整数据请在对应数据源看板中查看（接入真实数据后此处为实时筛选结果）</div>'
+    +(sid ? '<div class="pv-actions"><button class="sf-btn primary" onclick="confirmSourceFilter(\''+sid+'\')">确定，应用筛选</button></div>' : '');
 }
 
 function buildStatBars(s,filters){
@@ -8960,6 +8993,20 @@ function getMockSampleRows(s,n){
 function closeSourceFilter(sid){
   var el=document.getElementById('srcFilt_'+sid);
   if(el) el.parentNode.removeChild(el);
+}
+
+function confirmSourceFilter(sid){
+  var p=getPurpose(state.ws,state.purposeId);
+  if(!p)return;
+  var filters=collectFilters(sid);
+  p._srcFilters=p._srcFilters||{};
+  if(Object.keys(filters).length>0){
+    p._srcFilters[sid]={filters:filters,ts:Date.now()};
+  }else{
+    delete p._srcFilters[sid];
+  }
+  closeSourceFilter(sid);
+  renderStructPanel(p);
 }
 
 function removeSourceFromPurpose(sid){
@@ -9711,6 +9758,7 @@ if(typeof initFloatBar==='function') initFloatBar();
 .pv-table td.pv-neg{color:#ef4444;font-weight:700}
 .pv-table td.pv-pos{color:#34c759;font-weight:700}
 .pv-note{font-size:11px;color:var(--muted);margin-top:11px;line-height:1.5}
+.pv-actions{margin-top:16px;display:flex;justify-content:center;padding-top:12px;border-top:1px solid var(--border)}
 .pv-empty{padding:30px;text-align:center;color:var(--muted);font-size:13px}
 
 /* ===== 源管理器弹窗 ===== */
