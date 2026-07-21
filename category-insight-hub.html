@@ -2003,6 +2003,7 @@ body.dark .lab-status{color:#fbbf24}
 .emp-hero{padding:26px 28px 22px;background:linear-gradient(120deg,rgba(0,212,255,.06),rgba(168,85,247,.07),rgba(255,107,157,.06));border-bottom:1px solid var(--border)}
 .emp-hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--accent);background:rgba(0,212,255,.1);padding:4px 11px;border-radius:20px;border:1px solid rgba(0,212,255,.22)}
 .emp-hero-title{font-size:25px;font-weight:900;margin:12px 0 4px;letter-spacing:-.3px}
+.emp-hero-sub{font-size:13px;font-weight:700;color:var(--accent);margin:0 0 10px}
 .emp-hero-tagline{font-size:13.5px;color:var(--muted);line-height:1.6;max-width:760px}
 .emp-hero-tagline b{color:var(--ink)}
 .emp-note{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
@@ -2012,8 +2013,10 @@ body.dark .lab-status{color:#fbbf24}
 .emp-card:hover{transform:translateY(-3px);border-color:rgba(0,212,255,.42);box-shadow:0 12px 32px rgba(0,0,0,.14)}
 .emp-card::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:var(--rad-grad);opacity:.85}
 .emp-card-top{display:flex;gap:13px;align-items:center}
-.emp-avatar{width:52px;height:52px;border-radius:14px;background:var(--rad-grad);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 6px 16px rgba(0,0,0,.18)}
-.emp-avatar svg{width:26px;height:26px;fill:currentColor;stroke:none}
+.emp-avatar{width:60px;height:60px;border-radius:16px;background:var(--rad-grad);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;flex-shrink:0;box-shadow:0 6px 16px rgba(0,0,0,.18);padding:5px}
+.emp-avatar-ic{display:flex;align-items:center;justify-content:center;line-height:0}
+.emp-avatar-ic svg{width:22px;height:22px;fill:currentColor;stroke:none}
+.emp-avatar-nm{font-size:11px;font-weight:800;line-height:1;letter-spacing:.5px;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.25)}
 .emp-name{font-size:16px;font-weight:800;line-height:1.1}
 .emp-role{font-size:12px;color:var(--accent);font-weight:700;margin-top:3px}
 .emp-desc{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:11px;flex:1}
@@ -2031,8 +2034,9 @@ body.dark .lab-status{color:#fbbf24}
 .emp-modal{background:var(--panel-solid);border:1px solid var(--border);border-radius:18px;max-width:660px;width:100%;max-height:90vh;overflow:auto;animation:empPop .22s cubic-bezier(.2,.8,.3,1);box-shadow:0 30px 80px rgba(0,0,0,.4)}
 @keyframes empPop{from{transform:translateY(12px) scale(.98);opacity:0}to{transform:none;opacity:1}}
 .emp-modal-head{display:flex;gap:15px;align-items:center;padding:22px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--panel-solid);z-index:2}
-.emp-modal-head .emp-avatar{width:60px;height:60px}
-.emp-modal-head .emp-avatar svg{width:30px;height:30px}
+.emp-modal-head .emp-avatar{width:66px;height:66px}
+.emp-modal-head .emp-avatar-ic svg{width:24px;height:24px}
+.emp-modal-head .emp-avatar-nm{font-size:12.5px}
 .emp-mh-name{font-size:19px;font-weight:900}
 .emp-mh-role{font-size:12.5px;color:var(--accent);font-weight:700;margin-top:3px}
 .emp-mh-close{margin-left:auto;width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--glass-bg);color:var(--muted);cursor:pointer;font-size:15px;flex-shrink:0}
@@ -9314,8 +9318,8 @@ function toast(m){ if(typeof ctoast!=='undefined'){ctoast(m);} else { console.lo
 // ============================================================
 var EMPLOYEES = [
   { id:'voc', name:'小灵', role:'VOC 智能打标', icon:'w-tag',
-    desc:'我负责给用户评论打维度标签——动机、场景、痛点，一条评论穿过 9 道标签墙，盖上属于它的印章。',
-    category:'飞机杯、震动棒、润滑液等成人用品类目',
+    desc:'我负责给倒模类目的用户评论打维度标签——动机、场景、痛点，一条倒模真实评论穿过 9 道标签墙，盖上属于它的印章。',
+    category:'倒模类目',
     methods:['规则引擎打标','9 维度标签体系','否定保护校验','频率统计与情感分析'],
     tools:['VOC 标签框','语料分析工具','情绪维度报告'],
     sources:'亚马逊评论·DE/US/JP/UK/EU',
@@ -9326,8 +9330,8 @@ var EMPLOYEES = [
     outputs:['用户评论标签分布报告','情感极性统计','高频问题 TOP 列表'] },
 
   { id:'score', name:'小分', role:'产品需求打分', icon:'w-target',
-    desc:'我帮产品需求做四维评分——痛点匹配、技术可行、市场机会、竞争差异。每项附理由与置信度。',
-    category:'新产品概念、功能改进、产品线扩展',
+    desc:'我帮倒模类目的产品需求做四维评分——痛点匹配、技术可行、市场机会、竞争差异。每项附理由与置信度，让倒模新品决策有数据可依。',
+    category:'倒模类目新品需求',
     methods:['四象限评分模型','关键词权重打分','置信度评估','可溯源证据链'],
     tools:['产品打分工具','数据源匹配器','类目容量计算器'],
     sources:'德国商品库·DE、竞品分析·DE/US',
@@ -9338,8 +9342,8 @@ var EMPLOYEES = [
     outputs:['产品需求综合评分报告','各维度得分分布','数据源匹配明细'] },
 
   { id:'lab', name:'小预', role:'数字世界预测', icon:'w-globe',
-    desc:'我用多智能体仿真推演你的运营策略——把你真实的用户分群放进数字沙盒，注入定价、卖点、渠道变量，观察群体演化。',
-    category:'社媒活动预测、新品上市预测、品类机会评估',
+    desc:'我用多智能体仿真推演倒模类目的运营策略——把你真实的倒模用户分群放进数字沙盒，注入定价、卖点、渠道变量，观察群体如何演化。',
+    category:'倒模类目预测',
     methods:['Agent-Based Model','Hegselmann-Krause 观点演化','蒙特卡洛复算','三场景差异化输出'],
     tools:['数字世界工作台','用户基座编辑器','预测报告引擎'],
     sources:'NS 社媒内容台、用户画像/领新数据、类目趋势·EU/US',
@@ -9350,8 +9354,8 @@ var EMPLOYEES = [
     outputs:['预测报告（爆款率/触达率/翻车风险）','多场景对比','敏感性分析'] },
 
   { id:'dev', name:'小创', role:'新品开发盲盒', icon:'w-box',
-    desc:'我负责把创新方法装进盲盒——抽中 TRIZ 就给你物场分析，抽中 SCAMPER 就做替代/组合变形。每个方法长出 3 条产品开发创意。',
-    category:'飞机杯、震动棒等类目的产品创新',
+    desc:'我负责把倒模类目的创新方法装进盲盒——抽中 TRIZ 就给你物场分析，抽中 SCAMPER 就做替代/组合变形。每个方法长出 3 条倒模产品开发创意。',
+    category:'倒模类目产品创新',
     methods:['TRIZ 40 发明原理','SCAMPER 变形法','物场分析与标准解','语义组合引擎'],
     tools:['新品开发创意工具','FABE 文案生成器','多语言详情页模板'],
     sources:'用户访谈、竞品分析·DE/US、搜索数据·DE/US/JP',
@@ -9362,8 +9366,8 @@ var EMPLOYEES = [
     outputs:['产品设计需求文档','FABE 文案','多语言 listing 详情页'] },
 
   { id:'idea', name:'小设', role:'新品创意图', icon:'w-layers',
-    desc:'我是矿工——从六维创意矿脉（外观/功能/场景/情感/技术/叙事）里挖金块，拼成一张可执行的创意图。',
-    category:'成人用品类目外观设计、使用场景创新',
+    desc:'我是矿工——从六维创意矿脉（外观/功能/场景/情感/技术/叙事）里挖金块，拼成一张可执行的倒模类目创意图。',
+    category:'倒模类目外观与场景创新',
     methods:['六维创意生成','场景情感映射','技术趋势导入','叙事包装'],
     tools:['新品打造创意灵感工具','场景定义器','竞品视觉库'],
     sources:'社媒声量·全球、用户访谈、领新用户反馈',
@@ -9374,8 +9378,8 @@ var EMPLOYEES = [
     outputs:['创意概念卡片','场景说明文档','用户情绪映射报告'] },
 
   { id:'stress', name:'小测', role:'虚拟压力测试', icon:'w-robot',
-    desc:'我把你的产品概念丢进虚拟用户群——有人支持、有人反对、有人沉默。我找出最极端的反对声音，帮你提前发现翻车风险。',
-    category:'新品概念验证、运营活动压力、文案挑刺',
+    desc:'我把你的倒模产品概念丢进虚拟用户群——有人支持、有人反对、有人沉默。我找出最极端的反对声音，帮你在倒模上市前提前发现翻车风险。',
+    category:'倒模类目概念验证与压力测试',
     methods:['虚拟用户群生成','压力测试仿真','极端用户识别（von Hippel）','立场与影响分析'],
     tools:['虚拟用户压力测试工作台','极端用户分析器','风险评分卡'],
     sources:'社媒声量·全球、品类洞察、产品运营看板',
@@ -9386,8 +9390,8 @@ var EMPLOYEES = [
     outputs:['压力测试报告（支持/中立/反对）','极端用户画像 Top 5','风险预警清单'] },
 
   { id:'pr', name:'小展', role:'原理展厅', icon:'w-office',
-    desc:'我管理原理展厅——所有工具的「使用」和「看背后工作」双视角演示都存储在我这里。你想看什么工具怎么运转，我来展示。',
-    category:'全品类工具原理与演示',
+    desc:'我管理原理展厅——所有倒模类目工具的「使用」和「看背后工作」双视角演示都存储在我这里。你想看什么倒模工具怎么运转，我来展示。',
+    category:'倒模类目工具原理与演示',
     methods:['原理全景图','双视角切换（使用/原理）','动画演示引擎'],
     tools:['原理展厅画廊','AI 办公全景图','3D 引擎版（PixiJS）'],
     sources:'全数据源示意、分析框架库、AI 简化工具集',
@@ -9409,7 +9413,7 @@ function openEmployeeZone(){
   var cards = EMPLOYEES.map(function(e){
     var tags = [e.category].concat(e.methods.slice(0,2)).map(function(t){return '<span class="emp-tag">'+empEsc(t.length>16?t.slice(0,15)+'…':t)+'</span>';}).join('');
     return '<div class="emp-card" onclick="openEmployeeDetail(\''+e.id+'\')">'+
-      '<div class="emp-card-top"><div class="emp-avatar">'+empIcon(e.icon)+'</div>'+
+      '<div class="emp-card-top"><div class="emp-avatar"><span class="emp-avatar-ic">'+empIcon(e.icon)+'</span><span class="emp-avatar-nm">'+empEsc(e.name)+'</span></div>'+
         '<div><div class="emp-name">'+empEsc(e.name)+'</div><div class="emp-role">'+empEsc(e.role)+'</div></div></div>'+
       '<div class="emp-desc">'+empEsc(e.desc)+'</div>'+
       '<div class="emp-tags">'+tags+'</div>'+
@@ -9420,13 +9424,14 @@ function openEmployeeZone(){
   }).join('');
   $('#viewEmployeeZone').innerHTML =
     '<div class="emp-hero">'+
-      '<span class="emp-hero-eyebrow">'+empIcon('i-bot')+' 未来实验室 · 数字员工招募区</span>'+
+      '<span class="emp-hero-eyebrow">'+empIcon('i-bot')+' 未来实验室 · 倒模类目数字员工招募区</span>'+
       '<div class="emp-hero-title">招募你的数字员工</div>'+
-      '<div class="emp-hero-tagline">每个数字员工都内置了本类目的 <b>真实数据源知识库</b>、<b>岗位 SOP 技能</b> 与 <b>标准输出方式</b>。点击「招募」，我们会把 TA 的知识库 + 技能 + system prompt 打包成一个 <b>.zip</b> 文件——你把它交给自己的 AI 读取，AI 就变成这名懂你业务的数字员工，帮你在本地处理工作。</div>'+
+      '<div class="emp-hero-sub">倒模类目专属 · 7 位懂倒模业务的数字员工已就位</div>'+
+      '<div class="emp-hero-tagline">本招募区的数字员工全部围绕 <b>倒模类目</b> 构建——TA 们的知识库、技能与标准输出，都来自倒模品类的真实数据源与一线运营实践。每个员工都内置了本类目的 <b>真实数据源知识库</b>、<b>岗位 SOP 技能</b> 与 <b>标准输出方式</b>。点击「招募」，我们会把 TA 的知识库 + 技能 + system prompt 打包成一个 <b>.zip</b> 文件——你把它交给自己的 AI 读取，AI 就变成这名懂倒模业务的数字员工，帮你在本地处理工作。</div>'+
       '<div class="emp-note">'+
         '<span class="pill">按 5 维度打包：身份 / 知识库 / 技能SOP / 方法逻辑 / 输出结构</span>'+
         '<span class="pill">含 run.js 本地运行脚手架 · 任意 OpenAI 兼容模型</span>'+
-        '<span class="pill">当前 7 名 v1 员工（与 AI 办公全景同源）</span>'+
+        '<span class="pill">当前 7 名 倒模类目 数字员工</span>'+
       '</div>'+
     '</div>'+
     '<div class="emp-grid">'+cards+'</div>';
@@ -9443,7 +9448,7 @@ function openEmployeeDetail(id){
   bd.innerHTML =
     '<div class="emp-modal" role="dialog" aria-modal="true">'+
       '<div class="emp-modal-head">'+
-        '<div class="emp-avatar">'+empIcon(e.icon)+'</div>'+
+        '<div class="emp-avatar"><span class="emp-avatar-ic">'+empIcon(e.icon)+'</span><span class="emp-avatar-nm">'+empEsc(e.name)+'</span></div>'+
         '<div><div class="emp-mh-name">'+empEsc(e.name)+'</div><div class="emp-mh-role">'+empEsc(e.role)+'</div></div>'+
         '<button class="emp-mh-close" onclick="closeEmployeeModal()">✕</button>'+
       '</div>'+
