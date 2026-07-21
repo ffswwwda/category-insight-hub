@@ -1516,6 +1516,66 @@ body.dark .lab-status{color:#fbbf24}
 .eo-pct{font-weight:800;color:var(--accent);font-size:13px}
 .eo-footer{font-size:10.5px;color:var(--muted);line-height:1.5;background:rgba(0,212,255,.05);padding:8px 10px;border-radius:7px;margin-top:2px}
 .eo-empty{font-size:11.5px;color:var(--muted)}
+.eo-footer{display:flex;flex-direction:column;gap:7px}
+.eo-footer-text{font-size:10.5px;color:var(--muted);line-height:1.5}
+.eo-detail-btn{align-self:flex-end;margin-top:2px;padding:7px 18px;font-size:11.5px}
+
+/* 完整方案详情面板 */
+.pd-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.pd-modal{width:720px;max-width:95vw;max-height:88vh;background:var(--panel-solid);border:1px solid var(--border);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.pd-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
+.pd-title{font-size:15px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px}
+.pd-head .sf-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
+.pd-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 16px;gap:2px;overflow-x:auto}
+.pd-tab{padding:9px 14px;font-size:11.5px;font-weight:600;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s}
+.pd-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.pd-tab:hover:not(.active){color:var(--ink-2)}
+.pd-body{flex:1;overflow-y:auto;padding:16px 20px}
+.pd-pane{animation:pdFadeIn .2s ease}
+@keyframes pdFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* 数据源看板 */
+.pd-src-card{background:var(--glass-bg);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:11px}
+.pd-src-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.pd-src-name{font-size:13px;font-weight:700;color:var(--ink)}
+.pd-src-meta{font-size:10.5px;color:var(--muted)}
+.pd-src-status{font-size:10px;font-weight:700;margin-left:auto}
+.pd-filter-label{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.3px;margin:8px 0 5px;text-transform:uppercase}
+.pd-filter-body{}
+.pd-filter-row{display:flex;align-items:baseline;gap:8px;font-size:11.5px;padding:3px 0}
+.pd-fk{color:var(--muted);min-width:70px;flex-shrink:0;font-size:10.5px}
+.pd-fv{color:var(--ink-2);word-break:break-all}
+.pd-stats{display:flex;gap:14px;margin-top:7px;padding-top:7px;border-top:1px dashed var(--border)}
+.pd-stat{font-size:11px;color:var(--ink-2)}
+.pd-stat b{color:var(--accent)}
+.pd-no-filter{font-size:11.5px;color:var(--muted);font-style:italic}
+
+/* 分析框架 */
+.pd-fw-card{background:var(--glass-bg);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:10px}
+.pd-fw-name{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:5px}
+.pd-fw-desc{font-size:11.5px;color:var(--ink-2);line-height:1.6}
+.pd-fw-steps{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.pd-fw-step{font-size:10px;color:var(--accent);background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.22);padding:2px 8px;border-radius:6px}
+
+/* 分析链路 */
+.pd-chain-step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.pd-chain-step:last-child{border-bottom:none}
+.pd-chain-num{width:28px;height:28px;border-radius:50%;background:var(--rad-grad);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pd-chain-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.pd-chain-desc{font-size:11.5px;color:var(--ink-2);line-height:1.55}
+
+/* 总结结论 */
+.pd-conc-item{font-size:11.5px;color:var(--ink-2);line-height:1.65;padding:9px 12px;background:var(--glass-bg);border-radius:9px;border-left:3px solid var(--accent);margin-bottom:7px}
+
+/* 导出清单 */
+.pd-pkg-item{display:flex;gap:11px;padding:11px 13px;background:var(--glass-bg);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;align-items:flex-start}
+.pd-pkg-icon{flex-shrink:0;color:var(--accent);line-height:0}
+.pd-pkg-info b{font-size:12px;font-weight:700;color:var(--ink);display:block;margin-bottom:3px}
+.pd-pkg-info p{font-size:11px;color:var(--ink-2);margin:0;line-height:1.5}
+.pd-export-actions{display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.pd-export-actions .ghost{flex:1}
+.pd-empty{text-align:center;padding:30px 0;color:var(--muted);font-size:12px}
+
 .export-main{width:100%;padding:12px;font-size:13px;font-weight:700}
 .analysis-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .an-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--border);
@@ -8416,13 +8476,8 @@ function renderStructPanel(p){
   });
   actHtml+='</div></div>';
 
-  // 基础分析结果（简化版 skill 自动产出，右栏展示）
-  var anHtml='<div class="struct-section"><div class="ss-head">基础分析结果（简化版 · skill 自动产出）</div>'+
-    '<div class="analysis-grid">'+
-      '<div class="an-card"><div class="an-h">需求四象限</div><div id="quadBox" class="an-body"></div></div>'+
-      '<div class="an-card"><div class="an-h">细分市场</div><div id="segBox" class="an-body"></div></div>'+
-      '<div class="an-card"><div class="an-h">购买旅程</div><div id="journeyBox" class="an-body"></div></div>'+
-    '</div></div>';
+  // 方案简要总结（右栏，替代原"基础分析结果"）
+  var anHtml='<div class="struct-section"><div class="ss-head">方案简要总结</div><div id="summaryBox" class="eo-summary"></div></div>';
 
   // 建议交叉分析的数据源（左栏，数据源下方）
   var sugSrcHtml='<div class="struct-section"><div class="ss-head">建议交叉分析的数据源</div><div id="suggestSources" class="sg-list"><span class="sg-empty">加载中...</span></div></div>';
@@ -8472,6 +8527,7 @@ function renderStructPanel(p){
   renderSegments(p);
   renderJourney(p);
   renderExportOverview(p);
+  renderSummaryBox(p);
   var _lz = sp.querySelector('.struct-col-left .lf-zone');
   if(_lz) renderLfBody(_lz); // 领先用户专区
 }
@@ -8786,12 +8842,20 @@ function openSourceFilter(sid){
       '<div class="sf-foot">'+
         '<span class="sf-sel-count">已选 <b id="'+fid+'_cnt">0</b> 项筛选条件</span>'+
         '<button class="sf-btn ghost" onclick="resetSourceFilters(\''+sid+'\')">重置</button>'+
-        '<button class="sf-btn primary" onclick="applyAndPreview(\''+sid+'\')">应用筛选并查看结果</button>'+
+        '<button class="sf-btn primary" onclick="confirmApplyFilter(\''+sid+'\')">应用筛选并查看结果</button>'+
       '</div>'+
     '</div>';
   document.body.appendChild(bd);
   bindFilterInputs(sid);
   updateFilterCount(sid);
+  // 若已有筛选状态 → 回填筛选项 + 自动跳到预览 tab（真筛选）
+  var p=getPurpose(state.ws,state.purposeId);
+  if(p && p._srcFilters && p._srcFilters[sid]){
+    restoreFilterInputs(sid, p._srcFilters[sid].filters);
+    updateFilterCount(sid);
+    // 延迟切预览，确保 DOM 已就位
+    setTimeout(function(){ applyAndPreview(sid); }, 30);
+  }
 }
 
 function switchSfTab(sid,tab){
@@ -8801,6 +8865,9 @@ function switchSfTab(sid,tab){
   var pp=document.getElementById('srcFilt_'+sid+'_pane_preview');
   if(pf)pf.style.display = (tab==='filter')?'block':'none';
   if(pp)pp.style.display = (tab==='preview')?'block':'none';
+  // 同步底部按钮文字
+  var btn=modal.querySelector('.sf-footer .sf-btn.primary');
+  if(btn) btn.textContent=(tab==='filter')?'应用筛选并查看结果':'确定，应用筛选';
 }
 
 function buildRichFilterDefs(s){
@@ -8879,6 +8946,30 @@ function bindFilterInputs(sid){
   }
 }
 
+// 从已保存的筛选状态回填输入框（供 openSourceFilter 已筛选时调用）
+function restoreFilterInputs(sid, filters){
+  var fid='srcFilt_'+sid, modal=document.getElementById(fid);
+  if(!modal || !filters) return;
+  Object.keys(filters).forEach(function(g){
+    var vals=filters[g];
+    modal.querySelectorAll('.sf-cb[data-group="'+g+'"]').forEach(function(cb){
+      cb.checked=vals.indexOf(cb.value)>=0;
+    });
+    modal.querySelectorAll('.sf-sel[data-group="'+g+'"]').forEach(function(sel){
+      sel.value=vals[0]||'all';
+    });
+    modal.querySelectorAll('.sf-text[data-group="'+g+'"]').forEach(function(inp){
+      inp.value=vals[vals.length-1]||'';
+    });
+    // range inputs
+    var rangeInps=modal.querySelectorAll('.sf-inp[data-group="'+g+'"]');
+    rangeInps.forEach(function(inp){
+      var minIdx=inp.dataset.min==='1'?0:(inp.dataset.min==='2'?1:-1);
+      if(minIdx>=0 && vals[minIdx]) inp.value=vals[minIdx];
+    });
+  });
+}
+
 function updateFilterCount(sid){
   var fid='srcFilt_'+sid, modal=document.getElementById(fid);
   if(!modal)return;
@@ -8931,6 +9022,20 @@ function applyAndPreview(sid){
   switchSfTab(sid,'preview');
 }
 
+// 统一按钮：筛选条件tab→收集筛选项+切预览；预览tab→确认保存+关弹窗
+function confirmApplyFilter(sid){
+  var modal=document.getElementById('srcFilt_'+sid);
+  if(!modal)return;
+  var prevTab=modal.querySelector('.sf-tab[data-tab="preview"]');
+  // 如果当前在筛选条件 tab → 切到预览
+  if(prevTab && !prevTab.classList.contains('active')){
+    applyAndPreview(sid);
+    return;
+  }
+  // 已在预览 tab → 确认保存
+  confirmSourceFilter(sid);
+}
+
 function buildPreviewPanel(s,filters,sid){
   var rows=getMockSampleRows(s,5);
   var total = s.records? parseInt(String(s.records).replace(/[^\d]/g,''))||0 : 0;
@@ -8955,8 +9060,7 @@ function buildPreviewPanel(s,filters,sid){
     +'<div class="pv-match"><span class="pv-num">'+matchN.toLocaleString()+'</span><span class="pv-unit">条匹配记录</span>'+(total>0?'<span class="pv-badge">占总量 '+pct+'%</span>':'')+'</div>'
     +'<div class="pv-stats">'+stats+'</div>'
     +'<div class="pv-table-wrap"><table class="pv-table"><thead><tr>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>'
-    +'<div class="pv-note">展示前 '+rows.length+' 条样例 · 完整数据请在对应数据源看板中查看（接入真实数据后此处为实时筛选结果）</div>'
-    +(sid ? '<div class="pv-actions"><button class="sf-btn primary" onclick="confirmSourceFilter(\''+sid+'\')">确定，应用筛选</button></div>' : '');
+    +'<div class="pv-note">展示前 '+rows.length+' 条样例 · 完整数据请在对应数据源看板中查看（接入真实数据后此处为实时筛选结果）</div>';
 }
 
 function buildStatBars(s,filters){
@@ -9666,7 +9770,230 @@ function renderExportOverview(p){
       '<div class="eo-label">预估达成度</div>'+
       '<div class="eo-val"><div class="eo-bar-wrap"><div class="eo-bar" style="width:'+matchScore+'%"></div></div><span class="eo-pct">'+matchScore+'%</span></div>'+
     '</div>'+
-    '<div class="eo-footer">导出方案包将包含：数据源文档 · 分析框架 Skill · AI 提示词 · 筛选条件</div>';
+    '<div class="eo-footer">'+
+      '<div class="eo-footer-text">导出方案包将包含：数据源文档 · 分析框架 Skill · AI 提示词 · 筛选条件</div>'+
+      '<button class="sf-btn primary eo-detail-btn" onclick="openPlanDetailModal()">查看完整方案</button>'+
+    '</div>';
+}
+
+// ===== 完整方案详情面板 =====
+function openPlanDetailModal(){
+  var p=getPurpose(state.ws,state.purposeId); if(!p)return;
+  // 去掉旧面板
+  var old=document.getElementById('planDetailModal');
+  if(old){ old.parentNode.removeChild(old); return; }
+
+  var steps=(p.methods||'').split('/').map(function(m){return m.trim();}).filter(Boolean);
+  var fwIds=state.selectedFrameworks||[];
+
+  // ---- 1. 数据源筛选看板 ----
+  var srcDetailHtml='';
+  (p.sources||[]).forEach(function(sid){
+    var s=DATA.sources[sid]; if(!s)return;
+    var pf=p._srcFilters&&p._srcFilters[sid];
+    var filterRows='';
+    if(pf && Object.keys(pf.filters).length>0){
+      Object.keys(pf.filters).forEach(function(k){
+        var vals=pf.filters[k];
+        filterRows+='<div class="pd-filter-row"><span class="pd-fk">'+escHtml(k)+'</span><span class="pd-fv">'+escHtml(vals.join(', '))+'</span></div>';
+      });
+      // 模拟统计
+      var total=s.records?parseInt(String(s.records).replace(/[^\d]/g,''))||0:0;
+      var baseN=total>0?total:240;
+      var condN=Object.keys(pf.filters).length;
+      var matchN=Math.max(3,Math.round(baseN*Math.pow(0.72,condN)));
+      var pct=total>0?Math.round(matchN/total*100):0;
+      filterRows+='<div class="pd-stats"><span class="pd-stat"><b>'+matchN.toLocaleString()+'</b> 条匹配</span><span class="pd-stat">占 '+pct+'%</span></div>';
+    } else {
+      filterRows='<div class="pd-no-filter">未设置筛选条件（将使用全量数据）</div>';
+    }
+    srcDetailHtml+=
+      '<div class="pd-src-card">'+
+        '<div class="pd-src-head">'+
+          '<span class="pd-src-name">'+escHtml(s.name)+'</span>'+
+          '<span class="pd-src-meta">'+escHtml(s.type)+' · '+escHtml(s.market)+(s.records?' · '+s.records+' 条':'')+'</span>'+
+          '<span class="pd-src-status" style="color:'+(s.status==='ready'?'#34c759':'#f5a623')+'">'+(s.status==='ready'?'已就绪':'待接入')+'</span>'+
+        '</div>'+
+        (pf&&Object.keys(pf.filters).length>0?'<div class="pd-filter-label">已应用的筛选条件</div>':'')+
+        '<div class="pd-filter-body">'+filterRows+'</div>'+
+      '</div>';
+  });
+  if(!srcDetailHtml) srcDetailHtml='<div class="pd-empty">暂无数据源</div>';
+
+  // ---- 2. 分析框架核心思想 ----
+  var fwDetailHtml='';
+  fwIds.forEach(function(fid){
+    var f=DATA.frameworks.find(function(x){return x.id===fid;});
+    if(!f)return;
+    fwDetailHtml+=
+      '<div class="pd-fw-card">'+
+        '<div class="pd-fw-name">'+escHtml(f.name)+'</div>'+
+        '<div class="pd-fw-desc">'+escHtml(f.desc||f.description||'该框架用于结构化分析用户反馈数据，输出可行动的洞察')+'</div>'+
+        (f.steps?'<div class="pd-fw-steps">'+f.steps.map(function(st,i){return '<span class="pd-fw-step">'+(i+1)+'.'+escHtml(st)+'</span>';}).join('')+'</div>':'')+
+      '</div>';
+  });
+  if(!fwDetailHtml) fwDetailHtml='<div class="pd-empty">未选择分析框架</div>';
+
+  // ---- 3. 分析链路步骤说明 ----
+  var chainHtml=steps.map(function(st,i){
+    var desc='';
+    switch(st.trim()){
+      case '动机编码': desc='从原始评论/反馈中提取用户的购买动机、使用场景和情感倾向'; break;
+      case '场景聚类': desc='将提取的动机按场景维度聚合，识别高频需求模式'; break;
+      case '痛点映射': desc='将负面评论中的问题点映射到产品功能维度，定位改进优先级'; break;
+      case '机会评分': desc='综合市场规模×竞争强度×自身能力，量化每个细分机会的分值'; break;
+      default: desc='基于当前目的执行该分析步骤，产出中间结果供下一步使用';
+    }
+    return '<div class="pd-chain-step"><div class="pd-chain-num">'+(i+1)+'</div><div class="pd-chain-body"><div class="pd-chain-name">'+escHtml(st)+'</div><div class="pd-chain-desc">'+desc+'</div></div></div>';
+  }).join('');
+  if(!chainHtml) chainHtml='<div class="pd-empty">暂无分析链路</div>';
+
+  // ---- 4. 总结结论 ----
+  var readySrcCount=p.sources.filter(function(sid){var s=DATA.sources[sid];return s&&s.status==='ready';}).length;
+  var score=Math.min(98,30+readySrcCount*12+fwIds.length*8+steps.length*3);
+  var conclusions=[];
+  if(readySrcCount===0) conclusions.push('当前数据源均待接入，建议先完成数据源接入后再运行完整分析');
+  else if(readySrcCount<p.sources.length) conclusions.push(readySrcCount+'/'+p.sources.length+' 个数据源已就绪，部分分析结果可能受限');
+  else conclusions.push('所有数据源均已就绪，可以运行完整分析流程');
+  if(fwIds.length===0) conclusions.push('尚未选择分析框架，系统将使用默认分析方法');
+  if(steps.length<3) conclusions.push('分析链路较短，可能无法覆盖完整的洞察路径');
+  var hasFilter=p.sources.some(function(sid){return p._srcFilters&&p._srcFilters[sid];});
+  if(hasFilter) conclusions.push('已对部分数据源设置筛选条件，分析结果将聚焦于筛选后的数据子集');
+  conclusions.push('预估达成度 '+score+'%，'+(score>=75?'当前配置较完善，导出后可直接用于AI智能体执行':score>=50?'配置基本可用，建议补充更多数据源或调整筛选':'配置偏弱，建议增加数据源和分析框架'));
+
+  var summaryHtml=conclusions.map(function(c){
+    return '<div class="pd-conc-item">'+escHtml(c)+'</div>';
+  }).join('');
+
+  // ---- 5. 导出包清单 ----
+  var pkgItems=[
+    {icon:'i-doc',name:'数据源文档',desc:'每个数据源的说明文件（字段定义、更新频率、样本格式）'},
+    {icon:'i-layers',name:'分析框架 Skill',desc:fwIds.map(function(fid){var f=DATA.frameworks.find(function(x){return x.id===fid;});return f?f.name:fid;}).join(' / ')||'（选择框架后生成）'},
+    {icon:'i-bot',name:'AI 提示词',desc:'针对当前目的定制的AI提示词，可直接输入给智能体执行'},
+    {icon:'i-sliders',name:'筛选条件',desc:hasFilter?'已保存的筛选条件JSON（可用于复现筛选结果）':'（设置筛选后自动包含）'}
+  ];
+  var pkgHtml=pkgItems.map(function(item){
+    return '<div class="pd-pkg-item"><span class="pd-pkg-icon">'+empIcon(item.icon)+'</span><div class="pd-pkg-info"><b>'+escHtml(item.name)+'</b><p>'+escHtml(item.desc)+'</p></div></div>';
+  }).join('');
+
+  // 组装面板
+  var bd=document.createElement('div');
+  bd.id='planDetailModal';
+  bd.className='pd-overlay';
+  bd.onclick=function(ev){if(ev.target===bd)closePlanDetailModal();};
+  bd.innerHTML=
+    '<div class="pd-modal">'+
+      '<div class="pd-head">'+
+        '<div class="pd-title">'+empIcon('i-target')+' 完整方案 — '+escHtml(p.name)+'</div>'+
+        '<button class="sf-close" onclick="closePlanDetailModal()">✕</button>'+
+      '</div>'+
+      '<div class="pd-tabs">'+
+        '<button class="pd-tab active" data-pdtab="sources" onclick="switchPdTab(\'sources\',this)">数据源看板</button>'+
+        '<button class="pd-tab" data-pdtab="framework" onclick="switchPdTab(\'framework\',this)">分析框架</button>'+
+        '<button class="pd-tab" data-pdtab="chain" onclick="switchPdTab(\'chain\',this)">分析链路</button>'+
+        '<button class="pd-tab" data-pdtab="summary" onclick="switchPdTab(\'summary\',this)">总结结论</button>'+
+        '<button class="pd-tab" data-pdtab="export" onclick="switchPdTab(\'export\',this)">导出清单</button>'+
+      '</div>'+
+      '<div class="pd-body">'+
+        '<div class="pd-pane active" id="pd_pane_sources">'+srcDetailHtml+'</div>'+
+        '<div class="pd-pane" id="pd_pane_framework" style="display:none">'+fwDetailHtml+'</div>'+
+        '<div class="pd-pane" id="pd_pane_chain" style="display:none">'+chainHtml+'</div>'+
+        '<div class="pd-pane" id="pd_pane_summary" style="display:none">'+summaryHtml+'</div>'+
+        '<div class="pd-pane" id="pd_pane_export" style="display:none">'+pkgHtml+
+          '<div class="pd-export-actions">'+
+            '<button class="export-ai export-main" onclick="downloadPlanPackage()">下载方案包</button>'+
+            '<button class="sf-btn ghost" onclick="copyPlanPrompt()">复制提示词</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  document.body.appendChild(bd);
+}
+
+function closePlanDetailModal(){
+  var el=document.getElementById('planDetailModal');
+  if(el) el.parentNode.removeChild(el);
+}
+
+function switchPdTab(tab,btn){
+  var modal=document.getElementById('planDetailModal'); if(!modal)return;
+  modal.querySelectorAll('.pd-tab').forEach(function(b){ b.classList.toggle('active', b.dataset.pdtab===tab); });
+  modal.querySelectorAll('.pd-pane').forEach(function(p){ p.style.display=p.id==='pd_pane_'+tab?'':'none'; });
+}
+
+// ===== 真实导出：生成并下载方案包内容 =====
+function downloadPlanPackage(){
+  var p=getPurpose(state.ws,state.purposeId); if(!p)return;
+  var steps=(p.methods||'').split('/').map(function(m){return m.trim();}).filter(Boolean);
+  var fwIds=state.selectedFrameworks||[];
+  var now=new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
+
+  // 1. 数据源文档
+  var srcDocs=(p.sources||[]).map(function(sid){
+    var s=DATA.sources[sid]; if(!s)return '';
+    var pf=p._srcFilters&&p._srcFilters[sid];
+    return '## '+s.name+'\n- 类型: '+s.type+' | 市场: '+s.market+(s.records?' | 记录数: '+s.records:'')+' | 状态: '+s.status+'\n- 说明: '+(s.desc||'—')+(pf&&Object.keys(pf.filters).length>0?'\n- 筛选条件:\n'+Object.keys(pf.filters).map(function(k){return '  - '+k+': '+pf.filters[k].join(', ');}).join('\n'):'');
+  }).join('\n\n');
+
+  // 2. 分析框架 Skill 文档
+  var fwDoc=fwIds.map(function(fid){
+    var f=DATA.frameworks.find(function(x){return x.id===fid;});
+    if(!f)return '';
+    return '## '+f.name+'\n'+(f.desc||f.description||'')+(f.steps?'\n\n步骤:\n'+f.steps.map(function(s,i){return (i+1)+'. '+s;}).join('\n'):'');
+  }).join('\n\n') || '(未选择分析框架，建议在「建议使用的分析框架」中选择)';
+
+  // 3. AI 提示词
+  var promptText='你是倒模类目数据分析专家。以下是当前的分析任务配置：\n\n'+
+    '【任务目的】\n'+p.name+'\n'+
+    (p.desc?'\n【目的说明】\n'+p.desc+'\n':'')+
+    '\n【数据源】('+p.sources.length+'个)\n'+(p.sources||[]).map(function(sid){var s=DATA.sources[sid];return '- '+s.name+' ('+s.type+'/'+s.market+(s.records?', '+s.records+'条':'')+')';}).join('\n')+
+    '\n\n【分析框架】\n'+(fwIds.length?fwIds.map(function(fid){var f=DATA.frameworks.find(function(x){return x.id===fid;});return f?f.name:fid;}).join(', '):'默认方法')+
+    '\n\n【分析链路】\n'+steps.map(function(st,i){return (i+1)+'. '+st;}).join(' → ') +
+    '\n\n【筛选条件】\n'+(p.sources||[]).map(function(sid){var pf=p._srcFilters&&p._srcFilters[sid];if(!pf||!Object.keys(pf.filters).length)return '';var s=DATA.sources[sid];return s.name+':\n'+Object.keys(pf.filters).map(function(k){return '  '+k+' = ['+pf.filters[k].join(', ')+']';}).join('\n');}).filter(Boolean).join('\n')+
+    '\n\n请基于以上配置，按分析链路逐步执行，给出结构化的分析报告。';
+
+  // 4. 筛选条件 JSON
+  var filtJson={};
+  (p.sources||[]).forEach(function(sid){
+    var pf=p._srcFilters&&p._srcFilters[sid];
+    if(pf && Object.keys(pf.filters).length>0) filtJson[sid]=pf.filters;
+  });
+
+  // 组装为单个文本文件（浏览器环境无法真正打zip，合并为一个 .txt 方案包）
+  var packageContent=
+    '╔══════════════════════════════════════╗\n'+
+    '║   倒模类目 · 数据分析方案包           ║\n'+
+    '║   目的: '+p.name.padEnd(28)+'║\n'+
+    '║   生成时间: '+new Date().toLocaleString('zh-CN').padEnd(20)+'║\n'+
+    '╚══════════════════════════════════════╝\n\n'+
+    '═══ 1. 数据源文档 ═══\n\n'+srcDocs+'\n\n'+
+    '═══ 2. 分析框架 Skill ═══\n\n'+fwDoc+'\n\n'+
+    '═══ 3. AI 提示词 ═══\n\n'+promptText+'\n\n'+
+    '═══ 4. 筛选条件 (JSON) ═══\n\n'+JSON.stringify(filtJson,null,2)+'\n';
+
+  // 触发下载
+  var blob=new Blob([packageContent],{type:'text/plain;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='方案包-'+p.name.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g,'')+'-'+now+'.txt';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('方案包已开始下载');
+}
+
+function copyPlanPrompt(){
+  var p=getPurpose(state.ws,state.purposeId); if(!p)return;
+  var steps=(p.methods||'').split('/').map(function(m){return m.trim();}).filter(Boolean);
+  var fwIds=state.selectedFrameworks||[];
+  var promptText='你是倒模类目数据分析专家。任务目的：'+p.name+
+    '。数据源：'+(p.sources||[]).map(function(sid){var s=DATA.sources[sid];return s?s.name:sid;}).join(', ')+
+    '。分析框架：'+(fwIds.length?fwIds.map(function(fid){var f=DATA.frameworks.find(function(x){return x.id===fid;});return f?f.name:fid;}).join(', '):'默认')+
+    '。请按以下链路分析：'+steps.join(' → ')+'。';
+  navigator.clipboard.writeText(promptText).then(
+    function(){toast('提示词已复制');},
+    function(){/* fallback */}
+  );
 }
 
 function closeExportModal(){$('#exportModal').classList.remove('show')}
