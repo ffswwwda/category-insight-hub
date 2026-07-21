@@ -1171,7 +1171,7 @@ body.dark .lab-status{color:#fbbf24}
 
 /* Source/Insight cards in structured mode */
 .s-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:13px 15px;margin-bottom:9px;transition:all .25s var(--rad-easing);position:relative;overflow:hidden}
+  padding:13px 15px;margin-bottom:9px;transition:all .25s var(--rad-easing);position:relative;overflow:hidden;cursor:pointer}
 .s-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rad-grad);
   opacity:0;transform:scaleX(0);transform-origin:left;transition:all .25s ease}
 .s-card:hover{border-color:rgba(0,195,243,.4);box-shadow:var(--shadow-sm);transform:translateY(-3px)}
@@ -1179,9 +1179,9 @@ body.dark .lab-status{color:#fbbf24}
 .sc-name{font-size:13px;font-weight:700;margin-bottom:3px}
 .sc-type{font-size:10.5px;color:var(--muted);margin-bottom:6px}
 .sc-concl{font-size:11.5px;color:var(--ink-2);line-height:1.5;margin-bottom:8px}
-.sc-to-canvas{float:right;font-size:11px;font-weight:700;color:var(--accent);cursor:pointer;padding:3px 10px;
-  border:1px solid rgba(0,195,243,.25);border-radius:8px;transition:all .15s}
-.sc-to-canvas:hover{background:rgba(0,195,243,.12);border-color:var(--accent)}
+.sc-to-canvas{float:right;font-size:11px;font-weight:700;color:#fff;cursor:pointer;padding:4px 12px;
+  background:linear-gradient(135deg,#00b8d4,#0097a7);border:1px solid rgba(0,184,212,.45);border-radius:8px;transition:all .15s;box-shadow:0 2px 8px rgba(0,184,212,.18)}
+.sc-to-canvas:hover{background:linear-gradient(135deg,#00c3f3,#00acc1);box-shadow:0 3px 12px rgba(0,195,243,.28)}
 
 .i-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
   padding:13px 15px;margin-bottom:9px;border-left:3px solid var(--purple);transition:all .25s var(--rad-easing)}
@@ -2059,6 +2059,59 @@ body.dark .lab-status{color:#fbbf24}
 body.dark .emp-v1{color:#fbbf24}
 .emp-link-3d{font-size:11.5px;color:var(--accent);text-decoration:none;font-weight:600}
 .emp-link-3d:hover{text-decoration:underline}
+
+/* ===== 员工档案 V2（可视化增强预览 · 小灵） ===== */
+.emp-modal.v2{max-width:680px}
+.emp-modal.v2 .emp-modal-head{
+  background:linear-gradient(120deg, color-mix(in srgb, var(--emp-ac) 16%, var(--panel-solid)), var(--panel-solid) 72%);
+  border-bottom:1px solid var(--border);
+}
+.emp-modal.v2 .emp-mh-role{color:var(--emp-ac)}
+.emp-mh-ribbon{display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:3px 11px;border-radius:999px;font-size:11.5px;font-weight:800;color:var(--emp-ac);background:color-mix(in srgb,var(--emp-ac) 12%, transparent);border:1px solid color-mix(in srgb,var(--emp-ac) 34%, transparent);text-transform:none;letter-spacing:0}
+.emp-mh-ribbon svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2}
+.emp-intro-v2{margin:0;padding:14px 16px;border-radius:13px;background:color-mix(in srgb,var(--emp-ac) 7%, var(--panel-solid));border:1px solid color-mix(in srgb,var(--emp-ac) 18%, transparent);border-left:3px solid var(--emp-ac)}
+.emp-intro-v2 .hi{font-size:14.5px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.emp-intro-v2 .tx{font-size:13px;line-height:1.65;color:var(--ink-2)}
+.emp-sec-h.v2{color:var(--emp-ac)}
+.emp-cap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.emp-cap-card{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:12px;background:var(--glass-bg);border:1px solid var(--border);transition:border-color .2s,transform .2s}
+.emp-cap-card:hover{border-color:var(--emp-ac);transform:translateY(-2px)}
+.emp-cap-no{flex-shrink:0;width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;background:var(--emp-ac)}
+.emp-cap-t{font-size:12.5px;font-weight:650;line-height:1.4;color:var(--ink)}
+.emp-out-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.emp-out-card{display:flex;align-items:flex-start;gap:9px;padding:11px 12px;border-radius:12px;background:var(--glass-bg);border:1px solid var(--border)}
+.emp-out-ic{flex-shrink:0;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--emp-ac);background:color-mix(in srgb,var(--emp-ac) 12%, transparent)}
+.emp-out-ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2}
+.emp-out-t{font-size:12px;line-height:1.4;color:var(--ink-2)}
+.emp-ai-callout{margin:0;padding:13px 15px;border-radius:12px;background:linear-gradient(135deg, color-mix(in srgb,var(--emp-ac) 9%, transparent), color-mix(in srgb,#a855f7 8%, transparent));border:1px solid color-mix(in srgb,var(--emp-ac) 28%, transparent);font-size:12.5px;line-height:1.65;color:var(--ink-2)}
+@media (max-width:560px){.emp-cap-grid{grid-template-columns:1fr}}
+
+/* ===== 数据源筛选弹窗 ===== */
+.sf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:9600;display:flex;align-items:center;justify-content:center;padding:20px;animation:empFade .2s ease}
+.sf-modal{background:var(--panel-solid);border:1px solid var(--border);border-radius:16px;width:100%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 28px 70px rgba(0,0,0,.38)}
+.sf-head{display:flex;gap:14px;align-items:flex-start;padding:18px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sf-name{font-size:17px;font-weight:900;color:var(--ink)}
+.sf-meta{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.45;max-width:420px}
+.sf-close{margin-left:auto;flex-shrink:0;width:30px;height:30px;border-radius:9px;border:1px solid var(--border);background:var(--glass-bg);color:var(--muted);cursor:pointer;font-size:15px}
+.sf-close:hover{color:var(--ink);border-color:var(--accent)}
+.sf-body{padding:16px 20px;overflow-y:auto;flex:1}
+.sf-group{margin-bottom:16px}
+.sf-g-label{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;color:var(--accent);letter-spacing:.3px;margin-bottom:8px;text-transform:uppercase}
+.sf-g-label svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sf-g-body{display:flex;flex-wrap:wrap;gap:7px}
+.sf-opt{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:9px;border:1px solid var(--border);background:var(--glass-bg);cursor:pointer;font-size:12px;color:var(--ink-2);transition:all .15s;user-select:none}
+.sf-opt:hover{border-color:rgba(0,195,243,.35)}
+.sf-opt input[type=checkbox]{display:none}
+.sf-opt input:checked+span{color:#00b8d4;font-weight:700}
+.sf-opt:has(input:checked){background:color-mix(in srgb, #00b8d4 10%, var(--glass-bg));border-color:rgba(0,184,212,.35)}
+.sf-foot{display:flex;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0}
+.sf-sel-count{font-size:11.5px;color:var(--muted);flex:1}
+.sf-sel-count b{color:var(--accent)}
+.sf-btn{padding:9px 18px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--border);transition:all .15s}
+.sf-btn.ghost{background:var(--glass-bg);color:var(--ink-2)}
+.sf-btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.sf-btn.primary{background:linear-gradient(135deg,#00b8d4,#0097a7);color:#fff;border-color:transparent;box-shadow:0 2px 10px rgba(0,184,212,.2)}
+.sf-btn.primary:hover{box-shadow:0 3px 14px rgba(0,184,212,.32)}
 </style>
 </head>
 <body class="dark">
@@ -8253,8 +8306,8 @@ function renderStructPanel(p){
     var s=getSource(sid);
     if(!s)return;
     var concl=s.status==='ready'?(s.hasDashboard?'248款德国商品已分析':'数据就绪'):'待接入';
-    srcHtml+='<div class="s-card">'+
-      '<button class="sc-to-canvas" onclick="addSourceToCanvas(\''+sid+'\')">+ 画布</button>'+
+    srcHtml+='<div class="s-card" onclick="openSourceFilter(\''+sid+'\')" title="点击筛选数据">'+
+      '<button class="sc-to-canvas" onclick="event.stopPropagation();addSourceToCanvas(\''+sid+'\')">+ 画布</button>'+
       '<div class="sc-name">'+escHtml(s.name)+'</div>'+
       '<div class="sc-type">'+escHtml(s.type)+' · '+escHtml(s.market)+(s.records?' · '+s.records+' 条':'')+'</div>'+
       '<div class="sc-concl">'+escHtml(concl)+'</div>'+
@@ -8594,6 +8647,159 @@ function renderDrawer(p){
     '<div class="cdi-name">空白批注</div><div class="cdi-sub">拖入画布写笔记</div>'+
   '</div>';
   $('#drawerItems').innerHTML=html;
+}
+
+// --- 数据源筛选弹窗 ---
+function openSourceFilter(sid){
+  var s=getSource(sid); if(!s) return;
+  var fid='srcFilt_'+sid;
+  var old=document.getElementById(fid);
+  if(old){ old.parentNode.removeChild(old); return; }
+
+  // 根据源类型生成筛选维度
+  var filtDefs=buildFilterDefs(s);
+  var filtHtml='';
+  filtDefs.forEach(function(f){
+    var optsHtml=f.options.map(function(o,i){
+      return '<label class="sf-opt"><input type="checkbox" class="sf-cb" data-group="'+f.key+'" value="'+escHtml(o.v)+'" '+(o.d?'checked':'')+'><span>'+escHtml(o.l)+'</span></label>';
+    }).join('');
+    filtHtml+='<div class="sf-group"><div class="sf-g-label">'+empIcon(f.icon||'i-sliders')+' '+escHtml(f.label)+'</div><div class="sf-g-body">'+optsHtml+'</div></div>';
+  });
+
+  var bd=document.createElement('div');
+  bd.id=fid; bd.className='sf-overlay';
+  bd.onclick=function(ev){ if(ev.target===bd) closeSourceFilter(sid); };
+  bd.innerHTML=
+    '<div class="sf-modal" role="dialog">'+
+      '<div class="sf-head">'+
+        '<div>'+
+          '<div class="sf-name">'+escHtml(s.name)+'</div>'+
+          '<div class="sf-meta">'+escHtml(s.type)+' · '+escHtml(s.market)+(s.records?' · '+s.records+' 条':'')+' · '+escHtml(s.desc)+'</div>'+
+        '</div>'+
+        '<button class="sf-close" onclick="closeSourceFilter(\''+sid+'\')">✕</button>'+
+      '</div>'+
+      '<div class="sf-body">'+filtHtml+'</div>'+
+      '<div class="sf-foot">'+
+        '<span class="sf-sel-count">已选 <b id="'+fid+'_cnt">0</b> 项筛选条件</span>'+
+        '<button class="sf-btn ghost" onclick="resetSourceFilters(\''+sid+'\')">重置</button>'+
+        '<button class="sf-btn primary" onclick="confirmSourceFilter(\''+sid+'\')">确认选择并加入画布</button>'+
+      '</div>'+
+    '</div>';
+  document.body.appendChild(bd);
+
+  // 绑定 checkbox 变更计数
+  updateFilterCount(sid);
+  var cbs=bd.querySelectorAll('.sf-cb');
+  cbs.forEach(function(cb){ cb.addEventListener('change',function(){ updateFilterCount(sid); }); });
+}
+
+function buildFilterDefs(s){
+  // 根据数据源类型返回不同的筛选项
+  var t=s.type||'', defs=[];
+  if(t.indexOf('评论')>=0||t.indexOf('VOC')>=0){
+    defs.push({key:'star', label:'星级评分', icon:'i-star',
+      options:[{l:'5 星',v:'5'},{l:'4 星',v:'4',d:true},{l:'3 星',v:'3',d:true},{l:'1-2 星',v:'12'}]});
+    if(s.market && s.market!=='—'){
+      var mkts=s.market.split('/').map(function(m){return m.trim();});
+      defs.push({key:'region', label:'站点/市场', icon:'i-globe',
+        options:mkts.map(function(m){return {l:m,v:m,d:true};})});
+    }
+    defs.push({key:'aspect', label:'评论维度', icon:'i-target',
+      options:[{l:'质量',v:'质量'},{l:'尺寸',v:'尺寸'},{l:'材质',v:'材质'},{l:'功能',v:'功能'},{l:'价格',v:'价格'},{l:'包装',v:'包装'},{l:'物流',v:'物流'}]});
+  }
+  else if(t.indexOf('社媒')>=0){
+    defs.push({key:'platform', label:'平台', icon:'i-phone',
+      options:[{l:'Twitter / X',v:'twitter'},{l:'Instagram',v:'instagram'},{l:'TikTok',v:'tiktok'},{l:'Reddit',v:'reddit',d:true}]});
+    defs.push({key:'sentiment', label:'情感倾向', icon:'i-smile',
+      options:[{l:'正面',v:'pos'},{l:'中性',v:'neu',d:true},{l:'负面',v:'neg'}]});
+  }
+  else if(t.indexOf('竞品')>=0){
+    defs.push({key:'comp_dim', label:'对比维度', icon:'i-bar',
+      options:[{l:'价格对比',v:'price'},{l:'功能对比',v:'feature',d:true},{l:'卖点矩阵',v:'usp'},{l:'BSR 排名',v:'bsr'}]});
+  }
+  else if(t.indexOf('访谈')>=0){
+    defs.push({key:'seg', label:'用户分群', icon:'i-users',
+      options:[{l:'重度使用者',v:'heavy',d:true},{l:'轻度尝试者',v:'light'},{l:'潜在新客',v:'potential'},{l:'流失用户',v:'churn'}]});
+    defs.push({key:'topic', label:'访谈主题', icon:'i-doc',
+      options:[{l:'使用场景',v:'scene',d:true},{l:'购买决策',v:'decision'},{l:'产品体验',v:'exp'},{l:'竞品比较',v:'compare'}]});
+  }
+  else if(t.indexOf('搜索')>=0){
+    defs.push({key:'kw_type', label:'关键词类型', icon:'i-link',
+      options:[{l:'品牌词',v:'brand'},{l:'品类词',v:'category',d:true},{l:'长尾词',v:'longtail'},{l:'问题词',v:'question'}]});
+  }
+  else if(t.indexOf('运营')>=0||t.indexOf('销售')>=0){
+    defs.push({key:'metric', label:'指标类型', icon:'i-trend',
+      options:[{l:'销量/GMV',v:'sales',d:true},{l:'转化率',v:'cvr'},{l:'复购率',v:'repurchase'},{l:'退货率',v:'return'}]});
+  }
+  else if(t.indexOf('行业')>=0||t.indexOf('趋势')>=0){
+    defs.push({key:'period', label:'时间周期', icon:'i-clock',
+      options:[{l:'近 30 天',v:'30d',d:true},{l:'近 90 天',v:'90d'},{l:'近半年',v:'6m'},{l:'全年',v:'1y'}]});
+  }
+  else if(t.indexOf('营销')>=0||t.indexOf('广告')>=0){
+    defs.push({key:'ad_metric', label:'投放指标', icon:'i-zap',
+      options:[{l:'点击率 CTR',v:'ctr',d:true},{l:'ACOS',v:'acos'},{l:'转化',v:'conv'},{l:'曝光量',v:'imp'}]});
+  }
+  else{
+    // 默认通用筛选项
+    defs.push({key:'time_range', label:'时间范围', icon:'i-clock',
+      options:[{l:'最近一周',v:'7d',d:true},{l:'最近一月',v:'30d'},{l:'最近三月',v:'90d'},{l:'全部时间',v:'all'}]});
+    defs.push({key:'status', label:'数据状态', icon:'i-box',
+      options:[{l:'已就绪',v:'ready',d:true},{l:'待接入',v:'pending'}]});
+  }
+
+  // 所有源都加关键词搜索
+  defs.push({key:'keyword', label:'关键词搜索', icon:'i-msg',
+    options:[{l:'含正向评价词',v:'pos_kw'},{l:'含负面/问题词',v:'neg_kw'},{l:'含品牌名',v:'brand_kw'}]});
+
+  return defs;
+}
+
+function updateFilterCount(sid){
+  var fid='srcFilt_'+sid;
+  var modal=document.getElementById(fid);
+  if(!modal)return;
+  var cks=modal.querySelectorAll('.sf-cb:checked');
+  document.getElementById(fid+'_cnt').textContent=cks.length;
+}
+
+function resetSourceFilters(sid){
+  var fid='srcFilt_'+sid;
+  var modal=document.getElementById(fid);
+  if(!modal)return;
+  modal.querySelectorAll('.sf-cb').forEach(function(cb){ cb.checked=false; });
+  updateFilterCount(sid);
+}
+
+function confirmSourceFilter(sid){
+  var s=getSource(sid); if(!s)return;
+  var fid='srcFilt_'+sid;
+  var modal=document.getElementById(fid);
+  if(!modal)return;
+
+  // 收集已选筛选条件
+  var selGroups={};
+  modal.querySelectorAll('.sf-cb:checked').forEach(function(cb){
+    var g=cb.dataset.group;
+    if(!selGroups[g]) selGroups[g]=[];
+    selGroups[g].push(cb.value);
+  });
+
+  // 关闭弹窗，添加到画布（带筛选信息）
+  closeSourceFilter(sid);
+  state.canvasNodes.push({
+    id:'n-src-'+sid+'-'+Date.now(),x:80+Math.random()*300,y:80+Math.random()*200,
+    type:'src',title:s.name,sub:s.records?s.records+'条':'待接入',sourceId:sid,
+    filters:Object.keys(selGroups).length>0?selGroups:null
+  });
+
+  var fcount=Object.values(selGroups).reduce(function(a,b){return a+b.length;},0);
+  saveCanvasState();renderCanvas();
+  toast((fcount>0?'已按 '+fcount+' 项筛选条件':'')+' 已添加: '+s.name);
+}
+
+function closeSourceFilter(sid){
+  var el=document.getElementById('srcFilt_'+sid);
+  if(el) el.parentNode.removeChild(el);
 }
 
 function addSourceToCanvas(sid){
@@ -9317,7 +9523,7 @@ function toast(m){ if(typeof ctoast!=='undefined'){ctoast(m);} else { console.lo
 // 结合 ai-office-3d 的 7 位同事设定；招募 = 打包知识库+技能+SOP 为 zip 给招募者自己的 AI 读取
 // ============================================================
 var EMPLOYEES = [
-  { id:'voc', name:'小灵', role:'VOC 智能打标', icon:'w-tag',
+  { id:'voc', name:'小灵', role:'VOC 智能打标', icon:'w-tag', v2:true,
     desc:'我负责给倒模类目的用户评论打维度标签——动机、场景、痛点，一条倒模真实评论穿过 9 道标签墙，盖上属于它的印章。',
     category:'倒模类目',
     methods:['规则引擎打标','9 维度标签体系','否定保护校验','频率统计与情感分析'],
@@ -9401,6 +9607,7 @@ var EMPLOYEES = [
     skills:['原理全景图','双视角切换（使用/原理）','动画演示引擎','工具映射'],
     outputs:['工具使用指南','演示步骤说明','原理图解'] }
 ];
+var EMP_ACCENT = { voc:'#00b8d4', score:'#f97316', lab:'#8b5cf6', dev:'#ec4899', idea:'#14b8a6', stress:'#ef4444', pr:'#3b82f6' };
 
 function empEsc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function empIcon(id){ return '<svg viewBox="0 0 24 24"><use href="#'+id+'"/></svg>'; }
@@ -9439,6 +9646,7 @@ function openEmployeeZone(){
 
 function openEmployeeDetail(id){
   var e = EMPLOYEES.find(function(x){return x.id===id;}); if(!e) return;
+  if(e.v2){ openEmployeeDetailV2(e); return; }
   var chips = function(arr){ return (arr||[]).map(function(t){return '<span class="emp-chip">'+empEsc(t)+'</span>';}).join(''); };
   var back = (document.getElementById('empModalBackdrop'));
   if(back) back.parentNode.removeChild(back);
@@ -9464,6 +9672,46 @@ function openEmployeeDetail(id){
         '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-zap')+' 掌握技能 <span class="emp-v1">v1 待完善</span></div><div class="emp-chips">'+chips(e.skills)+'</div></div>'+
         '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-doc')+' 输出方式 <span class="emp-v1">v1 待完善</span></div><div class="emp-chips">'+chips(e.outputs)+'</div></div>'+
         '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-bot')+' AI 协作</div><div class="emp-sec-p">'+empEsc(e.aiInfo)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-globe')+' 联动</div><div class="emp-sec-p"><a class="emp-link-3d" href="https://ffswwwda.github.io/ai-office-3d/" target="_blank" rel="noopener">在 AI 办公全景 3D 办公室与 '+empEsc(e.name)+' 见面 →</a></div></div>'+
+      '</div>'+
+      '<div class="emp-modal-foot">'+
+        '<button class="emp-btn ghost" onclick="closeEmployeeModal()">关闭</button>'+
+        '<button class="emp-btn recruit" onclick="recruitEmployee(\''+e.id+'\')">招募这名数字员工（打包 .zip）</button>'+
+      '</div>'+
+    '</div>';
+  document.body.appendChild(bd);
+  document.addEventListener('keydown', empEscKey);
+}
+function openEmployeeDetailV2(e){
+  var chips = function(arr){ return (arr||[]).map(function(t){return '<span class="emp-chip">'+empEsc(t)+'</span>';}).join(''); };
+  var ac = e.accent || EMP_ACCENT[e.id] || '#00d4ff';
+  var capCards = (e.methods||[]).map(function(m,i){
+    return '<div class="emp-cap-card"><span class="emp-cap-no">'+(i+1)+'</span><span class="emp-cap-t">'+empEsc(m)+'</span></div>';
+  }).join('');
+  var outSrc = (e.outputs && e.outputs.length) ? e.outputs : String(e.reports||'').split('、').filter(Boolean);
+  var outCards = outSrc.map(function(o){
+    return '<div class="emp-out-card"><span class="emp-out-ic">'+empIcon('i-doc')+'</span><span class="emp-out-t">'+empEsc(o)+'</span></div>';
+  }).join('');
+  var back = document.getElementById('empModalBackdrop');
+  if(back) back.parentNode.removeChild(back);
+  var bd = document.createElement('div');
+  bd.id='empModalBackdrop'; bd.className='emp-modal-backdrop';
+  bd.onclick=function(ev){ if(ev.target===bd) closeEmployeeModal(); };
+  bd.innerHTML =
+    '<div class="emp-modal v2" role="dialog" aria-modal="true" style="--emp-ac:'+ac+'">'+
+      '<div class="emp-modal-head">'+
+        '<div class="emp-avatar"><span class="emp-avatar-ic">'+empIcon(e.icon)+'</span><span class="emp-avatar-nm">'+empEsc(e.name)+'</span></div>'+
+        '<div><div class="emp-mh-name">'+empEsc(e.name)+'</div><div class="emp-mh-role">'+empEsc(e.role)+'</div>'+
+          '<span class="emp-mh-ribbon">'+empIcon('i-tag')+' '+empEsc(e.category)+'</span></div>'+
+        '<button class="emp-mh-close" onclick="closeEmployeeModal()">✕</button>'+
+      '</div>'+
+      '<div class="emp-modal-body">'+
+        '<div class="emp-intro-v2"><div class="hi">你好，我是 '+empEsc(e.name)+' · '+empEsc(e.role)+'</div><div class="tx">'+empEsc(e.desc)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h v2">'+empIcon('i-gear')+' 能力 <span class="emp-v1">已合并「能做什么 + 掌握技能」</span></div><div class="emp-cap-grid">'+capCards+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-box')+' 常用工具</div><div class="emp-chips">'+chips(e.tools)+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-link')+' 内置知识库 / 数据源</div><div class="emp-chips">'+chips(e.knowledge.concat([e.sources]))+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h v2">'+empIcon('i-doc')+' 产出成果 <span class="emp-v1">已合并「输出方式 + 报告」</span></div><div class="emp-out-grid">'+outCards+'</div></div>'+
+        '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-bot')+' AI 协作</div><div class="emp-ai-callout">'+empEsc(e.aiInfo)+'</div></div>'+
         '<div class="emp-sec"><div class="emp-sec-h">'+empIcon('i-globe')+' 联动</div><div class="emp-sec-p"><a class="emp-link-3d" href="https://ffswwwda.github.io/ai-office-3d/" target="_blank" rel="noopener">在 AI 办公全景 3D 办公室与 '+empEsc(e.name)+' 见面 →</a></div></div>'+
       '</div>'+
       '<div class="emp-modal-foot">'+
