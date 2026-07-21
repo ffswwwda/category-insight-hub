@@ -2938,6 +2938,9 @@ function renderNavLab(){
     '<div class="nav-item" data-nav="nav-stress" onclick="openStressTest()">'+
       '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M9 20V4M14 20v-7M19 20V8"/><path d="M3 20h18"/></svg></span>'+
       '<span class="ni-name">虚拟用户压力测试</span></div>'+
+    '<div class="nav-item" data-nav="nav-cap" onclick="openCapabilityIntro()">'+
+      '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gear"/></svg></span>'+
+      '<span class="ni-name">能力风险引擎</span></div>'+
     '<div class="nav-item" data-nav="nav-pano" onclick="openPanoIntro()">'+
       '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></span>'+
       '<span class="ni-name">AI 办公全景</span></div>'+
@@ -6158,6 +6161,7 @@ function globFloatAction(){
   var navEl=document.querySelector('.nav-item.active');
   var navId=navEl?navEl.getAttribute('data-nav'):'';
   if(navId==='nav-pano'){ jumpToPano(); return; }
+  if(navId==='nav-cap'){ jumpToCapability(); return; }
   var active=document.querySelector('.view.active');
   var viewId=active?active.id:'';
   if(viewId==='viewStress'){ openStressTool(); }
@@ -6165,6 +6169,74 @@ function globFloatAction(){
 }
 function jumpToPano(){
   window.open(PANO_3D_URL,'_blank','noopener');
+}
+
+function jumpToCapability(){
+  window.open('https://ffswwwda.github.io/capability-risk-engine/','_blank','noopener');
+}
+
+function openCapabilityIntro(){
+  setActiveNav('nav-cap');
+  $('#subnav').classList.remove('show');
+  $('#topbarTitle').textContent='能力风险引擎 · 通用思考引擎';
+  setView('Principle');
+  var viz=
+    '<svg viewBox="0 0 240 200" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">'+
+      '<defs><radialGradient id="capGlow"><stop offset="0%" stop-color="#00d4ff" stop-opacity=".18"/><stop offset="100%" stop-color="#a855f7" stop-opacity="0"/></radialGradient></defs>'+
+      '<circle cx="120" cy="100" r="82" fill="url(#capGlow)"/>'+
+      // 左侧三个源节点（输入 / 知识库 / 经验）
+      '<g font-size="11" font-weight="600" text-anchor="middle" fill="#cbd5e1">'+
+        '<rect x="18" y="30" width="62" height="26" rx="7" fill="rgba(168,85,247,.08)" stroke="#a855f7" stroke-opacity=".4" stroke-width="1.2"/><text x="49" y="47">输入</text>'+
+        '<rect x="18" y="87" width="62" height="26" rx="7" fill="rgba(168,85,247,.08)" stroke="#a855f7" stroke-opacity=".4" stroke-width="1.2"/><text x="49" y="104">知识库</text>'+
+        '<rect x="18" y="144" width="62" height="26" rx="7" fill="rgba(168,85,247,.08)" stroke="#a855f7" stroke-opacity=".4" stroke-width="1.2"/><text x="49" y="161">经验</text>'+
+      '</g>'+
+      // 中间引擎核心
+      '<rect x="104" y="70" width="56" height="60" rx="13" fill="rgba(0,212,255,.06)" stroke="url(#uiGrad)" stroke-width="2"/>'+
+      '<use href="#i-gear" x="118" y="84" width="28" height="28"/>'+
+      // 右侧输出节点
+      '<rect x="182" y="87" width="60" height="26" rx="7" fill="rgba(0,212,255,.07)" stroke="#00d4ff" stroke-opacity=".5" stroke-width="1.2"/>'+
+      '<text x="212" y="104" font-size="11" font-weight="600" text-anchor="middle" fill="#cbd5e1">盲点/报告</text>'+
+      // 连接线
+      '<g stroke="url(#uiGrad)" stroke-width="1.5" stroke-opacity=".7">'+
+        '<path d="M80 43 L104 90"/><path d="M80 100 L104 100"/><path d="M80 157 L104 110"/><path d="M160 100 L182 100"/>'+
+      '</g>'+
+    '</svg>';
+  $('#viewPrinciple').innerHTML=
+    '<div class="lab-wrap">'+
+      // Hero
+      '<div class="lab-hero">'+
+        '<div class="lab-hero-text">'+
+          '<span class="lab-eyebrow"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-compass"/></svg> 能力风险引擎 · THINK ENGINE</span>'+
+          '<div class="lab-title">通用思考引擎</div>'+
+          '<div class="lab-tagline">把任何岗位，<span class="accent">套进同一套思考路径</span></div>'+
+          '<p class="lab-desc">这是一个「通用思考引擎」：无论你是运营、产品、市场还是创始人，都用同一条思考路径工作——差异只在「知识库」（岗位领域数据）与「经验」。引擎内核是固定的方法论（矛盾论 / 调查研究 / 实践论 / 实事求是 + 四步循环），岗位知识库可插拔。把一段想法、计划或素材倒进去，它做盲点扫描、压力测试、结构解构，而不是替你拍板。</p>'+
+          '<div class="lab-stats">'+
+            statChip('1 套','思考路径')+
+            statChip('岗位','知识库可插拔')+
+            statChip('盲点','扫描 / 压力测试')+
+            statChip('不拍板','只查漏补缺')+
+          '</div>'+
+        '</div>'+
+        '<div class="lab-hero-viz">'+viz+'</div>'+
+      '</div>'+
+      // 能做什么
+      '<div class="lab-sec">'+
+        '<div class="lab-sec-h">它能帮你做什么</div>'+
+        '<div class="lab-cards">'+
+          labCcard('<svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-alert"/></svg>','盲点扫描','把想法 / 计划 / 素材倒进去，引擎沿固定路径逼问，标出你没想到的矛盾与缺口。')+
+          labCcard('<svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-target"/></svg>','压力测试','对方案做多立场挑刺，明确「直接回答 / 给方案」与「盲点扫描」的区别，结论不替你决策。')+
+          labCcard('<svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-layers"/></svg>','结构解构','自动识别输入类型（提问 / 想法计划 / 素材），用对应动作拆成可执行的检查清单。')+
+          labCcard('<svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-gear"/></svg>','知识库驱动','岗位知识库以 JSON 加载，换一份 KB 就换一个岗位视角——加新岗位 = 写一份知识库。')+
+        '</div>'+
+      '</div>'+
+      // CTA
+      '<div class="lab-cta">'+
+        '<div class="ct-txt"><b>去试试这个通用思考引擎？</b><span>打开独立页面，输入一段想法或计划，看它怎么帮你查漏补缺。</span></div>'+
+        '<button class="lab-btn" onclick="jumpToCapability()">进入能力风险引擎 <span class="arr">↗</span></button>'+
+      '</div>'+
+      '<div class="lab-note">纯规则 MVP · 推理机 + 知识库分离架构 · 通用思考路径 + 可插拔岗位知识库 · GitHub Pages 部署</div>'+
+    '</div>';
+  if(window.anime){ try{ anime.animate('.lab-wrap > *',{opacity:[0,1],translateY:[18,0],delay:anime.stagger(70),duration:520,easing:'easeOutCubic'}); }catch(e){} }
 }
 
 // ---- 理论详情弹窗（虚拟用户压力测试 → 理论支撑卡片点击展开）----
