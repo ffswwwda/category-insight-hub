@@ -2086,24 +2086,61 @@ body.dark .emp-v1{color:#fbbf24}
 .emp-ai-callout{margin:0;padding:13px 15px;border-radius:12px;background:linear-gradient(135deg, color-mix(in srgb,var(--emp-ac) 9%, transparent), color-mix(in srgb,#a855f7 8%, transparent));border:1px solid color-mix(in srgb,var(--emp-ac) 28%, transparent);font-size:12.5px;line-height:1.65;color:var(--ink-2)}
 @media (max-width:560px){.emp-cap-grid{grid-template-columns:1fr}}
 
-/* ===== 数据源筛选弹窗 ===== */
-.sf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:9600;display:flex;align-items:center;justify-content:center;padding:20px;animation:empFade .2s ease}
-.sf-modal{background:var(--panel-solid);border:1px solid var(--border);border-radius:16px;width:100%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 28px 70px rgba(0,0,0,.38)}
+/* ===== 数据源筛选弹窗（增强版） ===== */
+.sf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:9600;display:flex;align-items:center;justify-content:center;padding:18px}
+.sf-modal{background:var(--panel-solid);border:1px solid var(--border);border-radius:16px;width:100%;max-width:640px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 28px 70px rgba(0,0,0,.38)}
+.sf-modal.sf-rich{max-width:720px}
 .sf-head{display:flex;gap:14px;align-items:flex-start;padding:18px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sf-h-left{flex:1;min-width:0}
 .sf-name{font-size:17px;font-weight:900;color:var(--ink)}
-.sf-meta{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.45;max-width:420px}
-.sf-close{margin-left:auto;flex-shrink:0;width:30px;height:30px;border-radius:9px;border:1px solid var(--border);background:var(--glass-bg);color:var(--muted);cursor:pointer;font-size:15px}
+.sf-meta{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.45}
+.sf-desc{font-size:11.5px;color:var(--ink-2);margin-top:6px;line-height:1.45;max-width:520px}
+.sf-close{flex-shrink:0;padding:7px 16px;border-radius:9px;border:1px solid var(--border);background:var(--glass-bg);color:var(--muted);cursor:pointer;font-size:12px;font-weight:700;transition:all .15s}
 .sf-close:hover{color:var(--ink);border-color:var(--accent)}
+
+/* tabs */
+.sf-tabs{display:flex;gap:0;padding:0 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sf-tab{padding:10px 16px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.sf-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.sf-tab:hover:not(.active){color:var(--ink)}
+.sf-tab-spacer{flex:1}
+
+/* body */
 .sf-body{padding:16px 20px;overflow-y:auto;flex:1}
-.sf-group{margin-bottom:16px}
-.sf-g-label{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;color:var(--accent);letter-spacing:.3px;margin-bottom:8px;text-transform:uppercase}
-.sf-g-label svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sf-pane{display:block}
+.sf-pane.hidden{display:none}
+
+/* 筛选组 */
+.sf-group{margin-bottom:15px}
+.sf-g-label{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;color:var(--accent);letter-spacing:.3px;margin-bottom:8px;text-transform:uppercase}
 .sf-g-body{display:flex;flex-wrap:wrap;gap:7px}
 .sf-opt{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:9px;border:1px solid var(--border);background:var(--glass-bg);cursor:pointer;font-size:12px;color:var(--ink-2);transition:all .15s;user-select:none}
 .sf-opt:hover{border-color:rgba(0,195,243,.35)}
 .sf-opt input[type=checkbox]{display:none}
 .sf-opt input:checked+span{color:#00b8d4;font-weight:700}
-.sf-opt:has(input:checked){background:color-mix(in srgb, #00b8d4 10%, var(--glass-bg));border-color:rgba(0,184,212,.35)}
+.sf-opt:has(input:checked){background:color-mix(in srgb,#00b8d4 8%,var(--glass-bg));border-color:rgba(0,184,212,.32)}
+
+/* 星级 radio */
+.sf-stars{display:flex;flex-wrap:wrap;gap:6px}
+.sf-star-opt{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:var(--glass-bg);cursor:pointer;font-size:12px;color:var(--ink-2)}
+.sf-star-opt input{display:none}
+.sf-star-opt:has(input:checked){background:color-mix(in srgb,#f59e0b 10%,var(--glass-bg));border-color:rgba(245,158,11,.4);color:#b45309;font-weight:700}
+
+/* 情感行 */
+.sf-sent-row .sf-pos:has(input:checked){background:rgba(52,199,89,.08);border-color:rgba(52,199,89,.3);color:#22c55e}
+.sf-sent-row .sf-neg:has(input:checked){background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3);color:#dc2626}
+
+/* 输入框 */
+.sf-input{flex:1;min-width:120px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;background:var(--panel-solid);color:var(--ink);font-size:12px;outline:none;transition:border-color .15s}
+.sf-input:focus{border-color:var(--accent)}
+.sf-input::placeholder{color:var(--muted)}
+.sf-select{padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--panel-solid);color:var(--ink);font-size:12px;outline:none;min-width:140px}
+.sf-num{width:90px!important;min-width:90px}
+.sf-kw-row{display:flex;gap:8px}
+.sf-range-row{display:flex;align-items:center;gap:8px}
+.sf-range-sep{color:var(--muted);font-size:12px}
+
+/* foot */
 .sf-foot{display:flex;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0}
 .sf-sel-count{font-size:11.5px;color:var(--muted);flex:1}
 .sf-sel-count b{color:var(--accent)}
@@ -2112,6 +2149,49 @@ body.dark .emp-v1{color:#fbbf24}
 .sf-btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
 .sf-btn.primary{background:linear-gradient(135deg,#00b8d4,#0097a7);color:#fff;border-color:transparent;box-shadow:0 2px 10px rgba(0,184,212,.2)}
 .sf-btn.primary:hover{box-shadow:0 3px 14px rgba(0,184,212,.32)}
+
+/* ---- 数据预览面板 ---- */
+.prev-wrap{}
+.prev-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+.prev-count{font-size:13px;color:var(--ink-2)}
+.prev-num{font-size:26px;font-weight:900;color:var(--accent);margin-right:4px}
+.prev-finfo{font-size:11px;color:var(--muted);font-weight:400}
+.prev-pct{font-size:12px;color:var(--muted);font-weight:700;background:var(--glass-bg);padding:2px 9px;border-radius:999px}
+.prev-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.ps-bar{background:var(--glass-bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+.ps-label{font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.ps-val{font-size:17px;font-weight:900}
+.ps-val small{font-size:11px;font-weight:600;opacity:.6;margin-left:2px}
+
+.prev-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px}
+.prev-table{width:100%;border-collapse:collapse;font-size:11.5px}
+.prev-table th{background:color-mix(in srgb,var(--accent) 8%,var(--panel-solid));padding:8px 10px;text-align:left;font-weight:800;color:var(--accent);font-size:11px;white-space:nowrap;border-bottom:1px solid var(--border)}
+.prev-table td{padding:8px 10px;border-bottom:1px solid var(--line);color:var(--ink-2);line-height:1.45;vertical-align:top;max-width:220px;word-break:break-word}
+.prev-table tr:last-child td{border-bottom:none}
+.prev-table td.hl{color:var(--accent);font-weight:700;background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.prev-empty{text-align:center;padding:36px 16px;color:var(--muted);font-size:13px}
+.prev-note{margin-top:10px;font-size:10.5px;color:var(--muted);text-align:center}
+
+/* ---- 源状态标签 & 卡片调整 ---- */
+.src-status{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px;vertical-align:middle;margin-left:6px}
+.src-status.ready{background:rgba(52,199,89,.12);color:#22c55e;border:1px solid rgba(52,199,89,.25)}
+.src-status.pending{background:rgba(245,158,11,.12);color:#d97706;border:1px solid rgba(245,158,11,.25)}
+.src-badge{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px;vertical-align:middle;margin-left:6px}
+.src-badge.ready{background:rgba(52,199,89,.12);color:#22c55e;border:1px solid rgba(52,199,89,.25)}
+.src-badge.pending{background:rgba(245,158,11,.12);color:#d97706;border:1px solid rgba(245,158,11,.25)}
+.src-badge.tiny{font-size:9px;padding:0 5px}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.sc-add-src{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px;margin-top:6px;border:2px dashed var(--border);border-radius:12px;background:transparent;color:var(--accent);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.sc-add-src:hover{border-color:var(--accent);background:rgba(0,195,243,.05)}
+
+/* ---- 数据源选择器（picker） ---- */
+.picker-item{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid var(--border);border-radius:11px;margin-bottom:7px;cursor:pointer;transition:all .15s}
+.picker-item:hover{border-color:rgba(0,195,243,.3);background:var(--glass-bg)}
+.picker-item.active{border-color:rgba(0,195,243,.35);background:color-mix(in srgb,#00b8d4 6%,var(--glass-bg))}
+.picker-item input{display:none}
+.picker-info{flex:1;min-width:0}
+.picker-name{font-size:13px;font-weight:700;color:var(--ink)}
+.picker-meta{font-size:11px;color:var(--muted);margin-top:2px}
 </style>
 </head>
 <body class="dark">
@@ -8301,18 +8381,24 @@ function renderStructPanel(p){
   var sp=$('#structPanel');
 
   // Data source cards
-  var srcHtml='<div class="struct-section"><div class="ss-head">数据源卡（调用 '+p.sources.length+' 个）</div>';
+  var allSrcIds=Object.keys(DATA.sources);
+  var activeSet={}; p.sources.forEach(function(id){activeSet[id]=true;});
+  var availSrcs=allSrcIds.filter(function(id){return !activeSet[id];}).map(function(id){return DATA.sources[id];});
+
+  var srcHtml='<div class="struct-section"><div class="ss-head">数据源（调用 '+p.sources.length+' 个 / 共 '+allSrcIds.length+' 个可用）</div>';
   p.sources.forEach(function(sid){
     var s=getSource(sid);
     if(!s)return;
-    var concl=s.status==='ready'?(s.hasDashboard?'248款德国商品已分析':'数据就绪'):'待接入';
-    srcHtml+='<div class="s-card" onclick="openSourceFilter(\''+sid+'\')" title="点击筛选数据">'+
-      '<button class="sc-to-canvas" onclick="event.stopPropagation();addSourceToCanvas(\''+sid+'\')">+ 画布</button>'+
-      '<div class="sc-name">'+escHtml(s.name)+'</div>'+
+    var concl=s.status==='ready'?(s.hasDashboard?s.records+' 条已就绪':'数据就绪'):'待接入';
+    var statusTag=s.status==='ready'?'<span class="src-status ready">就绪</span>':'<span class="src-status pending">待接入</span>';
+    srcHtml+='<div class="s-card" onclick="openSourceFilter(\''+sid+'\')" title="点击查看与筛选">'+
+      '<div class="sc-top"><div class="sc-name">'+escHtml(s.name)+statusTag+'</div></div>'+
       '<div class="sc-type">'+escHtml(s.type)+' · '+escHtml(s.market)+(s.records?' · '+s.records+' 条':'')+'</div>'+
       '<div class="sc-concl">'+escHtml(concl)+'</div>'+
     '</div>';
   });
+  // 添加其他数据源按钮
+  srcHtml+='<button class="sc-add-src" onclick="openSourcePicker()" title="为当前目的添加或移除数据源">'+empIcon('i-plug')+' 添加 / 管理数据源</button>';
   srcHtml+='</div>';
 
   // Insight cards
@@ -8649,158 +8735,434 @@ function renderDrawer(p){
   $('#drawerItems').innerHTML=html;
 }
 
-// --- 数据源筛选弹窗 ---
+// --- 数据源筛选弹窗（增强版：真实字段 + 数据预览） ---
 function openSourceFilter(sid){
   var s=getSource(sid); if(!s) return;
   var fid='srcFilt_'+sid;
   var old=document.getElementById(fid);
   if(old){ old.parentNode.removeChild(old); return; }
 
-  // 根据源类型生成筛选维度
-  var filtDefs=buildFilterDefs(s);
-  var filtHtml='';
-  filtDefs.forEach(function(f){
-    var optsHtml=f.options.map(function(o,i){
-      return '<label class="sf-opt"><input type="checkbox" class="sf-cb" data-group="'+f.key+'" value="'+escHtml(o.v)+'" '+(o.d?'checked':'')+'><span>'+escHtml(o.l)+'</span></label>';
-    }).join('');
-    filtHtml+='<div class="sf-group"><div class="sf-g-label">'+empIcon(f.icon||'i-sliders')+' '+escHtml(f.label)+'</div><div class="sf-g-body">'+optsHtml+'</div></div>';
-  });
+  var filtHtml=buildRichFilterHTML(s);
+  var previewHtml=buildPreviewPanel(s, {});
 
   var bd=document.createElement('div');
   bd.id=fid; bd.className='sf-overlay';
   bd.onclick=function(ev){ if(ev.target===bd) closeSourceFilter(sid); };
   bd.innerHTML=
-    '<div class="sf-modal" role="dialog">'+
+    '<div class="sf-modal sf-rich" role="dialog" data-sid="'+sid+'">'+
       '<div class="sf-head">'+
-        '<div>'+
-          '<div class="sf-name">'+escHtml(s.name)+'</div>'+
-          '<div class="sf-meta">'+escHtml(s.type)+' · '+escHtml(s.market)+(s.records?' · '+s.records+' 条':'')+' · '+escHtml(s.desc)+'</div>'+
+        '<div class="sf-h-left">'+
+          '<div class="sf-name">'+escHtml(s.name)+' '+(s.status==='ready'?'<span class="src-badge ready">已接入</span>':'<span class="src-badge pending">待接入</span>')+'</div>'+
+          '<div class="sf-meta">'+escHtml(s.type)+' · '+escHtml(s.market)+(s.records?' · '+s.records+' 条记录':'')+'</div>'+
+          '<div class="sf-desc">'+escHtml(s.desc)+'</div>'+
         '</div>'+
-        '<button class="sf-close" onclick="closeSourceFilter(\''+sid+'\')">✕</button>'+
+        '<button class="sf-close" onclick="closeSourceFilter(\''+sid+'\')">关闭</button>'+
       '</div>'+
-      '<div class="sf-body">'+filtHtml+'</div>'+
+      '<div class="sf-tabs"><div class="sf-tab active" data-t="filter" onclick="switchSfTab(this,\''+sid+'\')">筛选条件</div><div class="sf-tab" data-t="preview" onclick="switchSfTab(this,\''+sid+'\')">数据预览</div><span class="sf-tab-spacer"></span></div>'+
+      '<div class="sf-body">'+
+        '<div class="sf-pane sf-pane-filter" id="'+fid+'_filterPane">'+filtHtml+'</div>'+
+        '<div class="sf-pane sf-pane-preview hidden" id="'+fid+'_previewPane">'+previewHtml+'</div>'+
+      '</div>'+
       '<div class="sf-foot">'+
-        '<span class="sf-sel-count">已选 <b id="'+fid+'_cnt">0</b> 项筛选条件</span>'+
-        '<button class="sf-btn ghost" onclick="resetSourceFilters(\''+sid+'\')">重置</button>'+
-        '<button class="sf-btn primary" onclick="confirmSourceFilter(\''+sid+'\')">确认选择并加入画布</button>'+
+        '<button class="sf-btn ghost" onclick="resetAllFilters(\''+sid+'\')">重置筛选</button>'+
+        '<button class="sf-btn primary" onclick="applyAndShow(\''+sid+'\')">应用筛选并查看结果</button>'+
       '</div>'+
     '</div>';
   document.body.appendChild(bd);
-
-  // 绑定 checkbox 变更计数
-  updateFilterCount(sid);
-  var cbs=bd.querySelectorAll('.sf-cb');
-  cbs.forEach(function(cb){ cb.addEventListener('change',function(){ updateFilterCount(sid); }); });
 }
 
-function buildFilterDefs(s){
-  // 根据数据源类型返回不同的筛选项
-  var t=s.type||'', defs=[];
-  if(t.indexOf('评论')>=0||t.indexOf('VOC')>=0){
-    defs.push({key:'star', label:'星级评分', icon:'i-star',
-      options:[{l:'5 星',v:'5'},{l:'4 星',v:'4',d:true},{l:'3 星',v:'3',d:true},{l:'1-2 星',v:'12'}]});
+function buildRichFilterHTML(s){
+  var t=s.type||'', html='';
+  // ---- VOC/评论类 ----
+  if(t.indexOf('评论')>=0||t.indexOf('VOC')>=0||t.indexOf('商品')>=0){
+    html+='<div class="sf-group">'+
+      '<div class="sf-g-label">星级评分</div>'+
+      '<div class="sf-g-body sf-stars"><label class="sf-star-opt"><input type="radio" name="sf_star" value="all" checked><span>全部</span></label>'+
+      [5,4,3,2,1].map(function(st){return '<label class="sf-star-opt"><input type="radio" name="sf_star" value="'+st+'"><span>'+st+' 星</span></label>';}).join('')+
+      '</div></div>';
     if(s.market && s.market!=='—'){
       var mkts=s.market.split('/').map(function(m){return m.trim();});
-      defs.push({key:'region', label:'站点/市场', icon:'i-globe',
-        options:mkts.map(function(m){return {l:m,v:m,d:true};})});
+      html+='<div class="sf-group"><div class="sf-g-label">站点 / 市场（可多选）</div><div class="sf-g-body">';
+      mkts.forEach(function(m){html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="region" value="'+m+'" checked><span>'+m+'</span></label>';});
+      html+='</div></div>';
     }
-    defs.push({key:'aspect', label:'评论维度', icon:'i-target',
-      options:[{l:'质量',v:'质量'},{l:'尺寸',v:'尺寸'},{l:'材质',v:'材质'},{l:'功能',v:'功能'},{l:'价格',v:'价格'},{l:'包装',v:'包装'},{l:'物流',v:'物流'}]});
+    html+='<div class="sf-group"><div class="sf-g-label">评论维度标签</div><div class="sf-g-body">';
+    ['质量','尺寸','材质','功能','价格','包装','物流','噪音','续航','易清洁','舒适度'].forEach(function(d){
+      html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="aspect" value="'+d+'"><span>'+d+'</span></label>';
+    });
+    html+='</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">时间范围</div><div class="sf-g-body">'+
+      '<select class="sf-select" data-fk="timeRange"><option value="all">全部时间</option><option value="7d" selected>最近 7 天</option><option value="30d">最近 30 天</option><option value="90d">最近 90 天</option><option value="1y">近一年</option></select>'+
+      '</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">关键词过滤</div><div class="sf-g-body sf-kw-row">'+
+      '<input type="text" class="sf-input" data-fk="kwInclude" placeholder="包含关键词（逗号分隔）...">'+
+      '<input type="text" class="sf-input" data-fk="kwExclude" placeholder="排除关键词（逗号分隔）...">'+
+      '</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">Verified Purchase</div><div class="sf-g-body">'+
+      '<label class="sf-opt"><input type="radio" name="sf_vp" value="all" checked><span>全部</span></label>'+
+      '<label class="sf-opt"><input type="radio" name="sf_vp" value="yes"><span>仅已验证购买</span></label>'+
+      '<label class="sf-opt"><input type="radio" name="sf_vp" value="no"><span>仅未验证</span></label>'+
+      '</div></div>';
   }
-  else if(t.indexOf('社媒')>=0){
-    defs.push({key:'platform', label:'平台', icon:'i-phone',
-      options:[{l:'Twitter / X',v:'twitter'},{l:'Instagram',v:'instagram'},{l:'TikTok',v:'tiktok'},{l:'Reddit',v:'reddit',d:true}]});
-    defs.push({key:'sentiment', label:'情感倾向', icon:'i-smile',
-      options:[{l:'正面',v:'pos'},{l:'中性',v:'neu',d:true},{l:'负面',v:'neg'}]});
+  // ---- 社媒类 ----
+  else if(t.indexOf('社媒')>=0||t.indexOf('外部趋势')>=0){
+    html+='<div class="sf-group"><div class="sf-g-label">平台</div><div class="sf-g-body">';
+    ['Twitter/X','Instagram','TikTok','Reddit','YouTube','其他'].forEach(function(p){
+      html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="platform" value="'+p.toLowerCase()+'" checked><span>'+p+'</span></label>';
+    });
+    html+='</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">情感倾向</div><div class="sf-g-body sf-sent-row">'+
+      '<label class="sf-opt sf-pos"><input type="checkbox" class="sf-cb sf-filt" data-fk="sentiment" value="pos"><span>正面</span></label>'+
+      '<label class="sf-opt sf-neu"><input type="checkbox" class="sf-cb sf-filt" data-fk="sentiment" value="neu" checked><span>中性</span></label>'+
+      '<label class="sf-opt sf-neg"><input type="checkbox" class="sf-cb sf-filt" data-fk="sentiment" value="neg"><span>负面</span></label>'+
+      '</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">互动量范围</div><div class="sf-g-body sf-range-row">'+
+      '<input type="number" class="sf-input sf-num" data-fk="engMin" placeholder="最小" min="0">'+
+      '<span class="sf-range-sep">—</span>'+
+      '<input type="number" class="sf-input sf-num" data-fk="engMax" placeholder="最大" min="0">'+
+      '</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">时间范围</div><div class="sf-g-body">'+
+      '<select class="sf-select" data-fk="timeRange"><option value="all">全部时间</option><option value="7d" selected>最近 7 天</option><option value="30d">最近 30 天</option><option value="90d">最近 90 天</option></select>'+
+      '</div></div>';
   }
+  // ---- 访谈类 ----
+  else if(t.indexOf('访谈')>=0){
+    html+='<div class="sf-group"><div class="sf-g-label">用户分群</div><div class="sf-g-body">';
+    ['重度使用者','轻度尝试者','潜在新客','流失用户','竞品用户'].forEach(function(seg){
+      html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="segment" value="'+seg+'" checked><span>'+seg+'</span></label>';
+    });
+    html+='</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">访谈主题</div><div class="sf-g-body">';
+    ['使用场景与频率','购买决策因素','产品体验反馈','竞品比较','售后与服务','价格敏感度'].forEach(function(tp){
+      html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="topic" value="'+tp+'" checked><span>'+tp+'</span></label>';
+    });
+    html+='</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">访谈时长</div><div class="sf-g-body">'+
+      '<select class="sf-select" data-fk="duration"><option value="all">不限</option><option value="short" selected>&lt;15 分钟</option><option value="med">15–30 分钟</option><option value="long">&gt;30 分钟</option></select>'+
+      '</div></div>';
+  }
+  // ---- 竞品类 ----
   else if(t.indexOf('竞品')>=0){
-    defs.push({key:'comp_dim', label:'对比维度', icon:'i-bar',
-      options:[{l:'价格对比',v:'price'},{l:'功能对比',v:'feature',d:true},{l:'卖点矩阵',v:'usp'},{l:'BSR 排名',v:'bsr'}]});
+    html+='<div class="sf-group"><div class="sf-g-label">对比维度</div><div class="sf-g-body">';
+    ['价格区间','功能矩阵','卖点差异','BSR 排名','评论数对比','上架时间'].forEach(function(d){
+      html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="compDim" value="'+d+'" checked><span>'+d+'</span></label>';
+    });
+    html+='</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">竞品选择</div><div class="sf-g-body">';
+    ['品牌 A','品牌 B','品牌 C','自有产品'].forEach(function(c){
+      html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="competitor" value="'+c+'" checked><span>'+c+'</span></label>';
+    });
+    html+='</div></div>';
+  }
+  // ---- 搜索/关键词类 ----
+  else if(t.indexOf('搜索')>=0){
+    html+='<div class="sf-group"><div class="sf-g-label">关键词类型</div><div class="sf-g-body">';
+    ['品牌词','品类词','长尾词','问题词','比较词'].forEach(function(k){
+      html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="kwType" value="'+k+'" checked><span>'+k+'</span></label>';
+    });
+    html+='</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">搜索量范围</div><div class="sf-g-body sf-range-row">'+
+      '<input type="number" class="sf-input sf-num" data-fk="svMin" placeholder="最小搜索量" min="0">'+
+      '<span class="sf-range-sep">—</span>'+
+      '<input type="number" class="sf-input sf-num" data-fk="svMax" placeholder="最大搜索量" min="0">'+
+      '</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">竞争度</div><div class="sf-g-body">'+
+      '<label class="sf-opt"><input type="radio" name="sf_comp" value="all" checked><span>全部</span></label>'+
+      '<label class="sf-opt"><input type="radio" name="sf_comp" value="low">低竞争（蓝海）</label>'+
+      '<label class="sf-opt"><input type="radio" name="sf_comp" value="high">高竞争（红海）</label>'+
+      '</div></div>';
+  }
+  // ---- 运营/销售数据 ----
+  else if(t.indexOf('运营')>=0||t.indexOf('销售')>=0||t.indexOf('营销')>=0||t.indexOf('广告')>=0){
+    html+='<div class="sf-group"><div class="sf-g-label">核心指标</div><div class="sf-g-body">';
+    ['销量/GMV','转化率','ACOS/ROAS','复购率','退货率','点击率'].forEach(function(m){
+      html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="metric" value="'+m+'" checked><span>'+m+'</span></label>';
+    });
+    html+='</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">时间粒度</div><div class="sf-g-body">'+
+      '<select class="sf-select" data-fk="granularity"><option value="daily">按天</option><option value="weekly" selected>按周</option><option value="monthly">按月</option></select>'+
+      '</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">异常标记</div><div class="sf-g-body">'+
+      '<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="anomaly" value="spike"><span>飙升</span></label>'+
+      '<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="anomaly" value="drop"><span>骤降</span></label>'+
+      '<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="anomaly" value="flat"><span>持平</span></label>'+
+      '</div></div>';
+  }
+  // ---- 行业/趋势 ----
+  else if(t.indexOf('行业')>=0||t.indexOf('趋势')>=0){
+    html+='<div class="sf-group"><div class="sf-g-label">时间周期</div><div class="sf-g-body">'+
+      '<select class="sf-select" data-fk="period"><option value="7d">近 7 天</option><option value="30d" selected>近 30 天</option><option value="90d">近季度</option><option value="1y">全年</option><option value="yoy">同比</option></select>'+
+      '</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">趋势方向</div><div class="sf-g-body">'+
+      '<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="trendDir" value="up"><span>上升</span></label>'+
+      '<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="trendDir" value="down"><span>下降</span></label>'+
+      '<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="trendDir" value="stable"><span>稳定</span></label>'+
+      '</div></div>';
+  }
+  // ---- 供应链/供应商 ----
+  else if(t.indexOf('供应链')>=0||t.indexOf('供应')>=0){
+    html+='<div class="sf-group"><div class="sf-g-label">供应商类型</div><div class="sf-g-body">';
+    ['工厂直供','贸易商','品牌授权','OEM/ODM'].forEach(function(tp){
+      html+='<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="supplierType" value="'+tp+'" checked><span>'+tp+'</span></label>';
+    });
+    html+='</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">质量评级</div><div class="sf-g-body">'+
+      '<label class="sf-opt"><input type="radio" name="sf_q" value="all" checked><span>全部</span></label>'+
+      ['A 级（优）','B 级（良）','C 级（合格）','D 级（需改进）'].forEach(function(q){
+        html+='<label class="sf-opt"><input type="radio" name="sf_q" value="'+q.charAt(0)+'"><span>'+q+'</span></label>';
+      })+
+      '</div></div>';
+  }
+  // ---- 默认通用 ----
+  else{
+    html+='<div class="sf-group"><div class="sf-g-label">时间范围</div><div class="sf-g-body">'+
+      '<select class="sf-select" data-fk="timeRange"><option value="all">全部时间</option><option value="7d" selected>最近 7 天</option><option value="30d">最近 30 天</option><option value="90d">最近 90 天</option></select>'+
+      '</div></div>';
+    html+='<div class="sf-group"><div class="sf-g-label">状态</div><div class="sf-g-body">'+
+      '<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="status" value="ready" checked><span>已就绪</span></label>'+
+      '<label class="sf-opt"><input type="checkbox" class="sf-cb sf-filt" data-fk="status" value="pending"><span>待接入</span></label>'+
+      '</div></div>';
+  }
+
+  // 所有源都加关键词
+  if(html.indexOf('kwInclude')<0){
+    html+='<div class="sf-group"><div class="sf-g-label">关键词搜索</div><div class="sf-g-body sf-kw-row">'+
+      '<input type="text" class="sf-input" data-fk="kwInclude" placeholder="包含关键词...">'+
+      '<input type="text" class="sf-input" data-fk="kwExclude" placeholder="排除关键词...">'+
+      '</div></div>';
+  }
+  return html || '<div class="sf-empty">暂无可用筛选项</div>';
+}
+
+// ---- 构建数据预览面板（含模拟样例数据）----
+function buildPreviewPanel(s, filters){
+  var total=s.records||0;
+  var mockRows=getMockSampleRows(s, filters);
+  var fcount=Object.keys(filters).reduce(function(n,k){return n+(Array.isArray(filters[k])?filters[k].length:(filters[k]?1:0));},0);
+  var statHtml=buildStatBars(s, filters);
+
+  return '<div class="prev-wrap">'+
+    '<div class="prev-header">'+
+      '<div class="prev-count"><span class="prev-num">'+(mockRows.length>0?mockRows.length:total)+'</span> 条匹配记录'+(fcount>0?' <span class="prev-finfo">（基于 '+fcount+' 项筛选）</span>':'')+'</div>'+
+      '<div class="prev-pct">'+(total>0?((mockRows.length||Math.round(total*0.72))/total*100).toFixed(1):'—')+'% 占比</div>'+
+    '</div>'+
+    statHtml+
+    (mockRows.length>0?
+      '<div class="prev-table-wrap"><table class="prev-table"><thead>'+mockRows[0].keys.map(function(k){return '<th>'+escHtml(k)+'</th>';}).join('')+'</thead><tbody>'+
+      mockRows.map(function(r){return '<tr>'+r.keys.map(function(k,i){return '<td'+(r.hl&&r.hl[i]?' class="hl"':'')+'>'+escHtml(String(r.row[k]||''))+'</td>';}).join('')+'</tr>';}).join('')+
+      '</tbody></table></div>'
+    :'<div class="prev-empty">当前筛选条件下无匹配数据，请调整筛选条件</div>')+
+    '<div class="prev-note">展示前 '+Math.min(mockRows.length,5)+' 条样例数据 · 完整数据请在对应看板中查看</div>'+
+  '</div>';
+}
+
+function getMockSampleRows(s, f){
+  // 按源类型返回模拟样例行（3-5 条），字段对应该源的真实数据结构
+  var t=s.type||'', rows=[];
+  if(t.indexOf('评论')>=0||t.indexOf('VOC')>=0||t.indexOf('商品')>=0){
+    rows=[
+      {row:{id:'R1412',star:'5',date:'2026-06-18',market:'DE',user:'A***n',verified:'是',text:'非常安静，噪音控制做得很好。材质手感也很棒，清洗方便。',aspect:'质量|噪音|易清洁'},keys:['ID','星级','日期','市场','用户','已验证','评论文本','维度标签']},
+      {row:{id:'R1089',star:'3',date:'2026-06-15',market:'US',user:'J***k',verified:'否',text:'还可以但续航不太够用，充一次电大概只能用 40 分钟左右。',aspect:'续航|功能'},keys:['ID','星级','日期','市场','用户','已验证','评论文本','维度标签']},
+      {row:{id:'R0956',star:'2',date:'2026-06-12',market:'DE',user:'M***s',verified:'是',text:'尺寸偏大，收纳不方便。而且包装太简陋了，送人的话拿不出手。',aspect:'尺寸|包装'},keys:['ID','星级','日期','市场','用户','已验证','评论文本','维度标签']},
+      {row:{id:'R0823',star:'4',date:'2026-06-09',market:'JP',user:'T***o',verified:'是',text:'性价比不错，这个价位能买到这种品质算好的了。物流也很快。',aspect:'价格|物流'},keys:['ID','星级','日期','市场','用户','已验证','评论文本','维度标签']},
+      {row:{id:'R0701',star:'5',date:'2026-06-05',market:'UK',user:'L***a',verified:'是',text:'用了两周了，每天都会用。舒适度非常好，完全超出预期。推荐！',aspect:'舒适度|功能'},keys:['ID','星级','日期','市场','用户','已验证','评论文本','维度标签']},
+    ];
+  }
+  else if(t.indexOf('社媒')>=0||t.indexOf('外部趋势')>=0){
+    rows=[
+      {row:{platform:'Twitter',author:'@review_fan',date:'2026-07-19',engagement:'2.3K',sentiment:'正面',text:'终于找到一款真正好用的产品了，强烈安利给大家',tags:'#倒模 #测评'},keys:['平台','作者','日期','互动量','情感','内容摘要','标签']},
+      {row:{platform:'Reddit',author:'u/techguy_99',date:'2026-07-17',engagement:'856',sentiment:'负面',text:'踩雷了... 用了一周就开始有异响，客服也不理人',tags:''},keys:['平台','作者','日期','互动量','情感','内容摘要','标签']},
+      {row:{platform:'Instagram',author:'@lifestyle_daily',date:'2026-07-15',engagement:'5.1K',sentiment:'正面',text:'颜值很高，放在桌上也很好看，朋友来都问链接',tags:'#桌面好物 #设计感'},keys:['平台','作者','日期','互动量','情感','内容摘要','标签']},
+      {row:{platform:'TikTok',author:'@product_tester_cn',date:'2026-07-14',engagement:'12K',sentiment:'中性',text:'开箱视频来了，详细测试每个功能，最后给个评分',tags:'#开箱 #详细测评'},keys:['平台','作者','日期','互动量','情感','内容摘要','标签']},
+    ];
   }
   else if(t.indexOf('访谈')>=0){
-    defs.push({key:'seg', label:'用户分群', icon:'i-users',
-      options:[{l:'重度使用者',v:'heavy',d:true},{l:'轻度尝试者',v:'light'},{l:'潜在新客',v:'potential'},{l:'流失用户',v:'churn'}]});
-    defs.push({key:'topic', label:'访谈主题', icon:'i-doc',
-      options:[{l:'使用场景',v:'scene',d:true},{l:'购买决策',v:'decision'},{l:'产品体验',v:'exp'},{l:'竞品比较',v:'compare'}]});
+    rows=[
+      {row:{id:'INT-007',segment:'重度使用者',topic:'使用场景',duration:'28min',keyQuote:'基本每天都会用，已经买了三款不同的在轮换',painPoint:'续航和充电速度'},keys:['访谈 ID','用户分群','主题','时长','关键引述','痛点提及']},
+      {row:{id:'INT-003',segment:'潜在新客',topic:'购买决策',duration:'15min',keyQuote:'还在犹豫，主要担心质量和隐私问题',painPoint:'信任度和品牌背书'},keys:['访谈 ID','用户分群','主题','时长','关键引述','痛点提及']},
+      {row:{id:'INT-012',segment:'流失用户',topic:'竞品比较',duration:'22min',keyQuote:'后来换了另一家的，主要是他们家售后更好',painPoint:'售后服务'},
+       keys:['访谈 ID','用户分群','主题','时长','关键引述','痛点提及']},
+      {row:{id:'INT-019',segment:'轻度尝试者',topic:'产品体验',duration:'12min',keyQuote:'偶尔用一下，感觉还行但没有特别惊艳的地方',painPoint:'差异化不足'},keys:['访谈 ID','用户分群','主题','时长','关键引述','痛点提及']},
+    ];
   }
-  else if(t.indexOf('搜索')>=0){
-    defs.push({key:'kw_type', label:'关键词类型', icon:'i-link',
-      options:[{l:'品牌词',v:'brand'},{l:'品类词',v:'category',d:true},{l:'长尾词',v:'longtail'},{l:'问题词',v:'question'}]});
+  else if(t.indexOf('竞品')>=0){
+    rows=[
+      {row:{brand:'竞品 A',price:'$29.99',feature:'10 模式 | 静音 &lt;40dB',bsr:'#127',rating:'4.3',pros:'静音效果好',cons:'续航一般'},keys:['品牌','价格','核心参数','BSR排名','评分','优势','劣势']},
+      {row:{brand:'竞品 B',price:'$45.00',feature:'APP 控制 | 加热',bsr:'#89',rating:'4.6',pros:'智能化程度高',cons:'价格偏高'},keys:['品牌','价格','核心参数','BSR排名','评分','优势','劣势']},
+      {row:{brand:'竞品 C',price:'$19.99',feature:'基础款 | 3 模式',bsr:'#203',rating:'3.8',pros:'便宜',cons:'做工粗糙'},keys:['品牌','价格','核心参数','BSR排名','评分','优势','劣势']},
+      {row:{brand:'自有产品',price:'$35.00',feature:'8 模式 | 长续航 | 医疗级硅胶',bsr:'#156',rating:'4.5',pros:'综合均衡',cons:'品牌知名度待提升'},keys:['品牌','价格','核心参数','BSR排名','评分','优势','劣势']},
+    ];
   }
-  else if(t.indexOf('运营')>=0||t.indexOf('销售')>=0){
-    defs.push({key:'metric', label:'指标类型', icon:'i-trend',
-      options:[{l:'销量/GMV',v:'sales',d:true},{l:'转化率',v:'cvr'},{l:'复购率',v:'repurchase'},{l:'退货率',v:'return'}]});
+  else if(t.indexOf('搜索')>=0||t.indexOf('关键词')>=0){
+    rows=[
+      {row:{keyword:'aircraft cup',sv:'12,400',cpc:'$0.82',competition:'高',trend:'+8%',suggest:'长尾: best aircraft cup for beginners'},keys:['关键词','月搜索量','CPC','竞争度','趋势','建议长尾词']},
+      {row:{keyword:'male stroker',sv:'8,900',cpc:'$0.65',competition:'中',trend:'+12%',suggest:'长尾: quiet male stroker review'},keys:['关键词','月搜索量','CPC','竞争度','趋势','建议长尾词']},
+      {row:{keyword:'倒模 飞机杯',sv:'3,200',cpc:'¥0.45',competition:'低',trend:+15%,suggest:'长尾: 倒模飞机杯推荐静音款'},keys:['关键词','月搜索量','CPC','竞争度','趋势','建议长尾词']},
+      {row:{keyword:'pocket pussy amazon',sv:'6,700',cpc:'$0.71',competition:'中',trend:-3%,suggest:'长尾: pocket pussy amazon best seller'},keys:['关键词','月搜索量','CPC','竞争度','趋势','建议长尾词']},
+      {row:{keyword:'auto masturbator',sv:'4,100',cpc:'$0.58',competition:'中',trend:'+22%',suggest:'长尾: auto masturbator hands free quiet'},keys:['关键词','月搜索量','CPC','竞争度','趋势','建议长尾词']},
+    ];
   }
-  else if(t.indexOf('行业')>=0||t.indexOf('趋势')>=0){
-    defs.push({key:'period', label:'时间周期', icon:'i-clock',
-      options:[{l:'近 30 天',v:'30d',d:true},{l:'近 90 天',v:'90d'},{l:'近半年',v:'6m'},{l:'全年',v:'1y'}]});
-  }
-  else if(t.indexOf('营销')>=0||t.indexOf('广告')>=0){
-    defs.push({key:'ad_metric', label:'投放指标', icon:'i-zap',
-      options:[{l:'点击率 CTR',v:'ctr',d:true},{l:'ACOS',v:'acos'},{l:'转化',v:'conv'},{l:'曝光量',v:'imp'}]});
+  else if(t.indexOf('运营')>=0||t.indexOf('销售')>=0||t.indexOf('营销')>=0){
+    rows=[
+      {row:{date:'W28 (7/7-7/13)',sales:'¥42,300',cvr:'3.2%',acos:'18.5%',roas:'5.4x',vsWow:-2},keys:['周期','销售额','转化率','ACOS','ROAS','环比']},
+      {row:{date:'W27 (6/30-7/6)',sales:'¥43,100',cvr:'3.5%',acos:'16.2%',roas:'6.2x',vsWow:+5},keys:['周期','销售额','转化率','ACOS','ROAS','环比']},
+      {row:{date:'W26 (6/23-6/29)',sales:'¥41,000',cvr:'3.1%',acos:'19.8%',roas:'5.0x',vsWow:-8},keys:['周期','销售额','转化率','ACOS','ROAS','环比']},
+      {row:{date:'W25 (6/16-6/22)',sales:'¥44,600',cvr:'3.8%',acos:'14.1%',roas:'7.1x',vsWow:+12},keys:['周期','销售额','转化率','ACOS','ROAS','环比']},
+    ];
   }
   else{
-    // 默认通用筛选项
-    defs.push({key:'time_range', label:'时间范围', icon:'i-clock',
-      options:[{l:'最近一周',v:'7d',d:true},{l:'最近一月',v:'30d'},{l:'最近三月',v:'90d'},{l:'全部时间',v:'all'}]});
-    defs.push({key:'status', label:'数据状态', icon:'i-box',
-      options:[{l:'已就绪',v:'ready',d:true},{l:'待接入',v:'pending'}]});
+    // 通用默认
+    rows=[
+      {row:{field1:'样例数据 A',field2:'2026-07-19',field3:'值 1',field4:'备注信息',field5:'—'},keys:['名称','日期','数值','备注','状态']},
+      {row:{field1:'样例数据 B',field2:'2026-07-17',field3:'值 2',field4:'备注信息',field5:'—'},keys:['名称','日期','数值','备注','状态']},
+      {row:{field1:'样例数据 C',field2:'2026-07-15',field3:'值 3',field4:'备注信息',field5:'—'},keys:['名称','日期','数值','备注','状态']},
+    ];
   }
-
-  // 所有源都加关键词搜索
-  defs.push({key:'keyword', label:'关键词搜索', icon:'i-msg',
-    options:[{l:'含正向评价词',v:'pos_kw'},{l:'含负面/问题词',v:'neg_kw'},{l:'含品牌名',v:'brand_kw'}]});
-
-  return defs;
+  return rows;
 }
 
-function updateFilterCount(sid){
-  var fid='srcFilt_'+sid;
-  var modal=document.getElementById(fid);
-  if(!modal)return;
-  var cks=modal.querySelectorAll('.sf-cb:checked');
-  document.getElementById(fid+'_cnt').textContent=cks.length;
+function buildStatBars(s, f){
+  var t=s.type||'', html='<div class="prev-stats">';
+  // 根据源类型显示不同统计指标条
+  if(t.indexOf('评论')>=0||t.indexOf('VOC')>=0){
+    html+=statBar('平均星级','4.2','★','#f59e0b')+statBar('正面率','68%','↑','#34c759')+statBar('负面率','12%','↓','#ef4444')+statBar('含图片','23%','📷','#00b8d4');
+  }else if(t.indexOf('社媒')>=0){
+    html+=statBar('总声量','12.4K','#','var(--accent)')+statBar('互动率','4.8%','↗','#34c759')+statBar('正面情感','55%','☺','#34c759')+statBar('负面情感','18%','☹','#ef4444');
+  }else if(t.indexOf('访谈')>=0){
+    html+=statBar('访谈总数','24','人次','#00b8d4')+statBar('平均时长','21min','⏱','#f59e0b')+statBar('高频痛点','续航/充电','!','#ef4444')+statBar('NPS 分数','+32','NPS','#34c759');
+  }else if(t.indexOf('运营')>=0||t.indexOf('销售')>=0){
+    html+=statBar('本周销售','¥42.3K','💰','#34c759')+statBar('转化率','3.2%','%','#00b8d4')+statBar('ACOS','18.5%','$','#f59e0b')+statBar('ROAS','5.4x','×','#a855f7');
+  }else{
+    html+=statBar('数据总量',(s.records||'—'),'条','#00b8d4')+statBar('更新频率','实时','⟳','#34c759')+statBar('覆盖率','92%','✓','#a855f7');
+  }
+  html+='</div>';
+  return html;
+}
+function statBar(label,val,sym,color){
+  return '<div class="ps-bar"><div class="ps-label">'+label+'</div><div class="ps-val" style="color:'+color+'">'+val+' <small>'+sym+'</small></div></div>';
 }
 
-function resetSourceFilters(sid){
+// ---- 切换 tab ----
+function switchSfTab(el, sid){
   var fid='srcFilt_'+sid;
-  var modal=document.getElementById(fid);
-  if(!modal)return;
-  modal.querySelectorAll('.sf-cb').forEach(function(cb){ cb.checked=false; });
-  updateFilterCount(sid);
+  var mod=document.getElementById(fid);
+  if(!mod)return;
+  $$('#sf-tabs .sf-tab').forEach(function(t){t.classList.toggle('active',t===el;});
+  document.getElementById(fid+'_filterPane').classList.toggle('hidden',el.dataset.t!=='filter');
+  document.getElementById(fid+'_previewPane').classList.toggle('hidden',el.dataset.t!=='preview');
+  if(el.dataset.t==='preview') applyAndShow(sid);
 }
 
-function confirmSourceFilter(sid){
-  var s=getSource(sid); if(!s)return;
-  var fid='srcFilt_'+sid;
-  var modal=document.getElementById(fid);
-  if(!modal)return;
-
-  // 收集已选筛选条件
-  var selGroups={};
-  modal.querySelectorAll('.sf-cb:checked').forEach(function(cb){
-    var g=cb.dataset.group;
-    if(!selGroups[g]) selGroups[g]=[];
-    selGroups[g].push(cb.value);
+// ---- 收集筛选条件 + 渲染预览 ----
+function collectFilters(mod){
+  var f={};
+  mod.querySelectorAll('.sf-filt:checked').forEach(function(cb){
+    var k=cb.dataset.fk;
+    if(!f[k]) f[k]=[];
+    f[k].push(cb.value);
   });
-
-  // 关闭弹窗，添加到画布（带筛选信息）
-  closeSourceFilter(sid);
-  state.canvasNodes.push({
-    id:'n-src-'+sid+'-'+Date.now(),x:80+Math.random()*300,y:80+Math.random()*200,
-    type:'src',title:s.name,sub:s.records?s.records+'条':'待接入',sourceId:sid,
-    filters:Object.keys(selGroups).length>0?selGroups:null
+  mod.querySelectorAll('.sf-select[data-fk]').forEach(function(sel){
+    var v=sel.value; if(v && v!=='all') f[sel.dataset.fk]=v;
   });
+  mod.querySelectorAll('.sf-input[data-fk]').forEach(function(inp){
+    var v=inp.value.trim(); if(v) f[inp.dataset.fk]=v;
+  });
+  mod.querySelectorAll('input[type=radio]:checked[data-fk]').forEach(function(rad){
+    if(rad.name && rad.name.indexOf('sf_')===0) f[rad.dataset.fk]=rad.value;
+  });
+  // 特殊处理 radio 组
+  var starRad=mod.querySelector('input[name=sf_star]:checked');
+  if(starRad && starRad.value!=='all') f.star=starRad.value;
+  var vpRad=mod.querySelector('input[name=sf_vp]:checked');
+  if(vpRad && vpRad.value!=='all') f.verifiedPurchase=vpRad.value;
+  return f;
+}
 
-  var fcount=Object.values(selGroups).reduce(function(a,b){return a+b.length;},0);
-  saveCanvasState();renderCanvas();
-  toast((fcount>0?'已按 '+fcount+' 项筛选条件':'')+' 已添加: '+s.name);
+function applyAndShow(sid){
+  var fid='srcFilt_'+sid;
+  var mod=document.getElementById(fid);
+  if(!mod)return;
+  var s=getSource(sid);
+  var f=collectFilters(mod);
+  var preview=buildPreviewPanel(s,f);
+  document.getElementById(fid+'_previewPane').innerHTML=preview;
+  // 自动切到预览 tab
+  $$('.sf-tab').forEach(function(t){if(t.dataset.t==='preview'){t.click();}});
+}
+
+function resetAllFilters(sid){
+  var fid='srcFilt_'+sid;
+  var mod=document.getElementById(fid);
+  if(!mod)return;
+  mod.querySelectorAll('.sf-filt').forEach(function(cb){cb.checked=false;});
+  mod.querySelectorAll('.sf-select[data-fk]').forEach(function(sel){sel.selectedIndex=0;});
+  mod.querySelectorAll('.sf-input[data-fk]').forEach(function(inp){inp.value='';});
+  mod.querySelectorAll('input[type=radio][name=sf_star]').forEach(function(r){if(r.value==='all')r.checked=true;});
+  mod.querySelectorAll('input[type=radio][name=sf_vp]').forEach(function(r){if(r.value==='all')r.checked=true;});
+  // 重置预览
+  var s=getSource(sid);
+  document.getElementById(fid+'_previewPane').innerHTML=buildPreviewPanel(s,{});
 }
 
 function closeSourceFilter(sid){
   var el=document.getElementById('srcFilt_'+sid);
   if(el) el.parentNode.removeChild(el);
 }
+
+// ---- 数据源增删选择器 ----
+function openSourcePicker(){
+  var fid='srcPicker';
+  var old=document.getElementById(fid);
+  if(old){old.parentNode.removeChild(old); return;}
+
+  var p=DATA.purposes[state.purposeId];
+  var activeSet={}; (p.sources||[]).forEach(function(id){activeSet[id]=true;});
+  var allSrcs=Object.keys(DATA.sources).map(function(id){return DATA.sources[id];});
+
+  var listHtml='';
+  allSrcs.forEach(function(src){
+    var isActive=!!activeSet[src.id];
+    var statusTag=src.status==='ready'?'<span class="src-badge tiny ready">已接入</span>':'<span class="src-badge tiny pending">待接入</span>';
+    listHtml+='<label class="picker-item'+(isActive?' active':'')+'">'+
+      '<input type="checkbox" class="picker-cb" value="'+src.id+'" '+(isActive?'checked':'')+'>'+
+      '<div class="picker-info">'+
+        '<div class="picker-name">'+escHtml(src.name)+statusTag+'</div>'+
+        '<div class="picker-meta">'+escHtml(src.type)+' · '+escHtml(src.market)+(src.records?' · '+src.records+' 条':'')+'</div>'+
+      '</div>'+
+    '</label>';
+  });
+
+  var bd=document.createElement('div');
+  bd.id=fid; bd.className='sf-overlay';
+  bd.onclick=function(ev){if(ev.target===bd) closeSourcePicker();};
+  bd.innerHTML=
+    '<div class="sf-modal" style="max-width:560px" role="dialog">'+
+      '<div class="sf-head">'+
+        '<div class="sf-name">管理数据源</div>'+
+        '<div class="sf-meta">为「'+escHtml(p?p.label:state.purposeId)+'」添加或移除数据源</div>'+
+        '<button class="sf-close" onclick="closeSourcePicker()">关闭</button>'+
+      '</div>'+
+      '<div class="sf-body" style="max-height:60vh">'+listHtml+'</div>'+
+      '<div class="sf-foot">'+
+        '<span class="sf-sel-count">已选 <b id="pickCnt">0</b> 个数据源</span>'+
+        '<button class="sf-btn ghost" onclick="closeSourcePicker()">取消</button>'+
+        '<button class="sf-btn primary" onclick="confirmSourcePick()">确认更改</button>'+
+      '</div>'+
+    '</div>';
+  document.body.appendChild(bd);
+  updatePickCount();
+  bd.querySelectorAll('.picker-cb').forEach(function(cb){cb.addEventListener('change',updatePickCount);});
+}
+function updatePickCount(){ var cks=document.querySelectorAll('#srcPicker .picker-cb:checked'); var el=document.getElementById('pickCnt'); if(el) el.textContent=cks.length; }
+function confirmSourcePick(){
+  var picks=[].slice.call(document.querySelectorAll('#srcPicker .picker-cb:checked')).map(function(cb){return cb.value;});
+  var p=DATA.purposes[state.purposeId];
+  if(p) p.sources=picks;
+  closeSourcePicker();
+  renderStructPanel(p);
+  toast('数据源已更新为 '+picks.length+' 个');
+}
+function closeSourcePicker(){ var el=document.getElementById('srcPicker'); if(el) el.parentNode.removeChild(el); }
 
 function addSourceToCanvas(sid){
   var s=getSource(sid);if(!s)return;
