@@ -2174,6 +2174,22 @@ body.dark .lab-status{color:#fbbf24}
 .lf-mt{font-size:12px;font-weight:700;padding:5px 12px;border-radius:7px;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:.15s}
 .lf-mt.on{background:var(--rad-grad);color:#fff;box-shadow:0 2px 8px rgba(168,85,247,.32)}
 .lf-src-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 6px}
+/* ——领先用户专区·接入状态折叠（默认隐藏）—— */
+.lf-pull-details{margin:0 0 2px}
+.lf-pull-details>.lf-pull{margin:6px 0 2px}
+.lf-pull-sum,.idea-cfg-sum{list-style:none;cursor:pointer;font-size:11.5px;font-weight:700;color:var(--ink-2);
+  padding:7px 12px;border:1px solid var(--border);border-radius:9px;background:var(--glass-bg);
+  display:inline-flex;align-items:center;gap:7px;transition:all .15s;user-select:none}
+.lf-pull-sum::before,.idea-cfg-sum::before{content:'▸';font-size:9px;color:var(--accent);transition:transform .2s}
+.lf-pull-details[open]>.lf-pull-sum::before,.idea-cfg-details[open]>.idea-cfg-sum::before{transform:rotate(90deg)}
+.lf-pull-sum:hover,.idea-cfg-sum:hover{border-color:var(--accent);color:var(--accent)}
+.lf-pull-details[open]>.lf-pull-sum,.idea-cfg-details[open]>.idea-cfg-sum{margin-bottom:6px}
+/* ——创意灵感区·AI 配置折叠（默认隐藏，只显卡片）—— */
+.idea-cfg-details{margin:0 0 10px}
+.idea-cfg-details[open] .idea-intro,.idea-cfg-details[open] .idea-toolbar,
+.idea-cfg-details[open] .idea-paste,.idea-cfg-details[open] .idea-corpus-info{display:block}
+.idea-cfg-details .idea-intro,.idea-cfg-details .idea-toolbar,
+.idea-cfg-details .idea-paste,.idea-cfg-details .idea-corpus-info{display:none}
 .lf-src-chip{font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--glass-bg);border:1px solid var(--border);color:var(--ink-2)}
 /* ——领先用户扩展：身份卡双维度+信号+区块—— */
 .uid-top{display:flex;gap:10px;margin-bottom:8px}
@@ -6481,36 +6497,46 @@ function renderLfIdea(zone){
   IDEA_CORPUS=ideaCorpusGet();
   return ''+
   '<div class="idea-wrap">'+
-    '<div class="idea-intro">从真实用户反馈中，由 AI 提炼可复用的创意灵感（产品 / 运营 / 营销皆可用），并作为结构化原始库，可导出 JSON 供后续功能接入。新奇度按「被几条评论支撑」规则计算，有趣度与分类由 AI 判定。</div>'+
-    '<div class="idea-toolbar">'+
-      '<button class="idea-btn ghost" onclick="openAiSettings()">'+ideaIc('i-gear')+' AI 设置</button>'+
-      '<label class="idea-btn ghost">'+ideaIc('i-doc')+' 载入 CSV/文本<input type="file" id="ideaFile" accept=".csv,.txt" style="display:none" onchange="ideaLoadFile(this)"></label>'+
-      '<button class="idea-btn primary" onclick="runIdeaExtract()">'+ideaIc('i-bot')+' 用 AI 提炼创意灵感</button>'+
-      '<button class="idea-btn ghost" onclick="exportIdeas()">'+ideaIc('i-box')+' 导出 JSON</button>'+
-      '<button class="idea-btn ghost" onclick="clearSeedIdeas()">清空示例</button>'+
-    '</div>'+
-    '<textarea id="ideaPaste" class="idea-paste" placeholder="…或直接粘贴用户反馈，每行一条评论（与「载入文件」二选一）。"></textarea>'+
-    '<div id="ideaCorpusInfo" class="idea-corpus-info"></div>'+
-    '<div id="ideaGrid" class="idea-grid"></div>'+
+    '<details class="idea-cfg-details">'+
+      '<summary class="idea-cfg-sum">载入反馈并让 AI 提炼创意灵感</summary>'+
+      '<div class="idea-intro">从真实用户反馈中，由 AI 提炼可复用的创意灵感（产品 / 运营 / 营销皆可用），并作为结构化原始库，可导出 JSON 供后续功能接入。新奇度按「被几条评论支撑」规则计算，有趣度与分类由 AI 判定。</div>'+
+      '<div class="idea-toolbar">'+
+        '<button class="idea-btn ghost" onclick="openAiSettings()">'+ideaIc('i-gear')+' AI 设置</button>'+
+        '<label class="idea-btn ghost">'+ideaIc('i-doc')+' 载入 CSV/文本<input type="file" id="ideaFile" accept=".csv,.txt" style="display:none" onchange="ideaLoadFile(this)"></label>'+
+        '<button class="idea-btn primary" onclick="runIdeaExtract()">'+ideaIc('i-bot')+' 用 AI 提炼创意灵感</button>'+
+        '<button class="idea-btn ghost" onclick="exportIdeas()">'+ideaIc('i-box')+' 导出 JSON</button>'+
+        '<button class="idea-btn ghost" onclick="clearSeedIdeas()">清空示例</button>'+
+      '</div>'+
+      '<textarea id="ideaPaste" class="idea-paste" placeholder="…或直接粘贴用户反馈，每行一条评论（与「载入文件」二选一）。"></textarea>'+
+      '<div id="ideaCorpusInfo" class="idea-corpus-info"></div>'+
+    '</details>'+
+    '<div id="ideaGrid" class="uid-grid"></div>'+
   '</div>';
 }
 function ideaCardHtml(c){
-  var nvClass=c.noveltyLevel==='高'?'nv-hi':c.noveltyLevel==='中'?'nv-mid':'nv-lo';
-  var funClass=(c.fun>=70)?'nv-hi':(c.fun>=40)?'nv-mid':'nv-lo';
-  var seedBadge=c.seed?'<span class="idea-badge-seed">示例</span>':'';
-  var srcHtml=(c.sources&&c.sources.length)?'<div class="idea-sources"><div class="ias-h">来源引用（'+c.sources.length+'）</div>'+
-    c.sources.map(function(s){return '<div class="ias-item"><span class="ias-idx">#'+(s.idx||'?')+'</span><span class="ias-txt">'+escHtml(s.txt||'')+'</span></div>';}).join('')+'</div>':'';
-  return '<div class="idea-card">'+seedBadge+
-    '<div class="idea-content">'+escHtml(c.content||'')+'</div>'+
-    '<div class="idea-metrics">'+
-      '<span class="idea-chip '+nvClass+'">新奇度 · '+(c.noveltyLevel||'-')+'（出现 '+(c.novelty||0)+' 次）</span>'+
-      '<span class="idea-chip '+funClass+'">有趣度 · '+(c.fun||0)+'/100</span>'+
+  var nvClass=c.noveltyLevel==='高'?'dim-hi':c.noveltyLevel==='中'?'dim-mid':'dim-lo';
+  var funClass=(c.fun>=70)?'dim-hi':(c.fun>=40)?'dim-mid':'dim-lo';
+  var av=(c.type&&c.type.length)?c.type.charAt(0):'创';
+  var src0=(c.sources&&c.sources.length)?c.sources[0].txt:'';
+  var seedTag=c.seed?'<span class="uid-tag" style="background:var(--accent-soft);color:var(--accent)">示例</span>':'';
+  var tags=[
+    '<span class="uid-tag">类型 · '+(c.type||'其他')+'</span>',
+    '<span class="uid-tag">产品 · '+(c.product||'未提及')+'</span>',
+    seedTag
+  ].filter(Boolean).join('');
+  var name=c.content||'';
+  var nameShow=name.length>22?name.slice(0,22)+'…':name;
+  return '<div class="uid-card idea-uid" onclick="openLfModal(\''+escHtml(c.id)+'\',\'idea\')">'+
+    '<div class="uid-top"><div class="uid-avatar">'+escHtml(av)+'</div>'+
+      '<div class="uid-id"><div class="uid-name">'+escHtml(nameShow)+'</div>'+
+      '<div class="uid-arch" style="--arch:#a855f7">'+escHtml(c.type||'其他')+'</div></div></div>'+
+    '<div class="uid-dims">'+
+      '<div class="uid-dim"><span>新奇度</span><b class="'+nvClass+'">'+escHtml(c.noveltyLevel||'-')+'</b></div>'+
+      '<div class="uid-dim"><span>有趣度</span><b class="'+funClass+'">'+(c.fun||0)+'</b></div>'+
     '</div>'+
-    (c.funReason?'<div class="idea-fun-reason">'+escHtml(c.funReason)+'</div>':'')+
-    '<div class="idea-meta-chips">'+
-      '<span class="idea-chip neutral">类型 · '+(c.type||'其他')+'</span>'+
-      '<span class="idea-chip neutral">产品 · '+(c.product||'未提及')+'</span>'+
-    '</div>'+srcHtml+
+    (src0?'<div class="uid-block"><div class="ub-h">来源引用</div><div class="uid-quote">"'+escHtml(src0)+'"</div></div>':'')+
+    (c.funReason?'<div class="uid-block"><div class="ub-h">有趣度依据</div><div class="uid-idea" style="color:var(--ink-2)">'+escHtml(c.funReason)+'</div></div>':'')+
+    (tags?'<div class="uid-tags">'+tags+'</div>':'')+
   '</div>';
 }
 function renderIdeaGrid(){
@@ -6670,14 +6696,17 @@ function openLfZone(){
         '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">领先需求评估</div>'+
         '<div class="lf-tab" data-lftab="idea" onclick="switchLfTab(\'idea\',this)">创意灵感区</div>'+
       '</div>'+
-      '<div class="lf-pull">'+
-        '<div class="lf-pull-info"><span class="lf-pull-dot"></span>已自动接入 <b>'+lfPulledSources().length+'</b> 个数据源 · 共 '+SOURCE_POOL.length+' 条真实反馈</div>'+
-        '<div class="lf-mode">'+
-          '<button class="lf-mt'+(LF_MODE==='auto'?' on':'')+'" onclick="lfSetMode(\'auto\',this)">已接入源·自动</button>'+
-          '<button class="lf-mt'+(LF_MODE==='sample'?' on':'')+'" onclick="lfSetMode(\'sample\',this)">示例数据</button>'+
+      '<details class="lf-pull-details">'+
+        '<summary class="lf-pull-sum">数据接入状态</summary>'+
+        '<div class="lf-pull">'+
+          '<div class="lf-pull-info"><span class="lf-pull-dot"></span>已自动接入 <b>'+lfPulledSources().length+'</b> 个数据源 · 共 '+SOURCE_POOL.length+' 条真实反馈</div>'+
+          '<div class="lf-mode">'+
+            '<button class="lf-mt'+(LF_MODE==='auto'?' on':'')+'" onclick="lfSetMode(\'auto\',this)">已接入源·自动</button>'+
+            '<button class="lf-mt'+(LF_MODE==='sample'?' on':'')+'" onclick="lfSetMode(\'sample\',this)">示例数据</button>'+
+          '</div>'+
         '</div>'+
-      '</div>'+
-      '<div class="lf-src-chips">'+lfPulledSources().map(function(s){return '<span class="lf-src-chip">'+escHtml(s.label)+' · '+s.n+'</span>';}).join('')+'</div>'+
+        '<div class="lf-src-chips">'+lfPulledSources().map(function(s){return '<span class="lf-src-chip">'+escHtml(s.label)+' · '+s.n+'</span>';}).join('')+'</div>'+
+      '</details>'+
       '<div class="lf-body"></div>'+
     '</div>';
   var zone = document.getElementById('viewLfZone').querySelector('.lf-zone');
@@ -8384,12 +8413,15 @@ function ensureLfModal(){
 }
 function openLfModal(id, type){
   ensureLfModal();
-  var data=type==='portrait'?LF_PORTRAITS.find(function(u){return u.id===id;}):FEEDBACK_RAW.find(function(f){return f.id===id;});
+  var data;
+  if(type==='portrait') data=LF_PORTRAITS.find(function(u){return u.id===id;});
+  else if(type==='idea') data=(ideaDbGet()||[]).find(function(c){return c.id===id;});
+  else data=FEEDBACK_RAW.find(function(f){return f.id===id;});
   if(!data) return;
   var ov=document.getElementById('lfModal');
   if(ov) ov.classList.add('show');
-  document.getElementById('lfmTitle').textContent=type==='portrait'?data.name:'反馈 #'+data.id;
-  document.getElementById('lfmBody').innerHTML=type==='portrait'?renderLfPortraitDetail(data):renderLfFeedbackDetail(data);
+  document.getElementById('lfmTitle').textContent=type==='portrait'?data.name:(type==='idea'?'创意灵感 · '+escHtml((data.content||'').slice(0,16)):'反馈 #'+data.id);
+  document.getElementById('lfmBody').innerHTML=type==='portrait'?renderLfPortraitDetail(data):type==='idea'?renderIdeaDetail(data):renderLfFeedbackDetail(data);
 }
 function closeLfModal(){
   var ov=document.getElementById('lfModal');
@@ -8490,6 +8522,39 @@ function renderLfPortraitDetail(u){
         '<span class="uid-tag">使用阻碍</span><span class="uid-tag">克服方式</span><span class="uid-tag">改进建议</span><span class="uid-tag">忠诚度</span>'+
       '</div>'+
 
+    '</div>'+
+  '</div>';
+}
+function renderIdeaDetail(c){
+  var nvClass=c.noveltyLevel==='高'?'dim-hi':c.noveltyLevel==='中'?'dim-mid':'dim-lo';
+  var funClass=(c.fun>=70)?'dim-hi':(c.fun>=40)?'dim-mid':'dim-lo';
+  var archColor='#a855f7';
+  var av=(c.type&&c.type.length)?c.type.charAt(0):'创';
+  var srcHtml=(c.sources&&c.sources.length)?'<div class="lfm-deco" style="padding:10px 12px"><div class="lfm-dlabel">来源引用（'+c.sources.length+'）</div>'+
+    c.sources.map(function(s){return '<div style="font-size:11.5px;color:var(--ink-2);line-height:1.6;font-style:italic;border-left:3px solid '+archColor+';padding-left:10px;margin-top:4px">"'+escHtml(s.txt||'')+'"</div>';}).join('')+'</div>':'';
+  return '<div class="lfm-detail" style="display:block">'+
+    // Hero
+    '<div class="lfm-hero" style="background:linear-gradient(135deg,'+archColor+',rgba(0,0,0,.12));padding:16px 18px;border-radius:var(--radius-sm);color:#fff;display:flex;align-items:center;gap:14px">'+
+      '<div style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:22px;font-weight:900;flex-shrink:0">'+escHtml(av)+'</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="display:flex;align-items:center;gap:7px;flex-wrap:nowrap">'+
+          '<span style="font-size:9px;font-weight:800;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.22);flex-shrink:0;white-space:nowrap">'+escHtml(c.type||'其他')+'</span>'+
+        '</div>'+
+        '<div style="font-size:14px;font-weight:800;line-height:1.35;margin-top:4px">'+escHtml(c.content||'')+'</div>'+
+      '</div>'+
+      '<div style="display:flex;gap:14px;flex-shrink:0;padding-left:14px;border-left:1px solid rgba(255,255,255,.18)">'+
+        '<div style="text-align:center;min-width:44px"><div style="font-size:8px;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.05em">新奇度</div><div style="font-size:16px;font-weight:900;margin-top:1px;line-height:1">'+escHtml(c.noveltyLevel||'-')+'</div></div>'+
+        '<div style="text-align:center;min-width:44px"><div style="font-size:8px;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.05em">有趣度</div><div style="font-size:16px;font-weight:900;margin-top:1px;line-height:1">'+(c.fun||0)+'</div></div>'+
+      '</div>'+
+    '</div>'+
+    // 单列竖向堆叠
+    '<div style="margin-top:14px;display:flex;flex-direction:column;gap:12px">'+
+      (c.funReason?'<div style="padding:13px 15px;background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.14);border-radius:var(--radius-sm)"><div class="lfm-dlabel" style="--dl-color:'+archColor+'">有趣度依据</div><div style="font-size:13px;color:var(--ink);line-height:1.6">'+escHtml(c.funReason)+'</div></div>':'')+
+      (c.product&&c.product!=='未提及'?'<div style="padding:13px 15px;background:var(--bg-subtle,rgba(128,140,164,.04));border:1px solid var(--border);border-radius:var(--radius-sm)"><div class="lfm-dlabel">涉及产品</div><div style="font-size:13px;color:var(--ink);line-height:1.5">'+escHtml(c.product)+'</div></div>':'')+
+      (srcHtml?srcHtml:'')+
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:2px">'+
+        '<span class="uid-tag">创意灵感</span>'+(c.seed?'<span class="uid-tag" style="background:var(--accent-soft);color:var(--accent)">示例数据</span>':'<span class="uid-tag">AI 提炼</span>')+
+      '</div>'+
     '</div>'+
   '</div>';
 }
