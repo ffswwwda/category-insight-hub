@@ -1507,6 +1507,23 @@ body.dark .lab-status{color:#fbbf24}
 .au-reason-kw{display:inline-block;background:rgba(168,85,247,.1);color:#a855f7;border-radius:5px;padding:1px 7px;margin:2px 4px 2px 0;font-size:10px}
 .au-verdict-item{font-size:12px;color:var(--ink-2);line-height:1.65;margin-bottom:6px;padding-left:14px;position:relative}
 .au-verdict-item::before{content:'';position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+/* 目的类型识别块（运行核对增强） */
+.au-purposes{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.au-purpose{border:1px solid rgba(168,85,247,.28);background:rgba(168,85,247,.05);border-radius:12px;padding:12px 14px}
+.au-purpose-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.au-pname{font-size:14px;font-weight:800;color:var(--ink)}
+.au-pconf{margin-left:auto;font-size:10.5px;font-weight:700;color:#a855f7;background:rgba(168,85,247,.14);border-radius:20px;padding:2px 9px;flex-shrink:0}
+.au-purpose-q{font-size:12px;color:var(--ink-2);font-style:italic;margin-bottom:9px;line-height:1.55}
+.au-need-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px}
+.au-need-label{font-size:10.5px;font-weight:800;color:var(--muted);flex-shrink:0;width:64px;padding-top:3px;letter-spacing:.3px}
+.au-need-chips{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+.au-pchip{font-size:10.5px;border-radius:7px;padding:3px 9px;line-height:1.4;border:1px solid transparent;white-space:nowrap}
+.au-pchip.ok{color:#1f9d55;background:rgba(52,199,89,.13);border-color:rgba(52,199,89,.32)}
+.au-pchip.pen{color:#c8881a;background:rgba(245,166,35,.13);border-color:rgba(245,166,35,.34)}
+.au-pchip.fw{color:var(--fc,#a855f7);background:color-mix(in srgb,var(--fc,#a855f7) 13%,transparent);border-color:color-mix(in srgb,var(--fc,#a855f7) 34%,transparent)}
+.au-purpose-why{font-size:11px;color:var(--muted);line-height:1.65;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)}
+.au-purptags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.au-ptag{font-size:9.5px;color:#a855f7;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.22);border-radius:5px;padding:1px 7px;white-space:nowrap}
 /* 综合概览面板（右栏） */
 .export-overview{background:var(--glass-bg);border:1px solid rgba(0,212,255,.18);border-radius:14px;padding:14px 16px}
 .eo-panel{display:flex;flex-direction:column;gap:11px}
@@ -9706,7 +9723,83 @@ function openExportModal(){
   $('#expResult').value=generatePrompt(ctx,q);
 }
 
-// --- 目的核对引擎（真实匹配：解析输入→拆分关键词/意图→精准匹配数据源与分析框架）---
+// --- 目的核对引擎（目的类型识别 → 数据源/框架精准匹配 → 方案核对）---
+// 目的类型规则库：把「目的」映射到该目的真正需要的数据源（优先已就绪 ready）与分析框架
+var PURPOSE_RULES=[
+  {id:'new-product-dev',name:'新品开发 / 创新孵化',
+   triggers:['新品','新概念','创新','概念','孵化','研发','造','未满足','机会点','空白','突破','痛点','需求挖掘','产品概念'],
+   coreQuestion:'用户还有哪些未被满足的需求？我该造什么新产品 / 新概念？',
+   sources:['s1','s13','s15','s20','s8','s14','s12','s3','s9'],
+   frameworks:['quad','compass','triz','extreme','jtbd','needs'],
+   rationale:'以「用户未满足需求」为起点：评论(s1/s13)与反馈情报(s15)挖痛点；KOL合作(s20)、竞品(s3)与商品库(s8)看卖点差异；搜索量(s14)与类目趋势(s9)验证机会规模；Reddit标签(s12)定位极端/领先用户。框架上需求四象限定位空白、创意罗盘/TRIZ/领先用户生成方案。'},
+  {id:'new-product-marketing',name:'新品营销 / 内容种草',
+   triggers:['营销','种草','内容','卖点','话术','文案','推广','宣发','传播','品牌故事','卖点提炼','新媒体'],
+   coreQuestion:'怎么把新品讲给用户听？用什么内容 / 话术 / 渠道打动他们？',
+   sources:['s12','s15','s1','s13','s20','s8','s17','s18','s16','s21','s2','s11'],
+   frameworks:['motivation','needs','journey','plutchik'],
+   rationale:'营销先懂用户情感与场景：Reddit标签(s12)、反馈情报(s15)、评论(s1/s13)提炼动机/情感；KOL合作(s20)、商品库(s8)、外部测评(s17 YouTube/s18 Bedbible/s16 P站)找内容角度；社媒声量(s21/s2/s11)定渠道。框架上动机编码与需求层次定价值主张、购买旅程定触点、Plutchik定沟通基调。'},
+  {id:'campaign',name:'活动运营 / 大促节奏',
+   triggers:['活动','大促','促销','节日','节奏','排期','触点','投放节奏','campaign','转化放大','流量','大促'],
+   coreQuestion:'大促 / 节日窗口怎么排节奏、选素材、铺触点，放大转化？',
+   sources:['s10','s20','s21','s11','s12','s15','s9','s8','s2'],
+   frameworks:['journey','motivation','plutchik'],
+   rationale:'活动运营看投放与触点效率：广告投放(s10)测效果、KOL合作(s20)与社媒账号(s21/s11)铺内容、Reddit标签(s12)/反馈(s15)找话题、类目趋势(s9)定节奏、商品库(s8)看承接。框架上购买旅程排触点节奏、动机编码定素材方向、Plutchik定情绪钩子。'},
+  {id:'market-seg',name:'市场细分 / 用户分群',
+   triggers:['细分','分群','人群','画像','切分','客群','聚类','规模','高价值群体','用户分层'],
+   coreQuestion:'市场能切成哪些高价值细分？每个细分规模多大、特征是什么？',
+   sources:['s12','s15','s1','s13','s5','s9','s21','s11','s2','s8'],
+   frameworks:['motivation','quad','jtbd'],
+   rationale:'细分依赖画像/动机/规模数据：Reddit标签(s12)、反馈情报(s15)、评论(s1/s13)做画像与动机编码；访谈(s5)深挖；类目趋势(s9)看规模；社媒(s21/s11/s2)看声量分布；商品库(s8)看实际购买人群。框架上动机编码聚类、需求四象限定位价值、JTBD理解任务。'},
+  {id:'user-problem',name:'用户问题研究 / JTBD',
+   triggers:['问题','待解决','任务','jtbd','雇用','痛点','抱怨','麻烦','卡点','待办'],
+   coreQuestion:'用户真正要完成的任务是什么？哪些问题最痛、最高频？',
+   sources:['s1','s13','s8','s15','s20','s3','s14','s4','s5','s6'],
+   frameworks:['jtbd','quad','needs'],
+   rationale:'问题研究从真实反馈出发：差评/痛点来自评论(s1/s13)、商品库(s8)、反馈情报(s15)；竞品(s20/s3)与搜索(s14/s4)看替代方案；访谈(s5)、客服工单(s6)挖深层任务。框架上 JTBD 识别真实任务、需求四象限排优先级、需求层次看深层驱动。'},
+  {id:'category-opp',name:'品类机会发现',
+   triggers:['品类机会','机会','空白点','需求缺口','创新突破口','蓝海','未覆盖','机会点'],
+   coreQuestion:'需求四象限里哪里是空白机会？哪些需求高重要低满意？',
+   sources:['s1','s8','s13','s3','s20','s9','s14'],
+   frameworks:['quad','needs','compass'],
+   rationale:'机会发现聚焦高低满意象限：评论(s1/s13)、商品库(s8)打需求标签；竞品(s3/s20)看竞品满足度；类目趋势(s9)、搜索量(s14)看市场体量。框架上需求四象限定位空白、需求层次看价值、创意罗盘生成机会方向。'},
+  {id:'product-opt',name:'产品优化 / 差评归因',
+   triggers:['优化','差评','改进','归因','迭代','质量','短板','体验提升','升级'],
+   coreQuestion:'产品哪里要改？按影响面 × 严重度怎么排优先级？',
+   sources:['s1','s13','s8','s3','s20','s7'],
+   frameworks:['quad','jtbd','needs'],
+   rationale:'优化以差评归因为核心：评论(s1/s13)、商品库(s8)提取尺寸/质量/材质等归因维度；竞品(s3/s20)看差距；销量(s7)看影响面。框架上需求四象限排优先级、JTBD看任务断层、需求层次看深层体验。'},
+  {id:'price-strategy',name:'价格策略',
+   triggers:['价格','定价','价位','促销','毛利','弹性','价格带','acos','定价策略'],
+   coreQuestion:'最优价格带与促销节奏在哪？怎么平衡毛利与转化？',
+   sources:['s7','s3','s20','s10','s1','s8'],
+   frameworks:['quad','needs'],
+   rationale:'定价结合成本与竞争：销量(s7)看价格弹性、竞品价位(s3/s20)看锚点、广告(s10)看获客成本、评论(s1/s8)看价格敏感度。框架上需求四象限看价值-价格匹配、需求层次看价格背后的价值感。'},
+  {id:'competitor',name:'竞品对标',
+   triggers:['竞品','对标','对手','差距','卖点矩阵','攻击点','benchmark','竞争'],
+   coreQuestion:'竞品强在哪、弱在哪？我能攻击哪个薄弱点？',
+   sources:['s3','s20','s8','s1','s13','s7','s14'],
+   frameworks:['quad','needs','jtbd'],
+   rationale:'对标系统拆竞品：竞品分析(s3)、KOL合作(s20)看卖点与内容、商品库(s8)与评论(s1/s13)看用户真实评价、销量(s7)看表现、搜索量(s14)看流量来源。框架上需求四象限定位竞品薄弱象限、需求层次看差异化、JTBD看可替代性。'},
+  {id:'category-plan',name:'类目规划',
+   triggers:['类目规划','类目结构','选品','供给缺口','分层','资源倾斜','长期选品','品类'],
+   coreQuestion:'类目怎么分层？哪里有供给缺口与高潜细分？',
+   sources:['s9','s7','s8','s3','s20','s14'],
+   frameworks:['quad','needs'],
+   rationale:'类目规划看趋势与供给：类目趋势(s9)看增长与季节、销量(s7)看表现、商品库(s8)看现有结构、竞品(s3/s20)看供给缺口、搜索量(s14)看需求。框架上需求四象限定位高潜、需求层次看价值分布。'},
+  {id:'new-plan',name:'新品规划 / SKU 梯度',
+   triggers:['新品规划','sku','梯度','上市节奏','产品线','入门','旗舰','排期','铺货'],
+   coreQuestion:'新品线梯度（入门/进阶/旗舰）怎么排？何时上市？',
+   sources:['s8','s1','s13','s15','s9','s21','s2','s12'],
+   frameworks:['quad','needs','compass'],
+   rationale:'新品规划基于现有 SKU 与需求缺口：商品库(s8)看 SKU 表现梯度、评论(s1/s13)/反馈(s15)看缺口、类目趋势(s9)看时机、社媒(s21/s2)/Reddit(s12)看话题热度。框架上需求四象限定位梯度、需求层次看层级、创意罗盘想方向。'},
+  {id:'new-build',name:'新品打造 / 卖点推导',
+   triggers:['新品打造','卖点','fabe','差异化','痛点→卖点','定位','打造'],
+   coreQuestion:'从核心痛点反推卖点组合，形成 FABE 与差异化定位？',
+   sources:['s1','s8','s13','s15','s20','s3','s12','s21'],
+   frameworks:['jtbd','needs','quad','motivation'],
+   rationale:'新品打造从痛点反推卖点：评论(s1/s13)、商品库(s8)、反馈(s15)挖痛点；KOL(s20)/竞品(s3)看可差异化点；Reddit(s12)/社媒(s21)看情感钩子。框架上 JTBD 连接痛点-任务、需求层次定价值、需求四象限排卖点优先级、动机编码定沟通。'}
+];
+
 function runAuditEngine(){
   var txt=$('#auditInput').value.trim();
   if(!txt){toast('请输入你的目的或需求描述');return;}
@@ -9714,7 +9807,7 @@ function runAuditEngine(){
   var box=$('#auditResult');
   if(!box) return;
 
-  // ===== 关键词 → 数据源 映射 =====
+  // ===== 关键词 → 数据源 映射（细粒度补充匹配）=====
   var SRC_KW={
     '评论':['s1','s13'],'评价':['s1','s13'],'voc':['s1','s13'],'差评':['s1','s13'],'好评':['s1','s13'],'星级':['s1','s13'],'尺寸':['s1','s13'],'质量':['s1','s13'],'材质':['s1','s13'],'耐用':['s1','s13'],
     '德国':['s8'],'德站':['s8'],'德国站':['s8'],'亚马逊德国':['s8'],'在售商品':['s8'],
@@ -9743,7 +9836,14 @@ function runAuditEngine(){
 
   var low=txt.toLowerCase();
 
-  // 1. 关键词命中 → 收集数据源
+  // 1. 目的类型识别（核心增强）
+  var purpMatched=PURPOSE_RULES.map(function(r){
+    var hits=r.triggers.filter(function(t){return low.indexOf(t.toLowerCase())>=0;});
+    return {rule:r, hits:hits, score:hits.length};
+  }).filter(function(m){return m.score>0;}).sort(function(a,b){return b.score-a.score;});
+  var primaryPurp=purpMatched.length?purpMatched[0]:null;
+
+  // 2. 关键词命中 → 收集数据源
   var srcHits={};
   var hitKws=[];
   Object.keys(SRC_KW).forEach(function(kw){
@@ -9752,7 +9852,6 @@ function runAuditEngine(){
       SRC_KW[kw].forEach(function(sid){ (srcHits[sid]=srcHits[sid]||[]).push(kw); });
     }
   });
-  // 2. 兜底：输入文本与源 name/type/desc 子串模糊匹配
   Object.keys(DATA.sources).forEach(function(sid){
     if(srcHits[sid]) return;
     var s=DATA.sources[sid];
@@ -9761,27 +9860,42 @@ function runAuditEngine(){
     if(words.some(function(w){return hay.indexOf(w)>=0;})) srcHits[sid]=['语义相关'];
   });
 
-  // 3. 结合当前目的已选源上下文
-  var pSrcSet={}; (p?p.sources||[]:[]).forEach(function(s){pSrcSet[s]=true;});
-  var recSrcs=Object.keys(srcHits).map(function(sid){
-    var s=DATA.sources[sid];
-    return {id:sid, name:s.name, type:s.type, market:s.market, status:s.status,
-      reasons:srcHits[sid], inPlan:!!pSrcSet[sid]};
-  }).sort(function(a,b){return b.reasons.length-a.reasons.length;});
+  // 3. 目的规则贡献的数据源（带目的标签）
+  var srcPurp={};
+  purpMatched.forEach(function(m){ m.rule.sources.forEach(function(sid){ (srcPurp[sid]=srcPurp[sid]||[]).push(m.rule.name); }); });
 
-  // 4. 框架匹配（输入 + 当前目的 methods）
+  // 4. 合并推荐数据源（已就绪优先，目的标签 + 关键词依据）
+  var pSrcSet={}; (p?p.sources||[]:[]).forEach(function(s){pSrcSet[s]=true;});
+  var allSrcIds={};
+  Object.keys(srcHits).forEach(function(s){allSrcIds[s]=1;});
+  Object.keys(srcPurp).forEach(function(s){allSrcIds[s]=1;});
+  var recSrcs=Object.keys(allSrcIds).map(function(sid){
+    var s=DATA.sources[sid];
+    return {id:sid,name:s.name,type:s.type,market:s.market,status:s.status,
+      reasons:srcHits[sid]||[], purposes:srcPurp[sid]||[], inPlan:!!pSrcSet[sid]};
+  }).sort(function(a,b){
+    if(a.status!==b.status) return a.status==='ready'?-1:1;
+    return (b.purposes.length+b.reasons.length)-(a.purposes.length+a.reasons.length);
+  });
+
+  // 5. 框架匹配（关键词 + 目的规则）
   var fwHits={};
   Object.keys(FW_KW).forEach(function(kw){
     if(low.indexOf(kw.toLowerCase())>=0){ FW_KW[kw].forEach(function(fid){(fwHits[fid]=fwHits[fid]||[]).push(kw);}); }
   });
   var pMethods=(p&&p.methods||'').toLowerCase();
   Object.keys(FW_KW).forEach(function(kw){ if(pMethods.indexOf(kw.toLowerCase())>=0){ FW_KW[kw].forEach(function(fid){(fwHits[fid]=fwHits[fid]||[]).push(kw);}); }});
-  var recFws=Object.keys(fwHits).map(function(fid){
+  var fwPurp={};
+  purpMatched.forEach(function(m){ m.rule.frameworks.forEach(function(fid){(fwPurp[fid]=fwPurp[fid]||[]).push(m.rule.name);}); });
+  var allFwIds={};
+  Object.keys(fwHits).forEach(function(f){allFwIds[f]=1;});
+  Object.keys(fwPurp).forEach(function(f){allFwIds[f]=1;});
+  var recFws=Object.keys(allFwIds).map(function(fid){
     var f=DATA.frameworks.find(function(x){return x.id===fid;}); if(!f) return null;
-    return {id:fid, name:f.name, color:f.color, desc:f.desc, reasons:fwHits[fid], inPlan:(state.selectedFrameworks||[]).indexOf(fid)>=0};
-  }).filter(Boolean).sort(function(a,b){return b.reasons.length-a.reasons.length;});
+    return {id:fid,name:f.name,color:f.color,desc:f.desc,reasons:fwHits[fid]||[],purposes:fwPurp[fid]||[],inPlan:(state.selectedFrameworks||[]).indexOf(fid)>=0};
+  }).filter(Boolean).sort(function(a,b){return (b.purposes.length+b.reasons.length)-(a.purposes.length+a.reasons.length);});
 
-  // 5. 评分与结论
+  // 6. 评分与结论
   var readyRec=recSrcs.filter(function(s){return s.status==='ready';});
   var pendingRec=recSrcs.filter(function(s){return s.status!=='ready';});
   var score=Math.min(96, 25 + readyRec.length*10 + pendingRec.length*4 + recFws.length*6);
@@ -9789,50 +9903,93 @@ function runAuditEngine(){
   var scoreLabel=score>=80?'配置较完善':score>=55?'基本可用':'建议补充';
 
   var verdictParts=[];
-  if(recSrcs.length===0){
-    verdictParts.push('未能从输入中识别出明确的数据源需求。建议补充更具体的描述，如涉及哪类数据：评论/搜索/社媒/竞品/趋势/供应商/售后等。');
-  } else {
-    var inPlan=recSrcs.filter(function(s){return s.inPlan;});
-    if(inPlan.length===recSrcs.length){
-      verdictParts.push('识别到的 '+recSrcs.length+' 个相关数据源已全部纳入当前方案，配置吻合度高。');
-    } else if(inPlan.length>0){
-      verdictParts.push('识别到 '+recSrcs.length+' 个相关数据源，其中 '+inPlan.length+' 个已纳入方案，另 '+(recSrcs.length-inPlan.length)+' 个建议补充（见「建议补充」标签）。');
+  if(primaryPurp){
+    var rule=primaryPurp.rule;
+    var needSrc=rule.sources;
+    var needFw=rule.frameworks;
+    var inPlanSrc=needSrc.filter(function(sid){return pSrcSet[sid];});
+    var readyInPlan=inPlanSrc.filter(function(sid){var s=DATA.sources[sid];return s&&s.status==='ready';});
+    var pendingNeed=needSrc.filter(function(sid){var s=DATA.sources[sid];return s&&s.status!=='ready';});
+    var fwInPlan=needFw.filter(function(fid){(state.selectedFrameworks||[]).indexOf(fid)>=0;});
+    verdictParts.push('识别到目的类型「'+rule.name+'」（命中 '+primaryPurp.score+' 个关键词）。该目的共需 '+needSrc.length+' 个数据源，当前方案已纳入 '+inPlanSrc.length+' 个（其中已就绪 '+readyInPlan.length+' 个），待接入 '+pendingNeed.length+' 个。');
+    if(inPlanSrc.length<needSrc.length){
+      var miss=needSrc.filter(function(sid){return !pSrcSet[sid];}).map(function(sid){var s=DATA.sources[sid];return s?(s.name+(s.status!=='ready'?'（待接入）':'')):sid;});
+      verdictParts.push('建议补充数据源：'+miss.join('、')+'。');
     } else {
-      verdictParts.push('识别到 '+recSrcs.length+' 个相关数据源，但当前方案尚未纳入任何一个，建议优先加入。');
+      verdictParts.push('数据源已全覆盖该目的需求。');
     }
-    if(pendingRec.length>0){
-      verdictParts.push(pendingRec.length+' 个相关源仍为「待接入」状态，需先完成数据接入才能用于分析。');
+    if(needFw.length){
+      if(fwInPlan.length<needFw.length){
+        var missFw=needFw.filter(function(fid){(state.selectedFrameworks||[]).indexOf(fid)<0;}).map(function(fid){var f=DATA.frameworks.find(function(x){return x.id===fid;});return f?f.name:fid;});
+        verdictParts.push('建议加入分析框架：'+missFw.join('、')+'。');
+      } else {
+        verdictParts.push('分析框架已覆盖该目的需求。');
+      }
     }
   }
-  if(recFws.length===0){
+  if(recSrcs.length===0 && !primaryPurp){
+    verdictParts.push('未识别到目的类型，也未匹配到关键词。建议补充更具体的描述：涉及哪类数据（评论/搜索/社媒/竞品/趋势/供应商/售后）或哪个目的（新品开发/活动运营/市场细分/竞品对标…）。');
+  }
+  if(recFws.length===0 && !primaryPurp){
     verdictParts.push('未匹配到明确适用的分析框架。可参考：市场细分→动机编码/JTBD，链路诊断→购买旅程，创新→产品创意罗盘/TRIZ，情绪洞察→Plutchik。');
-  } else {
-    var fwIn=recFws.filter(function(f){return f.inPlan;}).length;
-    verdictParts.push('推荐 '+recFws.length+' 个分析框架（'+recFws.map(function(f){return f.name;}).join('、')+'）'+(fwIn?('，其中 '+fwIn+' 个已在方案中'):'，建议加入方案'));
+  }
+  if(purpMatched.length>1){
+    verdictParts.push('另识别到关联目的：'+purpMatched.slice(1,3).map(function(m){return m.rule.name;}).join('、')+'，可在上方「目的类型」中查看其需要的数据源与框架。');
   }
 
-  var intentHtml = hitKws.length? '<div class="au-intent"><span class="au-intent-label">识别意图：</span>'+hitKws.map(function(k){return '<span class="au-chip">'+escHtml(k)+'</span>';}).join('')+'</div>' : '';
+  // 7. 输出 HTML
+  var intentChips=[];
+  Object.keys(SRC_KW).forEach(function(kw){ if(low.indexOf(kw.toLowerCase())>=0 && intentChips.indexOf(kw)<0) intentChips.push(kw); });
+  Object.keys(FW_KW).forEach(function(kw){ if(low.indexOf(kw.toLowerCase())>=0 && intentChips.indexOf(kw)<0) intentChips.push(kw); });
+  var intentHtml = intentChips.length? '<div class="au-intent"><span class="au-intent-label">识别意图：</span>'+intentChips.map(function(k){return '<span class="au-chip">'+escHtml(k)+'</span>';}).join('')+'</div>' : '';
+
+  var purpHtml = purpMatched.length? purpMatched.slice(0,3).map(function(m){
+    var r=m.rule;
+    var srcChips=r.sources.map(function(sid){
+      var s=DATA.sources[sid]; if(!s)return '';
+      var st=s.status==='ready'?'ok':'pen';
+      return '<span class="au-pchip '+st+'">'+escHtml(s.name)+(s.status==='ready'?'':'（待接入）')+'</span>';
+    }).join('');
+    var fwChips=r.frameworks.map(function(fid){
+      var f=DATA.frameworks.find(function(x){return x.id===fid;}); if(!f)return '';
+      return '<span class="au-pchip fw" style="--fc:'+f.color+'">'+escHtml(f.name)+'</span>';
+    }).join('');
+    return '<div class="au-purpose">'+
+      '<div class="au-purpose-head"><span class="au-pname">'+escHtml(r.name)+'</span><span class="au-pconf">匹配 '+m.score+' 个关键词</span></div>'+
+      '<div class="au-purpose-q">「'+escHtml(r.coreQuestion)+'」</div>'+
+      '<div class="au-need-row"><span class="au-need-label">需要的数据源</span><div class="au-need-chips">'+srcChips+'</div></div>'+
+      '<div class="au-need-row"><span class="au-need-label">分析框架</span><div class="au-need-chips">'+fwChips+'</div></div>'+
+      '<div class="au-purpose-why">'+escHtml(r.rationale)+'</div>'+
+    '</div>';
+  }).join('') : '<div class="as-empty">未从输入中识别到明确的目的类型，已按关键词匹配（输入如「新品开发」「活动运营」「市场细分」「竞品对标」等可触发目的规则）。</div>';
+
   var srcHtml = recSrcs.length? recSrcs.map(function(s){
     var stColor=s.status==='ready'?'#34c759':'#f5a623';
     var stTxt=s.status==='ready'?'已就绪':'待接入';
     var badge=s.inPlan?'<span class="au-tag ok">已在方案</span>':'<span class="au-tag add">建议补充</span>';
+    var purpTags=s.purposes.length?'<div class="au-purptags">'+s.purposes.map(function(n){return '<span class="au-ptag">'+escHtml(n)+'</span>';}).join('')+'</div>':'';
+    var reasonHtml=s.reasons.length?'<div class="au-reason">关键词依据：'+s.reasons.map(function(r){return '<span class="au-reason-kw">'+escHtml(r)+'</span>';}).join('')+'</div>':'';
     return '<div class="au-item'+(s.inPlan?' au-inplan':'')+'">'+
       '<div class="au-item-top"><span class="au-name">'+escHtml(s.name)+'</span>'+badge+'</div>'+
       '<div class="au-meta">'+escHtml(s.type)+' · '+escHtml(s.market||'')+' · <b style="color:'+stColor+'">'+stTxt+'</b></div>'+
-      '<div class="au-reason">匹配依据：'+s.reasons.map(function(r){return '<span class="au-reason-kw">'+escHtml(r)+'</span>';}).join('')+'</div>'+
+      purpTags+reasonHtml+
     '</div>';
   }).join('') : '<div class="as-empty">未匹配到数据源，请补充更具体的描述</div>';
+
   var fwHtml = recFws.length? recFws.map(function(f){
     var tag=f.inPlan?'<span class="au-tag ok">已在方案</span>':'<span class="au-tag add">建议加入</span>';
+    var purpTags=f.purposes.length?'<div class="au-purptags">'+f.purposes.map(function(n){return '<span class="au-ptag">'+escHtml(n)+'</span>';}).join('')+'</div>':'';
+    var reasonHtml=f.reasons.length?'<div class="au-reason">信号：'+f.reasons.map(function(r){return '<span class="au-reason-kw">'+escHtml(r)+'</span>';}).join('')+'</div>':'';
     return '<div class="au-item'+(f.inPlan?' au-inplan':'')+'">'+
       '<div class="au-item-top"><span class="au-name" style="color:'+f.color+'">'+escHtml(f.name)+'</span>'+tag+'</div>'+
       '<div class="au-meta">'+escHtml(f.desc)+'</div>'+
-      '<div class="au-reason">适用信号：'+f.reasons.map(function(r){return '<span class="au-reason-kw">'+escHtml(r)+'</span>';}).join('')+'</div>'+
+      purpTags+reasonHtml+
     '</div>';
   }).join('') : '<div class="as-empty">未匹配到分析框架</div>';
 
   box.innerHTML='<div class="audit-report">'+
     intentHtml+
+    '<div class="au-purposes">'+purpHtml+'</div>'+
     '<div class="audit-score" style="--sc:'+scoreColor+'"><span class="as-num">'+score+'</span><span class="as-lbl">'+scoreLabel+'</span></div>'+
     '<div class="audit-sections">'+
       '<div class="audit-sec"><div class="as-title">推荐数据源（'+recSrcs.length+' · '+readyRec.length+' 已就绪 / '+pendingRec.length+' 待接入）</div>'+srcHtml+'</div>'+
