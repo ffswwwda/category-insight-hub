@@ -1747,6 +1747,7 @@ body.dark .lab-status{color:#fbbf24}
 .fw-collapse-head{display:flex;align-items:center;gap:8px;padding:14px 18px;cursor:pointer;font-size:14px;font-weight:700;color:var(--ink);background:var(--panel-solid);user-select:none;transition:background .2s}
 .fw-collapse-head:hover{background:rgba(0,212,255,.06)}
 .fw-collapse-head .fw-icon{font-size:16px}
+.fw-collapse-head .fw-ico{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center}
 .fw-collapse-arrow{margin-left:auto;font-size:12px;color:var(--muted);transition:transform .2s}
 .fw-collapse-body{padding:18px;border-top:1px solid var(--border);background:var(--bg)}
 .fw-collapse-body .fg-section{border:none;padding:0;margin-bottom:20px}
@@ -2153,6 +2154,16 @@ body.dark .lab-status{color:#fbbf24}
 .ai-set-in{display:block;width:100%;margin-top:5px;padding:8px 11px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:13px}
 .ai-set-in:focus{outline:none;border-color:var(--accent)}
 .ai-set-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+/* ——领先用户专区·已接入数据源条 + 模式切换—— */
+.lf-pull{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:11px 16px;margin:0 0 2px;background:linear-gradient(120deg,rgba(0,212,255,.05),rgba(168,85,247,.06));border:1px solid var(--border);border-radius:12px}
+.lf-pull-info{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.lf-pull-info b{color:var(--accent);font-weight:800}
+.lf-pull-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#a855f7);box-shadow:0 0 0 3px rgba(0,212,255,.14)}
+.lf-mode{display:flex;gap:6px;background:var(--glass-bg);border:1px solid var(--border);border-radius:9px;padding:3px}
+.lf-mt{font-size:12px;font-weight:700;padding:5px 12px;border-radius:7px;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:.15s}
+.lf-mt.on{background:var(--rad-grad);color:#fff;box-shadow:0 2px 8px rgba(168,85,247,.32)}
+.lf-src-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 6px}
+.lf-src-chip{font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--glass-bg);border:1px solid var(--border);color:var(--ink-2)}
 /* ——领先用户扩展：身份卡双维度+信号+区块—— */
 .uid-top{display:flex;gap:10px;margin-bottom:8px}
 .uid-id{flex:1}
@@ -6391,14 +6402,22 @@ function openAITools(){
     '<div class="gal-head"><div><div class="gal-h-title">AI 简化工具</div>'+
       '<div class="gal-h-sub">四大类共 9 个工具：分析类（VOC/语料/产品打分）、预测类（模拟/洞察/风险）、看板类（GTM社媒）、创意类（新品灵感/新品开发）。均不依赖大模型。</div></div></div>'+
     '<div class="ai-groups">'+groupHtml+'</div>'+
-    // 折叠的分析框架
+    // 折叠①：数据清洗框架（点开可见，点击卡片进入 VOC 标签体系）
     '<div class="fw-collapse">'+
       '<div class="fw-collapse-head" onclick="toggleFrameworkCollapse(this)">'+
-        '<span class="fw-icon">📐</span><span>分析框架</span><span class="fw-collapse-arrow">▸</span>'+
+        '<span class="fw-ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg></span><span>数据清洗框架</span><span class="fw-collapse-arrow">▸</span>'+
       '</div>'+
       '<div class="fw-collapse-body" style="display:none">'+
-        '<div class="fg-section"><div class="fg-shead">数据清洗框架</div>'+fwDataCleanCard+'</div>'+
-        '<div class="fg-section"><div class="fg-shead">分析框架全景</div><div class="gal-grid">'+fwCards+'</div></div>'+
+        '<div class="fg-section"><div class="fg-shead">VOC 标签体系</div>'+fwDataCleanCard+'</div>'+
+      '</div>'+
+    '</div>'+
+    // 折叠②：分析框架全景
+    '<div class="fw-collapse">'+
+      '<div class="fw-collapse-head" onclick="toggleFrameworkCollapse(this)">'+
+        '<span class="fw-ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/><path d="M3 12h18"/></svg></span><span>分析框架全景</span><span class="fw-collapse-arrow">▸</span>'+
+      '</div>'+
+      '<div class="fw-collapse-body" style="display:none">'+
+        '<div class="fg-section"><div class="fg-shead">分析框架全景（'+DATA.frameworks.length+' 个）</div><div class="gal-grid">'+fwCards+'</div></div>'+
       '</div>'+
     '</div>';
 }
@@ -6636,9 +6655,18 @@ function openLfZone(){
         '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">领先需求评估</div>'+
         '<div class="lf-tab" data-lftab="idea" onclick="switchLfTab(\'idea\',this)">创意灵感区</div>'+
       '</div>'+
+      '<div class="lf-pull">'+
+        '<div class="lf-pull-info"><span class="lf-pull-dot"></span>已自动接入 <b>'+lfPulledSources().length+'</b> 个数据源 · 共 '+SOURCE_POOL.length+' 条真实反馈</div>'+
+        '<div class="lf-mode">'+
+          '<button class="lf-mt'+(LF_MODE==='auto'?' on':'')+'" onclick="lfSetMode(\'auto\',this)">已接入源·自动</button>'+
+          '<button class="lf-mt'+(LF_MODE==='sample'?' on':'')+'" onclick="lfSetMode(\'sample\',this)">示例数据</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="lf-src-chips">'+lfPulledSources().map(function(s){return '<span class="lf-src-chip">'+escHtml(s.label)+' · '+s.n+'</span>';}).join('')+'</div>'+
       '<div class="lf-body"></div>'+
     '</div>';
   var zone = document.getElementById('viewLfZone').querySelector('.lf-zone');
+  refreshLfPortraits();
   if(zone) renderLfBody(zone);
 }
 function openVocTool(){
@@ -7989,6 +8017,112 @@ var FEEDBACK_RAW = [
 var LF_PURPOSES = ['产品开发','产品优化','创意','营销'];
 var LF_CLUSTERS = ['安装适配','智能连接','噪音安全','可靠性售后','工艺精度'];
 
+// ===== 已接入数据源池（领先用户专区 · 自动拉取）=====
+// 整合各「已接入」真实数据源的 VOC 样本；专区打开时按身份卡逻辑自动识别领先用户，无需手动上传。
+var SOURCE_POOL = [
+  {src:'s1', srcLabel:'VOC评论', text:'我自己加了静音棉，效果还行，但希望出厂就做好，还能调震频。'},
+  {src:'s1', srcLabel:'VOC评论', text:'机器噪音太大，我拆开加了减震垫，建议出厂就考虑静音。'},
+  {src:'s1', srcLabel:'VOC评论', text:'能不能出个可调震频的版本，自己改固件太麻烦。'},
+  {src:'s1', srcLabel:'VOC评论', text:'柜子深度只有30cm，市面上没有合适的，只能将就。'},
+  {src:'s8', srcLabel:'德国商品库', text:'我家是老房子，尺寸都不标准，希望能出非标尺寸定制。'},
+  {src:'s1', srcLabel:'VOC评论', text:'租房党空间小，希望有可伸缩结构适配非标空间。'},
+  {src:'s13', srcLabel:'美亚评论', text:'养猫家庭最在意噪音和安全性，市面上几乎没有同时满足这两个的。'},
+  {src:'s1', srcLabel:'VOC评论', text:'家里有宠物，怕咬到电线，希望出宠物安全材质的。'},
+  {src:'s13', srcLabel:'美亚评论', text:'养宠家庭需要低噪+无毒材质双满足。'},
+  {src:'s3', srcLabel:'竞品评论', text:'放客厅不好看，像工业品不像家电，朋友来都觉得尴尬。'},
+  {src:'s1', srcLabel:'VOC评论', text:'能不能做成装饰性外观，能当摆件而非躲起来。'},
+  {src:'s13', srcLabel:'美亚评论', text:'颜值即正义，现在这款太工业风了。'},
+  {src:'s4', srcLabel:'搜索量', text:'同样参数别家便宜20%，看不出差异在哪。'},
+  {src:'s7', srcLabel:'销售数据', text:'凭什么贵？参数差不多，差异化价值不明显。'},
+  {src:'s4', srcLabel:'搜索量', text:'多平台比价，你们优势在哪？'},
+  {src:'s5', srcLabel:'访谈', text:'公司采购50台给员工宿舍，半年坏7台，维修太慢。'},
+  {src:'s5', srcLabel:'访谈', text:'我们企业批量采购，希望有可靠性套餐+本地备件。'},
+  {src:'s6', srcLabel:'客服工单', text:'B端运维成本高，需要本地化服务响应。'},
+  {src:'s2', srcLabel:'社媒提及', text:'身边好几个朋友都在找能带上飞机的小烤箱。'},
+  {src:'s13', srcLabel:'美亚评论', text:'经常出差，希望有便携版本。'},
+  {src:'s2', srcLabel:'社媒提及', text:'出差党需要迷你款。'},
+  {src:'s12', srcLabel:'Reddit标签', text:'竞品的APP联动做得好，你们蓝牙配对不稳定。'},
+  {src:'s13', srcLabel:'美亚评论', text:'希望APP能稳定连接，智能联动。'},
+  {src:'s12', srcLabel:'Reddit标签', text:'智能家居联动太弱，希望加强。'},
+  {src:'s5', srcLabel:'访谈', text:'模具精度至少提升两个等级，公差太大。'},
+  {src:'s1', srcLabel:'VOC评论', text:'做工粗糙，缝隙不均，工艺细节能再精致点。'},
+  {src:'s15', srcLabel:'反馈情报', text:'安装对租房党不友好，搬了三次家每次拆装。'},
+  {src:'s12', srcLabel:'Reddit标签', text:'希望能出免打孔版本，打孔太麻烦。'},
+  {src:'s15', srcLabel:'反馈情报', text:'安装太复杂，老人不会，需要快装结构。'}
+];
+// 领先用户识别规则（= 身份卡逻辑：领先度 × 收益 × 信号）
+var LF_LEAD_RULES = [
+  {key:'diy', name:'极客型早期采用者', lead:'高', benefit:'高', signals:['workaround','future'],
+   match:['自己(加|改|装|弄|做)','DIY','改装','希望出厂','预装','调震频','减震','拆开'],
+   idea:'出厂预装对应模块 + 可调固件，省去用户 DIY。'},
+  {key:'custom', name:'场景定制需求者', lead:'高', benefit:'高', signals:['future'],
+   match:['非标','定制','尺寸','伸缩','租房','老房子'],
+   idea:'模块化非标尺寸定制 / 可伸缩结构，适配非标空间。'},
+  {key:'pet', name:'养宠安全顾虑者', lead:'高', benefit:'高', signals:['future','emotion'],
+   match:['养猫','养宠','宠物','无毒','咬'],
+   idea:'低噪 + 宠物安全材质（无毒 / 防咬）双满足。'},
+  {key:'aesthetic', name:'审美优先体验派', lead:'高', benefit:'中', signals:['emotion'],
+   match:['不好看','颜值','装饰','摆件','工业风','尴尬','朋友'],
+   idea:'家居化 / 装饰性外观，能当摆件而非躲起来。'},
+  {key:'value', name:'性价比精算师', lead:'低', benefit:'高', signals:['emotion'],
+   match:['便宜','贵','性价比','比价','差异','参数'],
+   idea:'差异化价值可视化（参数 + 体验对比），否则只能拼价格。'},
+  {key:'enterprise', name:'企业批量采购者', lead:'低', benefit:'高', signals:['social'],
+   match:['公司','企业','批量','采购','维修','备件','B端','运维'],
+   idea:'B 端可靠性套餐 + 本地化备件，降低运维成本。'},
+  {key:'portable', name:'便携出差党', lead:'高', benefit:'中', signals:['future'],
+   match:['带上飞机','出差','便携','迷你'],
+   idea:'旅行迷你系列，覆盖出差 / 租房人群。'},
+  {key:'smart', name:'智能连接需求者', lead:'高', benefit:'中', signals:['future'],
+   match:['APP','蓝牙','联动','智能','连接'],
+   idea:'稳定智能联动，补齐 APP 体验短板。'},
+  {key:'craft', name:'工艺精度派', lead:'中', benefit:'高', signals:['future'],
+   match:['模具','精度','公差','做工','缝隙','工艺','精致'],
+   idea:'提升工艺精度两等级，缩小公差。'},
+  {key:'install', name:'安装适配需求者', lead:'高', benefit:'中', signals:['future'],
+   match:['安装','免打孔','拆装','打孔'],
+   idea:'免打孔 / 快装结构，降低安装门槛。'}
+];
+function deriveLeadUsers(){
+  var byKey={};
+  SOURCE_POOL.forEach(function(r){
+    LF_LEAD_RULES.forEach(function(rule){
+      if(rule.match.some(function(p){ return new RegExp(p).test(r.text); })){
+        var g=byKey[rule.key]||(byKey[rule.key]={rule:rule,items:[],srcs:{}});
+        g.items.push(r);
+        g.srcs[r.srcLabel]=(g.srcs[r.srcLabel]||0)+1;
+      }
+    });
+  });
+  var out=[], i=0;
+  Object.keys(byKey).forEach(function(k){
+    var g=byKey[k], rule=g.rule;
+    var rep=g.items.slice().sort(function(a,b){return b.text.length-a.text.length;})[0];
+    var srcKeys=Object.keys(g.srcs);
+    out.push({
+      id:'auto'+i, avatar:String.fromCharCode(65+i), name:rule.name,
+      archetype:(rule.lead==='高'&&rule.benefit==='高')?'lead':(rule.benefit==='高'&&rule.lead!=='高')?'power':'trend',
+      lead:rule.lead, benefit:rule.benefit, signals:rule.signals.slice(),
+      said:rep.text, idea:rule.idea,
+      trait:g.items.length+' 条真实反馈 · 跨 '+srcKeys.length+' 个数据源',
+      source:'已接入源·自动识别', freq:g.items.length,
+      _srcs:g.srcs
+    });
+    i++;
+  });
+  out.sort(function(a,b){return b.freq-a.freq;});
+  return out;
+}
+function lfPulledSources(){
+  var m={}; SOURCE_POOL.forEach(function(r){ m[r.srcLabel]=(m[r.srcLabel]||0)+1; });
+  return Object.keys(m).map(function(k){return {label:k,n:m[k]};});
+}
+var LF_PORTRAITS_SAMPLE = LF_PORTRAITS;
+var LF_MODE = 'auto';
+function refreshLfPortraits(){
+  LF_PORTRAITS = (LF_MODE==='auto') ? deriveLeadUsers() : LF_PORTRAITS_SAMPLE;
+}
+
 function lfDimClass(v){ var s=String(v); return s==='极高'||s==='高' ? 'dim-hi' : (s==='中' ? 'dim-mid' : 'dim-lo'); }
 function lfScore(v){ var s=String(v); return s==='极高'?4 : s==='高'?3 : s==='中'?2 : 1; }
 
@@ -7997,6 +8131,15 @@ function switchLfTab(tab, el){
   var tabs = zone ? zone.querySelectorAll('.lf-tab') : $$('.lf-tab');
   tabs.forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-lftab')===tab); });
   renderLfBody(zone);
+}
+function lfSetMode(mode, btn){
+  LF_MODE = mode;
+  refreshLfPortraits();
+  var zone = btn.closest('.lf-zone');
+  if(zone){
+    zone.querySelectorAll('.lf-mt').forEach(function(b){ b.classList.toggle('on', b===btn); });
+    renderLfBody(zone);
+  }
 }
 
 function renderLfBody(zone){
@@ -8074,8 +8217,8 @@ function renderLfQuadrant(){
     return '<g class="lf-pt" onclick="openLfModal(\''+u.id+'\',\'portrait\')" style="cursor:pointer">'+
       '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+arch.color+'" fill-opacity=".12" stroke="'+arch.color+'" stroke-width="1.5"/>'+
       '<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="14" font-weight="900">'+escHtml(u.avatar)+'</text>'+
-      '<text x="'+cx+'" y="'+(cy+r+12)+'" text-anchor="middle" fill="'+arch.color+'" font-size="10" font-weight="800">'+(u.freq||0)+'%</text>'+
-      '<title>'+escHtml(u.name)+' · '+(u.freq||0)+'%</title></g>';
+      '<text x="'+cx+'" y="'+(cy+r+12)+'" text-anchor="middle" fill="'+arch.color+'" font-size="10" font-weight="800">'+(u.freq||0)+' 条</text>'+
+      '<title>'+escHtml(u.name)+' · '+(u.freq||0)+' 条相关反馈</title></g>';
   }).join('');
   // 5. 象限标签
   var qLabels = [
