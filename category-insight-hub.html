@@ -1349,6 +1349,78 @@ body.dark .lab-status{color:#fbbf24}
   opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:200}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ============ 5层设计体系 · 隐藏演示入口 ============ */
+.layer-trigger{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:14px;
+  background:var(--glass-bg);border:1px solid var(--border);backdrop-filter:var(--glass-blur);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:90;
+  opacity:.28;transition:opacity .3s var(--rad-easing),transform .3s var(--rad-easing),box-shadow .3s;
+  box-shadow:var(--shadow-sm)}
+.layer-trigger:hover{opacity:1;transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.layer-trigger .ic-svg{width:24px;height:24px}
+.layer-trigger .ic-svg use{stroke:url(#uiGrad)}
+.layer-trigger::after{content:'五层设计体系';position:absolute;right:54px;top:50%;transform:translateY(-50%);
+  white-space:nowrap;font-size:11.5px;font-weight:700;color:var(--ink-2);background:var(--panel-solid);
+  border:1px solid var(--border);padding:5px 10px;border-radius:9px;opacity:0;pointer-events:none;transition:opacity .25s;box-shadow:var(--shadow-sm)}
+.layer-trigger:hover::after{opacity:1}
+
+.layer-overlay{position:fixed;inset:0;background:rgba(8,10,20,.46);backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);z-index:300;display:none;align-items:center;justify-content:center;padding:24px}
+.layer-overlay.show{display:flex;animation:loFade .25s ease}
+@keyframes loFade{from{opacity:0}to{opacity:1}}
+.layer-box{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius);
+  width:1000px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);
+  backdrop-filter:var(--glass-blur);position:relative}
+.layer-box::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--rad-grad);border-radius:var(--radius) var(--radius) 0 0}
+.layer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:24px 28px 18px;
+  border-bottom:1px solid var(--border)}
+.layer-kicker{font-size:11px;font-weight:900;letter-spacing:2px;color:#fff;background:var(--rad-grad);padding:4px 11px;border-radius:20px;display:inline-block;margin-bottom:10px}
+.layer-title{font-size:22px;font-weight:900;
+  background:var(--rad-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+.layer-sub{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.6;max-width:680px}
+.layer-close{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:var(--glass-bg);
+  color:var(--ink-2);font-size:20px;line-height:1;cursor:pointer;flex-shrink:0;transition:all .2s}
+.layer-close:hover{background:var(--rad-grad);color:#fff;border-color:transparent}
+.layer-body{padding:22px 28px 28px}
+
+/* 阶梯图 */
+.layer-stairs{display:flex;gap:8px;margin-bottom:22px}
+.layer-stair{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:12px;
+  border:1px solid var(--border);background:var(--glass-bg);position:relative;transition:transform .25s}
+.layer-stair:hover{transform:translateY(-3px)}
+.layer-stair .ls-num{width:30px;height:30px;border-radius:9px;background:var(--rad-grad);color:#fff;font-weight:900;
+  font-size:14px;display:grid;place-items:center;box-shadow:0 5px 14px rgba(168,85,247,.26)}
+.layer-stair .ls-name{font-size:11.5px;font-weight:700;color:var(--ink-2);text-align:center;line-height:1.4}
+.layer-base{margin:-8px 0 22px;padding:11px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(168,85,247,.12),rgba(255,107,157,.12));
+  border:1px dashed color-mix(in srgb,var(--accent) 40%,transparent);font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.layer-base b{background:var(--rad-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.layer-base .lb-tag{font-size:10.5px;font-weight:900;letter-spacing:1px;color:var(--accent);display:block;margin-bottom:3px}
+
+/* 卡片 */
+.layer-card{display:flex;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--border);
+  background:var(--glass-bg);margin-bottom:14px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
+.layer-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.layer-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--rad-grad);opacity:.85}
+.lc-num{flex-shrink:0;width:38px;height:38px;border-radius:11px;background:var(--rad-grad);color:#fff;font-weight:900;font-size:16px;
+  display:grid;place-items:center;box-shadow:0 6px 16px rgba(168,85,247,.24)}
+.lc-main{flex:1;min-width:0}
+.lc-top{display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap}
+.lc-name{font-size:15.5px;font-weight:800;color:var(--ink)}
+.lc-icon{width:22px;height:22px;flex-shrink:0}
+.lc-icon use{stroke:url(#uiGrad)}
+.lc-depth{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;color:#fff;background:var(--rad-grad-soft);white-space:nowrap}
+.lc-who{font-size:12px;color:var(--muted);margin-bottom:9px;line-height:1.6}
+.lc-who b{color:var(--ink-2)}
+.lc-rows{display:flex;flex-direction:column;gap:7px}
+.lc-row{display:flex;gap:8px;font-size:12.5px;line-height:1.6}
+.lc-row .lc-k{flex-shrink:0;width:62px;font-weight:800;color:var(--accent);font-size:11.5px;padding-top:1px}
+.lc-row .lc-v{color:var(--ink-2)}
+.lc-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.lc-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:color-mix(in srgb,var(--accent) 12%,transparent);
+  color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 28%,transparent)}
+.lc-pill.ex{background:color-mix(in srgb,var(--rad-pink,#ff6b9d) 12%,transparent);color:var(--rad-pink,#ff6b9d);
+  border-color:color-mix(in srgb,var(--rad-pink,#ff6b9d) 28%,transparent)}
+.layer-foot{font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.6}
+
 /* DE dashboard iframe */
 .de-frame{width:100%;height:calc(100vh - 120px);border:none;display:block}
 .voc-frame{width:100%;height:calc(100vh - 120px);border:none;display:block;background:transparent}
@@ -2697,6 +2769,24 @@ body.dark .emp-v1{color:#fbbf24}
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- ===== 五层设计体系 · 隐藏演示入口 ===== -->
+<button class="layer-trigger" id="layerTrigger" title="五层设计体系 · 演示说明" onclick="openLayerPanel()">
+  <svg class="ic-svg"><use href="#i-layers"/></svg>
+</button>
+<div class="layer-overlay" id="layerOverlay">
+  <div class="layer-box">
+    <div class="layer-head">
+      <div class="layer-head-l">
+        <span class="layer-kicker">ARCHITECTURE</span>
+        <h2 class="layer-title">五层设计体系</h2>
+        <p class="layer-sub">整个网站按「使用深度 × 岗位」分为五层。同一套用户数据基座，逐级释放能力：从随手查询，到目的驱动，到二次加工，到固定流程团队协作，最终在你自己的类目基座上造出专属功能。</p>
+      </div>
+      <button class="layer-close" onclick="closeLayerPanel()">&times;</button>
+    </div>
+    <div class="layer-body" id="layerBody"></div>
+  </div>
+</div>
 
 <!-- ===== anime.js v4.5.0 (vendored, UMD global `anime`) ===== -->
 <script src="vendor/anime.umd.min.js"></script>
@@ -8386,12 +8476,114 @@ function lfSetFilter(type,val,el){
   renderLfBody(zone);
 }
 
+// ===== 五层设计体系 · 演示说明面板 =====
+var LAYER_DATA = [
+  {num:1, name:'找用户数据 · 随机探索', icon:'i-grid', depth:'深度① 随手查',
+   who:'任何想随手看看用户数据的人——没有明确目的，只是想翻翻、找点灵感。',
+   rows:[
+     {k:'行为', v:'根据看板数据源随机查找、或下载源数据；从用户评价里捞灵感。'},
+     {k:'方式', v:'随机浏览 / 直接下载原始数据（处于随机查找阶段）。'}
+   ],
+   pills:['数据源看板','评价灵感区','评论看板','社媒声量'],
+   note:'定位：随机查找 / 下载源数据'},
+
+  {num:2, name:'目的工作任务 · 目的工作区', icon:'i-target', depth:'深度② 有目的',
+   who:'清楚自己要做什么（目的明确）、但需要用户相关数据来支撑的人——分两类。',
+   rows:[
+     {k:'子A', v:'知道自己要什么 → 在目的工作区自己筛选数据源，获取分析框架与部分数据源建议（可自选数据源）。'},
+     {k:'子B', v:'不知道需要什么数据 → 运行「目的核对引擎」，引擎给出该目的需要的数据源/框架建议，一键加入补全。'}
+   ],
+   pills:['目的工作区','数据源自选','目的核对引擎'],
+   note:'定位：有目的，但不确定需要哪些用户数据 → 核对补全'},
+
+  {num:3, name:'二次处理原始数据', icon:'i-sliders', depth:'深度③ 加工',
+   who:'需要自己处理、二次加工原始数据，或把多源数据组合处理的人。',
+   rows:[
+     {k:'行为', v:'多数据源 + 技能处理 → 把原始数据加工成可用结果。'},
+     {k:'方式', v:'先归集多源数据，再调用技能做清洗 / 打标 / 重组。'}
+   ],
+   pills:['数据购物车','技能下载包','二次处理'],
+   note:'定位：加工 / 重组数据'},
+
+  {num:4, name:'固定任务流程 · 团队协作', icon:'i-users', depth:'深度④ 流程',
+   who:'要做固定流程工作的人：用户研究、新品规划、用户洞察等标准任务。',
+   rows:[
+     {k:'行为', v:'招募员工（完整数据源 + 多个技能 + 输出规范）；AI 全景办公按目的分配不同工作人员，协作实现任务。'},
+     {k:'方式', v:'根据目的，组合不同岗位员工，形成团队工作流。'}
+   ],
+   pills:['AI全景办公','员工招募','用户研究','新品规划'],
+   note:'定位：固定流程 + 团队协作'},
+
+  {num:5, name:'基于基座 · 自定义造功能', icon:'i-build', depth:'深度⑤ 造功能',
+   who:'想在「倒模类目用户数据源」这个基座上，按自己的目的写功能 / 技能的人。',
+   rows:[
+     {k:'基座', v:'倒模类目用户数据源（知识库）——一切能力的根。'},
+     {k:'逻辑', v:'基座是类目用户数据；我为了达到某个目的，基于这个基座去写自己需要的功能或技能。'}
+   ],
+   pills:['未来实验室'],
+   examples:[
+     {t:'数字世界虚拟', d:'据评价数据生成智能体，模拟真实实际的发展与传播。'},
+     {t:'虚拟用户压力测试', d:'基于真实评价 + 研究理论方法，随机生成用户，对新品 / 活动做挑刺式压力测试。'},
+     {t:'能力风险引擎', d:'获取倒模类目知识库，按逻辑方法评估想法 / 方案 / 决策的盲点、风险点。'},
+     {t:'AI 办公室', d:'同逻辑，基座=倒模类目用户知识库，按目的组合成复杂项目。'}
+   ],
+   note:'定位：基座之上，自定义造功能'}
+];
+
+function renderLayerPanel(){
+  var stairs = LAYER_DATA.map(function(l){
+    return '<div class="layer-stair"><div class="ls-num">'+l.num+'</div><div class="ls-name">'+escHtml(l.name.split(' · ')[0])+'</div></div>';
+  }).join('');
+  var base = '<div class="layer-base"><span class="lb-tag">▲ 统一基座</span>所有五层共享同一套 <b>倒模类目用户数据源</b>——越往上，对基座的加工越深、越接近「造自己的功能」。</div>';
+  var cards = LAYER_DATA.map(function(l){
+    var rows = l.rows.map(function(r){
+      return '<div class="lc-row"><span class="lc-k">'+escHtml(r.k)+'</span><span class="lc-v">'+escHtml(r.v)+'</span></div>';
+    }).join('');
+    var pills = '<div class="lc-pills">'+l.pills.map(function(p){return '<span class="lc-pill">'+escHtml(p)+'</span>';}).join('')+'</div>';
+    var exHtml='';
+    if(l.examples){
+      exHtml='<div class="lc-row"><span class="lc-k">案例</span><span class="lc-v"><div class="lc-pills">'+l.examples.map(function(e){
+        return '<span class="lc-pill ex"><b>'+escHtml(e.t)+'</b> · '+escHtml(e.d)+'</span>';
+      }).join('')+'</div></span></div>';
+    }
+    return '<div class="layer-card">'+
+      '<div class="lc-num">'+l.num+'</div>'+
+      '<div class="lc-main">'+
+        '<div class="lc-top"><svg class="lc-icon"><use href="#'+l.icon+'"/></svg>'+
+          '<span class="lc-name">'+escHtml(l.name)+'</span>'+
+          '<span class="lc-depth">'+escHtml(l.depth)+'</span></div>'+
+        '<div class="lc-who"><b>使用者：</b>'+escHtml(l.who)+'</div>'+
+        '<div class="lc-rows">'+rows+exHtml+
+          '<div class="lc-row"><span class="lc-k">模块</span><span class="lc-v">'+pills+'</span></div>'+
+        '</div>'+
+        '<div class="lc-who" style="margin-top:9px;margin-bottom:0"><b style="color:var(--accent)">▸ </b>'+escHtml(l.note)+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('layerBody').innerHTML = stairs + base + cards +
+    '<div class="layer-foot">同一套用户数据基座，按使用深度与岗位逐级释放能力 —— 由「看」到「用」到「造」。</div>';
+}
+function openLayerPanel(){
+  renderLayerPanel();
+  var ov=document.getElementById('layerOverlay');
+  ov.classList.add('show');
+  document.addEventListener('keydown', layerEsc);
+}
+function closeLayerPanel(){
+  var ov=document.getElementById('layerOverlay');
+  if(ov) ov.classList.remove('show');
+  document.removeEventListener('keydown', layerEsc);
+}
+function layerEsc(e){ if(e.key==='Escape') closeLayerPanel(); }
+document.getElementById('layerOverlay').addEventListener('click', function(e){
+  if(e.target===this) closeLayerPanel();
+});
+
 // ---- 领新用户详情弹窗（modal + 导出）----
 function ensureLfModal(){
   if(document.getElementById('lfModal')) return;
   var ov=document.createElement('div');
-  ov.id='lfModal'; ov.className='lfm-overlay';
-  ov.innerHTML='<div class="lfm-box"><div class="lfm-bar"></div><div class="lfm-head">'+
+  ov.id='lfModal'; ov.className='lfm-overlay';  ov.innerHTML='<div class="lfm-box"><div class="lfm-bar"></div><div class="lfm-head">'+
     '<span class="lfm-title" id="lfmTitle"></span><div class="lfm-actions">'+
     '<button class="lfm-btn" id="lfmExportBtn">导出图片</button>'+
     '<button class="lfm-btn" id="lfmCopyBtn">复制文本</button>'+
