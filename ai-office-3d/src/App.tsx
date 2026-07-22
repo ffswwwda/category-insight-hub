@@ -66,12 +66,12 @@ function App() {
         </main>
       </div>
       <OfficeRightPanel />
-      {showProjects && createPortal(
-        <OfficeProjectsModal onClose={() => setShowProjects(false)} />,
-        document.body,
-      )}
       {showMeeting && createPortal(
         <OfficeMeetingRoom onClose={() => setShowMeeting(false)} />,
+        document.body,
+      )}
+      {showProjects && createPortal(
+        <OfficeProjectsModal onClose={() => setShowProjects(false)} backToMeeting={showMeeting} />,
         document.body,
       )}
       {plantModal.open && createPortal(

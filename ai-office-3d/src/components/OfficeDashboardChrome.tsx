@@ -4,6 +4,7 @@ import { getOfficeAgents, subscribeOfficeAgents } from '@/store/officeStore'
 import { AGENT_ROSTER, PROJECTS } from '@/scene/layout/officeLayout'
 import { getLiveProjects, subscribeLiveProjects, type LiveProject } from '@/store/workspaceStore'
 import type { Agent } from '@/types/agent'
+import { TaskStageBoard } from '@/components/TaskStageBoard'
 import { QUICK_TOOLS } from '@/config'
 import { getOfficeScene } from '@/scene/officeSceneBridge'
 function SvgIcon({ id, size = 14 }: { id: string; size?: number }) {
@@ -864,9 +865,10 @@ function RankBlock({ tone, icon, title, items }: { tone: string; icon: string; t
 }
 
 /* ═════════ 真实项目弹窗（主从布局）════════ */
-export function OfficeProjectsModal({ onClose }: { onClose: () => void }) {
+export function OfficeProjectsModal({ onClose, backToMeeting }: { onClose: () => void; backToMeeting?: boolean }) {
   const [live, setLive] = useState<LiveProject[]>(getLiveProjects())
   const [openTaskId, setOpenTaskId] = useState<string | null>(null)
+  const [openStageId, setOpenStageId] = useState<string | null>(null)
   useEffect(() => subscribeLiveProjects(setLive), [])
 
   // 会议生成的实时项目排在前面
@@ -897,7 +899,13 @@ export function OfficeProjectsModal({ onClose }: { onClose: () => void }) {
             <h3>真实项目看板</h3>
             <span className="proj-count">{all.length} 个（含 {live.length} 个会议生成）</span>
           </div>
-          <button className="dr-close" onClick={onClose} aria-label="关闭项目">×</button>
+          {backToMeeting ? (
+            <button className="proj-back" onClick={onClose}>
+              <SvgIcon id="i-arrow-left" size={13} /> 返回会议室
+            </button>
+          ) : (
+            <button className="dr-close" onClick={onClose} aria-label="关闭项目">×</button>
+          )}
         </div>
         <div className="proj-body">
           {/* 左侧主列表 */}
@@ -967,20 +975,26 @@ export function OfficeProjectsModal({ onClose }: { onClose: () => void }) {
                     <p className="proj-text"><b>主题：</b>{(active as LiveProject).topic || '—'}</p>
                     <p className="proj-text"><b>目的：</b>{(active as LiveProject).purpose || '—'}</p>
                   </div>
-                  {/* 任务与实时产出 */}
+                  {/* 任务与实时产出（阶段可视化看板） */}
                   <div className="proj-section">
-                    <div className="proj-section-title"><SvgIcon id="i-sliders" size={12}/> 任务进度（每人实际产出）</div>
+                    <div className="proj-section-title"><SvgIcon id="i-sliders" size={12}/> 任务进度（点击展开阶段可视化看板）</div>
                     <ul className="proj-tasks">
                       {(active as LiveProject).tasks.map((t) => (
                         <li key={t.id} className={'proj-task' + (t.status === 'done' ? ' done' : t.status === 'doing' ? ' doing' : '')}>
                           <span className="proj-task-dot" style={{ background: agentColor(t.ownerId) }} />
                           <div className="proj-task-main">
-                            <button className="proj-task-toggle" onClick={() => t.output && setOpenTaskId(openTaskId === t.id ? null : t.id)}>
+                            <button className="proj-task-toggle" onClick={() => setOpenTaskId(openTaskId === t.id ? null : t.id)}>
                               <span className="proj-task-name">{t.title}</span>
-                              <span className="proj-task-owner">{agentName(t.ownerId)} · {t.status === 'done' ? '已交付' : t.status === 'doing' ? '执行中' : '待执行'}</span>
+                              <span className="proj-task-owner">{agentName(t.ownerId)} · {t.status === 'done' ? '已交付' : t.status === 'doing' ? '执行中' : '待执行'} · {t.progress ?? 0}%</span>
                             </button>
-                            {t.output && openTaskId === t.id && (
-                              <pre className="proj-task-output">{t.output}</pre>
+                            {openTaskId === t.id && t.stages && (
+                              <TaskStageBoard
+                                task={t}
+                                nameOf={agentName}
+                                colorHex={agentColor}
+                                openStageId={openStageId}
+                                onToggleStage={(sid) => setOpenStageId(openStageId === sid ? null : sid)}
+                              />
                             )}
                           </div>
                         </li>

@@ -106,3 +106,111 @@ function ruleTaskOutput(id: string, title: string, ctx: MeetingContext): string 
   lines.push('> 说明：当前为规则引擎生成的占位交付物（未接入大模型）。在会议室设置中填入 API Key 后，这里会自动替换为该员工基于真实知识库生成的实质内容。')
   return lines.join('\n')
 }
+
+/* ───────── 4. 任务阶段（把一次执行拆成可见进展的子步骤） ───────── */
+export interface TaskStageSeed {
+  name: string
+  outputHint: string
+}
+
+/** 不同角色的阶段模板（统一四段：澄清→草案→评审→交付） */
+const STAGE_TEMPLATES: Record<string, TaskStageSeed[]> = {
+  voc: [
+    { name: '数据接入与清洗', outputHint: '圈定相关 VOC 语料范围、剔除噪声' },
+    { name: '标签分布计算', outputHint: '9 维标签覆盖度与高频痛点清单' },
+    { name: '交叉校验', outputHint: '小测/小预对结论做信度复核' },
+    { name: '洞察交付', outputHint: '用户痛点摘要 + 证据行号' },
+  ],
+  score: [
+    { name: '维度建模', outputHint: '四维（痛点/技术/市场/竞争）打分框架' },
+    { name: '证据打分', outputHint: '逐维匹配数据源并落分' },
+    { name: '敏感性检查', outputHint: '小测复核打分鲁棒性' },
+    { name: '评分交付', outputHint: '总分牌 + 短板说明' },
+  ],
+  lab: [
+    { name: '场景拆解', outputHint: '数字世界多场景枚举' },
+    { name: '策略推演', outputHint: '各场景下的打法与预期' },
+    { name: '可行性评审', outputHint: '小创/小分对落地性评估' },
+    { name: '推演交付', outputHint: '场景×策略矩阵' },
+  ],
+  dev: [
+    { name: '需求澄清', outputHint: '明确产品开发边界与约束' },
+    { name: '方案草案', outputHint: '产品方向与核心功能草案' },
+    { name: 'FABE 打磨', outputHint: '卖点与详情页文案初稿' },
+    { name: '交付', outputHint: '开发方向文档 + 文案' },
+  ],
+  idea: [
+    { name: '概念发散', outputHint: '创意图方向枚举' },
+    { name: '视觉草案', outputHint: '核心视觉概念稿' },
+    { name: '风格评审', outputHint: '小设/小创评审一致性' },
+    { name: '交付', outputHint: '创意 + 视觉概念说明' },
+  ],
+  stress: [
+    { name: '用户构建', outputHint: '基于 VOC 的虚拟用户群' },
+    { name: '压力测试', outputHint: '概念/功能/文案挑刺结论' },
+    { name: '归因整理', outputHint: '支持/中立/反对立场与驱动因子' },
+    { name: '交付', outputHint: '高风险用户排名 + 建议' },
+  ],
+  pr: [
+    { name: '语料对齐', outputHint: '对齐目标市场用户真实表达' },
+    { name: '地道改写', outputHint: '多市场本地化初稿' },
+    { name: '文化校验', outputHint: '小测复核禁忌与歧义' },
+    { name: '交付', outputHint: '各市场终稿表达' },
+  ],
+}
+
+export function buildTaskStages(id: string, title: string): TaskStageSeed[] {
+  return STAGE_TEMPLATES[id] ?? [
+    { name: '需求澄清', outputHint: '明确任务边界与可用数据源' },
+    { name: '草案产出', outputHint: '初版交付物草稿' },
+    { name: '交叉评审', outputHint: '同事反馈与风险标注' },
+    { name: '最终交付', outputHint: '可交付版本 + 数据缺口说明' },
+  ]
+}
+
+/** 单个阶段的具体产出（规则版；LLM 接入后可在调用处替换为真实生成） */
+export function buildStageOutput(
+  id: string, title: string, stageName: string, stageHint: string, ctx: MeetingContext,
+): string {
+  const kb = kbOf(id)
+  const topic = ctx.topic || '本次会议主题'
+  const lines: string[] = []
+  lines.push(`### ${stageName}`)
+  lines.push(`> 本阶段产出：${stageHint}`)
+  lines.push('')
+  switch (stageName) {
+    case '数据接入与清洗':
+    case '语料对齐':
+    case '场景拆解':
+    case '需求澄清':
+    case '概念发散':
+    case '用户构建':
+      lines.push(`- 已锚定「${topic}」相关语料，主要来源：${kb.dataSources.join('、')}。`)
+      lines.push(`- 边界确认：聚焦与「${title}」直接相关的部分，其余打回待定。`)
+      break
+    case '标签分布计算':
+    case '证据打分':
+    case '策略推演':
+    case '方案草案':
+    case '视觉草案':
+    case '压力测试':
+    case '地道改写':
+      lines.push(`- 基于${kb.dataSources[0] ?? '领域数据'}产出初版内容，关键判断已标注证据。`)
+      lines.push(`- 当前进展：核心要点已成形，待交叉评审收紧。`)
+      break
+    case '交叉校验':
+    case '敏感性检查':
+    case '可行性评审':
+    case 'FABE 打磨':
+    case '风格评审':
+    case '文化校验':
+    case '归因整理':
+      lines.push(`- 邀请相关同事（小测/小预/小创等）复核，已标注风险与待确认项。`)
+      lines.push(`- 结论稳健性：在现有数据下可信，缺口处已显式标注。`)
+      break
+    default:
+      lines.push(`- 阶段成果已沉淀为可交付内容，对齐预期交付物：${kb.deliverable}。`)
+      lines.push(`- 说明：当前为规则引擎生成的阶段产出（未接入大模型）。在会议室设置中填入 API Key 后，此处会替换为该员工基于真实知识库生成的实质内容。`)
+  }
+  return lines.join('\n')
+}

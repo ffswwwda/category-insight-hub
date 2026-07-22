@@ -3,15 +3,17 @@ import { createPortal } from 'react-dom'
 import { AGENT_ROSTER, MEETING_EXPERTS } from '@/scene/layout/officeLayout'
 import { getOfficeScene } from '@/scene/officeSceneBridge'
 import {
-  addLiveProject, updateTask,
+  addLiveProject, updateTask, updateStage, subscribeLiveProjects,
   type LiveProject, type ProjectTask,
   getLLMConfig, setLLMConfig, isLLMEnabled,
 } from '@/store/workspaceStore'
 import {
-  buildReply, buildPlanItems, buildTaskOutput,
+  buildReply, buildPlanItems,
+  buildTaskStages, buildStageOutput,
   type ChatMsg, type MeetingContext,
 } from '@/lib/meetingEngine'
 import { kbOf } from '@/lib/employeeKB'
+import { TaskStageBoard } from '@/components/TaskStageBoard'
 
 function SvgIcon({ id, size = 14 }: { id: string; size?: number }) {
   return <svg viewBox="0 0 24 24" width={size} height={size}><use href={'#' + id}/></svg>
@@ -73,9 +75,13 @@ function MeetingRoom({ onClose }: { onClose: () => void }) {
   const [respondingId, setRespondingId] = useState<string | null>(null)
   const [planItems, setPlanItems] = useState<Array<{ ownerId: string; title: string }>>([])
   const [planDoc, setPlanDoc] = useState('')
-  const [project, setProject] = useState<LiveProject | null>(null)
+  const [projectId, setProjectId] = useState<string | null>(null)
+  const [liveProjects, setLiveProjects] = useState<LiveProject[]>([])
+  const project = liveProjects.find((p) => p.id === projectId) ?? null
   const [executing, setExecuting] = useState(false)
+  const [dispatched, setDispatched] = useState(false)
   const [openTask, setOpenTask] = useState<string | null>(null)
+  const [openStage, setOpenStage] = useState<string | null>(null)
   const [cfgOpen, setCfgOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -85,6 +91,9 @@ function MeetingRoom({ onClose }: { onClose: () => void }) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
+
+  // 订阅工作区实时项目，让「执行」步看到随阶段推进的进度
+  useEffect(() => subscribeLiveProjects(setLiveProjects), [])
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
@@ -135,12 +144,22 @@ function MeetingRoom({ onClose }: { onClose: () => void }) {
   /** 确认方案 → 生成真实项目并写入工作区存储 */
   const confirmPlan = () => {
     const pid = 'mtg-' + Date.now().toString(36)
-    const tasks: ProjectTask[] = planItems.map((it, i) => ({
-      id: pid + '-t' + i,
-      title: it.title,
-      ownerId: it.ownerId,
-      status: 'todo',
-    }))
+    const tasks: ProjectTask[] = planItems.map((it, i) => {
+      const seeds = buildTaskStages(it.ownerId, it.title)
+      return {
+        id: pid + '-t' + i,
+        title: it.title,
+        ownerId: it.ownerId,
+        status: 'todo' as const,
+        progress: 0,
+        stages: seeds.map((s, j) => ({
+          id: pid + '-t' + i + '-s' + j,
+          name: s.name,
+          outputHint: s.outputHint,
+          status: 'todo' as const,
+        })),
+      }
+    })
     const ownerId = planItems[0]?.ownerId ?? invited[0]
     const proj: LiveProject = {
       id: pid,
@@ -156,26 +175,38 @@ function MeetingRoom({ onClose }: { onClose: () => void }) {
       source: 'meeting',
     }
     addLiveProject(proj)
-    setProject(proj)
+    setProjectId(pid)
     setStep('done')
   }
 
-  /** 分派执行：每个任务交由对应员工真做（调 LLM 或规则），实时回写进度与产出 */
+  /** 分派执行：每个任务按阶段推进（调 LLM 或规则），实时回写进度与每阶段产出 */
   const doExecute = async () => {
-    if (!project) return
-    setExecuting(true)
+    if (!projectId) return
     const scene = getOfficeScene()
-    for (const t of project.tasks) {
-      updateTask(project.id, t.id, { status: 'doing', startedAt: Date.now() })
+    const ctx: MeetingContext = { topic, purpose, thread: messages }
+    const snapshot = project?.tasks ?? []
+    setExecuting(true)
+    setDispatched(true)
+    for (const t of snapshot) {
+      updateTask(projectId, t.id, { status: 'doing', startedAt: Date.now() })
       scene?.setAgentState(t.ownerId, 'thinking', t.title)
       scene?.pushActivity(`${nameOf(t.ownerId)} 开始执行：${t.title}`, ROSTER[t.ownerId]?.color ?? 0x00d4ff)
-      const out = await buildTaskOutput(t.ownerId, t.title, { topic, purpose, thread: messages }, nameOf)
-      updateTask(project.id, t.id, { status: 'done', output: out, doneAt: Date.now() })
+      const stageOutputs: string[] = []
+      for (const stage of t.stages ?? []) {
+        updateStage(projectId, t.id, stage.id, { status: 'doing', startedAt: Date.now() })
+        scene?.setAgentState(t.ownerId, 'working', stage.name + '…')
+        await new Promise((r) => setTimeout(r, 520))
+        const out = buildStageOutput(t.ownerId, t.title, stage.name, stage.outputHint, ctx)
+        updateStage(projectId, t.id, stage.id, { status: 'done', output: out, doneAt: Date.now() })
+        stageOutputs.push(`## ${stage.name}\n\n${out}`)
+      }
+      const finalOut = `# ${t.title}\n\n> 负责人：${nameOf(t.ownerId)}（${kbOf(t.ownerId).role}）\n\n` +
+        stageOutputs.join('\n\n')
+      updateTask(projectId, t.id, { status: 'done', progress: 100, output: finalOut, doneAt: Date.now() })
       scene?.setAgentState(t.ownerId, 'working', '已完成：' + t.title)
       scene?.pushActivity(`${nameOf(t.ownerId)} 交付：${t.title}`, ROSTER[t.ownerId]?.color ?? 0x34c759)
       await new Promise((r) => setTimeout(r, 250))
     }
-    setProject({ ...project, status: '已完成' })
     setExecuting(false)
   }
 
@@ -184,8 +215,8 @@ function MeetingRoom({ onClose }: { onClose: () => void }) {
   }
 
   const openProjects = () => {
+    // 不关闭会议室：会议室仍在底层，项目看板在其上方弹出，用户可点「返回会议室」回到这里
     window.dispatchEvent(new CustomEvent('office:open-projects'))
-    onClose()
   }
 
   const steps: Array<{ key: Step; label: string; icon: string }> = [
@@ -357,7 +388,7 @@ function MeetingRoom({ onClose }: { onClose: () => void }) {
                   </div>
                 ))}
               </div>
-              <details className="mr-doc-detail">
+              <details className="mr-doc-detail" open>
                 <summary><SvgIcon id="i-doc" size={12} /> 查看方案文档（Markdown）</summary>
                 <pre className="mr-plan-doc">{planDoc}</pre>
               </details>
@@ -375,7 +406,7 @@ function MeetingRoom({ onClose }: { onClose: () => void }) {
             <div className="mr-done">
               <div className="mr-done-badge">
                 <SvgIcon id="i-zap" size={20} />
-                <span>{executing ? '项目执行中…' : '项目已生成，员工正在交付'}</span>
+                <span>{executing ? '项目执行中…' : (dispatched ? '项目已分派，员工正在交付' : '项目已生成，可点「分派执行」启动')}</span>
               </div>
               <div className="mr-progress">
                 <div className="mr-progress-track"><div className="mr-progress-fill" style={{ width: project.progress + '%' }} /></div>
@@ -385,26 +416,36 @@ function MeetingRoom({ onClose }: { onClose: () => void }) {
                 {project.tasks.map((t) => (
                   <li key={t.id} className={'mr-task' + (t.status === 'done' ? ' done' : t.status === 'doing' ? ' doing' : '')}>
                     <span className="mr-task-dot" style={{ background: colorHex(t.ownerId) }} />
-                    <button className="mr-task-main" onClick={() => t.output && setOpenTask(openTask === t.id ? null : t.id)}>
+                    <button className="mr-task-main" onClick={() => setOpenTask(openTask === t.id ? null : t.id)}>
                       <span className="mr-task-name">{t.title}</span>
                       <span className="mr-task-owner">{nameOf(t.ownerId)} · {t.status === 'done' ? '已交付' : t.status === 'doing' ? '执行中' : '待执行'}</span>
                     </button>
-                    {t.output && openTask === t.id && (
-                      <pre className="mr-task-output">{t.output}</pre>
+                    {openTask === t.id && t.stages && (
+                      <TaskStageBoard
+                        task={t}
+                        nameOf={nameOf}
+                        colorHex={colorHex}
+                        openStageId={openStage}
+                        onToggleStage={(sid) => setOpenStage(openStage === sid ? null : sid)}
+                      />
                     )}
                   </li>
                 ))}
               </ul>
               <div className="mr-foot">
-                {!executing && project.progress < 100 && (
-                  <button className="mr-btn primary" onClick={doExecute}>
+                {!dispatched ? (
+                  <button className="mr-btn primary" onClick={doExecute} disabled={executing}>
                     <SvgIcon id="i-zap" size={13} /> 分派执行
+                  </button>
+                ) : (
+                  <button className="mr-btn done-flag" disabled>
+                    <SvgIcon id="i-check" size={13} /> 已分派
                   </button>
                 )}
                 <button className="mr-btn" onClick={openProjects}>查看项目看板</button>
                 <button className="mr-btn primary" onClick={onClose}>完成</button>
               </div>
-              <p className="mr-done-tip">产出会实时回写到「项目」看板，可在左侧栏「项目」随时查看每人进度与交付物。</p>
+              <p className="mr-done-tip">分派后，每人的进度会按阶段实时推进，可点开任务看「阶段可视化看板」；也可在左侧栏「项目」随时查看。</p>
             </div>
           )}
         </div>
