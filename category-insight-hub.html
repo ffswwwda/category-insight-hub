@@ -1197,8 +1197,23 @@ body.dark .lab-status{color:#fbbf24}
 .i-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
   padding:13px 15px;margin-bottom:9px;border-left:3px solid var(--purple);transition:all .25s var(--rad-easing)}
 .i-card:hover{box-shadow:var(--shadow-sm);transform:translateX(3px)}
+.i-card.clickable{cursor:pointer}
+.i-card.clickable:hover{border-left-color:var(--accent);box-shadow:0 6px 20px rgba(0,212,255,.12)}
 .ic-title{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:4px}
 .ic-body{font-size:11.5px;color:var(--ink-2);line-height:1.5}
+.ic-rel{margin-top:7px;font-size:10px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:5px}
+.ic-rel::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--rad-grad)}
+/* 关联洞察溯源模态框 */
+.im-body{font-size:13px;color:var(--ink);line-height:1.6;padding:14px 18px;margin:0}
+.im-tags{display:flex;flex-wrap:wrap;gap:6px;padding:0 18px 6px}
+.im-tag{font-size:10.5px;font-weight:700;color:var(--accent);background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.18);border-radius:6px;padding:3px 9px}
+.im-trace{margin:6px 18px 18px;padding:13px 15px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.16);border-radius:10px}
+.im-trace-h{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.3px;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.im-trace-srcs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.im-src-chip{font-size:10.5px;font-weight:700;color:var(--ink-2);background:var(--panel-solid);border:1px solid var(--border);border-radius:7px;padding:4px 10px}
+.im-trace-quote{font-size:11.5px;color:var(--ink-2);line-height:1.55;padding:7px 11px;margin-bottom:6px;border-left:2px solid var(--accent);background:var(--panel-solid);border-radius:0 7px 7px 0}
+.im-trace-note{font-size:10px;color:var(--muted);margin-top:4px}
+.lf-sub-hint{font-size:10.5px;font-weight:700;color:var(--accent);padding:8px 2px 2px;opacity:.85}
 
 /* Method chain */
 .method-chain{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
@@ -3170,6 +3185,75 @@ function csvCell(s){
 function getSource(id){return DATA.sources[id]}
 function getPurpose(ws,id){return DATA.workspaces[ws].purposes.find(function(p){return p.id===id})}
 function getInsights(pid){return DATA.seedInsights[pid]||[]}
+
+// ===== 目的相关性匹配（关联洞察 / 领先用户卡 共用）=====
+// 关键词对：目的语境含 key 且目标文本含 value 时计分
+var KW_MAP=[
+  ['静音','静音'],['噪音','噪音'],['分贝','分贝'],['尺寸','尺寸'],['大小','尺寸'],['定制','定制'],
+  ['非标','非标'],['外观','外观'],['颜值','颜值'],['装饰','装饰'],['审美','装饰'],['宠物','宠物'],
+  ['安全','安全'],['无毒','安全'],['性价比','性价比'],['比价','比价'],['价格','价格'],['企业','企业'],
+  ['批量','批量'],['采购','批量'],['便携','便携'],['出差','出差'],['旅行','旅行'],['迷你','便携'],
+  ['智能','智能'],['连接','连接'],['蓝牙','蓝牙'],['APP','智能'],['工艺','工艺'],['精度','精度'],
+  ['公差','精度'],['安装','安装'],['免打孔','免打孔'],['租房','租房'],['场景','场景'],['社媒','社媒'],
+  ['营销','营销'],['清洁','清洁'],['拆洗','拆洗'],['收纳','收纳'],['礼物','礼品'],['高端','高端'],
+  ['中端','中端'],['品质','品质'],['耐用','耐用'],['退货','退货'],['差评','差评']
+];
+function purposeCtxText(p){
+  var parts=[p.name||'', p.desc||''];
+  (p.sources||[]).forEach(function(sid){var s=DATA.sources[sid]; if(s) parts.push(s.name+' '+s.type+' '+s.market+' '+(s.desc||''));});
+  (p.methods||'').split('/').forEach(function(m){parts.push(m.trim());});
+  // 该目的自身洞察关键词也纳入语境
+  getInsights(state.purposeId).forEach(function(ins){parts.push(ins.title+' '+ins.body+' '+(ins.tags||[]).join(' '));});
+  return parts.join(' ').toLowerCase();
+}
+function kwScore(targetText, ctxText){
+  targetText=(''+(targetText||'')).toLowerCase();
+  var score=0;
+  KW_MAP.forEach(function(pr){ if(ctxText.indexOf(pr[0])>=0 && targetText.indexOf(pr[1])>=0) score+=2; });
+  return score;
+}
+// 按目的相关性排序，取前 N 条领先用户身份卡
+function getRelevantLeadUsers(p, topN){
+  topN = topN || 4;
+  var ctx = purposeCtxText(p);
+  var scored = LF_PORTRAITS.map(function(u){
+    var t=[u.name, u.said, u.idea, u.trait, (u.signals||[]).map(function(s){return LF_SIG[s]||s;}).join(' ')].join(' ');
+    return {u:u, score:kwScore(t, ctx)};
+  });
+  scored.sort(function(a,b){return b.score-a.score;});
+  var picked = scored.filter(function(x){return x.score>0;}).slice(0, topN);
+  if(picked.length < topN) picked = scored.slice(0, topN);
+  return picked.map(function(x){return x.u;});
+}
+// 跨全部目的种子洞察，按目的相关性排序，取前 N 条
+function getRelevantInsights(p, topN){
+  topN = topN || 5;
+  var ctx = purposeCtxText(p);
+  var all=[];
+  Object.keys(DATA.seedInsights).forEach(function(pid){
+    DATA.seedInsights[pid].forEach(function(ins){
+      var t=ins.title+' '+ins.body+' '+(ins.tags||[]).join(' ');
+      all.push({ins:ins, score:kwScore(t, ctx)});
+    });
+  });
+  all.sort(function(a,b){return b.score-a.score;});
+  var picked = all.filter(function(x){return x.score>0;}).slice(0, topN);
+  if(picked.length < topN) picked = all.slice(0, topN);
+  return picked.map(function(x){return x.ins;});
+}
+// 关联洞察追溯原始数据源头：按关键词匹配 SOURCE_POOL 真实反馈
+function insightTrace(ins){
+  var text=(ins.title+' '+ins.body+' '+(ins.tags||[]).join(' ')).toLowerCase();
+  var hits=[];
+  SOURCE_POOL.forEach(function(r){
+    if(KW_MAP.some(function(pr){ return text.indexOf(pr[1])>=0 && r.text.toLowerCase().indexOf(pr[1])>=0; })) hits.push(r);
+  });
+  var m={}; hits.forEach(function(r){ m[r.srcLabel]=(m[r.srcLabel]||0)+1; });
+  return {
+    labels:Object.keys(m).map(function(k){return {label:k,n:m[k]};}),
+    quotes:hits.slice(0,2)
+  };
+}
 
 // ============================================================
 // NAVIGATION
@@ -8269,20 +8353,30 @@ function renderLfBody(zone){
   if(!zone) zone = document.querySelector('.lf-zone');
   var body = zone ? zone.querySelector('.lf-body') : null;
   if(!body) return;
+  // 目的工作区嵌入的领先用户专区：按所选目的相关性排序、只展示部分身份卡；专用区（#viewLfZone）仍全量
+  var inPurpose = !zone.closest('#viewLfZone');
+  var relOpts = inPurpose ? {relevance:true, purpose:getPurpose(state.ws,state.purposeId)} : null;
   var active = zone.querySelector('.lf-tab.active');
   var tab = active ? active.getAttribute('data-lftab') : 'portrait';
-  if(tab === 'portrait') body.innerHTML = renderLfPortrait(zone);
+  if(tab === 'portrait') body.innerHTML = renderLfPortrait(zone, relOpts);
   else if(tab === 'feedback') body.innerHTML = renderLfFeedback(zone);
   else { body.innerHTML = renderLfIdea(zone); renderIdeaGrid(); updateIdeaCorpusInfo(); }
 }
 
-function renderLfPortrait(zone){
-  if(!LF_PORTRAITS.length) return '<div style="padding:14px;color:var(--muted);font-size:12px">暂无领新用户画像数据</div>';
+function renderLfPortrait(zone, opts){
+  var users = LF_PORTRAITS;
+  var relHint = '';
+  if(opts && opts.relevance && opts.purpose){
+    users = getRelevantLeadUsers(opts.purpose, 4);
+    window._relLeadUsers = users;
+    relHint = '<div class="lf-sub-hint">按本目的相关性排序 · 前 '+users.length+' 位领先用户（点卡片看详情）</div>';
+  }
+  if(!users.length) return '<div style="padding:14px;color:var(--muted);font-size:12px">暂无领新用户画像数据</div>';
   var mode = zone.dataset.lfMode || 'grid';
   var toggle = '<div class="lf-view-toggle"><button class="lf-vt'+(mode==='grid'?' on':'')+'" data-mode="grid" onclick="lfSwitchView(\'grid\',this)">▦ 身份卡</button><button class="lf-vt'+(mode==='quadrant'?' on':'')+'" data-mode="quadrant" onclick="lfSwitchView(\'quadrant\',this)">◷ 四象限分布</button></div>';
-  if(mode==='quadrant') return toggle + renderLfQuadrant();
-  return toggle+'<div class="uid-grid">'+
-    LF_PORTRAITS.map(function(u){
+  if(mode==='quadrant') return toggle + renderLfQuadrant(users);
+  return relHint + toggle+'<div class="uid-grid">'+
+    users.map(function(u){
       var arch = LF_ARCH[u.archetype] || {label:u.archetype||'',color:'#94a3b8'};
       var sigs = (u.signals||[]).map(function(s){ var v=LF_SIG[s]||s; return '<span class="uid-sig">'+escHtml(v)+'</span>'; }).join('');
       var traits = u.trait ? u.trait.split('·').map(function(t){return '<span class="uid-tag">'+escHtml(t.trim())+'</span>';}).join('') : '';
@@ -8310,13 +8404,14 @@ function lfSwitchView(mode, btn){
   renderLfBody(zone);
 }
 // 四象限分布图：横轴=产品优化/创意；纵轴=用户感知度
-function renderLfQuadrant(){
+function renderLfQuadrant(users){
+  users = users || LF_PORTRAITS;
   // 1. 统计
   var maxFreq=0;
-  LF_PORTRAITS.forEach(function(u){if(u.freq>maxFreq)maxFreq=u.freq;});
+  users.forEach(function(u){if(u.freq>maxFreq)maxFreq=u.freq;});
   // 2. 坐标
   var pos={};
-  LF_PORTRAITS.forEach(function(u){
+  users.forEach(function(u){
     var ic=(u.idea||'').toLowerCase();
     var isCreative=ic.indexOf('新')>-1||ic.indexOf('定制')>-1||ic.indexOf('设计')>-1||ic.indexOf('模块化')>-1;
     var x=isCreative?0.55+Math.random()*0.30:0.15+Math.random()*0.30;
@@ -8325,14 +8420,14 @@ function renderLfQuadrant(){
   });
   // 3. 象限统计
   var quad={NE:0,NW:0,SE:0,SW:0};
-  LF_PORTRAITS.forEach(function(u){
+  users.forEach(function(u){
     var p=pos[u.id]||{x:0.5,y:0.5};
     if(p.x>=0.5) p.y>=0.5?quad.NE++:quad.SE++; else p.y>=0.5?quad.NW++:quad.SW++;
   });
   var dominant=Object.keys(quad).sort(function(a,b){return quad[b]-quad[a];})[0];
   // 4. SVG 散点
   var W=540, H=340, P=70;
-  var dots = LF_PORTRAITS.map(function(u){
+  var dots = users.map(function(u){
     var p=pos[u.id]||{x:0.5,y:0.5};
     var cx=P+p.x*(W-2*P), cy=P+(1-p.y)*(H-2*P);
     var arch=LF_ARCH[u.archetype]||{color:'#94a3b8'};
@@ -8366,7 +8461,7 @@ function renderLfQuadrant(){
     '<text x="12" y="'+(H-P+14)+'" fill="var(--accent)" font-size="11" font-weight="800">高频·明显感知</text>';
   // 7. Hero
   var hero = '<div class="lfq-hero"><div class="lfq-hl">领先用户四象限分布</div>'+
-    '<div class="lfq-hs">基于「创意程度 × 出现频率」量化聚类 · 共 '+LF_PORTRAITS.length+' 位领先用户</div>'+
+    '<div class="lfq-hs">基于「创意程度 × 出现频率」量化聚类 · 共 '+users.length+' 位领先用户</div>'+
     '<div class="lfq-kpis">'+
       '<div class="lfq-kpi"><div class="lfq-kv" style="color:#0891B2">'+quad.NE+'</div><div class="lfq-kl">创新×高频</div></div>'+
       '<div class="lfq-kpi"><div class="lfq-kv" style="color:#10B981">'+quad.NW+'</div><div class="lfq-kl">优化×高频</div></div>'+
@@ -8606,6 +8701,51 @@ function openLfModal(id, type){
 }
 function closeLfModal(){
   var ov=document.getElementById('lfModal');
+  if(ov) ov.classList.remove('show');
+}
+// ===== 关联洞察溯源模态框（点击洞察卡弹出，追溯到原始数据源头）=====
+function ensureInsightModal(){
+  if(document.getElementById('insightModal')) return;
+  var ov=document.createElement('div');
+  ov.id='insightModal'; ov.className='lfm-overlay';
+  ov.innerHTML='<div class="lfm-box"><div class="lfm-bar"></div><div class="lfm-head">'+
+    '<span class="lfm-title" id="imTitle"></span><div class="lfm-actions">'+
+    '<button class="lfm-close" id="imCloseBtn">&times;</button></div></div>'+
+    '<div class="lfm-body" id="imBody"></div></div>';
+  ov.addEventListener('click', function(e){
+    var bx=ov.querySelector('.lfm-box');
+    if(!bx||!bx.contains(e.target)) closeInsightModal();
+  });
+  var clsBtn=ov.querySelector('#imCloseBtn');
+  if(clsBtn) clsBtn.addEventListener('click', closeInsightModal);
+  document.body.appendChild(ov);
+  document.addEventListener('keydown', function imKd(e){ if(e.key==='Escape') closeInsightModal(); });
+}
+function renderInsightBody(ins){
+  var tr=insightTrace(ins);
+  var tags=(ins.tags||[]).map(function(t){return '<span class="im-tag">'+escHtml(t)+'</span>';}).join('');
+  var srcChips=tr.labels.length? tr.labels.map(function(s){return '<span class="im-src-chip">'+escHtml(s.label)+' · '+s.n+' 条</span>';}).join('') : '<span class="im-src-chip">未匹配到明确源头 · 供参考</span>';
+  var quotes=tr.quotes.length? tr.quotes.map(function(r){return '<div class="im-trace-quote">"'+escHtml(r.text)+'" <span style="color:var(--muted)">— '+escHtml(r.srcLabel)+'</span></div>';}).join('') : '';
+  return '<div class="im-body">'+escHtml(ins.body)+'</div>'+
+    (tags?'<div class="im-tags">'+tags+'</div>':'')+
+    '<div class="im-trace">'+
+      '<div class="im-trace-h">数据来源（按关键词匹配的原始反馈）</div>'+
+      '<div class="im-trace-srcs">'+srcChips+'</div>'+
+      quotes+
+      '<div class="im-trace-note">※ 关联洞察为分析参考，最终结论须溯源到 02-数据包/ 原始数据行。</div>'+
+    '</div>';
+}
+function openInsightModal(i){
+  ensureInsightModal();
+  var ins=(window._relInsights||[])[i];
+  if(!ins) return;
+  var ov=document.getElementById('insightModal');
+  if(ov) ov.classList.add('show');
+  document.getElementById('imTitle').textContent=ins.title;
+  document.getElementById('imBody').innerHTML=renderInsightBody(ins);
+}
+function closeInsightModal(){
+  var ov=document.getElementById('insightModal');
   if(ov) ov.classList.remove('show');
 }
 function copyLfCard(){
@@ -9180,13 +9320,15 @@ function renderStructPanel(p){
   srcHtml+='</div>';
 
   // Insight cards
-  var insights=getInsights(state.purposeId);
-  var insHtml='<div class="struct-section"><div class="ss-head">关联洞察</div>';
+  var insights=getRelevantInsights(p, 5);
+  window._relInsights=insights;
+  var insHtml='<div class="struct-section"><div class="ss-head">关联洞察 <span style="font-weight:500;color:var(--muted);font-size:11px">· 按本目的相关性匹配</span></div>';
+  if(!insights.length) insHtml+='<div class="sg-empty">暂无关联洞察</div>';
   insights.forEach(function(ins,i){
-    insHtml+='<div class="i-card">'+
-      '<button class="sc-to-canvas" onclick="addInsightToCanvas('+i+')">+ 画布</button>'+
+    insHtml+='<div class="i-card clickable" onclick="openInsightModal('+i+')" title="点击查看数据来源">'+
       '<div class="ic-title">'+escHtml(ins.title)+'</div>'+
       '<div class="ic-body">'+escHtml(ins.body)+'</div>'+
+      '<div class="ic-rel">相关性匹配 · 点击追溯数据来源</div>'+
     '</div>';
   });
   insHtml+='</div>';
@@ -10975,7 +11117,12 @@ function PLAN_MANIFEST(p,pid,pname,srcList,fwList,steps,now){
       '5. 按 04-交付模板/输出模板.md 六段结构产出',
       '6. 按 04-交付模板/校验清单.md 逐条核对'
     ],
-    labels:'05-标签字典/taxonomy.md'
+    labels:'05-标签字典/taxonomy.md',
+    reference_materials:{
+      lead_users:{path:'06-领先用户卡/',desc:'按本目的相关性排序的前 N 位领先用户身份卡，属创新信号参考，结论须溯源至 02-数据包/ 原始行'},
+      related_insights:{path:'07-关联洞察/',desc:'按本目的相关性匹配的关联洞察，属分析启发参考，每条标注数据来源，最终结论以 02-数据包/ 为准'}
+    },
+    note:'06/07 为「参考材料」而非「证据」；正式结论必须有 02-数据包/ 原始行支撑。'
   };
   return JSON.stringify(m,null,2);
 }
@@ -10987,7 +11134,8 @@ function PLAN_README(p,pid,pname,srcList,fwList,steps){
     '## 已选分析框架（'+fwList.length+' 个）\n'+fwList.map(function(f){return '- '+f.name;}).join('\n')+'\n\n'+
     '## 分析链路\n'+(steps.length?steps.map(function(s,i){return (i+1)+'. '+s;}).join('\n'):'(无)')+'\n\n'+
     '## 运行顺序\n1. 读 manifest.json\n2. 读 01-提示词/SYSTEM.md\n3. 载入 02-数据包/ CSV\n4. 按需调 03-技能包/voc-tagger\n5. 套 04-交付模板/输出模板.md 产出\n6. 按 04-交付模板/校验清单.md 核对\n\n'+
-    '> 数据均为原始导出，未做二次加工；如需打标再用 voc-tagger。\n';
+    '## 附带参考材料（来自本目的工作区）\n- `06-领先用户卡/`：按本目的相关性排序的前 N 位领先用户身份卡 —— **创新信号参考**，结论须溯源到 02-数据包/ 原始行。\n- `07-关联洞察/`：按本目的相关性匹配的关联洞察 —— **分析启发参考**，每条已标注数据来源，最终结论以 02-数据包/ 为准。\n\n'+
+    '> 数据均为原始导出，未做二次加工；如需打标再用 voc-tagger。06/07 为参考而非证据，正式结论必须有 02-数据包/ 原始行支撑。\n';
 }
 function PLAN_SYSTEM(p,pid,pname,srcList,fwList,steps){
   return '# 分析手册 · '+pname+'\n\n'+
@@ -11006,7 +11154,11 @@ function PLAN_SYSTEM(p,pid,pname,srcList,fwList,steps){
     }).join('\n')+'\n\n'+
     '## 本次已选分析框架\n'+fwList.map(function(f){return '- '+f.name+'（用法见 01-提示词/分析框架说明.md）';}).join('\n')+'\n\n'+
     '## 分析链路\n'+(steps.length?steps.map(function(s,i){return (i+1)+'. '+s;}).join(' → '):'(未配置链路)')+'\n\n'+
-    '## 输出与核对\n按 `04-交付模板/输出模板.md` 六段产出 → 按 `04-交付模板/校验清单.md` 逐条核对 → 交付。技能调用见 `01-提示词/技能调用说明.md`。\n';
+    '## 输出与核对\n按 `04-交付模板/输出模板.md` 六段产出 → 按 `04-交付模板/校验清单.md` 逐条核对 → 交付。技能调用见 `01-提示词/技能调用说明.md`。\n\n'+
+    '## 附带的参考材料（来自本目的工作区，须谨慎使用）\n'+
+    '- `06-领先用户卡/`：按**本目的相关性排序**的前 N 位领先用户身份卡。它是**创新信号参考**，不是数据结论；其中任何判断若要写进产出，都必须先溯源到 `02-数据包/` 的具体原始行，不得仅凭身份卡下结论。\n'+
+    '- `07-关联洞察/`：按**本目的相关性匹配**的关联洞察（跨全部目的种子洞察筛选）。它是**分析启发参考**，每条已标注数据来源；最终结论仍以 `02-数据包/` 原始数据行为准，关联洞察仅用于拓宽思路。\n'+
+    '> 重要：这两份材料是「参考」而非「证据」。硬约束 1/2/3 依然适用——所有正式结论必须有 `02-数据包/` 原始行支撑，不能只引用 06/07。\n';
 }
 function PLAN_SRC_DOC(srcList){
   return '# 数据源说明\n\n每个源对应 `02-数据包/` 下一个 CSV 文件。字段：`id, market, rating, dimension, sentiment, text`。\n\n'+
@@ -11052,6 +11204,34 @@ var PLAN_TAXONOMY='# 标签 / 维度字典\n\n'+
   '## VOC 九维\n用户画像 / 购买动机 / 购买目的 / 使用场景 / 使用障碍 / 克服方式 / 用户忠诚度 / 产品改进建议 / 十三种需求。\n\n'+
   '## 十三种需求（示例词表）\n功能刚需 / 性能提升 / 易用性 / 安全性 / 美观性 / 个性化 / 性价比 / 便携性 / 静音 / 清洁便利 / 舒适度 / 情感陪伴 / 社交认同。\n\n'+
   '> 打标时严格从上述词表取词，不私自新增维度；如需扩展，先在 manifest 记录并经人工确认。\n';
+var PLAN_LEAD_USERS='# 领先用户卡（按本目的相关性排序 · 前 N 位）\n\n'+
+  '本文件由「目的工作区」导出时，按**当前所选目的**的相关性对领先用户身份卡排序，取前 N 位。\n'+
+  '它是**创新信号参考**，不是数据结论——其中每条卡的结论都必须能溯源到 `02-数据包/` 的原始数据行，不得仅凭身份卡下判断。\n\n';
+function PLAN_LEAD_USERS_BODY(users){
+  if(!users||!users.length) return PLAN_LEAD_USERS+'> 未匹配到领先用户卡。\n';
+  return PLAN_LEAD_USERS+users.map(function(u,i){
+    return '## '+(i+1)+'. '+u.name+'（相关度排序第 '+(i+1)+'）\n'+
+      '- 时间领先性：'+u.lead+' · 高收益预期：'+u.benefit+'\n'+
+      '- 信号：'+((u.signals||[]).map(function(s){return LF_SIG[s]||s;}).join('、')||'—')+'\n'+
+      '- 说了什么：'+u.said+'\n'+
+      '- 提供创意：'+u.idea+'\n'+
+      '- 来源：'+u.source+'\n';
+  }).join('\n')+'\n';
+}
+var PLAN_INSIGHTS='# 关联洞察（按本目的相关性匹配 · 前 N 条）\n\n'+
+  '本文件由「目的工作区」导出时，跨全部目的种子洞察，按**当前所选目的**的相关性匹配，取前 N 条。\n'+
+  '它是**分析参考 / 启发**，每条标注数据来源（按关键词匹配 `02-数据包/` 与站内真实反馈）；最终结论仍以 `02-数据包/` 原始数据行为准。\n\n';
+function PLAN_INSIGHTS_BODY(insights){
+  if(!insights||!insights.length) return PLAN_INSIGHTS+'> 未匹配到关联洞察。\n';
+  return PLAN_INSIGHTS+insights.map(function(ins,i){
+    var tr=insightTrace(ins);
+    var srcs=tr.labels.length? tr.labels.map(function(s){return s.label+'('+s.n+')';}).join('、') : '未匹配到明确源头';
+    return '## '+(i+1)+'. '+ins.title+'\n'+
+      '- 内容：'+ins.body+'\n'+
+      '- 标签：'+((ins.tags||[]).join('、')||'—')+'\n'+
+      '- 数据来源：'+srcs+'\n';
+  }).join('\n')+'\n';
+}
 
 function downloadPlanPackage(){
   var p=getPurpose(state.ws,state.purposeId); if(!p){toast('请先选择一个目的');return;}
@@ -11063,6 +11243,8 @@ function downloadPlanPackage(){
   var base=pid+'/';
   var srcList=(p.sources||[]).map(function(sid){return {id:sid, s:DATA.sources[sid]};}).filter(function(x){return x.s;});
   var fwList=fwIds.map(function(fid){return DATA.frameworks.find(function(f){return f.id===fid;});}).filter(Boolean);
+  var leadUsers=getRelevantLeadUsers(p, 4);
+  var relInsights=getRelevantInsights(p, 5);
   var dataFiles=srcList.map(function(x){
     var rows=filterSourceRows(x.id);
     var header=['id','market','rating','dimension','sentiment','text'];
@@ -11084,6 +11266,8 @@ function downloadPlanPackage(){
   files.push({name:base+'04-交付模板/输出模板.md', content:PLAN_OUT_TEMPLATE});
   files.push({name:base+'04-交付模板/校验清单.md', content:PLAN_CHECK_LIST});
   files.push({name:base+'05-标签字典/taxonomy.md', content:PLAN_TAXONOMY});
+  files.push({name:base+'06-领先用户卡/领先用户卡.md', content:PLAN_LEAD_USERS_BODY(leadUsers)});
+  files.push({name:base+'07-关联洞察/关联洞察.md', content:PLAN_INSIGHTS_BODY(relInsights)});
   var zip=makeZip(files);
   var blob=new Blob([zip],{type:'application/zip'});
   var url=URL.createObjectURL(blob);
