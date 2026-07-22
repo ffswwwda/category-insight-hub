@@ -1360,8 +1360,18 @@ body.dark .lab-status{color:#fbbf24}
 
 /* ── 画布空状态提示 ── */
 .canvas-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;text-align:center;
-  color:var(--muted);font-size:13px;max-width:320px;line-height:1.7;pointer-events:none}
+  color:var(--muted);font-size:13px;max-width:320px;line-height:1.7;pointer-events:none;display:none}
 .canvas-hint b{color:var(--ink);display:block;font-size:15px;margin-bottom:6px}
+
+/* ── 画布空状态引导卡（含一键铺开）── */
+.canvas-empty{position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.canvas-empty.show{display:flex}
+.ce-card{pointer-events:auto;text-align:center;max-width:340px;background:var(--panel-solid);
+  border:1px solid var(--border);border-radius:var(--radius);padding:24px 26px;box-shadow:var(--shadow-md);backdrop-filter:var(--glass-blur)}
+.ce-card b{font-size:16px;color:var(--ink);display:block;margin-bottom:10px}
+.ce-card p{font-size:12.5px;color:var(--muted);line-height:1.65;margin:0 0 16px}
+.ce-card .ce-sub{margin:14px 0 0!important;font-size:11px!important;opacity:.8}
+.ce-card .ct-btn.primary{font-size:13px;padding:10px 18px}
 
 /* ── 全屏模式 ── */
 .canvas-area.fullscreen{position:fixed;inset:0;z-index:200000;background:var(--bg)}
@@ -2681,6 +2691,14 @@ body.dark .emp-v1{color:#fbbf24}
             </div>
             <svg class="canvas-svg" id="canvasSvg"></svg>
             <div class="canvas-hint" id="canvasHint"><b>这是个自由画布</b>从右上角「素材」拖入或点击卡片，随便放、随便连。<br>数据源 / 分析框架 / 洞察 / 创意 / 领先用户，想到什么放什么。</div>
+            <div class="canvas-empty" id="canvasEmpty">
+              <div class="ce-card">
+                <b>这是你的无限画布</b>
+                <p>想到什么放什么 —— 数据源 / 分析框架 / 洞察 / 创意 / 领先用户，随便混搭、拖动、连线。最终导出会按结构化那样重新组织。</p>
+                <button class="ct-btn primary" onclick="fillCanvasWithStarter()">一键铺开本目的素材</button>
+                <p class="ce-sub">或点右上角「素材」抽屉，挑卡片单独放进画布</p>
+              </div>
+            </div>
             <div class="canvas-drawer" id="matDrawer">
               <div class="cd-head">素材 <span class="cd-toggle" onclick="toggleDrawer()">收起</span></div>
               <div id="drawerItems"></div>
@@ -9707,14 +9725,57 @@ function renderCanvasArea(p){
   renderCanvas();
 }
 
+// 干净的起始布局：按类型分列铺开（数据源/框架/洞察/领先用户），不重叠、不碰左栏
+function buildStarterNodes(p){
+  var nodes=[];
+  var colX={src:60, fw:440, ins:820, lf:1200};
+  var yy={src:80, fw:80, ins:80, lf:80};
+  var gap=120;
+  (p.sources||[]).forEach(function(sid){
+    var s=getSource(sid); if(!s)return;
+    nodes.push({id:'n-src-'+sid+'-s', x:colX.src, y:yy.src, type:'src', title:s.name, sub:(s.records?s.records+'条':'待接入'), sourceId:sid});
+    yy.src+=gap;
+  });
+  (DATA.frameworks||[]).forEach(function(f){
+    nodes.push({id:'n-fw-'+f.id+'-s', x:colX.fw, y:yy.fw, type:'fw', title:f.name, sub:f.desc?f.desc.slice(0,24):'分析框架', fwId:f.id});
+    yy.fw+=gap;
+  });
+  var ins=getInsights(state.purposeId)||[];
+  ins.slice(0,4).forEach(function(it,i){
+    nodes.push({id:'n-ins-'+i+'-s', x:colX.ins, y:yy.ins, type:'ins', title:it.title, body:it.body});
+    yy.ins+=gap;
+  });
+  var lfus=getRelevantLeadUsers(p,4)||[];
+  lfus.forEach(function(u){
+    var uid=u.id||u.name;
+    nodes.push({id:'n-lf-'+uid+'-s', x:colX.lf, y:yy.lf, type:'lf', title:u.name, sub:u.trait?u.trait.slice(0,18):'领先用户', lfId:uid});
+    yy.lf+=gap;
+  });
+  return nodes;
+}
+
 function seedCanvas(p){
-  // 不自动 seed —— 无限画布是「想到放什么就放什么」的自由混搭空间，
-  // 与结构化左栏内容重叠会让画面显乱。初始为空，由用户从素材面板拖入。
-  // 若本地有保存的状态则保留（loadCanvasState 已在 renderCanvasArea 之前调用）。
+  // 首次进入（本地无该目的存档）→ 自动铺一份整洁起始布局，避免打开就是一片空白。
+  // 若已有存档（含用户清空后的空状态），尊重之，不再强塞。
+  var key='cih_canvas_'+state.purposeId;
+  if(state.canvasNodes.length) return;
+  var hasSaved=false;
+  try{ hasSaved=!!localStorage.getItem(key); }catch(e){}
+  if(hasSaved) return;
+  state.canvasNodes=buildStarterNodes(p);
+  saveCanvasState();
+}
+
+// 空画布引导卡上的「一键铺开」按钮
+function fillCanvasWithStarter(){
+  var p=getPurpose(state.ws,state.purposeId);
+  if(!p)return;
   if(!state.canvasNodes.length){
-    state.canvasNodes=[];
+    state.canvasNodes=buildStarterNodes(p);
     saveCanvasState();
   }
+  renderCanvas();
+  toast('已铺开本目的素材 · 可自由拖动 / 删除 / 连线');
 }
 
 function renderDrawer(p){
@@ -10353,9 +10414,11 @@ function renderCanvas(){
   // Remove old nodes
   $$('.cn-node').forEach(function(n){n.remove()});
 
-  // 空画布提示
+  // 空画布 → 显示引导卡（含一键铺开）；有内容则隐藏
   var hint=$('#canvasHint');
-  if(hint) hint.style.display = state.canvasNodes.length? 'none':'block';
+  if(hint) hint.style.display='none';
+  var emptyCard=$('#canvasEmpty');
+  if(emptyCard) emptyCard.style.display = state.canvasNodes.length? 'none':'flex';
 
   // Render nodes
   state.canvasNodes.forEach(function(n){
