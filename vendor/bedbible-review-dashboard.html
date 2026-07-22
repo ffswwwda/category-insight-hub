@@ -46,7 +46,9 @@
   .brand-mark{width:36px;height:36px;border-radius:10px;background:var(--rad-grad);color:#fff;display:grid;place-items:center;font-size:15px;font-weight:800;box-shadow:0 6px 18px rgba(0,195,243,.32)}
   .brand-name{font-weight:700;font-size:15px;letter-spacing:.2px}
   .brand-sub{font-size:11px;color:var(--muted);letter-spacing:.6px;margin-top:1px}
-  .src-card{margin:10px 14px;background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:13px 14px}
+  .src-card{margin:10px 14px;background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:13px 14px;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
+  .src-card:hover{border-color:rgba(0,195,243,.35)}
+  .src-card.active{border-color:var(--accent);background:var(--accent-weak);box-shadow:0 0 0 1px rgba(0,195,243,.15)}
   .src-card .tag{display:inline-block;background:#fff4e0;color:var(--warn);font-weight:600;border-radius:20px;padding:2px 9px;font-size:10.5px;margin-bottom:8px}
   .src-card h4{margin:0 0 4px;font-size:13.5px;font-weight:700;line-height:1.4}
   .src-card .meta{font-size:11.5px;color:var(--muted);line-height:1.6}
@@ -172,7 +174,7 @@
       <div class="topbar-left">
         <div class="topbar-titlerow">
           <button class="back-btn" onclick="goBack()" title="返回类目洞察中枢">← 返回</button>
-          <div><h1 class="board-title">Bedbible · 测评文章正文分段钻取看板</h1><div class="board-sub">数据规模：693 个正文段落<br>维度：文章/段落类型/关键词/字数<br>来源：Bedbible 测评站</div></div>
+          <div><h1 class="board-title">Bedbible · 测评文章正文分段钻取看板</h1><div class="board-sub">693 个正文段落</div></div>
         </div>
       </div>
       <div class="topbar-right">
@@ -349,7 +351,7 @@ function loadView(id){
   var v=SAVED_VIEWS.find(function(x){return x.id===id;}); if(!v) return;
   filters={}; for(var k in (v.filters||{})) filters[k]=new Set(v.filters[k]);
   curKeyword=v.keyword||''; document.getElementById('nl-input').value=curKeyword;
-  ACTIVE_VIEW_ID=id; _cartAdded=false; _cartFp=''; updateCartBtn(); render();
+  ACTIVE_VIEW_ID=id; updateCartBtn(); render();
   document.querySelectorAll('#vlList .vl-item').forEach(function(el){ el.classList.toggle('active',+el.dataset.vid===id); });
 }
 function renderSavedViews(){
@@ -361,7 +363,22 @@ function renderSavedViews(){
     var nm=v.name.length>30?v.name.slice(0,29)+'…':v.name;
     return '<div class="vl-item'+act+'" data-vid="'+v.id+'" role="button" tabindex="0"><span class="vl-dot"></span><span class="nm" title="'+esc(v.name)+'">'+esc(nm)+'</span><span class="vl-meta">'+v.hitCount.toLocaleString()+' 条</span><span class="vl-del" onclick="delView(event,'+v.id+')">✕</span></div>';
   }).join('');
-  box.onclick=function(e){ if(e.target.closest('.vl-del')) return; var it=e.target.closest('.vl-item'); if(it) loadView(+it.dataset.vid); };
+  box.onclick=function(e){ 
+    if(e.target.closest('.vl-del')) return; 
+    var it=e.target.closest('.vl-item'); 
+    if(!it) return;
+    var vid=+it.dataset.vid;
+    if(ACTIVE_VIEW_ID===vid){ 
+      // 再次点击同一视图 → 回到全量数据
+      ACTIVE_VIEW_ID=null;
+      filters={}; curKeyword=''; document.getElementById('nl-input').value='';
+      updateCartBtn(); render();
+      document.querySelectorAll('#vlList .vl-item').forEach(function(el){ el.classList.remove('active'); });
+      document.querySelector('.src-card')?.classList.add('active');
+    } else {
+      loadView(vid);
+    }
+  };
   box.onkeydown=function(e){ if(e.key!=='Enter'&&e.key!==' ') return; var it=e.target.closest('.vl-item'); if(it){ e.preventDefault(); loadView(+it.dataset.vid); } };
 }
 function delView(e,id){ e.stopPropagation(); SAVED_VIEWS=SAVED_VIEWS.filter(function(v){return v.id!==id;}); try{localStorage.setItem('bb_views',JSON.stringify(SAVED_VIEWS));}catch(x){} renderSavedViews(); }
@@ -385,6 +402,15 @@ function updateCartBtn(){
 }
 function goBack(){ try{ if(window.parent!==window) window.parent.postMessage({type:'cih-go-back'},'*'); }catch(e){} history.back(); }
 function toggleFs(){ var el=document.documentElement; if(!document.fullscreenElement){ el.requestFullscreen&&el.requestFullscreen(); } else { document.exitFullscreen&&document.exitFullscreen(); } }
+
+  // 数据源卡片点击 = 重置全部筛选，显示全量数据
+  document.querySelector('.src-card').addEventListener('click', function(){
+    filters={}; curKeyword=''; document.getElementById('nl-input').value='';
+    ACTIVE_VIEW_ID=null;
+    updateCartBtn(); render();
+    document.querySelectorAll('#vlList .vl-item').forEach(function(el){ el.classList.remove('active'); });
+    document.querySelector('.src-card')?.classList.add('active');
+  });
 
 (function(){
   var cols=document.getElementById('mod-cols');

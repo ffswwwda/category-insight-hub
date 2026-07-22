@@ -878,7 +878,15 @@ function renderSavedViews(){
     if(e.target.closest('.vl-del')) return;
     var item=e.target.closest('.vl-item');
     if(!item) return;
-    loadView(+item.dataset.vid);
+    var vid=+item.dataset.vid;
+    if(ACTIVE_VIEW_ID===vid){
+      // 再次点击同一视图 → 回到全量数据
+      ACTIVE_VIEW_ID=null; filters={}; _lastCommunity='';
+      buildTree(); updateCartBtn(); render();
+      document.querySelectorAll('#savedTree .vl-item').forEach(function(el){ el.classList.remove('active'); });
+    } else {
+      loadView(vid);
+    }
   };
   box.onkeydown=function(e){
     if(e.key!=='Enter'&&e.key!==' ') return;
@@ -901,7 +909,7 @@ function loadView(id){
   if(v.mode==='module'&&v.activeModule){ var ci=document.getElementById('mc-'+v.activeModule); if(ci){ci.style.display='block';buildSubList(v.activeModule);} }
   setMode(v.mode,v.activeModule);
   ACTIVE_VIEW_ID=id;
-  _cartAdded=false; updateCartBtn(); render();
+  updateCartBtn(); render();
   document.querySelectorAll('#savedTree .vl-item').forEach(function(el){ el.classList.toggle('active',+el.dataset.vid===id); });
 }
 function delView(e,id){ e.stopPropagation(); SAVED_VIEWS=SAVED_VIEWS.filter(function(x){return x.id!==id}); localStorage.setItem('reddit_views',JSON.stringify(SAVED_VIEWS)); renderSavedViews(); }
