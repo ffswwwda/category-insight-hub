@@ -9242,7 +9242,7 @@ function renderStructPanel(p){
 
   var expHtml='<div class="struct-section export-actions">'+
     '<button class="export-ai export-main" onclick="openPlanDetailModal()">查看完整方案</button>'+
-    '<button class="export-ghost" onclick="openExportModal()">导出方案包（.zip）</button>'+
+    '<button class="export-ghost" onclick="downloadPlanPackage()">导出方案包（.zip）</button>'+
   '</div>';
 
   sp.innerHTML=
@@ -10915,65 +10915,185 @@ function switchPdTab(tab,btn){
 }
 
 // ===== 真实导出：生成并下载方案包内容 =====
+// ============ 零依赖 ZIP（store + CRC32 + UTF-8 文件名） ============
+function makeZip(files){
+  function crc32(buf){
+    var c, table=crc32.t||(crc32.t=(function(){
+      var t=[];for(var n=0;n<256;n++){c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;
+    })());
+    var crc=0xFFFFFFFF;
+    for(var i=0;i<buf.length;i++){crc=table[(crc^buf[i])&0xFF]^(crc>>>8);}
+    return (crc^0xFFFFFFFF)>>>0;
+  }
+  function enc(s){return new TextEncoder().encode(s);}
+  var LFH=0x04034b50, CDH=0x02014b50, EOCD=0x06054b50;
+  var chunks=[], central=[], offset=0;
+  files.forEach(function(f){
+    var name=enc(f.name), data=enc(f.content), crc=crc32(data), size=data.length;
+    var lh=new Uint8Array(30), dv=new DataView(lh.buffer);
+    dv.setUint32(0,LFH,true); dv.setUint16(4,20,true); dv.setUint16(6,0x0800,true);
+    dv.setUint16(8,0,true); dv.setUint16(10,0,true); dv.setUint16(12,0,true);
+    dv.setUint32(14,crc,true); dv.setUint32(18,size,true); dv.setUint32(22,size,true);
+    dv.setUint16(26,name.length,true); dv.setUint16(28,0,true);
+    chunks.push(lh); chunks.push(name); chunks.push(data);
+    var cd=new Uint8Array(46), cv=new DataView(cd.buffer);
+    cv.setUint32(0,CDH,true); cv.setUint16(4,20,true); cv.setUint16(6,20,true);
+    cv.setUint16(8,0x0800,true); cv.setUint16(10,0,true); cv.setUint16(12,0,true);
+    cv.setUint16(14,0,true); cv.setUint32(16,crc,true); cv.setUint32(20,size,true);
+    cv.setUint32(24,size,true); cv.setUint16(28,name.length,true); cv.setUint16(30,0,true);
+    cv.setUint16(32,0,true); cv.setUint16(34,0,true); cv.setUint16(36,0,true);
+    cv.setUint32(38,0,true); cv.setUint32(42,offset,true);
+    central.push(cd); central.push(name);
+    offset += lh.length + name.length + data.length;
+  });
+  var cdStart=offset, cdSize=central.reduce(function(a,c){return a+c.length;},0);
+  var eocd=new Uint8Array(22), ed=new DataView(eocd.buffer);
+  ed.setUint32(0,EOCD,true); ed.setUint16(4,0,true); ed.setUint16(6,0,true);
+  ed.setUint16(8,files.length,true); ed.setUint16(10,files.length,true);
+  ed.setUint32(12,cdSize,true); ed.setUint32(16,cdStart,true); ed.setUint16(20,0,true);
+  var all=chunks.concat(central,[eocd]), total=all.reduce(function(a,c){return a+c.length;},0);
+  var out=new Uint8Array(total), pos=0;
+  all.forEach(function(c){out.set(c,pos);pos+=c.length;});
+  return out;
+}
+
+// ============ 方案包内容构造 ============
+function PLAN_MANIFEST(p,pid,pname,srcList,fwList,steps,now){
+  var m={
+    purpose_id: pid, purpose: pname, purpose_desc: p.desc||'',
+    version:'1.0', generated_at: now,
+    data_lineage:'来源于本包 02-数据包/ 中按用户在来源上设定的筛选导出的原始数据；未做二次加工/打标，AI 直接消费',
+    required_sources: srcList.map(function(x){return {id:x.id,name:x.s.name,type:x.s.type,market:x.s.market,status:x.s.status};}),
+    frameworks: fwList.map(function(f){return {id:f.id,name:f.name};}),
+    chain: steps,
+    skill_dependencies:[{name:'voc-tagger',path:'03-技能包/voc-tagger/',required:false,note:'可选：如需对原始评论做 VOC 九维打标时使用'}],
+    run_order:[
+      '1. 读 manifest.json 了解目的/数据源/框架/血缘',
+      '2. 读 01-提示词/SYSTEM.md（自包含总提示词，含硬约束）',
+      '3. 载入 02-数据包/ 中对应源 CSV',
+      '4. 按需调用 03-技能包/voc-tagger（可选）',
+      '5. 按 04-交付模板/输出模板.md 六段结构产出',
+      '6. 按 04-交付模板/校验清单.md 逐条核对'
+    ],
+    labels:'05-标签字典/taxonomy.md'
+  };
+  return JSON.stringify(m,null,2);
+}
+function PLAN_README(p,pid,pname,srcList,fwList,steps){
+  return '# 方案包总览 · '+pname+'\n\n'+
+    '本包由「目的工作区」导出，是一个**自包含**的分析方案包：拿到包的 AI 无需联网、无需额外背景，即可按提示词分析、产出、核对。\n\n'+
+    '## 目的\n'+pname+'\n'+(p.desc?p.desc+'\n':'')+'\n'+
+    '## 已选数据源（'+srcList.length+' 个）\n'+srcList.map(function(x){return '- '+x.s.name+'（'+x.s.type+' / '+x.s.market+'）';}).join('\n')+'\n\n'+
+    '## 已选分析框架（'+fwList.length+' 个）\n'+fwList.map(function(f){return '- '+f.name;}).join('\n')+'\n\n'+
+    '## 分析链路\n'+(steps.length?steps.map(function(s,i){return (i+1)+'. '+s;}).join('\n'):'(无)')+'\n\n'+
+    '## 运行顺序\n1. 读 manifest.json\n2. 读 01-提示词/SYSTEM.md\n3. 载入 02-数据包/ CSV\n4. 按需调 03-技能包/voc-tagger\n5. 套 04-交付模板/输出模板.md 产出\n6. 按 04-交付模板/校验清单.md 核对\n\n'+
+    '> 数据均为原始导出，未做二次加工；如需打标再用 voc-tagger。\n';
+}
+function PLAN_SYSTEM(p,pid,pname,srcList,fwList,steps){
+  return '# 分析手册 · '+pname+'\n\n'+
+    '你是倒模类目用户研究数据分析专家。本包是「目的工作区」导出的**自包含方案包**，任何 AI 拿到本包即可独立完成分析、产出与核对，**无需联网、无需额外背景知识**。\n\n'+
+    '## 硬约束（必须严格遵守）\n'+
+    '1. **仅使用包内数据**：只能用 `02-数据包/` 内的真实数据，禁止联网检索、禁止引入包外任何外部知识或数据。\n'+
+    '2. **行级引用**：所有结论必须引用具体数据行，格式 `[(源文件#行号)]`，行号以该 CSV 的 `id` 列为准。\n'+
+    '3. **数据不足标注**：数据不足以支撑的结论必须明确写「⚠️ 数据不足」，严禁编造、严禁把合理推测当事实。\n'+
+    '4. **按模板产出**：严格按 `04-交付模板/输出模板.md` 的六段结构产出。\n'+
+    '5. **逐条核对**：产出后按 `04-交付模板/校验清单.md` 逐条自检。\n'+
+    '6. **标签一致**：标签体系严格遵循 `05-标签字典/taxonomy.md`，不私自新增维度词。\n'+
+    '7. **框架步骤**：按 `01-提示词/分析框架说明.md` 的步骤执行，不跳步、不遗漏。\n\n'+
+    '## 任务目的\n'+pname+'\n'+(p.desc?p.desc+'\n':'')+'\n'+
+    '## 本次已选数据源（'+srcList.length+' 个）\n'+srcList.map(function(x){
+      return '- **'+x.s.name+'**（`'+x.id+'-'+x.s.name+'.csv`）：类型 '+x.s.type+'，市场 '+x.s.market+(x.s.records?'，约 '+x.s.records+' 条':'')+'。'+(x.s.desc?'\n  '+x.s.desc:'');
+    }).join('\n')+'\n\n'+
+    '## 本次已选分析框架\n'+fwList.map(function(f){return '- '+f.name+'（用法见 01-提示词/分析框架说明.md）';}).join('\n')+'\n\n'+
+    '## 分析链路\n'+(steps.length?steps.map(function(s,i){return (i+1)+'. '+s;}).join(' → '):'(未配置链路)')+'\n\n'+
+    '## 输出与核对\n按 `04-交付模板/输出模板.md` 六段产出 → 按 `04-交付模板/校验清单.md` 逐条核对 → 交付。技能调用见 `01-提示词/技能调用说明.md`。\n';
+}
+function PLAN_SRC_DOC(srcList){
+  return '# 数据源说明\n\n每个源对应 `02-数据包/` 下一个 CSV 文件。字段：`id, market, rating, dimension, sentiment, text`。\n\n'+
+    srcList.map(function(x){
+      return '## '+x.s.name+'（`'+x.id+'-'+x.s.name+'.csv`）\n'+
+        '- 类型：'+x.s.type+'\n- 覆盖市场：'+x.s.market+'\n- 状态：'+x.s.status+'\n'+
+        '- 说明：'+(x.s.desc||'—')+'\n- 取数方式：本 CSV 即该源按用户筛选导出的原始样本，直接读取即可，无需二次处理。\n';
+    }).join('\n')+'\n';
+}
+function PLAN_FW_DOC(fwList){
+  return '# 分析框架说明\n\n'+fwList.map(function(f){
+    var secs=(f.sections||[]).map(function(s){
+      return '### '+s.t+'\n'+(s.d? s.d+'\n':'')+ (s.items? s.items.map(function(it){return '- **'+it.h+'**：'+it.p;}).join('\n'):'');
+    }).join('\n');
+    return '## '+f.name+'\n'+f.desc+'\n\n'+secs+'\n';
+  }).join('\n')+'\n'+(fwList.length?'':'> 未选择分析框架：建议回到目的工作区「分析框架」中按建议补充。\n');
+}
+function PLAN_SKILL_DOC(){
+  return '# 技能调用说明\n\n## voc-tagger（可选）\n- **何时调**：当你需要对 `02-数据包/` 中的原始评论做 VOC 九维结构化打标时使用（如生成标签分布、聚类）。\n'+
+    '- **怎么调**：进入 `03-技能包/voc-tagger/`，按其中 SKILL.md 的说明运行；输入为原始评论文本，输出为九维标签。\n'+
+    '- **降级**：若运行环境无法加载该技能，可改为由你（AI）按 `05-标签字典/taxonomy.md` 的九维词表人工标注，效果等价。\n'+
+    '- **注意**：打标产物属于「二次加工」，本包默认不强制；是否打标由你的分析需要决定，但无论是否打标，最终结论都必须能溯源到 `02-数据包/` 原始行。\n';
+}
+var PLAN_VOC_SKILL='# voc-tagger 技能包（精简版）\n\n对原始用户评论做 VOC 九维打标。\n\n'+
+  '## 九大维度\n用户画像 / 购买动机 / 购买目的 / 使用场景 / 使用障碍 / 克服方式 / 用户忠诚度 / 产品改进建议 / 十三种需求。\n\n'+
+  '## 运行方式\n输入评论文本（来自 02-数据包/ 的 CSV `text` 列），逐条匹配维度词典，输出每条评论的标签集合。\n\n'+
+  '## 降级\n环境无法运行脚本时，按 05-标签字典/taxonomy.md 词表人工标注。\n';
+var PLAN_OUT_TEMPLATE='# 输出模板（六段结构）\n\n'+
+  '## 1. 需求清单\n按重要度排序的用户需求点（每条引用 [(源文件#行号)]）。\n\n'+
+  '## 2. 需求四象限\n按「重要度 × 满意度」定位，标注 P0 创新突破口。\n\n'+
+  '## 3. 领先用户\n识别超前/极端用户及其未被满足的需求信号。\n\n'+
+  '## 4. 产品概念\n基于上述洞察生成 2-3 个可落地的产品/功能概念。\n\n'+
+  '## 5. FABE 文案\n对每个概念写 FABE（功能/优势/利益/证据）。\n\n'+
+  '## 6. 优先级\n给出落地优先级与理由（引用数据）。\n';
+var PLAN_CHECK_LIST='# 校验清单（产出后逐条核对）\n\n'+
+  '- [ ] 每条结论都能溯源到 02-数据包/ 的具体行号 [(源文件#行号)]\n'+
+  '- [ ] 无编造：所有数据均来自包内，无外部知识混入\n'+
+  '- [ ] 数据不足处已标注「⚠️ 数据不足」，未以推测充当事实\n'+
+  '- [ ] 标签严格使用 05-标签字典/taxonomy.md 词表，无私自新增维度\n'+
+  '- [ ] 分析框架步骤已走完，无跳步/遗漏\n'+
+  '- [ ] 产出符合 04-交付模板/输出模板.md 的六段结构\n';
+var PLAN_TAXONOMY='# 标签 / 维度字典\n\n'+
+  '## VOC 九维\n用户画像 / 购买动机 / 购买目的 / 使用场景 / 使用障碍 / 克服方式 / 用户忠诚度 / 产品改进建议 / 十三种需求。\n\n'+
+  '## 十三种需求（示例词表）\n功能刚需 / 性能提升 / 易用性 / 安全性 / 美观性 / 个性化 / 性价比 / 便携性 / 静音 / 清洁便利 / 舒适度 / 情感陪伴 / 社交认同。\n\n'+
+  '> 打标时严格从上述词表取词，不私自新增维度；如需扩展，先在 manifest 记录并经人工确认。\n';
+
 function downloadPlanPackage(){
-  var p=getPurpose(state.ws,state.purposeId); if(!p)return;
+  var p=getPurpose(state.ws,state.purposeId); if(!p){toast('请先选择一个目的');return;}
   var steps=(p.methods||'').split('/').map(function(m){return m.trim();}).filter(Boolean);
   var fwIds=state.selectedFrameworks||[];
   var now=new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-
-  // 1. 数据源文档
-  var srcDocs=(p.sources||[]).map(function(sid){
-    var s=DATA.sources[sid]; if(!s)return '';
-    var pf=p._srcFilters&&p._srcFilters[sid];
-    return '## '+s.name+'\n- 类型: '+s.type+' | 市场: '+s.market+(s.records?' | 记录数: '+s.records:'')+' | 状态: '+s.status+'\n- 说明: '+(s.desc||'—')+(pf&&Object.keys(pf.filters).length>0?'\n- 筛选条件:\n'+Object.keys(pf.filters).map(function(k){return '  - '+k+': '+pf.filters[k].join(', ');}).join('\n'):'');
-  }).join('\n\n');
-
-  // 2. 分析框架 Skill 文档
-  var fwDoc=fwIds.map(function(fid){
-    var f=DATA.frameworks.find(function(x){return x.id===fid;});
-    if(!f)return '';
-    return '## '+f.name+'\n'+(f.desc||f.description||'')+(f.steps?'\n\n步骤:\n'+f.steps.map(function(s,i){return (i+1)+'. '+s;}).join('\n'):'');
-  }).join('\n\n') || '(未选择分析框架，建议在「建议使用的分析框架」中选择)';
-
-  // 3. AI 提示词
-  var promptText='你是倒模类目数据分析专家。以下是当前的分析任务配置：\n\n'+
-    '【任务目的】\n'+p.name+'\n'+
-    (p.desc?'\n【目的说明】\n'+p.desc+'\n':'')+
-    '\n【数据源】('+p.sources.length+'个)\n'+(p.sources||[]).map(function(sid){var s=DATA.sources[sid];return '- '+s.name+' ('+s.type+'/'+s.market+(s.records?', '+s.records+'条':'')+')';}).join('\n')+
-    '\n\n【分析框架】\n'+(fwIds.length?fwIds.map(function(fid){var f=DATA.frameworks.find(function(x){return x.id===fid;});return f?f.name:fid;}).join(', '):'默认方法')+
-    '\n\n【分析链路】\n'+steps.map(function(st,i){return (i+1)+'. '+st;}).join(' → ') +
-    '\n\n【筛选条件】\n'+(p.sources||[]).map(function(sid){var pf=p._srcFilters&&p._srcFilters[sid];if(!pf||!Object.keys(pf.filters).length)return '';var s=DATA.sources[sid];return s.name+':\n'+Object.keys(pf.filters).map(function(k){return '  '+k+' = ['+pf.filters[k].join(', ')+']';}).join('\n');}).filter(Boolean).join('\n')+
-    '\n\n请基于以上配置，按分析链路逐步执行，给出结构化的分析报告。';
-
-  // 4. 筛选条件 JSON
-  var filtJson={};
-  (p.sources||[]).forEach(function(sid){
-    var pf=p._srcFilters&&p._srcFilters[sid];
-    if(pf && Object.keys(pf.filters).length>0) filtJson[sid]=pf.filters;
+  var pid=state.purposeId||'purpose';
+  var pname=p.name||'未命名目的';
+  var base=pid+'/';
+  var srcList=(p.sources||[]).map(function(sid){return {id:sid, s:DATA.sources[sid]};}).filter(function(x){return x.s;});
+  var fwList=fwIds.map(function(fid){return DATA.frameworks.find(function(f){return f.id===fid;});}).filter(Boolean);
+  var dataFiles=srcList.map(function(x){
+    var rows=filterSourceRows(x.id);
+    var header=['id','market','rating','dimension','sentiment','text'];
+    var csv='\ufeff'+header.join(',')+'\n'+rows.map(function(r){
+      return header.map(function(h){var v=(''+(r[h]==null?'':r[h])).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}).join(',');
+    }).join('\n');
+    return {name:base+'02-数据包/'+x.id+'-'+x.s.name+'.csv', content:csv, n:rows.length};
   });
-
-  // 组装为单个文本文件（浏览器环境无法真正打zip，合并为一个 .txt 方案包）
-  var packageContent=
-    '╔══════════════════════════════════════╗\n'+
-    '║   倒模类目 · 数据分析方案包           ║\n'+
-    '║   目的: '+p.name.padEnd(28)+'║\n'+
-    '║   生成时间: '+new Date().toLocaleString('zh-CN').padEnd(20)+'║\n'+
-    '╚══════════════════════════════════════╝\n\n'+
-    '═══ 1. 数据源文档 ═══\n\n'+srcDocs+'\n\n'+
-    '═══ 2. 分析框架 Skill ═══\n\n'+fwDoc+'\n\n'+
-    '═══ 3. AI 提示词 ═══\n\n'+promptText+'\n\n'+
-    '═══ 4. 筛选条件 (JSON) ═══\n\n'+JSON.stringify(filtJson,null,2)+'\n';
-
-  // 触发下载
-  var blob=new Blob([packageContent],{type:'text/plain;charset=utf-8'});
+  var files=[
+    {name:base+'manifest.json', content:PLAN_MANIFEST(p,pid,pname,srcList,fwList,steps,now)},
+    {name:base+'00-README.md', content:PLAN_README(p,pid,pname,srcList,fwList,steps)},
+    {name:base+'01-提示词/SYSTEM.md', content:PLAN_SYSTEM(p,pid,pname,srcList,fwList,steps)},
+    {name:base+'01-提示词/数据源说明.md', content:PLAN_SRC_DOC(srcList)},
+    {name:base+'01-提示词/分析框架说明.md', content:PLAN_FW_DOC(fwList)},
+    {name:base+'01-提示词/技能调用说明.md', content:PLAN_SKILL_DOC()}
+  ];
+  dataFiles.forEach(function(d){files.push({name:d.name, content:d.content});});
+  files.push({name:base+'03-技能包/voc-tagger/SKILL.md', content:PLAN_VOC_SKILL});
+  files.push({name:base+'04-交付模板/输出模板.md', content:PLAN_OUT_TEMPLATE});
+  files.push({name:base+'04-交付模板/校验清单.md', content:PLAN_CHECK_LIST});
+  files.push({name:base+'05-标签字典/taxonomy.md', content:PLAN_TAXONOMY});
+  var zip=makeZip(files);
+  var blob=new Blob([zip],{type:'application/zip'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url; a.download='方案包-'+p.name.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g,'')+'-'+now+'.txt';
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
+  a.href=url; a.download='方案包-'+pname.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g,'')+'-'+now+'.zip';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  toast('方案包已开始下载');
+  toast('方案包已开始下载（'+files.length+' 个文件 · 数据 '+dataFiles.reduce(function(a,d){return a+d.n;},0)+' 行）');
 }
+
 
 function copyPlanPrompt(){
   var p=getPurpose(state.ws,state.purposeId); if(!p)return;
