@@ -1392,6 +1392,32 @@
 .proj-item-status[data-status="进行中"] { background: rgba(52,199,89,.16); color: #34c759; }
 .proj-item-status[data-status="规划中"] { background: rgba(245,197,66,.16); color: #f5c542; }
 .proj-item-status[data-status="已完成"] { background: rgba(0,212,255,.16); color: #00d4ff; }
+.proj-del {
+  flex: 0 0 auto;
+  width: 26px; height: 26px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.04);
+  color: #ff8a9a;
+  border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.proj-del:hover { background: rgba(255,77,109,.16); border-color: rgba(255,77,109,.45); color: #ff5d7a; }
+.proj-del-detail {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 9px;
+  border: 1px solid rgba(255,77,109,.3);
+  background: rgba(255,77,109,.1);
+  color: #ff5d7a;
+  cursor: pointer;
+  transition: background .15s;
+}
+.proj-del-detail:hover { background: rgba(255,77,109,.2); }
+.proj-del-detail svg { color: #ff5d7a; }
 
 .proj-detail {
   padding: 18px 22px 22px;
@@ -1603,10 +1629,10 @@
 .mr-msg { display: flex; gap: 8px; align-items: flex-start; }
 .mr-msg.user { flex-direction: row-reverse; }
 .mr-avatar { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 700; }
-.mr-bubble { background: rgba(255,255,255,.06); border: 1px solid var(--border, #2a2d44); border-radius: 12px; padding: 8px 11px; max-width: 82%; }
+.mr-bubble { background: rgba(34,38,64,.92); border: 1px solid rgba(255,255,255,.14); border-radius: 12px; padding: 9px 12px; max-width: 84%; color: #f2f3fb; }
 .mr-bubble.user { background: linear-gradient(135deg,#00d4ff,#a855f7 70%,#ff6b9d); border: none; color: #fff; }
-.mr-bubble p { margin: 0; font-size: 13px; line-height: 1.55; white-space: pre-wrap; }
-.mr-msg-name { display: block; font-size: 11px; color: #9a9aa8; margin-bottom: 3px; font-weight: 600; }
+.mr-bubble p { margin: 0; font-size: 13.5px; line-height: 1.6; font-weight: 500; white-space: pre-wrap; color: #f2f3fb; }
+.mr-msg-name { display: block; font-size: 11px; color: #c2c6e2; margin-bottom: 4px; font-weight: 600; }
 .mr-msg.user .mr-bubble.user .mr-msg-name { color: rgba(255,255,255,.85); }
 .mr-typing { display: flex; gap: 4px; margin-top: 8px; }
 .mr-typing span { width: 6px; height: 6px; border-radius: 50%; background: #b6b6c4; animation: mrBlink 1.1s infinite both; }

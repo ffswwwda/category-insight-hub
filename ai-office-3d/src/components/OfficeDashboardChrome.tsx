@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { getOfficeAgents, subscribeOfficeAgents } from '@/store/officeStore'
 import { AGENT_ROSTER, PROJECTS } from '@/scene/layout/officeLayout'
-import { getLiveProjects, subscribeLiveProjects, type LiveProject } from '@/store/workspaceStore'
+import { getLiveProjects, subscribeLiveProjects, deleteLiveProject, type LiveProject } from '@/store/workspaceStore'
 import type { Agent } from '@/types/agent'
 import { TaskStageBoard } from '@/components/TaskStageBoard'
 import { QUICK_TOOLS } from '@/config'
@@ -876,6 +876,12 @@ export function OfficeProjectsModal({ onClose, backToMeeting }: { onClose: () =>
   const [activeId, setActiveId] = useState<string>(all[0]?.id ?? '')
   const active = all.find(p => p.id === activeId) ?? all[0]
   const activeIsLive = live.some(p => p.id === activeId)
+  const handleDelete = (id: string, name: string) => {
+    if (!window.confirm(`确定删除项目「${name}」？此操作不可恢复。`)) return
+    const remaining = live.filter(p => p.id !== id)
+    deleteLiveProject(id)
+    if (id === activeId && remaining[0]) setActiveId(remaining[0].id)
+  }
   const agentName = (id: string) => AGENT_ROSTER.find(r => r.id === id)?.name ?? id
   const agentColor = (id: string) => {
     const c = AGENT_ROSTER.find(r => r.id === id)?.color
@@ -917,11 +923,13 @@ export function OfficeProjectsModal({ onClose, backToMeeting }: { onClose: () =>
               const status = isLive ? (p as LiveProject).status : (p as any).status
               const icon = isLive ? 'i-zap' : (p as any).icon
               return (
-                <button
+                <div
                   key={p.id}
-                  type="button"
                   className={'proj-item' + (p.id === activeId ? ' on' : '')}
                   onClick={() => { setActiveId(p.id); setOpenTaskId(null) }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { setActiveId(p.id); setOpenTaskId(null) } }}
                 >
                   <span className="proj-item-icon"><SvgIcon id={icon} size={15}/></span>
                   <span className="proj-item-main">
@@ -929,7 +937,16 @@ export function OfficeProjectsModal({ onClose, backToMeeting }: { onClose: () =>
                     <span className="proj-item-owner">负责人 · {owner}</span>
                   </span>
                   <span className={'proj-item-status'} data-status={status}>{status}</span>
-                </button>
+                  {isLive && (
+                    <button
+                      type="button"
+                      className="proj-del"
+                      title="删除项目"
+                      aria-label="删除项目"
+                      onClick={(e) => { e.stopPropagation(); handleDelete(p.id, p.name) }}
+                    ><SvgIcon id="i-trash" size={14}/></button>
+                  )}
+                </div>
               )
             })}
           </div>
@@ -946,6 +963,14 @@ export function OfficeProjectsModal({ onClose, backToMeeting }: { onClose: () =>
                     {activeIsLive && <span className="proj-tag tone-live">实时</span>}
                   </div>
                 </div>
+                {activeIsLive && (
+                  <button
+                    type="button"
+                    className="proj-del-detail"
+                    title="删除项目"
+                    onClick={() => handleDelete(active.id, active.name)}
+                  ><SvgIcon id="i-trash" size={15}/><span>删除</span></button>
+                )}
               </div>
               {/* 进度条 */}
               <div className="proj-progress">

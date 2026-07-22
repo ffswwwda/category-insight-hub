@@ -140,6 +140,12 @@ export function clearLiveProjects() {
   emitProjects()
 }
 
+export function deleteLiveProject(id: string) {
+  liveProjects = liveProjects.filter((p) => p.id !== id)
+  persistProjects()
+  emitProjects()
+}
+
 /* ───────── LLM(BYOK) 配置 ───────── */
 export interface LLMConfig {
   key: string
