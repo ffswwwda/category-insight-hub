@@ -180,8 +180,7 @@
         <div class="search-box"><span class="ico">⌕</span><input id="nl-input" type="text" placeholder="搜索关键词 / 内容…" autocomplete="off"></div>
       </div>
     </header>
-    <div class="board">
-      <div class="filterbar">
+    <div class="filterbar">
         <div class="fb-hint">当前定位：<code id="fbTitle">全部数据</code> · 点击下方任意分布图中的元素即可钻取筛选（可叠加）。</div>
         <div class="chips" id="chips"></div>
         <div class="fb-foot">
@@ -191,6 +190,8 @@
         </div>
         <div class="understood" id="understood"></div>
       </div>
+
+    <div class="board">
       <div class="countline">当前命中 <b id="hit-count">0</b> 条（共 <span id="total-count">0</span> 条）</div>
       <div class="grid g-6 section-gap" id="kpis"></div>
       <div class="panel">
@@ -380,19 +381,26 @@ function renderSavedViews(){
   box.onkeydown=function(e){ if(e.key!=='Enter'&&e.key!==' ') return; var it=e.target.closest('.vl-item'); if(it){ e.preventDefault(); loadView(+it.dataset.vid); } };
 }
 function delView(e,id){ e.stopPropagation(); SAVED_VIEWS=SAVED_VIEWS.filter(function(v){return v.id!==id;}); try{localStorage.setItem('pz_views',JSON.stringify(SAVED_VIEWS));}catch(x){} renderSavedViews(); }
+var CART_COLUMNS = COLS.map(function(c){return {key:c.k, label:c.label};});
 function addToCart(){
   if(_cartAdded) return;
-  var arr=getFiltered(); if(!arr.length){ toast('当前筛选结果为空，无法加入购物车'); return; }
-  var item={ id:'cart_'+Date.now(), source:'P站标签&历年报告', sourceKey:'pornhub', filter:generateViewFingerprint(), count:arr.length, addedAt:new Date().toISOString(), columns:COLS.map(function(c){return c.k;}), rows:arr.map(function(r){ var o={}; COLS.forEach(function(c){ if(c.k!=='__search') o[c.k]=r[c.k]; }); return o; }) };
-  try{ parent.postMessage({type:'cih-cart-add',item:item},'*'); }catch(e){}
+  var arr = getFiltered();
+  if(!arr.length){ toast('当前筛选结果为空，无法加入购物车'); return; }
+  var items = arr.map(function(r){ var o={}; CART_COLUMNS.forEach(function(c){ o[c.key]=r[c.key]; }); return o; });
+  var item = {id:'cart_'+Date.now()+'_'+Math.floor(Math.random()*9999), source:'P站标签&历年报告', sourceKey:'pornhub', filter:generateViewFingerprint(), count:arr.length, addedAt:new Date().toISOString(), columns:CART_COLUMNS, items:items, _sel:true};
+  try{ window.parent.postMessage({type:'cih-cart-add', item:item}, '*'); }catch(e){}
   _cartAdded=true; _cartFp=generateViewFingerprint(); updateCartBtn();
   if(window.parent===window){
-    var key='cih_cart_v1'; var a=[]; try{a=JSON.parse(localStorage.getItem(key))||[];}catch(e){}
-    var d=a.find(function(x){return x.source===item.source&&x.filter===item.filter;}); if(d){d.rows=item.rows;d.count=item.count;d.addedAt=item.addedAt;} else a.push(item);
-    try{localStorage.setItem(key,JSON.stringify(a));}catch(e){}
+    var key='cih_cart_v1'; var a=[];
+    try{ a=JSON.parse(localStorage.getItem(key))||[]; }catch(e){}
+    var dup=a.find(function(x){return x.source===item.source && x.filter===item.filter;});
+    if(dup){ dup.items=item.items; dup.count=item.count; dup.addedAt=item.addedAt; dup.columns=item.columns; }
+    else a.push(item);
+    try{ localStorage.setItem(key, JSON.stringify(a)); }catch(e){}
     toast('已加入购物车（'+arr.length+' 条）');
-  } else toast('已发送到购物车');
+  } else { toast('已发送到购物车'); }
 }
+document.getElementById('cartBtn').addEventListener('click', addToCart);
 function updateCartBtn(){
   var btn=document.getElementById('cartBtn'); var cur=generateViewFingerprint();
   if(_cartAdded && _cartFp===cur){ btn.className='save-view-btn cart-added'; btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M20 6L9 17l-5-5"/></svg>已加入'; }
