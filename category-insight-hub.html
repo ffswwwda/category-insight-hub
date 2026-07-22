@@ -6786,17 +6786,6 @@ function openLfZone(){
         '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">领先需求评估</div>'+
         '<div class="lf-tab" data-lftab="idea" onclick="switchLfTab(\'idea\',this)">创意灵感区</div>'+
       '</div>'+
-      '<details class="lf-pull-details">'+
-        '<summary class="lf-pull-sum">数据接入状态</summary>'+
-        '<div class="lf-pull">'+
-          '<div class="lf-pull-info"><span class="lf-pull-dot"></span>已自动接入 <b>'+lfPulledSources().length+'</b> 个数据源 · 共 '+SOURCE_POOL.length+' 条真实反馈</div>'+
-          '<div class="lf-mode">'+
-            '<button class="lf-mt'+(LF_MODE==='auto'?' on':'')+'" onclick="lfSetMode(\'auto\',this)">已接入源·自动</button>'+
-            '<button class="lf-mt'+(LF_MODE==='sample'?' on':'')+'" onclick="lfSetMode(\'sample\',this)">示例数据</button>'+
-          '</div>'+
-        '</div>'+
-        '<div class="lf-src-chips">'+lfPulledSources().map(function(s){return '<span class="lf-src-chip">'+escHtml(s.label)+' · '+s.n+'</span>';}).join('')+'</div>'+
-      '</details>'+
       '<div class="lf-body"></div>'+
     '</div>';
   var zone = document.getElementById('viewLfZone').querySelector('.lf-zone');
