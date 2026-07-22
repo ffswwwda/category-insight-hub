@@ -2993,7 +2993,7 @@ function openDeDashboard(){
   $('#viewDe').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
   var f=document.querySelector('#viewDe .de-frame');
-  if(f) f.src=ghBase()+'de-dashboard.html?theme='+th;
+  if(f) f.src=ghBase()+'de-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 
 function openRedditDashboard(){
@@ -3002,7 +3002,7 @@ function openRedditDashboard(){
   $('#viewReddit').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewReddit')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
   var f=document.getElementById('redditFrame');
-  if(f) f.src=ghBase()+'reddit-dashboard.html?theme='+th;
+  if(f) f.src=ghBase()+'reddit-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 
 // GitHub Pages 项目站基址：无论主站以何种方式打开（部署子路径 / 本地 file://），
@@ -3022,7 +3022,7 @@ function openAmzDashboard(){
   $('#viewAmz').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewAmz')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
   var f=document.getElementById('amzFrame');
-  if(f) f.src=ghBase()+'vendor/amz-review-dashboard.html?theme='+th;
+  if(f) f.src=ghBase()+'vendor/amz-review-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 
 function openSearchDashboard(){
@@ -3031,7 +3031,7 @@ function openSearchDashboard(){
   $('#viewSearch').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewSearch')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
   var f=document.getElementById('searchFrame');
-  if(f) f.src=ghBase()+'vendor/search-volume-dashboard.html?theme='+th;
+  if(f) f.src=ghBase()+'vendor/search-volume-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 
 function openFeedbackDashboard(){
@@ -3040,44 +3040,44 @@ function openFeedbackDashboard(){
   $('#viewFeedback').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewFeedback')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
   var f=document.getElementById('feedbackFrame');
-  if(f) f.src=ghBase()+'vendor/feedback-intel-dashboard.html?theme='+th;
+  if(f) f.src=ghBase()+'vendor/feedback-intel-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 
 function openPornhubDashboard(){
   state.purposeId=null; setActiveNav('src-s16');
   $('#viewPornhub').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewPornhub')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
-  var f=document.getElementById('pornhubFrame'); if(f) f.src=ghBase()+'vendor/pornhub-tags-dashboard.html?theme='+th;
+  var f=document.getElementById('pornhubFrame'); if(f) f.src=ghBase()+'vendor/pornhub-tags-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 function openYoutubeDashboard(){
   state.purposeId=null; setActiveNav('src-s17');
   $('#viewYoutube').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewYoutube')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
-  var f=document.getElementById('youtubeFrame'); if(f) f.src=ghBase()+'vendor/youtube-review-dashboard.html?theme='+th;
+  var f=document.getElementById('youtubeFrame'); if(f) f.src=ghBase()+'vendor/youtube-review-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 function openBedbibleDashboard(){
   state.purposeId=null; setActiveNav('src-s18');
   $('#viewBedbible').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewBedbible')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
-  var f=document.getElementById('bedbibleFrame'); if(f) f.src=ghBase()+'vendor/bedbible-review-dashboard.html?theme='+th;
+  var f=document.getElementById('bedbibleFrame'); if(f) f.src=ghBase()+'vendor/bedbible-review-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 function openSupplierDashboard(){
   state.purposeId=null; setActiveNav('src-s19');
   $('#viewSupplier').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewSupplier')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
-  var f=document.getElementById('supplierFrame'); if(f) f.src=ghBase()+'vendor/supplier-intel-dashboard.html?theme='+th;
+  var f=document.getElementById('supplierFrame'); if(f) f.src=ghBase()+'vendor/supplier-intel-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 function openCompetitorDashboard(){
   state.purposeId=null; setActiveNav('src-s20');
   $('#viewCompetitor').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewCompetitor')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
-  var f=document.getElementById('competitorFrame'); if(f) f.src=ghBase()+'vendor/competitor-kol-dashboard.html?theme='+th;
+  var f=document.getElementById('competitorFrame'); if(f) f.src=ghBase()+'vendor/competitor-kol-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 function openSocialDashboard(){
   state.purposeId=null; setActiveNav('src-s21');
   $('#viewSocial').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewSocial')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
-  var f=document.getElementById('socialFrame'); if(f) f.src=ghBase()+'vendor/social-monitor-dashboard.html?theme='+th;
+  var f=document.getElementById('socialFrame'); if(f) f.src=ghBase()+'vendor/social-monitor-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 
 // ============================================================
