@@ -2110,6 +2110,49 @@ body.dark .lab-status{color:#fbbf24}
 .rf-metric.lead{background:rgba(0,212,255,.1);color:#0369a1}
 .rf-metric.creat{background:rgba(236,72,153,.1);color:#be185d}
 .rf-metric.hit-low{background:rgba(156,163,175,.12);color:#6b7280}
+/* ——创意灵感区（领先用户专区第三 tab）—— */
+.idea-wrap{padding:4px 0}
+.idea-intro{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;max-width:780px}
+.idea-toolbar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px}
+.idea-btn{font-family:inherit;font-size:12px;font-weight:700;padding:7px 12px;border-radius:9px;border:1px solid var(--border);background:var(--panel);color:var(--ink-2);cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.idea-btn svg{width:15px;height:15px;flex-shrink:0}
+.idea-btn:hover{border-color:var(--accent);color:var(--accent)}
+.idea-btn.primary{background:var(--rad-grad);color:#fff;border-color:transparent}
+.idea-btn.primary:hover{filter:brightness(1.06);color:#fff}
+.idea-btn.primary:disabled{opacity:.6;cursor:wait}
+.idea-btn.ghost{background:var(--glass-bg)}
+.idea-paste{width:100%;min-height:64px;resize:vertical;padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:12.5px;line-height:1.5;margin-bottom:6px}
+.idea-paste:focus{outline:none;border-color:var(--accent)}
+.idea-corpus-info{font-size:11.5px;color:var(--muted);margin-bottom:10px}
+.idea-corpus-info b{color:var(--accent)}
+.idea-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.idea-card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;display:flex;flex-direction:column;gap:9px}
+.idea-badge-seed{position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:20px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent)}
+.idea-content{font-size:13px;font-weight:700;color:var(--ink);line-height:1.5;padding-right:34px}
+.idea-metrics{display:flex;flex-wrap:wrap;gap:6px}
+.idea-meta-chips{display:flex;flex-wrap:wrap;gap:6px}
+.idea-chip{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:rgba(128,140,164,.07);color:var(--ink-2);white-space:nowrap}
+.idea-chip.nv-hi{background:rgba(52,199,89,.12);color:#1a9e4b;border-color:rgba(52,199,89,.4)}
+.idea-chip.nv-mid{background:rgba(245,166,35,.12);color:#c9871a;border-color:rgba(245,166,35,.4)}
+.idea-chip.nv-lo{background:rgba(128,140,164,.1);color:var(--muted);border-color:var(--border)}
+.idea-chip.neutral{background:rgba(128,140,164,.07);color:var(--ink-2)}
+.idea-fun-reason{font-size:11px;color:var(--ink-2);line-height:1.5;background:rgba(128,140,164,.05);border-left:2px solid var(--accent-2);padding:5px 9px;border-radius:0 7px 7px 0}
+.idea-sources{margin-top:1px;border-top:1px dashed var(--border);padding-top:8px}
+.ias-h{font-size:10px;font-weight:800;color:var(--muted);margin-bottom:5px}
+.ias-item{display:flex;gap:6px;font-size:10.5px;color:var(--ink-2);line-height:1.45;margin-bottom:4px}
+.ias-idx{color:var(--accent);font-weight:800;flex-shrink:0}
+.ias-txt{font-style:italic}
+.idea-empty{padding:24px 14px;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.6;border:1px dashed var(--border);border-radius:var(--radius-sm);background:var(--panel)}
+/* AI 设置弹窗（BYOK） */
+.ai-set-ovl{position:fixed;inset:0;background:rgba(8,12,22,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:200}
+.ai-set-ovl.show{display:flex}
+.ai-set-box{width:min(420px,92vw);background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.ai-set-head{font-size:15px;font-weight:900;color:var(--ink);margin-bottom:5px}
+.ai-set-sub{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.ai-set-lab{display:block;font-size:11.5px;font-weight:700;color:var(--ink-2);margin-bottom:11px}
+.ai-set-in{display:block;width:100%;margin-top:5px;padding:8px 11px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:13px}
+.ai-set-in:focus{outline:none;border-color:var(--accent)}
+.ai-set-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
 /* ——领先用户扩展：身份卡双维度+信号+区块—— */
 .uid-top{display:flex;gap:10px;margin-bottom:8px}
 .uid-id{flex:1}
@@ -6369,6 +6412,215 @@ function toggleFrameworkCollapse(head){
   arrow.textContent=isOpen?'▸':'▾';
 }
 
+// ====================== 创意灵感区（领先用户专区 · 第三 tab） ======================
+// 设计：从真实用户反馈（CSV/文本）中，由 AI 提炼可复用的创意灵感，落为结构化原始库。
+// 新奇度=规则（被几条评论支撑 <3 次=高）；有趣度/创意类型/产品类型=AI 判定。BYOK 密钥仅存本机。
+var IDEA_TYPES=['功能创新','视觉外观','使用方式','场景拓展','情感体验','组合玩法','服务模式','其他'];
+var IDEA_DB_KEY='cih_idea_db', IDEA_CORPUS_KEY='cih_idea_corpus', AI_SET_KEY='cih_ai_settings';
+var IDEA_CORPUS=[];
+
+function ideaIc(id){return '<svg viewBox="0 0 24 24" width="15" height="15"><use href="#'+id+'"/></svg>';}
+function ideaDbGet(){ try{return JSON.parse(localStorage.getItem(IDEA_DB_KEY));}catch(e){return null;} }
+function ideaDbSet(a){ try{localStorage.setItem(IDEA_DB_KEY,JSON.stringify(a));}catch(e){} }
+function ideaCorpusGet(){ try{return JSON.parse(localStorage.getItem(IDEA_CORPUS_KEY))||[];}catch(e){return [];} }
+function ideaCorpusSet(a){ IDEA_CORPUS=a; try{localStorage.setItem(IDEA_CORPUS_KEY,JSON.stringify(a));}catch(e){} }
+
+// 首开示例卡（来自专区既有样本数据，标注 seed，可一键清空）
+var SEED_IDEAS=[
+  {id:'seed1',seed:true,content:'出厂预装静音模块 + 可调震频固件，省去用户 DIY 静音棉',novelty:2,noveltyLevel:'高',
+   fun:78,funReason:'突破「出厂即完美」的常规预期，且原评论引发了 DIY 讨论与互动',type:'功能创新',product:'未提及',
+   sources:[{idx:1,txt:'我自己加了静音棉，效果还行，但希望出厂就做好，还能调震频。'}]},
+  {id:'seed2',seed:true,content:'模块化非标尺寸定制 / 可伸缩结构，适配 30cm 深柜等非标空间',novelty:1,noveltyLevel:'高',
+   fun:72,funReason:'针对特殊居住空间的非常规解法，常规产品无法满足',type:'使用方式',product:'未提及',
+   sources:[{idx:1,txt:'我的柜子深度只有 30cm，市面上没有合适的，只能将就。'}]},
+  {id:'seed3',seed:true,content:'家居化 / 装饰性外观，能当摆件而非躲起来的工业品',novelty:3,noveltyLevel:'中',
+   fun:82,funReason:'把家电当家居摆件，反转「藏起来」的常规认知，社交分享度高',type:'视觉外观',product:'未提及',
+   sources:[{idx:1,txt:'放在客厅里不好看，像工业品不像家电，朋友来都觉得尴尬。'}]},
+  {id:'seed4',seed:true,content:'低噪 + 宠物安全材质（无毒 / 防咬）双满足，专为养宠家庭设计',novelty:2,noveltyLevel:'高',
+   fun:75,funReason:'同时解决噪音与安全的组合创新，直击养宠家庭痛点',type:'组合玩法',product:'未提及',
+   sources:[{idx:1,txt:'养猫家庭最在意噪音和安全性，市面几乎没有同时满足这两个的。'}]}
+];
+function ideaEnsureSeed(){ if(ideaDbGet()===null){ ideaDbSet(SEED_IDEAS.slice()); } }
+
+function renderLfIdea(zone){
+  ideaEnsureSeed();
+  IDEA_CORPUS=ideaCorpusGet();
+  return ''+
+  '<div class="idea-wrap">'+
+    '<div class="idea-intro">从真实用户反馈中，由 AI 提炼可复用的创意灵感（产品 / 运营 / 营销皆可用），并作为结构化原始库，可导出 JSON 供后续功能接入。新奇度按「被几条评论支撑」规则计算，有趣度与分类由 AI 判定。</div>'+
+    '<div class="idea-toolbar">'+
+      '<button class="idea-btn ghost" onclick="openAiSettings()">'+ideaIc('i-gear')+' AI 设置</button>'+
+      '<label class="idea-btn ghost">'+ideaIc('i-doc')+' 载入 CSV/文本<input type="file" id="ideaFile" accept=".csv,.txt" style="display:none" onchange="ideaLoadFile(this)"></label>'+
+      '<button class="idea-btn primary" onclick="runIdeaExtract()">'+ideaIc('i-bot')+' 用 AI 提炼创意灵感</button>'+
+      '<button class="idea-btn ghost" onclick="exportIdeas()">'+ideaIc('i-box')+' 导出 JSON</button>'+
+      '<button class="idea-btn ghost" onclick="clearSeedIdeas()">清空示例</button>'+
+    '</div>'+
+    '<textarea id="ideaPaste" class="idea-paste" placeholder="…或直接粘贴用户反馈，每行一条评论（与「载入文件」二选一）。"></textarea>'+
+    '<div id="ideaCorpusInfo" class="idea-corpus-info"></div>'+
+    '<div id="ideaGrid" class="idea-grid"></div>'+
+  '</div>';
+}
+function ideaCardHtml(c){
+  var nvClass=c.noveltyLevel==='高'?'nv-hi':c.noveltyLevel==='中'?'nv-mid':'nv-lo';
+  var funClass=(c.fun>=70)?'nv-hi':(c.fun>=40)?'nv-mid':'nv-lo';
+  var seedBadge=c.seed?'<span class="idea-badge-seed">示例</span>':'';
+  var srcHtml=(c.sources&&c.sources.length)?'<div class="idea-sources"><div class="ias-h">来源引用（'+c.sources.length+'）</div>'+
+    c.sources.map(function(s){return '<div class="ias-item"><span class="ias-idx">#'+(s.idx||'?')+'</span><span class="ias-txt">'+escHtml(s.txt||'')+'</span></div>';}).join('')+'</div>':'';
+  return '<div class="idea-card">'+seedBadge+
+    '<div class="idea-content">'+escHtml(c.content||'')+'</div>'+
+    '<div class="idea-metrics">'+
+      '<span class="idea-chip '+nvClass+'">新奇度 · '+(c.noveltyLevel||'-')+'（出现 '+(c.novelty||0)+' 次）</span>'+
+      '<span class="idea-chip '+funClass+'">有趣度 · '+(c.fun||0)+'/100</span>'+
+    '</div>'+
+    (c.funReason?'<div class="idea-fun-reason">'+escHtml(c.funReason)+'</div>':'')+
+    '<div class="idea-meta-chips">'+
+      '<span class="idea-chip neutral">类型 · '+(c.type||'其他')+'</span>'+
+      '<span class="idea-chip neutral">产品 · '+(c.product||'未提及')+'</span>'+
+    '</div>'+srcHtml+
+  '</div>';
+}
+function renderIdeaGrid(){
+  var grid=document.getElementById('ideaGrid'); if(!grid) return;
+  var db=ideaDbGet()||[];
+  if(!db.length){ grid.innerHTML='<div class="idea-empty">还没有创意卡。载入真实反馈 CSV/文本，点「用 AI 提炼创意灵感」即可生成；或先看 4 张示例卡。</div>'; return; }
+  grid.innerHTML=db.map(function(c){return ideaCardHtml(c);}).join('');
+}
+function updateIdeaCorpusInfo(){
+  var el=document.getElementById('ideaCorpusInfo'); if(!el) return;
+  if(IDEA_CORPUS.length){ el.innerHTML='已载入 <b>'+IDEA_CORPUS.length+'</b> 条评论，将作为 AI 提炼语料。'; }
+  else { el.innerHTML='未载入语料：可「载入 CSV/文本」或直接粘贴评论。'; }
+}
+// —— CSV / 文本解析 ——
+function ideaParseCsv(text){
+  var rows=[],row=[],field='',i=0,inQ=false;
+  while(i<text.length){
+    var ch=text[i];
+    if(inQ){ if(ch==='"'){ if(text[i+1]==='"'){field+='"';i++;} else {inQ=false;} } else { field+=ch; } }
+    else { if(ch==='"'){inQ=true;} else if(ch===','){row.push(field);field='';} else if(ch==='\n'){row.push(field);rows.push(row);row=[];field='';} else if(ch!=='\r'){field+=ch;} }
+    i++;
+  }
+  if(field.length||row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+function ideaCsvToLines(text){
+  var rows=ideaParseCsv(text).filter(function(r){return r.length && r.some(function(c){return (c||'').trim();});});
+  if(!rows.length) return [];
+  var header=rows[0].map(function(c){return (c||'').toLowerCase();});
+  var txtCol=-1;
+  for(var h=0;h<header.length;h++){ if(/评论|内容|文本|反馈|评价|body|text|comment|review|content/.test(header[h])){ txtCol=h; break; } }
+  var dataRows=txtCol>=0?rows.slice(1):rows;
+  if(txtCol<0){
+    var best=0,bestC=0;
+    for(var c=0;c<rows[0].length;c++){ var s=0; for(var r=0;r<dataRows.length;r++){ s+=(dataRows[r][c]||'').length; } var avg=dataRows.length?s/dataRows.length:0; if(avg>best){best=avg;bestC=c;} }
+    txtCol=bestC;
+  }
+  return dataRows.map(function(r){return (r[txtCol]||'').trim();});
+}
+function ideaLoadFile(input){
+  var f=input.files&&input.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(e){
+    var text=String(e.target.result||'');
+    var lines=f.name.toLowerCase().endsWith('.csv')?ideaCsvToLines(text):text.split(/\r?\n/);
+    lines=lines.map(function(s){return (s||'').trim();}).filter(function(s){return s.length>0;});
+    if(!lines.length){ toast('未能从该文件解析出评论'); return; }
+    ideaCorpusSet(lines); updateIdeaCorpusInfo(); toast('已载入 '+lines.length+' 条评论');
+  };
+  r.readAsText(f);
+}
+// —— AI 设置（BYOK）——
+function aiSettingsGet(){ try{return JSON.parse(localStorage.getItem(AI_SET_KEY))||{};}catch(e){return {};} }
+function aiSettingsSet(o){ try{localStorage.setItem(AI_SET_KEY,JSON.stringify(o));}catch(e){} }
+function ensureAiSetModal(){
+  if(document.getElementById('aiSetModal')) return;
+  var ov=document.createElement('div'); ov.className='ai-set-ovl'; ov.id='aiSetModal';
+  ov.innerHTML='<div class="ai-set-box">'+
+    '<div class="ai-set-head">AI 设置（BYOK · 仅存本机）</div>'+
+    '<div class="ai-set-sub">密钥仅保存在你的浏览器 localStorage，绝不进入仓库或任何服务器（除你指定的 API 地址）。</div>'+
+    '<label class="ai-set-lab">API Key<input id="aiKey" class="ai-set-in" type="password" placeholder="sk-..."></label>'+
+    '<label class="ai-set-lab">Base URL<input id="aiBase" class="ai-set-in" placeholder="https://api.openai.com/v1"></label>'+
+    '<label class="ai-set-lab">模型<input id="aiModel" class="ai-set-in" placeholder="gpt-4o-mini"></label>'+
+    '<div class="ai-set-actions"><button class="idea-btn ghost" onclick="closeAiSettings()">取消</button><button class="idea-btn primary" onclick="saveAiSettings()">保存</button></div>'+
+  '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){ if(e.target===ov) closeAiSettings(); });
+}
+function openAiSettings(){
+  ensureAiSetModal();
+  var c=aiSettingsGet();
+  document.getElementById('aiKey').value=c.key||'';
+  document.getElementById('aiBase').value=c.base||'';
+  document.getElementById('aiModel').value=c.model||'';
+  document.getElementById('aiSetModal').classList.add('show');
+}
+function closeAiSettings(){ var m=document.getElementById('aiSetModal'); if(m) m.classList.remove('show'); }
+function saveAiSettings(){
+  aiSettingsSet({key:(document.getElementById('aiKey').value||'').trim(),base:(document.getElementById('aiBase').value||'').trim(),model:(document.getElementById('aiModel').value||'').trim()});
+  closeAiSettings(); toast('AI 设置已保存（本机）');
+}
+// —— 核心：AI 提炼 ——
+function runIdeaExtract(){
+  var corpus=IDEA_CORPUS.length?IDEA_CORPUS:(function(){ var t=document.getElementById('ideaPaste'); return t?t.value.split(/\r?\n/).map(function(s){return s.trim();}).filter(function(s){return s.length>0;}):[]; })();
+  if(corpus.length<3){ toast('至少需要 3 条评论才能提炼（当前 '+corpus.length+' 条）'); return; }
+  var cfg=aiSettingsGet();
+  if(!cfg.key){ toast('请先在「AI 设置」中填写密钥'); openAiSettings(); return; }
+  var base=(cfg.base||'https://api.openai.com/v1').replace(/\/+$/,'');
+  var model=cfg.model||'gpt-4o-mini';
+  var capped=corpus.slice(0,400);
+  var listed=capped.map(function(s,i){return (i+1)+'. '+s;}).join('\n');
+  var sys='你是资深用户研究分析师。从用户反馈中提取「创意灵感」——即突破常规、有趣、或具启发性的点子（可来自产品功能、外观、使用方法、场景、情感、组合玩法、服务模式等）。只输出 JSON，不要任何解释文字。';
+  var usr='以下是带编号的用户反馈（共 '+capped.length+' 条）：\n'+listed+'\n\n请返回严格 JSON：{"ideas":[ {"content":"创意点子，中文简洁一句","support":[支撑该点子的反馈编号数组，必须是上面真实出现过的编号],"funScore":0-100整数（突破常规/别人觉得有意思/互动多则高）,"funReason":"一句话说明有趣度依据","type":"从['+IDEA_TYPES.join(',')+']中选一个","product":"提到的具体产品类型，未提及填\'未提及\'"} ]}。最多 12 条，点子之间去重，support 编号必须真实存在。';
+  var btn=document.querySelector('.idea-btn.primary');
+  if(btn){ btn.disabled=true; btn.textContent='提炼中…'; }
+  fetch(base+'/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+    body:JSON.stringify({model:model,messages:[{role:'system',content:sys},{role:'user',content:usr}],temperature:0.5,response_format:{type:'json_object'}})
+  })
+  .then(function(r){ if(!r.ok){ return r.text().then(function(t){throw new Error('HTTP '+r.status+' '+t.slice(0,200));}); } return r.json(); })
+  .then(function(j){
+    var content=j&&j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content;
+    var parsed=JSON.parse(content);
+    var arr=(parsed&&parsed.ideas)||[];
+    if(!arr.length){ toast('AI 未返回创意，换一批语料试试'); return finishExtract(btn); }
+    var db=ideaDbGet()||[];
+    var existing=new Set(db.map(function(d){return (d.content||'').trim();}));
+    var added=0;
+    arr.forEach(function(it){
+      var sup=Array.isArray(it.support)?it.support.filter(function(n){return n>=1&&n<=capped.length;}).map(function(n){return parseInt(n,10);}):[];
+      var novelty=sup.length;
+      var level=novelty<3?'高':(novelty<=8?'中':'低');
+      var content0=(it.content||'').trim();
+      if(!content0||existing.has(content0)) return;
+      existing.add(content0);
+      var sources=sup.map(function(n){return {idx:n,txt:capped[n-1]||''};});
+      db.unshift({id:'ai'+Date.now()+'_'+added,seed:false,content:content0,novelty:novelty,noveltyLevel:level,
+        fun:Math.max(0,Math.min(100,parseInt(it.funScore,10)||0)),funReason:it.funReason||'',
+        type:IDEA_TYPES.indexOf(it.type)>=0?it.type:'其他',product:it.product||'未提及',sources:sources});
+      added++;
+    });
+    ideaDbSet(db); renderIdeaGrid();
+    toast('AI 提炼完成，新增 '+added+' 条创意');
+    finishExtract(btn);
+  })
+  .catch(function(e){ toast('提炼失败：'+(e&&e.message||e)); finishExtract(btn); });
+}
+function finishExtract(btn){ if(btn){ btn.disabled=false; btn.textContent='用 AI 提炼创意灵感'; } }
+function exportIdeas(){
+  var db=ideaDbGet()||[];
+  if(!db.length){ toast('暂无创意可导出'); return; }
+  var payload={exportedAt:new Date().toISOString(),count:db.length,ideas:db};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download='creative-ideas.json'; a.click(); URL.revokeObjectURL(url);
+  toast('已导出 '+db.length+' 条创意 JSON');
+}
+function clearSeedIdeas(){
+  var db=ideaDbGet()||[];
+  var kept=db.filter(function(d){return !d.seed;});
+  ideaDbSet(kept); renderIdeaGrid();
+  toast('已清空示例卡（保留 '+kept.length+' 条）');
+}
+
 // ---- 领先用户专区（与 AI 简化工具平级的独立入口） ----
 function openLfZone(){
   setActiveNav('nav-lf');
@@ -6382,6 +6634,7 @@ function openLfZone(){
       '<div class="lf-tabs">'+
         '<div class="lf-tab active" data-lftab="portrait" onclick="switchLfTab(\'portrait\',this)">领先用户身份卡</div>'+
         '<div class="lf-tab" data-lftab="feedback" onclick="switchLfTab(\'feedback\',this)">领先需求评估</div>'+
+        '<div class="lf-tab" data-lftab="idea" onclick="switchLfTab(\'idea\',this)">创意灵感区</div>'+
       '</div>'+
       '<div class="lf-body"></div>'+
     '</div>';
@@ -7753,7 +8006,8 @@ function renderLfBody(zone){
   var active = zone.querySelector('.lf-tab.active');
   var tab = active ? active.getAttribute('data-lftab') : 'portrait';
   if(tab === 'portrait') body.innerHTML = renderLfPortrait(zone);
-  else body.innerHTML = renderLfFeedback(zone);
+  else if(tab === 'feedback') body.innerHTML = renderLfFeedback(zone);
+  else { body.innerHTML = renderLfIdea(zone); renderIdeaGrid(); updateIdeaCorpusInfo(); }
 }
 
 function renderLfPortrait(zone){
