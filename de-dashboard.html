@@ -100,9 +100,9 @@
   .fs-btn:hover{background:var(--accent-weak);border-color:var(--accent);color:var(--accent)}
   .fs-btn svg{width:14px;height:14px;flex-shrink:0}
 
-  .board{flex:1;padding:0 26px 60px;overflow:auto;margin:0;padding-top:0}
-  /* 筛选栏紧贴 topbar 底边 */
-  .board > .filterbar{margin-top:-1px;padding-top:12px}
+  .board{flex:1;padding:0 26px 60px;overflow:auto;margin:0!important;padding-top:0}
+  /* 筛选栏紧贴 topbar 底边（负边距吃掉所有可能的间距） */
+  .board > .filterbar{margin-top:-25px}
 
   /* Filter chips */
   .filterbar{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;box-shadow:var(--shadow);position:sticky;top:60px;z-index:19}
