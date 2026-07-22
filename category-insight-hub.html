@@ -2501,6 +2501,15 @@ body.dark .emp-v1{color:#fbbf24}
   <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></symbol>
   <symbol id="i-swap" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><polyline points="17 3 21 7 17 11"/><path d="M21 7H7"/><polyline points="7 21 3 17 7 13"/><path d="M3 17h14"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M12 3 2 20h20z"/><path d="M12 9v5M12 17h.01"/></symbol>
+  <!-- 白色图标（渐变底色方块上的员工头像 / 招募区，currentColor -> 白色） -->
+  <symbol id="w-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V3h10z"/><circle cx="7.5" cy="7.5" r="1.4" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="w-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="w-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></symbol>
+  <symbol id="w-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></symbol>
+  <symbol id="w-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+  <symbol id="w-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2.5"/><path d="M12 8V4M9 4h6"/><circle cx="9.5" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="14.5" cy="14" r="1.2" fill="currentColor" stroke="none"/><path d="M9 18h6"/></symbol>
+  <symbol id="w-office" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7M3 21h18"/></symbol>
+  <symbol id="w-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l2-5.5A8 8 0 1 1 21 12z"/><circle cx="8.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="12" r="1" fill="currentColor" stroke="none"/></symbol>
 </svg>
 
 <div class="scroll-progress" id="scrollProgress"></div>
@@ -4758,7 +4767,7 @@ function openPanoIntro(){
           // 文字
           '<g fill="#a78bfa" font-size="7.5" font-weight="600" text-anchor="middle">'+
             '<text x="96" y="62">小灵</text><text x="144" y="62">小分</text><text x="120" y="142">小预</text>'+
-            '<text x="60" y="130">小创</text><text x="180" y="130">小设</text><text x="80" y="186">小测</text><text x="160" y="186">小展</text>'+
+            '<text x="60" y="130">小创</text><text x="180" y="130">小设</text><text x="80" y="186">小测</text><text x="150" y="186">方言大师</text>'+
           '</g>'+
         '</svg></div>'+
       '</div>'+
@@ -4772,7 +4781,7 @@ function openPanoIntro(){
           '<div class="pano-intro-card"><div class="pic-emoji" style="background:linear-gradient(135deg,#10b981,#059669)">小创</div><h4>新品开发盲盒</h4><p>创新方法盲盒—抽中 TRIZ 给物场分析，抽中 SCAMPER 做组合变形。每个方法长 3 条创意。</p></div>'+
           '<div class="pano-intro-card"><div class="pic-emoji" style="background:linear-gradient(135deg,#f43f5e,#e11d48)">小设</div><h4>新品创意图</h4><p>六维创意矿脉（外观/功能/场景/情感/技术/叙事），挥镐挖金块，拼成创意图。</p></div>'+
           '<div class="pano-intro-card"><div class="pic-emoji" style="background:linear-gradient(135deg,#00d4ff,#a855f7)">小测</div><h4>虚拟压力测试</h4><p>VOC 驱动虚拟用户群，对产品做挑刺测试。支持/中立/反对立场分布 + 极端用户识别。</p></div>'+
-          '<div class="pano-intro-card"><div class="pic-emoji" style="background:linear-gradient(135deg,#6366f1,#4f46e5)">小展</div><h4>原理展厅</h4><p>所有工具的双视角演示（使用/原理）集中管理。也是全景图的「终点站」展示位。</p></div>'+
+          '<div class="pano-intro-card"><div class="pic-emoji" style="background:linear-gradient(135deg,#22d3ee,#06b6d4)">方言大师</div><h4>地道表达本地化</h4><p>精通各大目标市场本地语言，肚里装各数据源用户真实语料。你给中文，它还你最地道、最能转化的本地表达。</p></div>'+
         '</div>'+
       '</div>'+
       // 交互一览
@@ -11781,19 +11790,19 @@ var EMPLOYEES = [
     skills:['虚拟用户群生成','压力测试仿真','极端用户识别（von Hippel）','立场与影响分析'],
     outputs:['压力测试报告（支持/中立/反对）','极端用户画像 Top 5','风险预警清单'] },
 
-  { id:'pr', name:'小展', role:'原理展厅', icon:'w-office',
-    desc:'我管理原理展厅——所有倒模类目工具的「使用」和「看背后工作」双视角演示都存储在我这里。你想看什么倒模工具怎么运转，我来展示。',
-    category:'倒模类目工具原理与演示',
-    methods:['原理全景图','双视角切换（使用/原理）','动画演示引擎'],
-    tools:['原理展厅画廊','AI 办公全景图','3D 引擎版（PixiJS）'],
-    sources:'全数据源示意、分析框架库、AI 简化工具集',
-    reports:'工具使用指南、演示步骤说明、原理图解',
-    aiInfo:'所有演示动画都是纯前端实现（无需后端）。你可以自由切换「使用视角」看结果、「看背后工作」看原理。每个演示对应一个真实工具。',
-    knowledge:['全数据源示意','分析框架库','AI 简化工具集','工具原理库'],
-    skills:['原理全景图','双视角切换（使用/原理）','动画演示引擎','工具映射'],
-    outputs:['工具使用指南','演示步骤说明','原理图解'] }
+  { id:'pr', name:'方言大师', role:'地道表达本地化', icon:'w-chat',
+    desc:'我是方言大师——精通各大目标市场的本地语言（英语美式/英式、德语、日语、法语/西语等），肚子里装的是各数据源里用户的真实语料。你给我一句中文，我结合当地用户怎么说话，还你最地道、最能转化的本地表达。',
+    category:'亚马逊 US/DE/JP/UK/EU 多市场本地化表达',
+    methods:['多市场语言映射','用户语料风格对齐','地道表达生成','文化敏感词规避'],
+    tools:['地道表达工作台','多语言语料对照库','本地化质检器'],
+    sources:'亚马逊评论·DE/US/JP/UK/EU、社媒声量·全球、用户访谈语料',
+    reports:'地道表达对照表、本地化改写稿、文化敏感词清单',
+    aiInfo:'我的核心能力来自大模型：先吃透各市场用户语料（评论/社媒真实用词），再基于你给的中文做"母语者级"改写——不是翻译，是用地道本地表达重写。开启 AI 后可直接对接你的 LLM。',
+    knowledge:['亚马逊评论语料·DE/US/JP/UK/EU','社媒声量·全球','用户访谈语料','领新用户反馈语料'],
+    skills:['多市场语言映射','用户语料风格对齐','地道表达生成','文化敏感词规避'],
+    outputs:['地道表达对照表','本地化改写稿','文化敏感词清单'] }
 ];
-var EMP_ACCENT = { voc:'#00b8d4', score:'#f97316', lab:'#8b5cf6', dev:'#ec4899', idea:'#14b8a6', stress:'#ef4444', pr:'#3b82f6' };
+var EMP_ACCENT = { voc:'#00b8d4', score:'#f97316', lab:'#8b5cf6', dev:'#ec4899', idea:'#14b8a6', stress:'#ef4444', pr:'#22d3ee' };
 
 function empEsc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function empIcon(id){ return '<svg viewBox="0 0 24 24"><use href="#'+id+'"/></svg>'; }
