@@ -123,7 +123,16 @@
   /* ── 视图图层面板（PS 图层式多视图）── */
   .view-layers{margin:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--panel-2);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);overflow:hidden}
   .vl-head{display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--line);user-select:none}
+  .vl-head .vl-title{display:flex;align-items:center;gap:6px;flex:1}
+  .vl-head .vl-icon{width:13px;height:13px;color:var(--muted)}
   .vl-head .vl-count{margin-left:auto;background:var(--rad-grad);color:#fff;font-size:9.5px;padding:1px 7px;border-radius:8px;font-weight:700}
+  .vl-head .vl-toggle{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:0;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;transition:.15s}
+  .vl-head .vl-toggle:hover{background:var(--accent-weak);color:var(--accent)}
+  .vl-head .vl-toggle svg{width:13px;height:13px;transition:transform .2s}
+  .view-layers.collapsed .vl-list{display:none}
+  .view-layers.collapsed .vl-head{border-bottom:0;cursor:pointer}
+  .view-layers.collapsed .vl-toggle svg{transform:rotate(180deg)}
+  .view-layers.collapsed + .vl-batch{display:none}
   .vl-list{padding:6px;max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;pointer-events:auto}
   .vl-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;border:1px solid transparent;cursor:pointer;transition:all .15s;background:var(--panel);user-select:none;pointer-events:auto}
   .vl-item:hover{border-color:rgba(0,195,243,.3);background:rgba(0,195,243,.05)}
@@ -280,7 +289,16 @@
 
     <!-- 视图图层（PS 图层式多视图） -->
     <div class="view-layers" id="viewLayers">
-      <div class="vl-head"><span>📑 视图图层</span><span class="vl-count" id="vlCount">0</span></div>
+      <div class="vl-head" id="vlHead">
+        <span class="vl-title">
+          <svg class="vl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          视图图层
+        </span>
+        <button type="button" class="vl-toggle" id="vlToggle" title="收起/展开" aria-label="收起">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+        </button>
+        <span class="vl-count" id="vlCount">0</span>
+      </div>
       <div class="vl-list" id="vlList"><div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div></div>
     </div>
 
@@ -927,6 +945,19 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
         '</div>';
     }).join("");
   }
+
+  // 视图图层面板收起/展开
+  (function bindViewLayersToggle(){
+    var panel = document.getElementById('viewLayers');
+    var head = document.getElementById('vlHead');
+    var btn = document.getElementById('vlToggle');
+    if(!panel || !btn) return;
+    function toggle(){ panel.classList.toggle('collapsed'); }
+    btn.addEventListener('click', function(e){ e.stopPropagation(); toggle(); });
+    head.addEventListener('click', function(e){
+      if(panel.classList.contains('collapsed')) toggle();
+    });
+  })();
 
   // 简易提示
   function toast(msg){
