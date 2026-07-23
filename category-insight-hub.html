@@ -2990,9 +2990,15 @@ var DATA = {
    s22:{id:'s22',name:'用户反馈信息合集',type:'售后/反馈',market:'全球',
         desc:'客诉历史记录 + 用户评论与留言 + 邮件原文 · 三子看板统一检索合集',
         records:0,status:'ready',hasDashboard:true,dashboard:'feedbackcoll'},
-   s23:{id:'s23',name:'商品销售数据',type:'商品销售',market:'美亚/日亚/欧亚',
-        desc:'美亚 / 日亚 / 欧亚（德国+英国）按国家维度 · 月度销售额 + 销售卖点',
-        records:0,status:'ready',hasDashboard:true,dashboard:'productsales'}
+   s23:{id:'s23',name:'商品销售数据 · 美亚',type:'商品销售',market:'美亚',
+        desc:'美亚站点：月度销售额 + 销售卖点 · 品牌/类目/评分/价格筛选与聚类',
+        records:0,status:'ready',hasDashboard:true,dashboard:'productsales',board:'美亚'},
+   s24:{id:'s24',name:'商品销售数据 · 日亚',type:'商品销售',market:'日亚',
+        desc:'日亚站点：月度销售额 + 销售卖点 · 品牌/类目/评分/价格筛选与聚类',
+        records:0,status:'ready',hasDashboard:true,dashboard:'productsales',board:'日亚'},
+   s25:{id:'s25',name:'商品销售数据 · 欧亚（德国+英国）',type:'商品销售',market:'欧亚',
+        desc:'欧亚站点（德国+英国合并）：德国/英国可切换 · 月度销售额 + 销售卖点',
+        records:0,status:'ready',hasDashboard:true,dashboard:'productsales',board:'欧亚（德国+英国）'}
   },
 
   // ---- 双工作区定义（截图1）----
@@ -3483,13 +3489,15 @@ function openFeedbackCollDashboard(){
   if(f) f.src=ghBase()+'vendor/feedback-collection.html?theme='+th+'&_cb='+Date.now();
 }
 
-function openProductSalesDashboard(){
+function openProductSalesDashboard(board){
   state.purposeId=null;
-  setActiveNav('src-s23');
+  var bid = board==='日亚'?'s24':board==='欧亚（德国+英国）'?'s25':'s23';
+  setActiveNav('src-'+bid);
   $('#viewProductSales').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewProductSales')v.classList.remove('active')});
   var th=document.body.classList.contains('dark')?'dark':'light';
+  var b=encodeURIComponent(board||'美亚');
   var f=document.getElementById('productSalesFrame');
-  if(f) f.src=ghBase()+'vendor/product-sales.html?theme='+th+'&_cb='+Date.now();
+  if(f) f.src=ghBase()+'vendor/product-sales.html?board='+b+'&theme='+th+'&_cb='+Date.now();
 }
 
 function openPornhubDashboard(){
@@ -3846,7 +3854,7 @@ function openSource(srcId){
     if(s.dashboard==='competitor'){ openCompetitorDashboard(); return; }
     if(s.dashboard==='social'){ openSocialDashboard(); return; }
     if(s.dashboard==='feedbackcoll'){ openFeedbackCollDashboard(); return; }
-    if(s.dashboard==='productsales'){ openProductSalesDashboard(); return; }
+    if(s.dashboard==='productsales'){ openProductSalesDashboard(s.board); return; }
     // Level1：s8 德国商品库 → 专属完整看板（已含筛选/导出/报告）
     $('#viewDe').classList.add('active');
     $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
@@ -6511,7 +6519,8 @@ function openSourceGallery(){
     s5:'用户访谈',
     s9:'外部趋势信息/数据',s10:'外部趋势信息/数据',s16:'外部趋势信息/数据',s17:'外部趋势信息/数据',s18:'外部趋势信息/数据',
     s19:'供应商/供应链情报',
-    s6:'售后反馈',s15:'售后反馈',s22:'售后反馈'};
+    s6:'售后反馈',s15:'售后反馈',s22:'售后反馈',
+    s23:'商品销售/卖点数据',s24:'商品销售/卖点数据',s25:'商品销售/卖点数据'};
   function card(k){
     var s=DATA.sources[k];
     var ready=s.status==='ready';
@@ -6534,7 +6543,7 @@ function openSourceGallery(){
     s6:['使用','评价'], s22:['使用','评价'], s7:['购买'], s8:['决策','评价'], s9:['认知'], s10:['认知'],
     s11:['认知','评价'], s12:['评价','决策'], s13:['评价','决策'], s14:['认知','决策'],
     s15:['评价','使用'], s16:['认知'], s17:['认知','决策'], s18:['认知','决策'],
-    s19:['购买'], s20:['认知','决策'], s21:['评价','认知'], s23:['购买','决策']
+    s19:['购买'], s20:['认知','决策'], s21:['评价','认知'], s23:['购买','决策'], s24:['购买','决策'], s25:['购买','决策']
   };
   var JN=[{key:'认知',sub:'Awareness'},{key:'决策',sub:'Decision'},{key:'购买',sub:'Purchase'},{key:'使用',sub:'Use'},{key:'评价',sub:'Evaluate'}];
   function sectionHeader(title,count){

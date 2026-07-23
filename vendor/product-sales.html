@@ -280,6 +280,9 @@ const SALES_DATA = {"currency":{"美亚":"$","日亚":"¥","欧亚（德国+英�
 
 /* ===== 状态 ===== */
 let activeBoard = '美亚';
+const _psParams = new URLSearchParams(location.search);
+const LOCKED_BOARD = _psParams.get('board');
+if(LOCKED_BOARD && SALES_DATA.boards[LOCKED_BOARD]) activeBoard = LOCKED_BOARD;
 let state = { market:'all', month:'all', cat:'', brand:'', rating:'', price:'', q:'' };
 let clusterDim = 'cat';
 let drill = null;
@@ -360,6 +363,7 @@ function buildSide(){
   }).join('');
 }
 function setBoard(id){
+  if(LOCKED_BOARD) return; // 单看板模式下不允许切换国家
   activeBoard=id;
   state={market:'all',month:'all',cat:'',brand:'',rating:'',price:'',q:''};
   document.getElementById('q').value='';
@@ -714,6 +718,11 @@ function batchDownload(){
 })();
 clusterDim=availDims()[0];
 buildSide(); buildFilters(); render(); renderViewLayers();
+if(LOCKED_BOARD){
+  var _sb=document.getElementById('sideBoards'); if(_sb) _sb.style.display='none';
+  var _lbl=document.querySelector('.side-label'); if(_lbl) _lbl.style.display='none';
+  var _foot=document.querySelector('.sidebar-foot'); if(_foot) _foot.style.display='none';
+}
 document.getElementById('saveViewBtn').addEventListener('click',saveCurrentView);
 document.getElementById('vlList').addEventListener('click',function(e){
   const del=e.target.closest('.vl-del'); if(del){ const vid=Number(del.dataset.vid); if(vid>0) deleteView(vid,e); return; }
