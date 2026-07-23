@@ -2771,6 +2771,16 @@ body.dark .emp-v1{color:#fbbf24}
         <iframe class="de-frame" id="feedbackCollFrame" src="" title="用户反馈信息合集"></iframe>
       </div>
 
+      <!-- ===== VIEW: PRODUCT SALES DASHBOARD ===== -->
+      <div class="view" id="viewProductSales">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToSourceGallery()">返回</button>
+          <span class="ws-title">商品销售数据 · 看板</span>
+          <span class="ws-tag">美亚 / 日亚 / 欧亚（德国+英国）</span>
+        </div>
+        <iframe class="de-frame" id="productSalesFrame" src="" title="商品销售数据"></iframe>
+      </div>
+
       <!-- ===== VIEW: PORNHUB DASHBOARD ===== -->
       <div class="view" id="viewPornhub">
         <div class="ws-bar">
@@ -2979,7 +2989,10 @@ var DATA = {
         records:50,status:'ready',hasDashboard:true,dashboard:'social'},
    s22:{id:'s22',name:'用户反馈信息合集',type:'售后/反馈',market:'全球',
         desc:'客诉历史记录 + 用户评论与留言 + 邮件原文 · 三子看板统一检索合集',
-        records:0,status:'ready',hasDashboard:true,dashboard:'feedbackcoll'}
+        records:0,status:'ready',hasDashboard:true,dashboard:'feedbackcoll'},
+   s23:{id:'s23',name:'商品销售数据',type:'商品销售',market:'美亚/日亚/欧亚',
+        desc:'美亚 / 日亚 / 欧亚（德国+英国）按国家维度 · 月度销售额 + 销售卖点',
+        records:0,status:'ready',hasDashboard:true,dashboard:'productsales'}
   },
 
   // ---- 双工作区定义（截图1）----
@@ -3470,6 +3483,15 @@ function openFeedbackCollDashboard(){
   if(f) f.src=ghBase()+'vendor/feedback-collection.html?theme='+th+'&_cb='+Date.now();
 }
 
+function openProductSalesDashboard(){
+  state.purposeId=null;
+  setActiveNav('src-s23');
+  $('#viewProductSales').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewProductSales')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('productSalesFrame');
+  if(f) f.src=ghBase()+'vendor/product-sales.html?theme='+th+'&_cb='+Date.now();
+}
+
 function openPornhubDashboard(){
   state.purposeId=null; setActiveNav('src-s16');
   $('#viewPornhub').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewPornhub')v.classList.remove('active')});
@@ -3824,6 +3846,7 @@ function openSource(srcId){
     if(s.dashboard==='competitor'){ openCompetitorDashboard(); return; }
     if(s.dashboard==='social'){ openSocialDashboard(); return; }
     if(s.dashboard==='feedbackcoll'){ openFeedbackCollDashboard(); return; }
+    if(s.dashboard==='productsales'){ openProductSalesDashboard(); return; }
     // Level1：s8 德国商品库 → 专属完整看板（已含筛选/导出/报告）
     $('#viewDe').classList.add('active');
     $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
@@ -6511,7 +6534,7 @@ function openSourceGallery(){
     s6:['使用','评价'], s22:['使用','评价'], s7:['购买'], s8:['决策','评价'], s9:['认知'], s10:['认知'],
     s11:['认知','评价'], s12:['评价','决策'], s13:['评价','决策'], s14:['认知','决策'],
     s15:['评价','使用'], s16:['认知'], s17:['认知','决策'], s18:['认知','决策'],
-    s19:['购买'], s20:['认知','决策'], s21:['评价','认知']
+    s19:['购买'], s20:['认知','决策'], s21:['评价','认知'], s23:['购买','决策']
   };
   var JN=[{key:'认知',sub:'Awareness'},{key:'决策',sub:'Decision'},{key:'购买',sub:'Purchase'},{key:'使用',sub:'Use'},{key:'评价',sub:'Evaluate'}];
   function sectionHeader(title,count){
