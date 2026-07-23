@@ -1095,7 +1095,6 @@ body.dark .lab-status{color:#fbbf24}
 /* Views */
 .view{display:none;min-height:100%}
 .view.active{display:block;animation:fadeInUp .5s var(--rad-easing)}
-#viewWorkspace{display:flex;flex-direction:column;height:100%}
 
 /* ========== VIEW: PURPOSE GRID ========== */
 .purpose-grid-wrap{padding:22px 24px 40px}
@@ -1153,23 +1152,6 @@ body.dark .lab-status{color:#fbbf24}
 .mode-opt{flex:1;padding:7px 16px;font-size:12.5px;font-weight:650;border-radius:9px;cursor:pointer;
   text-align:center;transition:all .22s var(--rad-easing);color:var(--muted);border:1px solid transparent}
 .mode-opt.active{background:var(--panel-solid);color:var(--ink);box-shadow:var(--shadow-sm);border-color:var(--border)}
-.mode-opt.mode-canvas{position:relative;overflow:hidden}
-.mode-opt.mode-canvas::before{content:"";position:absolute;inset:-2px;background:var(--rad-grad);opacity:0;transition:opacity .22s;z-index:-1;border-radius:10px}
-.mode-opt.mode-canvas:hover::before{opacity:.18}
-.mode-opt.mode-canvas.active::before{opacity:.22}
-.mc-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--rad-grad);margin-right:6px;vertical-align:middle;box-shadow:0 0 8px rgba(0,195,243,.5);animation:mcPulse 1.8s infinite}
-@keyframes mcPulse{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.25)}}
-
-/* Mode canvas hint */
-.mode-canvas-hint{display:flex;align-items:center;gap:12px;margin:-4px 24px 8px;padding:10px 14px;border-radius:10px;
-  background:linear-gradient(90deg, rgba(0,195,243,.08), rgba(168,85,247,.08), rgba(255,107,157,.08));
-  border:1px dashed rgba(0,195,243,.35);cursor:pointer;transition:all .18s;z-index:4;position:relative}
-.mode-canvas-hint:hover{background:linear-gradient(90deg, rgba(0,195,243,.14), rgba(168,85,247,.14), rgba(255,107,157,.14));border-style:solid;transform:translateY(-1px)}
-.mode-canvas-hint.hidden{display:none}
-.mch-ico{font-size:16px;flex:0 0 auto}
-.mch-txt{flex:1;font-size:12px;color:var(--ink-2);line-height:1.5}
-.mch-txt b{color:var(--ink)}
-.mch-btn{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--accent);background:var(--panel-solid);padding:5px 11px;border-radius:7px;border:1px solid var(--border)}
 
 /* Workspace body - dual panel layout */
 .ws-body{display:flex;flex:1;min-height:0;overflow:hidden}
@@ -1180,19 +1162,12 @@ body.dark .lab-status{color:#fbbf24}
   scrollbar-width:thin;background:var(--bg)}
 .struct-col:last-child{border-right:none}
 .col-header{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.8px;text-transform:uppercase;
-  padding-bottom:10px;margin-bottom:12px;border-bottom:2px solid var(--rad-grad);display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding-bottom:10px;margin-bottom:12px;border-bottom:2px solid var(--rad-grad);display:flex;align-items:center;gap:6px;
   background:linear-gradient(90deg,var(--rad-grad),transparent);background-size:100% 2px;background-repeat:no-repeat}
-.col-sub{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0;text-transform:none;opacity:.8}
 .struct-section{margin-bottom:18px}
 .ss-head{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px;
   display:flex;align-items:center;gap:8px}
 .ss-head::before{content:'';width:4px;height:14px;border-radius:2px;background:var(--rad-grad)}
-.ss-info{font-size:12px;font-weight:800;color:var(--accent);cursor:help;margin-left:2px;border-radius:50%;
-  width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);
-  background:var(--panel-solid);text-transform:none;letter-spacing:0;line-height:1}
-.ss-sub{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0;text-transform:none;margin:-6px 0 10px}
-.mc-rel{font-size:11px;color:var(--muted);background:var(--panel-solid);border:1px dashed var(--border);
-  border-radius:var(--radius-sm);padding:8px 10px;margin-top:10px;line-height:1.5}
 
 /* Source/Insight cards in structured mode */
 .s-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
@@ -1318,82 +1293,6 @@ body.dark .lab-status{color:#fbbf24}
 .zoom-indicator{position:absolute;bottom:12px;left:12px;z-index:20;
   background:var(--panel-solid);border:1px solid var(--border);border-radius:9px;padding:5px 11px;
   font-size:11px;font-weight:600;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
-
-/* ── 素材抽屉：分类面板 ── */
-.canvas-drawer{position:absolute;top:12px;right:12px;width:240px;z-index:20;
-  background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
-  box-shadow:var(--shadow-md);max-height:calc(100% - 90px);overflow-y:auto;backdrop-filter:var(--glass-blur)}
-.cd-head{padding:12px 14px 8px;font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.5px;
-  border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--panel-solid);z-index:1}
-.cd-toggle{cursor:pointer;color:var(--accent);font-size:11px;font-weight:700}
-.cd-group{padding:8px 10px 4px;border-bottom:1px solid var(--line)}
-.cd-group:last-child{border-bottom:0}
-.cd-g-title{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin:4px 2px 6px;display:flex;justify-content:space-between;align-items:center}
-.cd-g-hint{font-size:9.5px;font-weight:600;color:var(--muted);opacity:.7;letter-spacing:0}
-.cd-item{padding:9px 10px;border-radius:9px;cursor:grab;transition:background .12s,transform .1s;display:flex;gap:9px;align-items:flex-start}
-.cd-item:hover{background:rgba(0,195,243,.1);transform:translateX(1px)}
-.cd-item:active{cursor:grabbing}
-.cd-item.cd-add{border:1px dashed var(--border);margin-top:2px}
-.cd-item.cd-add:hover{border-color:var(--accent);background:rgba(168,85,247,.08)}
-.cd-ico{flex:0 0 auto;width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
-.cd-ico svg{width:14px;height:14px}
-.ico-src svg{stroke:var(--accent)} .ico-fw svg{stroke:var(--purple)} .ico-ins svg{stroke:var(--gold)}
-.ico-lf svg{stroke:var(--green-a)} .ico-idea svg{stroke:var(--accent)}
-.cdi-main{min-width:0}
-.cdi-name{font-size:12px;font-weight:700;color:var(--ink);line-height:1.25}
-.cdi-sub{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.cd-empty{font-size:10.5px;color:var(--muted);padding:4px 4px 8px;opacity:.7}
-
-/* ── 画布节点：新类型 ── */
-.cn-type.fw{color:var(--purple)} .cn-type.lf{color:var(--green-a)} .cn-type.idea{color:var(--accent)}
-.cn-sub{font-size:10.5px;color:var(--muted);margin-top:2px}
-.cn-node.cn-fw{border-left:3px solid var(--purple)} .cn-node.cn-lf{border-left:3px solid var(--green-a)}
-.cn-node.cn-idea{border-left:3px solid var(--accent);background:linear-gradient(135deg,rgba(0,195,243,.06),rgba(168,85,247,.05))}
-.cn-hint{font-size:9px;color:var(--muted);margin-top:5px;opacity:.65}
-
-/* ── 通用卡片弹窗（框架/洞察/领先用户含义）── */
-.cm-overlay{position:fixed;inset:0;z-index:300000;background:rgba(12,16,40,.5);display:none;
-  align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.cm-overlay.show{display:flex}
-.cm-modal{width:min(460px,92vw);max-height:84vh;overflow:auto;background:var(--panel-solid);border:1px solid var(--border);
-  border-radius:var(--radius);box-shadow:var(--shadow-lg);backdrop-filter:var(--glass-blur)}
-.cm-head{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel-solid)}
-.cm-title{font-size:14px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:7px;flex:1}
-.cm-title svg{width:16px;height:16px;stroke:var(--accent)}
-.cm-close{width:28px;height:28px;border:none;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;border-radius:6px}
-.cm-close:hover{background:var(--bg);color:var(--ink)}
-.cm-body{padding:16px}
-.cm-desc{font-size:12.5px;color:var(--ink-2);line-height:1.6;margin-bottom:10px}
-.cm-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-.cm-meta span{font-size:10.5px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:4px 8px}
-.cm-meta b{color:var(--ink);margin-right:3px}
-.cm-sec-title{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin:12px 0 6px;text-transform:uppercase}
-.cm-steps{margin:0;padding-left:18px;font-size:12px;color:var(--ink-2);line-height:1.7}
-.cm-steps li{margin-bottom:3px}
-.cm-tags{display:flex;flex-wrap:wrap;gap:6px}
-.cm-tag{font-size:10.5px;padding:3px 9px;border-radius:20px;background:rgba(0,195,243,.12);color:var(--accent);font-weight:600}
-.cm-quote{margin:8px 0;padding:8px 12px;border-left:3px solid var(--purple);background:var(--bg);border-radius:0 8px 8px 0;
-  font-size:12px;color:var(--ink-2);font-style:italic;line-height:1.5}
-.cm-note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px;padding:9px 11px;background:var(--bg);border-radius:8px;border:1px dashed var(--border)}
-
-/* ── 画布空状态提示 ── */
-.canvas-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;text-align:center;
-  color:var(--muted);font-size:13px;max-width:320px;line-height:1.7;pointer-events:none;display:none}
-.canvas-hint b{color:var(--ink);display:block;font-size:15px;margin-bottom:6px}
-
-/* ── 画布空状态引导卡（含一键铺开）── */
-.canvas-empty{position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.canvas-empty.show{display:flex}
-.ce-card{pointer-events:auto;text-align:center;max-width:340px;background:var(--panel-solid);
-  border:1px solid var(--border);border-radius:var(--radius);padding:24px 26px;box-shadow:var(--shadow-md);backdrop-filter:var(--glass-blur)}
-.ce-card b{font-size:16px;color:var(--ink);display:block;margin-bottom:10px}
-.ce-card p{font-size:12.5px;color:var(--muted);line-height:1.65;margin:0 0 16px}
-.ce-card .ce-sub{margin:14px 0 0!important;font-size:11px!important;opacity:.8}
-.ce-card .ct-btn.primary{font-size:13px;padding:10px 18px}
-
-/* ── 全屏模式 ── */
-.canvas-area.fullscreen{position:fixed;inset:0;z-index:200000;background:var(--bg)}
-.ct-sep{width:1px;height:22px;background:var(--border);margin:0 2px}
 
 /* ========== VOC TAGGER (in structured panel) ========== */
 .tagger-panel{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
@@ -2687,12 +2586,7 @@ body.dark .emp-v1{color:#fbbf24}
         <!-- Mode toggle -->
         <div class="mode-toggle" id="modeToggle">
           <div class="mode-opt active" data-mode="struct">结构化模式 · 默认</div>
-          <div class="mode-opt mode-canvas" data-mode="canvas"><span class="mc-dot"></span>无限画布模式</div>
-        </div>
-        <div class="mode-canvas-hint" id="modeCanvasHint" onclick="applyMode('canvas', getPurpose(state.ws, state.purposeId))">
-          <span class="mch-ico">🎨</span>
-          <span class="mch-txt">想自由混搭素材？点这里切换到 <b>无限画布模式</b> · 数据源 / 分析框架 / 洞察 / 创意 / 领先用户，随便拖、随便连。</span>
-          <span class="mch-btn">切换 →</span>
+          <div class="mode-opt" data-mode="canvas">无限画布模式</div>
         </div>
 
         <!-- Workspace body -->
@@ -2707,22 +2601,10 @@ body.dark .emp-v1{color:#fbbf24}
               <button class="ct-btn" onclick="zoomCanvas(.8)">- 缩小</button>
               <button class="ct-btn" onclick="fitCanvas()">适应</button>
               <button class="ct-btn" onclick="clearCanvas()">清空</button>
-              <button class="ct-btn" onclick="toggleCanvasFullscreen()" title="全屏 / 退出全屏">⛶ 全屏</button>
-              <span class="ct-sep"></span>
-              <button class="ct-btn" onclick="openPlanDetailModal()">查看完整方案</button>
-              <button class="ct-btn primary" onclick="downloadPlanPackage()">导出方案包（.zip）</button>
+              <button class="ct-btn primary" onclick="openExportModal()">导出画布到智能体</button>
             </div>
             <svg class="canvas-svg" id="canvasSvg"></svg>
-            <div class="canvas-hint" id="canvasHint"><b>这是个自由画布</b>从右上角「素材」拖入或点击卡片，随便放、随便连。<br>数据源 / 分析框架 / 洞察 / 创意 / 领先用户，想到什么放什么。</div>
-            <div class="canvas-empty" id="canvasEmpty">
-              <div class="ce-card">
-                <b>这是你的无限画布</b>
-                <p>想到什么放什么 —— 数据源 / 分析框架 / 洞察 / 创意 / 领先用户，随便混搭、拖动、连线。最终导出会按结构化那样重新组织。</p>
-                <button class="ct-btn primary" onclick="fillCanvasWithStarter()">一键铺开本目的素材</button>
-                <p class="ce-sub">或点右上角「素材」抽屉，挑卡片单独放进画布</p>
-              </div>
-            </div>
-            <div class="canvas-drawer" id="matDrawer">
+            <div class="material-drawer" id="matDrawer">
               <div class="cd-head">素材 <span class="cd-toggle" onclick="toggleDrawer()">收起</span></div>
               <div id="drawerItems"></div>
             </div>
@@ -9462,18 +9344,12 @@ function renderStructPanel(p){
 
   // Method chain
   var steps=p.methods.split('/').map(function(m){return m.trim()});
-  var mcHtml='<div class="struct-section"><div class="ss-head">分析方法链路'+
-    '<span class="ss-info" title="分析方法链路 vs 分析框架：\n· 分析方法链路 = 你做这件事的「先后顺序」。把分析拆成先做什么、再做什么（例如先 JTBD、再问题归类）。\n· 分析框架 = 链路每一步真正用的「分析工具 / 方法论」（VOC、需求四象限、JTBD、动机编码…）。\n· 关系：链路是骨架（顺序），框架是填充骨架的工具。链路里的每一步，通常对应一个或多个分析框架。\n下方「建议使用的分析框架」里勾选的框架，就是在为这条链路提供落地方法。">ⓘ</span>'+
-    '</div>'+
-    '<div class="ss-sub">这是本目的的「分析先后顺序」——先做什么、再做什么。</div>'+
-    '<div class="method-chain">';
+  var mcHtml='<div class="struct-section"><div class="ss-head">分析方法链路</div><div class="method-chain">';
   steps.forEach(function(st,i){
     mcHtml+='<div class="mc-step"><div class="mc-num">'+(i+1)+'</div><span>'+escHtml(st)+'</span></div>';
     if(i<steps.length-1)mcHtml+='<div class="mc-arrow">↓</div>';
   });
-  mcHtml+='</div>'+
-    '<div class="mc-rel">链路是「骨架顺序」，下方「分析框架」是填充它的工具——勾选框架即把方法挂到这条路上。</div>'+
-    '</div>';
+  mcHtml+='</div></div>';
 
   // Action list
   var actHtml='<div class="struct-section"><div class="ss-head">行动清单</div><div class="action-list">';
@@ -9531,7 +9407,7 @@ function renderStructPanel(p){
     '<div class="lf-body"></div>'+
     '</div></div>'+
     /* ===== 中栏：分析框架 + 链路 + 建议框架 + 核对引擎 ===== */
-    '<div class="struct-col struct-col-center"><div class="col-header">分析框架<span class="col-sub">本目的用来「落地」分析的工具 / 方法论</span></div>'+mcHtml+sugFwHtml+auditHtml+'</div>'+
+    '<div class="struct-col struct-col-center"><div class="col-header">分析框架</div>'+mcHtml+sugFwHtml+auditHtml+'</div>'+
     /* ===== 右栏：综合结果与导出 ===== */
     '<div class="struct-col struct-col-right"><div class="col-header">结果与导出</div>'+overviewHtml+anHtml+actHtml+expHtml+'</div>';
 
@@ -9748,119 +9624,56 @@ function renderCanvasArea(p){
   renderCanvas();
 }
 
-// 干净的起始布局：按类型分列铺开（数据源/框架/洞察/领先用户），不重叠、不碰左栏
-function buildStarterNodes(p){
-  var nodes=[];
-  var colX={src:60, fw:440, ins:820, lf:1200};
-  var yy={src:80, fw:80, ins:80, lf:80};
-  var gap=120;
-  (p.sources||[]).forEach(function(sid){
-    var s=getSource(sid); if(!s)return;
-    nodes.push({id:'n-src-'+sid+'-s', x:colX.src, y:yy.src, type:'src', title:s.name, sub:(s.records?s.records+'条':'待接入'), sourceId:sid});
-    yy.src+=gap;
-  });
-  (DATA.frameworks||[]).forEach(function(f){
-    nodes.push({id:'n-fw-'+f.id+'-s', x:colX.fw, y:yy.fw, type:'fw', title:f.name, sub:f.desc?f.desc.slice(0,24):'分析框架', fwId:f.id});
-    yy.fw+=gap;
-  });
-  var ins=getInsights(state.purposeId)||[];
-  ins.slice(0,4).forEach(function(it,i){
-    nodes.push({id:'n-ins-'+i+'-s', x:colX.ins, y:yy.ins, type:'ins', title:it.title, body:it.body});
-    yy.ins+=gap;
-  });
-  var lfus=getRelevantLeadUsers(p,4)||[];
-  lfus.forEach(function(u){
-    var uid=u.id||u.name;
-    nodes.push({id:'n-lf-'+uid+'-s', x:colX.lf, y:yy.lf, type:'lf', title:u.name, sub:u.trait?u.trait.slice(0,18):'领先用户', lfId:uid});
-    yy.lf+=gap;
-  });
-  return nodes;
-}
-
 function seedCanvas(p){
-  // 首次进入（本地无该目的存档）→ 自动铺一份整洁起始布局，避免打开就是一片空白。
-  // 若已有存档（含用户清空后的空状态），尊重之，不再强塞。
-  var key='cih_canvas_'+state.purposeId;
-  if(state.canvasNodes.length) return;
-  var hasSaved=false;
-  try{ hasSaved=!!localStorage.getItem(key); }catch(e){}
-  if(hasSaved) return;
-  state.canvasNodes=buildStarterNodes(p);
-  saveCanvasState();
-}
+  var baseX=60,baseY=80,gapX=200,gapY=130;
+  var ni=0;
 
-// 空画布引导卡上的「一键铺开」按钮
-function fillCanvasWithStarter(){
-  var p=getPurpose(state.ws,state.purposeId);
-  if(!p)return;
-  if(!state.canvasNodes.length){
-    state.canvasNodes=buildStarterNodes(p);
-    saveCanvasState();
-  }
-  renderCanvas();
-  toast('已铺开本目的素材 · 可自由拖动 / 删除 / 连线');
+  // Add source nodes
+  p.sources.forEach(function(sid,i){
+    var s=getSource(sid);if(!s)return;
+    state.canvasNodes.push({
+      id:'n-src-'+sid,x:baseX+i*gapX,y:baseY,type:'src',
+      title:s.name,sub:(s.records?s.records+' 条':'待接入'),sourceId:sid
+    });ni++;
+  });
+
+  // Add insight nodes
+  var insights=getInsights(state.purposeId);
+  insights.slice(0,4).forEach(function(ins,i){
+    state.canvasNodes.push({
+      id:'n-ins-'+i,x:baseX+(i%2)*gapX+60,y:baseY+gapY+Math.floor(i/2)*gapY,
+      type:'ins',title:ins.title,body:ins.body
+    });ni++;
+  });
+
+  // Add note node
+  state.canvasNodes.push({id:'n-note-1',x:baseX+gapX*1.5,y:baseY+gapY*3,type:'note',
+    title:'推导批注',body:'在此处记录你的推导过程和关键发现...'});
+  saveCanvasState();
 }
 
 function renderDrawer(p){
   var html='';
-
-  // ① 数据源
-  html+='<div class="cd-group"><div class="cd-g-title">数据源 <span class="cd-g-hint">点击 / 拖入画布 · 可筛选</span></div>';
+  // Sources in drawer
   p.sources.forEach(function(sid){
     var s=getSource(sid);if(!s)return;
-    html+='<div class="cd-item" draggable="true" data-type="src" data-id="'+sid+'" ondragstart="onDrawerDrag(event)" onclick="addDrawerItem(event,\'src\',\''+sid+'\')">'+
-      '<span class="cd-ico ico-src">'+empIcon('i-plug')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">'+escHtml(s.name)+'</div>'+
-      '<div class="cdi-sub">'+escHtml(s.type)+' · '+(s.records?s.records+'条':'待接入')+'</div></div>'+
+    html+='<div class="cd-item" draggable="true" data-type="src" data-id="'+sid+'" ondragstart="onDrawerDrag(event)">'+
+      '<div class="cdi-name">'+escHtml(s.name)+'</div>'+
+      '<div class="cdi-sub">'+escHtml(s.type)+' · '+(s.records?s.records+'条':'待接入')+'</div>'+
     '</div>';
   });
-  html+='</div>';
-
-  // ② 分析框架
-  html+='<div class="cd-group"><div class="cd-g-title">分析框架 <span class="cd-g-hint">点击 / 拖入 · 看含义</span></div>';
-  (DATA.frameworks||[]).forEach(function(f){
-    html+='<div class="cd-item" draggable="true" data-type="fw" data-id="'+f.id+'" ondragstart="onDrawerDrag(event)" onclick="addDrawerItem(event,\'fw\',\''+f.id+'\')">'+
-      '<span class="cd-ico ico-fw">'+empIcon('i-layers')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">'+escHtml(f.name)+'</div>'+
-      '<div class="cdi-sub">'+(f.desc?escHtml(f.desc.slice(0,22)):'分析框架')+'</div></div>'+
-    '</div>';
-  });
-  html+='</div>';
-
-  // ③ 洞察
+  // Insights
   var insights=getInsights(state.purposeId);
-  html+='<div class="cd-group"><div class="cd-g-title">洞察 <span class="cd-g-hint">点击 / 拖入 · 看来源</span></div>';
-  if(!insights.length) html+='<div class="cd-empty">暂无关联洞察</div>';
   insights.forEach(function(ins,i){
-    html+='<div class="cd-item" draggable="true" data-type="ins" data-idx="'+i+'" ondragstart="onDrawerDrag(event)" onclick="addDrawerItem(event,\'ins\',\''+i+'\')">'+
-      '<span class="cd-ico ico-ins">'+empIcon('i-bulb')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">'+escHtml(ins.title)+'</div>'+
-      '<div class="cdi-sub">洞察 · 可拖入画布</div></div>'+
+    html+='<div class="cd-item" draggable="true" data-type="ins" data-idx="'+i+'" ondragstart="onDrawerDrag(event)">'+
+      '<div class="cdi-name">'+escHtml(ins.title)+'</div>'+
+      '<div class="cdi-sub">洞察 · 可拖入画布</div>'+
     '</div>';
   });
-  html+='</div>';
-
-  // ④ 创意（自由新建）
-  html+='<div class="cd-group"><div class="cd-g-title">创意 <span class="cd-g-hint">随手记想法</span></div>'+
-    '<div class="cd-item cd-add" onclick="addDrawerItem(event,\'idea\',\'\')">'+
-      '<span class="cd-ico ico-idea">'+empIcon('i-zap')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">+ 新建创意卡</div>'+
-      '<div class="cdi-sub">双击画布卡片可编辑文字</div></div>'+
-    '</div></div>';
-
-  // ⑤ 领先用户
-  var lfus=getRelevantLeadUsers(p,6);
-  html+='<div class="cd-group"><div class="cd-g-title">领先用户 <span class="cd-g-hint">点击 / 拖入 · 看画像</span></div>';
-  if(!lfus.length) html+='<div class="cd-empty">暂无领先用户</div>';
-  lfus.forEach(function(u){
-    html+='<div class="cd-item" draggable="true" data-type="lf" data-id="'+escHtml(u.id||u.name)+'" ondragstart="onDrawerDrag(event)" onclick="addDrawerItem(event,\'lf\',\''+escHtml(u.id||u.name)+'\')">'+
-      '<span class="cd-ico ico-lf">'+empIcon('i-users')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">'+escHtml(u.name)+'</div>'+
-      '<div class="cdi-sub">'+(u.trait?escHtml(u.trait.slice(0,18)):'领先用户')+'</div></div>'+
-    '</div>';
-  });
-  html+='</div>';
-
+  // Blank note
+  html+='<div class="cd-item" draggable="true" data-type="note" ondragstart="onDrawerDrag(event)">'+
+    '<div class="cdi-name">空白批注</div><div class="cdi-sub">拖入画布写笔记</div>'+
+  '</div>';
   $('#drawerItems').innerHTML=html;
 }
 
@@ -10437,39 +10250,25 @@ function renderCanvas(){
   // Remove old nodes
   $$('.cn-node').forEach(function(n){n.remove()});
 
-  // 空画布 → 显示引导卡（含一键铺开）；有内容则隐藏
-  var hint=$('#canvasHint');
-  if(hint) hint.style.display='none';
-  var emptyCard=$('#canvasEmpty');
-  if(emptyCard) emptyCard.style.display = state.canvasNodes.length? 'none':'flex';
-
   // Render nodes
   state.canvasNodes.forEach(function(n){
     var el=document.createElement('div');
-    el.className='cn-node cn-'+n.type;el.setAttribute('data-nid',n.id);
+    el.className='cn-node';el.setAttribute('data-nid',n.id);
     el.style.left=n.x+'px';el.style.top=n.y+'px';
-    var typeLabel={'src':'数据源','ins':'洞察','fw':'分析框架','lf':'领先用户','idea':'创意','note':'批注'}[n.type]||'卡片';
-    var typeClass={'src':'src','ins':'ins','fw':'fw','lf':'lf','idea':'idea','note':'note'}[n.type]||'';
+    var typeLabel={'src':'数据源','ins':'洞察','tool':'工具','note':'批注'}[n.type]||'卡片';
+    var typeClass={'src':'src','ins':'ins','tool':'tool','note':'note'}[n.type]||'';
     var bodyHtml=n.body?'<div class="cn-body">'+escHtml(n.body)+'</div>':'';
-    var subHtml=n.sub?'<div class="cn-sub">'+escHtml(n.sub)+'</div>':'';
-    var clickHint=(n.type==='idea')?'双击编辑':(n.type==='note'?'双击编辑':'点击查看');
+    var subHtml=n.sub?'<div style="font-size:10.5px;color:var(--muted)">'+escHtml(n.sub)+'</div>':'';
     el.innerHTML=
       '<div class="cn-type '+typeClass+'">'+typeLabel+'</div>'+
       '<div class="cn-title">'+escHtml(n.title)+'</div>'+
       subHtml+bodyHtml+
-      '<div class="cn-hint">'+clickHint+'</div>'+
       '<div class="cn-port cn-port-left" title="连线入口"></div>'+
       '<div class="cn-port" title="连线出口"></div>';
     canvasEl.appendChild(el);
 
-    // 单击：按类型打开对应弹窗
-    el.addEventListener('click',function(ev){
-      ev.stopPropagation();
-      onCanvasNodeClick(n);
-    });
-    // 双击：编辑（idea / note / 自定义）
-    el.addEventListener('dblclick',function(ev){
-      ev.stopPropagation();
+    // Double click to edit title/body
+    el.addEventListener('dblclick',function(){
       var newT=prompt('编辑标题:',n.title);if(newT&&newT.trim()){n.title=newT.trim();saveCanvasState();renderCanvas();}
     });
   });
@@ -10503,7 +10302,7 @@ function renderCanvasLines(){
     // Bezier curve: right edge of "from" -> left edge of "to"
     var dx=to.lx-from.rx;
     var cx1=from.rx+dx*.45,cy1=from.ry;
-    var cx2=to.lx-dx*.45,cy2=to.ly;
+    var cx2=to.lx-dx*.45,cy2=to.ty;
 
     var path=document.createElementNS('http://www.w3.org/2000/svg','path');
     path.setAttribute('d','M'+from.rx+','+from.ry+' C'+cx1+','+cy1+' '+cx2+','+cy2+' '+to.lx+','+to.ly);
@@ -10513,7 +10312,7 @@ function renderCanvasLines(){
     svgEl.appendChild(path);
 
     // Endpoint dots
-    [from.rx,from.ry],[to.lx,to.ly].forEach(function(pt){
+    [from.rx,from.ry],[to.lx,to.ty].forEach(function(pt){
       var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
       c.setAttribute('cx',pt[0]);c.setAttribute('cy',pt[1]);c.setAttribute('r','3.5');
       c.setAttribute('fill','#0891B2');
@@ -10540,16 +10339,6 @@ function toggleDrawer(){
   var d=$('#matDrawer');state.drawerOpen=!state.drawerOpen;
   d.style.display=state.drawerOpen?'block':'none';
 }
-function toggleCanvasFullscreen(){
-  var ca=$('.canvas-area');
-  if(!ca)return;
-  ca.classList.toggle('fullscreen');
-  state.canvasFullscreen=ca.classList.contains('fullscreen');
-  if(state.canvasFullscreen){ toast('已进入全屏画布（按 Esc 退出）'); document.addEventListener('keydown',escFullExit); }
-  else { document.removeEventListener('keydown',escFullExit); }
-  setTimeout(function(){ renderCanvas(); },60);
-}
-function escFullExit(e){ if(e.key==='Escape'){ var ca=$('.canvas-area'); if(ca&&ca.classList.contains('fullscreen')){ ca.classList.remove('fullscreen'); state.canvasFullscreen=false; document.removeEventListener('keydown',escFullExit); setTimeout(function(){renderCanvas();},60);} } }
 
 function saveCanvasState(){
   try{localStorage.setItem('cih_canvas_'+state.purposeId,JSON.stringify({nodes:state.canvasNodes,lines:state.canvasLines,zoom:state.canvasZoom}));}catch(e){}
@@ -10560,91 +10349,6 @@ function loadCanvasState(){
     var raw=localStorage.getItem('cih_canvas_'+state.purposeId);
     if(raw){var d=JSON.parse(raw);state.canvasNodes=d.nodes||[];state.canvasLines=d.lines||[];if(d.zoom)state.canvasZoom=d.zoom;}
   }catch(e){}
-}
-
-// 点击素材直接加入画布（与拖拽等价）
-function addDrawerItem(ev,type,id){
-  if(ev)ev.stopPropagation();
-  var cRect=canvasEl?canvasEl.getBoundingClientRect():null;
-  var x= cRect? (200-state.canvasPanX)/state.canvasZoom : 80;
-  var y= cRect? (120-state.canvasPanY)/state.canvasZoom : 80;
-  // 简单错开，避免重叠
-  x += (state.canvasNodes.length%5)*30; y += (state.canvasNodes.length%5)*24;
-  addNodeByType(type,id,x,y);
-  saveCanvasState();renderCanvas();toast('已添加到画布');
-}
-
-function addNodeByType(type,id,x,y){
-  if(type==='src'){var s=getSource(id);if(s)state.canvasNodes.push({id:'n-src-'+id+'-'+Date.now(),x:x,y:y,type:'src',title:s.name,sub:(s.records?s.records+'条':'待接入'),sourceId:id});}
-  else if(type==='fw'){var f=(DATA.frameworks||[]).find(function(x){return x.id===id;});if(f)state.canvasNodes.push({id:'n-fw-'+id+'-'+Date.now(),x:x,y:y,type:'fw',title:f.name,sub:f.desc?f.desc.slice(0,24):'分析框架',fwId:id});}
-  else if(type==='ins'){var ins=(getInsights(state.purposeId)||[])[parseInt(id)];if(ins)state.canvasNodes.push({id:'n-ins-'+id+'-'+Date.now(),x:x,y:y,type:'ins',title:ins.title,body:ins.body});}
-  else if(type==='lf'){var u=(getRelevantLeadUsers(getPurpose(state.ws,state.purposeId),6)||[]).find(function(z){return (z.id||z.name)===id;});if(u)state.canvasNodes.push({id:'n-lf-'+id+'-'+Date.now(),x:x,y:y,type:'lf',title:u.name,sub:u.trait?u.trait.slice(0,18):'领先用户',lfId:id});}
-  else if(type==='idea'){state.canvasNodes.push({id:'n-idea-'+Date.now(),x:x,y:y,type:'idea',title:'新创意',body:'双击编辑你的想法…'});}
-}
-
-// 画布节点单击 → 按类型打开对应弹窗（与结构化侧逻辑一致）
-function onCanvasNodeClick(n){
-  if(n.type==='src'){ openSourceFilter(n.sourceId); }
-  else if(n.type==='fw'){ openFrameworkModal(n.fwId); }
-  else if(n.type==='ins'){ openCanvasInsightModal(n); }
-  else if(n.type==='lf'){ openCanvasLfModal(n); }
-  // idea / note 不弹窗，双击编辑
-}
-
-// 分析框架「这是什么」弹窗（轻量 modal，不离开画布）
-function openFrameworkModal(fwId){
-  var f=(DATA.frameworks||[]).find(function(x){return x.id===fwId;});
-  if(!f)return;
-  var secHtml=(f.sections||[]).slice(0,4).map(function(s){
-    return '<li><b>'+escHtml(s.t)+'</b>：'+escHtml((s.d||(s.items&&s.items[0]&&s.items[0].p)||'').toString().slice(0,60))+'</li>';
-  }).join('');
-  var ov=ensureCardModal();
-  ov.querySelector('.cm-title').innerHTML=empIcon('i-layers')+' '+escHtml(f.name);
-  ov.querySelector('.cm-body').innerHTML=
-    '<div class="cm-desc">'+escHtml(f.desc||'')+'</div>'+
-    (f.meta&&f.meta.length?'<div class="cm-meta">'+f.meta.map(function(m){return '<span><b>'+escHtml(m[0])+'</b>'+escHtml(m[1])+'</span>';}).join('')+'</div>':'')+
-    (secHtml?'<div class="cm-sec-title">主要分析步骤</div><ul class="cm-steps">'+secHtml+'</ul>':'')+
-    '<div class="cm-note">这是「分析框架」——本目的分析链路每一步用的方法论。勾选它即把方法挂到链路上。</div>';
-  ov.classList.add('show');
-}
-function openCanvasInsightModal(n){
-  var ov=ensureCardModal();
-  var tr=insightTrace({title:n.title,body:n.body,tags:[]});
-  ov.querySelector('.cm-title').innerHTML=empIcon('i-bulb')+' '+escHtml(n.title);
-  ov.querySelector('.cm-body').innerHTML=
-    '<div class="cm-desc">'+escHtml(n.body||'')+'</div>'+
-    (tr.labels&&tr.labels.length?'<div class="cm-sec-title">数据来源追溯</div><div class="cm-tags">'+tr.labels.map(function(l){return '<span class="cm-tag">'+escHtml(l.label)+' · '+l.n+'</span>';}).join('')+'</div>':'')+
-    (tr.quotes&&tr.quotes.length?'<blockquote class="cm-quote">'+escHtml(tr.quotes[0].text)+'</blockquote>':'')+
-    '<div class="cm-note">洞察来自真实用户反馈，点击来源可溯源。</div>';
-  ov.classList.add('show');
-}
-function openCanvasLfModal(n){
-  var u=(getRelevantLeadUsers(getPurpose(state.ws,state.purposeId),6)||[]).find(function(z){return (z.id||z.name)===n.lfId;});
-  if(!u){toast('未找到该领先用户');return;}
-  var ov=ensureCardModal();
-  ov.querySelector('.cm-title').innerHTML=empIcon('i-users')+' '+escHtml(u.name);
-  var sigs=(u.signals||[]).map(function(s){return '<span class="cm-tag">'+escHtml(LF_SIG[s]||s)+'</span>';}).join('');
-  ov.querySelector('.cm-body').innerHTML=
-    '<div class="cm-desc"><b>特质：</b>'+(u.trait||'')+'</div>'+
-    (u.said?'<div class="cm-quote">「'+escHtml(u.said)+'」</div>':'')+
-    (u.idea?'<div class="cm-desc"><b>代表性想法：</b>'+escHtml(u.idea)+'</div>':'')+
-    (sigs?'<div class="cm-sec-title">信号</div><div class="cm-tags">'+sigs+'</div>':'')+
-    '<div class="cm-note">领先用户 = 极端 / 重度使用者，其需求往往预示大众未来。</div>';
-  ov.classList.add('show');
-}
-
-// 通用卡片弹窗容器
-function ensureCardModal(){
-  var ov=document.getElementById('cardModal');
-  if(ov)return ov;
-  ov=document.createElement('div');
-  ov.id='cardModal';ov.className='cm-overlay';
-  ov.onclick=function(e){if(e.target===ov)ov.classList.remove('show');};
-  ov.innerHTML='<div class="cm-modal" role="dialog">'+
-    '<div class="cm-head"><div class="cm-title"></div><button class="cm-close" onclick="document.getElementById(\'cardModal\').classList.remove(\'show\')">✕</button></div>'+
-    '<div class="cm-body"></div></div>';
-  document.body.appendChild(ov);
-  return ov;
 }
 
 // Drawer drag -> drop onto canvas
@@ -10659,7 +10363,9 @@ canvasEl&&(canvasEl.addEventListener('drop',function(e){
     var cRect=canvasEl.getBoundingClientRect();
     var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-70;
     var y=(e.clientY-cRect.top-state.canvasPanY)/state.canvasZoom-30;
-    addNodeByType(d.type,d.id,x,y);
+    if(d.type==='src'){var s=getSource(d.id);if(s){state.canvasNodes.push({id:'n-src-d-'+Date.now(),x:x,y:y,type:'src',title:s.name,sub:d.id,sourceId:d.id});}}
+    else if(d.type==='ins'){var ins=(getInsights(state.purposeId)||[])[parseInt(d.idx)];if(ins){state.canvasNodes.push({id:'n-ins-d-'+Date.now(),x:x,y:y,type:'ins',title:ins.title,body:ins.body});}}
+    else if(d.type==='note'){state.canvasNodes.push({id:'n-note-d-'+Date.now(),x:x,y:y,type:'note',title:'批注',body:''});}
     saveCanvasState();renderCanvas();toast('已添加到画布');
   }catch(err){console.error(err);}
 }));
@@ -10668,10 +10374,8 @@ canvasEl&&(canvasEl.addEventListener('drop',function(e){
 // MODE TOGGLE (截图2)
 // ============================================================
 function applyMode(mode, p){
-  console.log('[applyMode] start', mode, 'purposeId=', state.purposeId, 'ws=', state.ws);
   state.mode=mode;
-  var sp=$('#structPanel'), ca=$('.canvas-area'), hint=$('#modeCanvasHint');
-  if(!sp || !ca){ console.error('[applyMode] missing panels'); return; }
+  var sp=$('#structPanel'), ca=$('.canvas-area');
   $$('#modeToggle .mode-opt').forEach(function(el){
     el.classList.toggle('active',el.getAttribute('data-mode')===mode);
   });
@@ -10679,32 +10383,21 @@ function applyMode(mode, p){
     // 仅在此刻才生成 / 显示无限画布
     sp.style.display='none';
     ca.style.display='flex';
-    if(hint) hint.classList.add('hidden');
-    console.log('[applyMode] canvas DOM shown, calling renderCanvasArea');
-    try{
-      if(p)renderCanvasArea(p);
-      console.log('[applyMode] renderCanvasArea done');
-    }catch(err){ console.error('[applyMode] renderCanvasArea error:', err); }
+    if(p)renderCanvasArea(p);
   }else{
     // 默认结构化：三栏布局（左数据源 / 中分析框架 / 右结果+导出）
     ca.style.display='none';
     sp.style.display='flex';
     sp.style.flex='1';
     sp.style.width='auto';
-    if(hint) hint.classList.remove('hidden');
   }
 }
 
-// 事件委托：绑定在 #modeToggle 上，即使子元素动态变化也生效
-$('#modeToggle').addEventListener('click',function(ev){
-  var el=ev.target.closest('.mode-opt');
-  if(!el)return;
-  console.log('[modeToggle click]', el.getAttribute('data-mode'));
-  try{
+$$('#modeToggle .mode-opt').forEach(function(el){
+  el.addEventListener('click',function(){
     var p=getPurpose(state.ws,state.purposeId);
-    console.log('[modeToggle click] purpose=', !!p);
     applyMode(el.getAttribute('data-mode'), p);
-  }catch(err){ console.error('[modeToggle click] error:', err); }
+  });
 });
 
 // ============================================================
@@ -10789,19 +10482,12 @@ function gatherContext(){
   // Level2：基础分析结论
   ctx.analysis=state.analysisSummary||{};
 
-  // Canvas context —— 把画布上的自由节点「组织」回结构化字段，导出包与结构化一致
+  // Canvas context
   if(state.canvasNodes.length){
-    var cSrcs=[],cFws=[],cIns=[],cIdea=0,cLf=0,cNote=0;
-    state.canvasNodes.forEach(function(n){
-      if(n.type==='src'){var s=getSource(n.sourceId);if(s&&ctx.sources.indexOf(s.name+'('+s.type+')')<0)ctx.sources.push(s.name+'('+s.type+')');cSrcs.push(n);}
-      else if(n.type==='fw'){var f=(DATA.frameworks||[]).find(function(x){return x.id===n.fwId;});if(f&&ctx.frameworks.indexOf(f.name+'：'+f.desc)<0)ctx.frameworks.push(f.name+'：'+f.desc);cFws.push(n);}
-      else if(n.type==='ins'){if(ctx.insights.indexOf(n.title+': '+(n.body||''))<0)ctx.insights.push(n.title+': '+(n.body||''));cIns.push(n);}
-      else if(n.type==='idea'){cIdea++;}
-      else if(n.type==='lf'){cLf++;}
-      else if(n.type==='note'){cNote++;}
-    });
     ctx.canvasSummary='画布上有 '+state.canvasNodes.length+' 个节点（'+
-      cSrcs.length+' 数据源 / '+cFws.length+' 分析框架 / '+cIns.length+' 洞察 / '+cLf+' 领先用户 / '+cIdea+' 创意 / '+cNote+' 批注）'+
+      state.canvasNodes.filter(function(n){return n.type==='src'}).length+' 数据源 / '+
+      state.canvasNodes.filter(function(n){return n.type==='ins'}).length+' 洞察 / '+
+      state.canvasNodes.filter(function(n){return n.type==='note'}).length+' 批注）'+
       (state.canvasLines.length?', '+state.canvasLines.length+' 条连线':'');
   }
 
