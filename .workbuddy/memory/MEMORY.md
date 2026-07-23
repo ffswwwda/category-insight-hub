@@ -94,6 +94,26 @@
 - **场景**：3D 等轴测办公室，7 工位（中文同事：小灵/小分/小预/小创/小设/小测/小展）
 - **复用建议**：用户研究/数据可视化的"全景项目"模板——PixiJS 程序绘制 2.5D 场景，零图片依赖，可作为独立子项目部署
 
+## 方案包（Plan Package）规范 · 用户已确认（2026-07-22）
+**目标**：每个"目的"工作区可下载一个**自包含方案包**，让从没见过项目的 AI 拿到包就能照着分析/产出/核对。
+**已确认目录结构**（spec 用户复述认可）：
+```
+<目的id>/
+├── manifest.json          # 机器索引：目的/版本/依赖/血缘
+├── 00-README.md           # 人读总览 + 运行顺序
+├── 01-提示词/ SYSTEM.md(自包含总提示词) + 数据源说明 + 分析框架说明 + 技能调用说明
+├── 02-数据包/ <源>.csv     # 按源筛选过的真实数据
+├── 03-技能包/ <skill>/      # SKILL.md + scripts/
+├── 04-交付模板/ 输出模板.md + 校验清单.md
+└── 05-标签字典/ taxonomy.md  # 可选：VOC九维/13维需求/四象限
+```
+**用户补充的 5 点（A-E，均已认可需落地）**：A.交付物模板+逐条校验清单；B.包索引 manifest+README；C.标签/维度字典（防打标漂移）；D.运行编排顺序(①manifest→②提示词→③数据→④技能→⑤套模板→⑥校验)；E.(可选)样例交付物+版本血缘。
+**关键硬约束（必须写进 SYSTEM.md）**：自包含+强约束——禁止联网/禁外部知识补充；所有结论须引用 `02-数据包/` 具体行号 `[源文件#行号]`；数据不足处标注「数据不足」而非编造。这正是"核对准确"的落地。
+**样例包已落地（本地）**：`workspace-packages/new-product-dev/`（31 文件，结构完全对齐 spec，含 9 源 CSV + voc-tagger 技能包 + 六段输出模板 + 校验清单 + taxonomy）。
+**生成器已落地（2026-07-22，commit 949616f）**：右栏「导出方案包（.zip）」按钮已改为直接调用 `downloadPlanPackage()` 生成**真·多文件 zip**（零依赖 `makeZip`：store 模式 + CRC32 + UTF-8 文件名，内联无外部库，符合整站零 CORS 约定）。zip 严格按 spec 目录结构组装：`manifest.json`/`00-README.md`/`01-提示词/SYSTEM.md(+数据源/框架/技能说明)`/`02-数据包/<源id>-<源名>.csv`/`03-技能包/voc-tagger/SKILL.md`/`04-交付模板/(输出模板+校验清单)`/`05-标签字典/taxonomy.md`。SYSTEM.md 写死硬约束（禁联网/行级引用/数据不足标注/标签一致/框架不跳步）。
+**待决点已拍板（用户 2026-07-22）**：数据包 = 用户在目的工作区**已选源的原始数据，原样导出，不二次加工、不重新跑 voc-tagger 打标**。生成器直接调 `filterSourceRows(sid)`（尊重用户在来源上的筛选）导出 CSV。目的工作区定位本就是"选源/选框架 → 导出给其他 AI 分析"，生成器只照单打包。
+**注（macOS 解压）**：zip 字节标准合规（Python zipfile 验证 testzip=None、中文名/内容正确）；但 macOS 命令行 `unzip`(info-zip 旧版) 对 UTF-8 文件名有已知乱码 bug，建议用 Archive Utility / 7zip / Keka / Python 解压。
+
 ## Vite + PixiJS v8 常见坑（2026-07-17 实战踩坑）
 - **PixiJS Container 的 `label` 字段是内置的**，子类不能重复声明 `private label`，会与 Container 自带的 string 类型冲突。改名 `bubbleLabel` 等
 - **TypeScript 6.x `baseUrl` 弃用警告**：tsconfig.app.json 加 `"ignoreDeprecations": "6.0"`

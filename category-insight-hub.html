@@ -1096,6 +1096,11 @@ body.dark .lab-status{color:#fbbf24}
 .view{display:none;min-height:100%}
 .view.active{display:block;animation:fadeInUp .5s var(--rad-easing)}
 
+/* 仅作用于目的工作区视图：用 flex 列布局给 ws-body 可靠的 100% 高度基准
+   —— 用 id 作用域，绝不动全局 .view，避免影响其它视图（上次布局崩的根因） */
+#viewWorkspace{display:none}
+#viewWorkspace.active{display:flex;flex-direction:column;height:100%}
+
 /* ========== VIEW: PURPOSE GRID ========== */
 .purpose-grid-wrap{padding:22px 24px 40px}
 .purpose-header{margin-bottom:18px;animation:fadeInUp .5s var(--rad-easing)}
@@ -1251,10 +1256,15 @@ body.dark .lab-status{color:#fbbf24}
 .ct-btn.primary{background:var(--rad-grad);border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(0,195,243,.3)}
 .ct-btn.primary:hover{filter:brightness(1.06)}
 
-/* Canvas material drawer */
-.canvas-drawer{position:absolute;top:12px;right:12px;width:220px;z-index:20;
+/* Canvas material drawer (LEFT, below toolbar row) */
+.canvas-drawer{position:absolute;top:56px;left:12px;width:240px;z-index:20;
   background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
-  box-shadow:var(--shadow-md);max-height:calc(100% - 80px);overflow-y:auto;backdrop-filter:var(--glass-blur)}
+  box-shadow:var(--shadow-md);max-height:calc(100% - 124px);overflow-y:auto;backdrop-filter:var(--glass-blur)}
+.canvas-drawer::-webkit-scrollbar{width:8px}
+.canvas-drawer::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+
+/* Right-aligned toolbar cluster */
+.canvas-toolbar-right{left:auto;right:12px}
 .cd-head{padding:12px 14px 8px;font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.5px;
   border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
 .cd-toggle{cursor:pointer;color:var(--accent);font-size:11px;font-weight:700}
@@ -1265,8 +1275,9 @@ body.dark .lab-status{color:#fbbf24}
 .cdi-name{font-size:12px;font-weight:700;color:var(--ink)}
 .cdi-sub{font-size:10.5px;color:var(--muted);margin-top:2px}
 
-/* Canvas SVG layer (connections + cards) */
-.canvas-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+/* Canvas world layer (only nodes + lines are transformed; toolbar/drawer stay fixed) */
+.canvas-world{position:absolute;top:0;left:0;width:100%;height:100%;transform-origin:0 0;z-index:1}
+.canvas-svg{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .canvas-svg line{stroke:rgba(0,195,243,.4);stroke-width:1.5}
 .canvas-svg circle{fill:var(--accent);r:4}
 
@@ -1285,14 +1296,73 @@ body.dark .lab-status{color:#fbbf24}
 .cn-type.note{color:var(--green-a)}
 .cn-title{font-size:13px;font-weight:700;margin-bottom:3px}
 .cn-body{font-size:11px;color:var(--ink-2);line-height:1.45}
+.cn-filter{margin-top:8px;padding:6px 9px;border-radius:8px;background:rgba(0,195,243,.10);
+  border:1px solid rgba(0,195,243,.32);font-size:10.5px;line-height:1.5;color:var(--accent)}
+.cn-filter .cf-cap{display:inline-block;font-weight:800;opacity:.85;margin-right:4px}
 .cn-port{position:absolute;right:-6px;top:50%;width:12px;height:12px;border-radius:50%;
   background:var(--rad-grad);cursor:crosshair;transform:translateY(-50%);z-index:5}
 .cn-port-left{right:auto;left:-6px}
 
-/* Canvas zoom indicator */
-.zoom-indicator{position:absolute;bottom:12px;left:12px;z-index:20;
+/* Canvas node close (remove) button */
+.cn-close{position:absolute;top:-9px;right:-9px;width:20px;height:20px;border-radius:50%;
+  background:var(--panel-solid);border:1px solid var(--border);color:var(--muted);
+  font-size:12px;line-height:18px;text-align:center;cursor:pointer;z-index:8;
+  box-shadow:var(--shadow-sm);transition:all .15s}
+.cn-close:hover{color:#fff;background:#ef4444;border-color:#ef4444}
+.cn-node.src{cursor:pointer}
+
+/* Canvas fullscreen title pill (only shown in fullscreen) */
+.canvas-fs-title{display:none;position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:30;
+  align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--border);
+  background:var(--panel-solid);border-radius:30px;font-size:12px;font-weight:700;color:var(--ink);
+  box-shadow:var(--shadow-sm);pointer-events:none;white-space:nowrap;max-width:52vw;overflow:hidden;text-overflow:ellipsis}
+.canvas-fs-title .fs-tag{font-size:10px;font-weight:700;color:#fff;background:var(--rad-grad);padding:2px 9px;border-radius:20px}
+
+/* Fullscreen immersion: hide all chrome, canvas fills the screen */
+body.canvas-fullscreen .sidebar{display:none!important}
+body.canvas-fullscreen .topbar{display:none!important}
+body.canvas-fullscreen .subnav{display:none!important}
+body.canvas-fullscreen #viewWorkspace{padding:0!important;height:100vh!important}
+body.canvas-fullscreen .ws-bar{display:none!important}
+body.canvas-fullscreen .mode-toggle{display:none!important}
+body.canvas-fullscreen .ws-body{padding:0!important}
+body.canvas-fullscreen #structPanel{display:none!important}
+body.canvas-fullscreen .board{overflow:hidden!important}
+body.canvas-fullscreen .canvas-area{position:fixed;inset:0;width:100vw;height:100vh;z-index:60}
+body.canvas-fullscreen .canvas-fs-title{display:flex}
+
+/* Fullscreen: drawer & toolbars visible by default (no auto-hide).
+   Each can be collapsed via its own toggle; a persistent visible tab remains to reopen. */
+body.canvas-fullscreen .canvas-drawer{display:block!important}
+body.canvas-fullscreen.fs-drawer-collapsed .canvas-drawer{display:none!important}
+body.canvas-fullscreen.fs-tools-collapsed .canvas-toolbar-left,
+body.canvas-fullscreen.fs-tools-collapsed .canvas-toolbar-right,
+body.canvas-fullscreen.fs-tools-collapsed .zoom-indicator{display:none!important}
+
+/* Persistent reopen tabs: always visible when that panel is collapsed (normal + fullscreen) */
+.canvas-reopen{display:none;position:fixed;z-index:72;align-items:center;gap:6px;
+  padding:10px 15px;border:none;border-radius:0 12px 12px 0;cursor:pointer;
+  background:var(--rad-grad);color:#fff;font-size:12px;font-weight:700;box-shadow:var(--shadow-md);font-family:inherit}
+.canvas-reopen:hover{filter:brightness(1.06)}
+#drawerReopen{left:0;top:72px}
+#toolsReopen{right:0;left:auto;top:0;transform:none;border-radius:0 0 0 12px;padding:7px 18px}
+body.fs-drawer-collapsed #drawerReopen{display:flex}
+body.fs-tools-collapsed #toolsReopen{display:flex}
+
+/* Drawer "all materials" toggle */
+.cd-all-on{color:var(--purple)!important}
+.cd-on{font-size:9.5px;font-weight:700;color:var(--green-a);background:rgba(34,197,94,.12);
+  padding:1px 6px;border-radius:10px;margin-left:6px}
+
+/* Canvas zoom indicator (right of left drawer) */
+.zoom-indicator{position:absolute;bottom:12px;left:264px;z-index:20;
   background:var(--panel-solid);border:1px solid var(--border);border-radius:9px;padding:5px 11px;
   font-size:11px;font-weight:600;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+
+/* Canvas hint (subtle, shown only when explicitly set) */
+.canvas-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;
+  text-align:center;color:var(--muted);font-size:13px;max-width:320px;line-height:1.7;
+  pointer-events:none;display:none}
 
 /* ========== VOC TAGGER (in structured panel) ========== */
 .tagger-panel{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
@@ -2596,19 +2666,37 @@ body.dark .emp-v1{color:#fbbf24}
 
           <!-- Canvas Area (right) -->
           <div class="canvas-area" id="canvasArea">
-            <div class="canvas-toolbar">
-              <button class="ct-btn" onclick="zoomCanvas(1.2)">+ 放大</button>
-              <button class="ct-btn" onclick="zoomCanvas(.8)">- 缩小</button>
-              <button class="ct-btn" onclick="fitCanvas()">适应</button>
+            <div class="canvas-toolbar canvas-toolbar-left">
+              <button class="ct-btn" onclick="zoomCanvas(1.12)" title="放大">＋ 放大</button>
+              <button class="ct-btn" onclick="zoomCanvas(.89)" title="缩小">－ 缩小</button>
+              <button class="ct-btn" onclick="fitCanvas()" title="重置视图">适应</button>
+              <button class="ct-btn" onclick="organizeCanvas()" title="一键整理成清晰布局">一键整理</button>
               <button class="ct-btn" onclick="clearCanvas()">清空</button>
-              <button class="ct-btn primary" onclick="openExportModal()">导出画布到智能体</button>
+              <button class="ct-btn" onclick="toggleTools()" title="收起顶部工具（再点边缘按钮展开）">收起</button>
             </div>
-            <svg class="canvas-svg" id="canvasSvg"></svg>
-            <div class="material-drawer" id="matDrawer">
-              <div class="cd-head">素材 <span class="cd-toggle" onclick="toggleDrawer()">收起</span></div>
+            <div class="canvas-toolbar canvas-toolbar-right">
+              <button class="ct-btn" onclick="toggleCanvasFullscreen()" title="全屏工作（ESC 退出）">⛶ 全屏</button>
+              <button class="ct-btn" onclick="openPlanDetailModal()" title="查看完整方案">查看完整方案</button>
+              <button class="ct-btn primary" onclick="downloadPlanPackage()" title="导出方案包（.zip）">导出方案包</button>
+            </div>
+            <div class="canvas-world" id="canvasWorld">
+              <svg class="canvas-svg" id="canvasSvg"></svg>
+            </div>
+            <div class="canvas-drawer" id="matDrawer">
+              <div class="cd-head">
+                <span>素材</span>
+                <span style="display:flex;gap:10px">
+                  <span class="cd-toggle" id="drawerAllToggle" onclick="toggleDrawerAll()" title="展开全部网站素材，可拖入画布">全部素材 +</span>
+                  <span class="cd-toggle" onclick="toggleDrawer()">收起</span>
+                </span>
+              </div>
               <div id="drawerItems"></div>
             </div>
+            <div class="canvas-fs-title" id="canvasFsTitle"></div>
+            <div class="canvas-hint" id="canvasHint"></div>
             <div class="zoom-indicator" id="zoomIndicator">100%</div>
+            <button class="canvas-reopen" id="drawerReopen" onclick="toggleDrawer()">⟨ 素材</button>
+            <button class="canvas-reopen" id="toolsReopen" onclick="toggleTools()">⌃ 工具</button>
           </div>
         </div>
       </div>
@@ -3166,6 +3254,7 @@ var state = {
   dragOffX: 0,
   dragOffY: 0,
   drawerOpen: true,
+  toolsOpen: true,
   // ---- 三层级新增状态 ----
   sourceCache: {},        // {srcId: [rows]}  Level1 样本缓存
   sourceFilters: {},      // {srcId: {text, market, dimension, sentiment}}
@@ -9603,10 +9692,11 @@ function renderJourney(p){
 // ============================================================
 // CANVAS ENGINE (截图2 右侧)
 // ============================================================
-var canvasEl, svgEl;
+var canvasEl, svgEl, worldEl;
 
 function renderCanvasArea(p){
   canvasEl=$('#canvasArea');
+  worldEl=$('#canvasWorld');
   svgEl=$('#canvasSvg');
 
   // Seed canvas with initial nodes
@@ -9618,6 +9708,7 @@ function renderCanvasArea(p){
   renderDrawer(p);
 
   // Setup events
+  bindCanvasDrop();
   setupCanvasEvents();
 
   // Render nodes and lines
@@ -9625,40 +9716,32 @@ function renderCanvasArea(p){
 }
 
 function seedCanvas(p){
-  var baseX=60,baseY=80,gapX=200,gapY=130;
-  var ni=0;
-
-  // Add source nodes
-  p.sources.forEach(function(sid,i){
+  // 先放占位节点，再由 organizeCanvas 排成整洁布局（起始位置避开左侧素材抽屉）
+  p.sources.forEach(function(sid){
     var s=getSource(sid);if(!s)return;
-    state.canvasNodes.push({
-      id:'n-src-'+sid,x:baseX+i*gapX,y:baseY,type:'src',
-      title:s.name,sub:(s.records?s.records+' 条':'待接入'),sourceId:sid
-    });ni++;
+    state.canvasNodes.push({id:'n-src-'+sid,x:0,y:0,type:'src',
+      title:s.name,sub:(s.records?s.records+' 条':'待接入'),sourceId:sid});
   });
-
-  // Add insight nodes
   var insights=getInsights(state.purposeId);
   insights.slice(0,4).forEach(function(ins,i){
-    state.canvasNodes.push({
-      id:'n-ins-'+i,x:baseX+(i%2)*gapX+60,y:baseY+gapY+Math.floor(i/2)*gapY,
-      type:'ins',title:ins.title,body:ins.body
-    });ni++;
+    state.canvasNodes.push({id:'n-ins-'+i,x:0,y:0,type:'ins',title:ins.title,body:ins.body});
   });
-
-  // Add note node
-  state.canvasNodes.push({id:'n-note-1',x:baseX+gapX*1.5,y:baseY+gapY*3,type:'note',
+  state.canvasNodes.push({id:'n-note-1',x:0,y:0,type:'note',
     title:'推导批注',body:'在此处记录你的推导过程和关键发现...'});
   saveCanvasState();
+  organizeCanvas(true); // 静默整理
 }
 
 function renderDrawer(p){
   var html='';
-  // Sources in drawer
-  p.sources.forEach(function(sid){
-    var s=getSource(sid);if(!s)return;
+  // Sources in drawer (全部素材模式 = 列出 DATA.sources 所有数据源)
+  var srcIds = state.drawerAll ? Object.keys(DATA.sources) : (p.sources||[]);
+  srcIds.forEach(function(sid){
+    var s=DATA.sources[sid];if(!s)return;
+    var onCanvas = state.canvasNodes.some(function(n){return n.type==='src'&&n.sourceId===sid;});
+    var tag = onCanvas?'<span class="cd-on">已加入</span>':'';
     html+='<div class="cd-item" draggable="true" data-type="src" data-id="'+sid+'" ondragstart="onDrawerDrag(event)">'+
-      '<div class="cdi-name">'+escHtml(s.name)+'</div>'+
+      '<div class="cdi-name">'+escHtml(s.name)+tag+'</div>'+
       '<div class="cdi-sub">'+escHtml(s.type)+' · '+(s.records?s.records+'条':'待接入')+'</div>'+
     '</div>';
   });
@@ -9675,6 +9758,17 @@ function renderDrawer(p){
     '<div class="cdi-name">空白批注</div><div class="cdi-sub">拖入画布写笔记</div>'+
   '</div>';
   $('#drawerItems').innerHTML=html;
+  // 同步"全部素材"开关文案
+  var t=document.getElementById('drawerAllToggle');
+  if(t){ t.textContent=state.drawerAll?'仅本目的 −':'全部素材 +'; t.classList.toggle('cd-all-on',!!state.drawerAll); }
+}
+
+// 展开 / 收起「全部网站素材」
+function toggleDrawerAll(){
+  state.drawerAll=!state.drawerAll;
+  var p=getPurpose(state.ws,state.purposeId);
+  renderDrawer(p);
+  toast(state.drawerAll?'已展开全部素材，可拖入画布':'已收起，仅显示本目的素材');
 }
 
 // --- 数据源筛选弹窗 ---
@@ -10054,16 +10148,50 @@ function closeSourceFilter(sid){
   if(el) el.parentNode.removeChild(el);
 }
 
+// 把筛选条件对象转成卡片上可读的中文摘要（如「5星 · 德国 · 含：续航」）
+function summarizeFilter(s,filters){
+  if(!filters||!Object.keys(filters).length) return '';
+  var defs=buildRichFilterDefs(s)||[];
+  var defMap={};defs.forEach(function(d){defMap[d.key]=d;});
+  var parts=[];
+  Object.keys(filters).forEach(function(key){
+    var vals=filters[key]; if(!vals||!vals.length) return;
+    if(key==='kw_include'){ parts.push('含：'+vals.join('、')); return; }
+    if(key==='kw_exclude'){ parts.push('排除：'+vals.join('、')); return; }
+    var d=defMap[key], label=d?d.label:key;
+    if(d&&d.type==='range'&&vals.length>=2){
+      parts.push(label+'：'+String(vals[0]).split(':')[1]+'~'+String(vals[1]).split(':')[1]); return;
+    }
+    var mapped=vals.map(function(v){
+      if(d&&d.options){ var o=d.options.find(function(x){return String(x.v)===String(v);}); if(o) return o.l; }
+      if(typeof v==='string'&&v.indexOf(':')>=0) return v.split(':')[1];
+      return v;
+    });
+    parts.push(label+'：'+mapped.join('、'));
+  });
+  return parts.join(' · ');
+}
+
 function confirmSourceFilter(sid){
   var p=getPurpose(state.ws,state.purposeId);
   if(!p)return;
   var filters=collectFilters(sid);
+  var has=Object.keys(filters).length>0;
   p._srcFilters=p._srcFilters||{};
-  if(Object.keys(filters).length>0){
+  if(has){
     p._srcFilters[sid]={filters:filters,ts:Date.now()};
   }else{
     delete p._srcFilters[sid];
   }
+  // 同步画布卡片上的筛选可视化
+  var s=getSource(sid);
+  state.canvasNodes.forEach(function(n){
+    if(n.type==='src'&&n.sourceId===sid){
+      if(has&&s){ n.filterSummary=summarizeFilter(s,filters); n.filterCount=Object.keys(filters).length; }
+      else { delete n.filterSummary; delete n.filterCount; }
+    }
+  });
+  if(canvasEl) renderCanvas();
   closeSourceFilter(sid);
   renderStructPanel(p);
 }
@@ -10161,10 +10289,12 @@ function addInsightToCanvas(idx){
 }
 
 function setupCanvasEvents(){
-  // Zoom with mousewheel
+  // Zoom with mousewheel (low sensitivity); drawer-internal scroll must NOT zoom
   canvasEl.addEventListener('wheel',function(e){
+    if(e.target.closest && e.target.closest('#matDrawer')) return; // 让素材框自己滚动
     e.preventDefault();
-    var factor=e.deltaY>0?.92:1.08;
+    var intensity=Math.min(Math.abs(e.deltaY)/100,1); // 单格滚轮≈1
+    var factor=e.deltaY>0 ? (1 - 0.04*intensity) : (1 + 0.04*intensity); // 每格仅约 4%
     state.canvasZoom=Math.max(.2, Math.min(5, state.canvasZoom*factor));
     renderCanvas();
   },{passive:false});
@@ -10172,7 +10302,7 @@ function setupCanvasEvents(){
   // Pan with middle-click drag or space+drag
   var panning=false,pStartX,pStartY;
   canvasEl.addEventListener('mousedown',function(e){
-    if(e.target===canvasEl||e.target===svgEl||(e.button===1)){
+    if(e.target===canvasEl||e.target===svgEl||e.target===worldEl||(e.button===1)){
       panning=true;pStartX=e.clientX-state.canvasPanX;pStartY=e.clientY-state.canvasPanY;
       canvasEl.style.cursor='grabbing';
     }
@@ -10197,7 +10327,7 @@ function setupCanvasEvents(){
   document.addEventListener('mousemove',function(e){
     if(state.isDragging&&state.dragNode){
       var cRect=canvasEl.getBoundingClientRect();
-      var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-state.dragOffY/state.canvasZoom;
+      var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-state.dragOffX/state.canvasZoom;
       var y=(e.clientY-cRect.top-state.canvasPanY)/state.canvasZoom-state.dragOffY/state.canvasZoom;
       var nid=state.dragNode.getAttribute('data-nid');
       var n=state.canvasNodes.find(function(n){return n.id===nid});
@@ -10238,17 +10368,17 @@ function setupCanvasEvents(){
 }
 
 function renderCanvas(){
-  if(!canvasEl)return;
+  if(!canvasEl||!worldEl)return;
 
-  // Update transform
-  canvasEl.style.transformOrigin='0 0';
-  canvasEl.style.transform='translate('+state.canvasPanX+'px,'+state.canvasPanY+'px) scale('+state.canvasZoom+')';
+  // 只变换「世界层」，工具栏/素材抽屉保持固定
+  worldEl.style.transformOrigin='0 0';
+  worldEl.style.transform='translate('+state.canvasPanX+'px,'+state.canvasPanY+'px) scale('+state.canvasZoom+')';
 
   // Zoom indicator
   $('#zoomIndicator').textContent=Math.round(state.canvasZoom*100)+'%';
 
   // Remove old nodes
-  $$('.cn-node').forEach(function(n){n.remove()});
+  $$('#canvasWorld .cn-node').forEach(function(n){n.remove()});
 
   // Render nodes
   state.canvasNodes.forEach(function(n){
@@ -10259,17 +10389,30 @@ function renderCanvas(){
     var typeClass={'src':'src','ins':'ins','tool':'tool','note':'note'}[n.type]||'';
     var bodyHtml=n.body?'<div class="cn-body">'+escHtml(n.body)+'</div>':'';
     var subHtml=n.sub?'<div style="font-size:10.5px;color:var(--muted)">'+escHtml(n.sub)+'</div>':'';
+    var filterHtml=(n.type==='src'&&n.filterSummary)?'<div class="cn-filter"><span class="cf-cap">已筛</span>'+escHtml(n.filterSummary)+'</div>':'';
     el.innerHTML=
+      '<div class="cn-close" title="移除该卡片">✕</div>'+
       '<div class="cn-type '+typeClass+'">'+typeLabel+'</div>'+
       '<div class="cn-title">'+escHtml(n.title)+'</div>'+
-      subHtml+bodyHtml+
+      subHtml+bodyHtml+filterHtml+
       '<div class="cn-port cn-port-left" title="连线入口"></div>'+
       '<div class="cn-port" title="连线出口"></div>';
-    canvasEl.appendChild(el);
+    worldEl.appendChild(el);
 
-    // Double click to edit title/body
-    el.addEventListener('dblclick',function(){
-      var newT=prompt('编辑标题:',n.title);if(newT&&newT.trim()){n.title=newT.trim();saveCanvasState();renderCanvas();}
+    // 移除卡片
+    el.querySelector('.cn-close').addEventListener('click',function(ev){
+      ev.stopPropagation();ev.preventDefault();
+      state.canvasNodes=state.canvasNodes.filter(function(x){return x.id!==n.id;});
+      state.canvasLines=state.canvasLines.filter(function(l){return l.from!==n.id&&l.to!==n.id;});
+      saveCanvasState();renderCanvas();
+      if(state.drawerAll) renderDrawer(getPurpose(state.ws,state.purposeId)); // 刷新"已加入"标记
+    });
+
+    // 单击：src 型 → 弹出数据源筛选；其余类型 → 弹出节点详情（介绍 / 编辑）
+    el.addEventListener('click',function(ev){
+      if(ev.target.closest('.cn-close')||ev.target.closest('.cn-port')) return;
+      if(n.type==='src' && n.sourceId){ openSourceFilter(n.sourceId); }
+      else { openNodeDetail(n); }
     });
   });
 
@@ -10277,21 +10420,56 @@ function renderCanvas(){
   renderCanvasLines();
 }
 
+// 画布节点详情弹窗：数据源→筛选（由单击直接调 openSourceFilter）；
+// 洞察/工具/框架/领先用户→只读「介绍」；批注→可编辑标题与内容
+var NODE_TYPE_LABEL={'src':'数据源','ins':'洞察','tool':'工具','note':'批注','fw':'分析框架','lf':'领先用户','idea':'创意'};
+function openNodeDetail(n){
+  var ov=document.getElementById('nodeModal');
+  if(!ov){
+    ov=document.createElement('div');ov.className='modal-overlay';ov.id='nodeModal';
+    ov.innerHTML='<div class="modal-box" id="nodeModalBox"></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.classList.remove('show'); });
+  }
+  var box=ov.querySelector('#nodeModalBox');
+  var typeLabel=NODE_TYPE_LABEL[n.type]||'卡片';
+  var editable=(n.type==='note');
+  var html='';
+  html+='<div class="mb-title">'+escHtml(n.title||'未命名卡片')+'</div>';
+  html+='<div class="mb-sub"><span class="cn-type '+n.type+'">'+typeLabel+'</span>'+(n.sub?(' · '+escHtml(n.sub)):'')+'</div>';
+  if(editable){
+    html+='<div class="mb-field"><div class="mb-label">标题</div><input class="mb-textarea" id="nmTitle" style="min-height:38px" value="'+escHtml(n.title||'')+'"></div>';
+    html+='<div class="mb-field"><div class="mb-label">内容</div><textarea class="mb-textarea" id="nmBody">'+escHtml(n.body||'')+'</textarea></div>';
+    html+='<div class="mb-actions"><button class="mb-close" onclick="closeNodeModal()">取消</button><button class="mb-copy" onclick="saveNodeDetail(\''+n.id+'\')">保存</button></div>';
+  }else{
+    html+='<div class="mb-field"><div class="mb-label">介绍</div><textarea class="mb-textarea" style="min-height:120px" readonly>'+(escHtml(n.body||'（暂无介绍内容）'))+'</textarea></div>';
+    html+='<div class="mb-actions"><button class="mb-copy" onclick="closeNodeModal()">知道了</button></div>';
+  }
+  box.innerHTML=html;
+  ov.classList.add('show');
+}
+function closeNodeModal(){ var ov=document.getElementById('nodeModal'); if(ov) ov.classList.remove('show'); }
+function saveNodeDetail(nid){
+  var n=state.canvasNodes.find(function(x){return x.id===nid;}); if(!n) return;
+  var t=document.getElementById('nmTitle'), b=document.getElementById('nmBody');
+  if(t) n.title=t.value.trim()||'批注';
+  if(b) n.body=b.value;
+  saveCanvasState();renderCanvas();closeNodeModal();toast('已保存');
+}
+
 function renderCanvasLines(){
-  if(!svgEl)return;
+  if(!svgEl||!worldEl)return;
   svgEl.innerHTML=''; // Clear
 
-  // Get node positions (need to account for transform)
+  // 直接在「世界坐标」里取节点锚点（节点已按 n.x/n.y 绝对定位在 world 层）
   var getNodeCenter=function(nid){
-    var el=$('.cn-node[data-nid="'+nid+'"]');
-    if(!el)return null;
-    var rect=el.getBoundingClientRect();
-    var cRect=canvasEl.getBoundingClientRect();
+    var n=state.canvasNodes.find(function(x){return x.id===nid;});
+    if(!n)return null;
+    var el=worldEl.querySelector('.cn-node[data-nid="'+nid+'"]');
+    var w=el?el.offsetWidth:200, h=el?el.offsetHeight:60;
     return{
-      rx:(rect.left+rect.width-cRect.left-state.canvasPanX)/state.canvasZoom,
-      ry:(rect.top+rect.height/2-cRect.top-state.canvasPanY)/state.canvasZoom,
-      lx:(rect.left-cRect.left-state.canvasPanX)/state.canvasZoom,
-      ly:(rect.top+rect.height/2-cRect.top-state.canvasPanY)/state.canvasZoom
+      rx:n.x+w, ry:n.y+h/2,   // 右锚点（出口）
+      lx:n.x,   ly:n.y+h/2    // 左锚点（入口）
     };
   };
 
@@ -10302,7 +10480,7 @@ function renderCanvasLines(){
     // Bezier curve: right edge of "from" -> left edge of "to"
     var dx=to.lx-from.rx;
     var cx1=from.rx+dx*.45,cy1=from.ry;
-    var cx2=to.lx-dx*.45,cy2=to.ty;
+    var cx2=to.lx-dx*.45,cy2=to.ly;
 
     var path=document.createElementNS('http://www.w3.org/2000/svg','path');
     path.setAttribute('d','M'+from.rx+','+from.ry+' C'+cx1+','+cy1+' '+cx2+','+cy2+' '+to.lx+','+to.ly);
@@ -10312,7 +10490,7 @@ function renderCanvasLines(){
     svgEl.appendChild(path);
 
     // Endpoint dots
-    [from.rx,from.ry],[to.lx,to.ty].forEach(function(pt){
+    [from.rx,from.ry],[to.lx,to.ly].forEach(function(pt){
       var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
       c.setAttribute('cx',pt[0]);c.setAttribute('cy',pt[1]);c.setAttribute('r','3.5');
       c.setAttribute('fill','#0891B2');
@@ -10338,6 +10516,64 @@ function clearCanvas(){
 function toggleDrawer(){
   var d=$('#matDrawer');state.drawerOpen=!state.drawerOpen;
   d.style.display=state.drawerOpen?'block':'none';
+  document.body.classList.toggle('fs-drawer-collapsed',!state.drawerOpen);
+}
+function toggleTools(){
+  state.toolsOpen=!state.toolsOpen;
+  document.body.classList.toggle('fs-tools-collapsed',!state.toolsOpen);
+}
+
+// 一键整理：按类型分列排成整洁网格（起始位置避开左侧素材抽屉；全屏时左留更小）
+function organizeCanvas(silent){
+  if(!state.canvasNodes.length){ if(!silent) toast('画布为空，无可整理'); return; }
+  var cols={src:[],ins:[],tool:[],note:[]};
+  state.canvasNodes.forEach(function(n){(cols[n.type]||cols.note).push(n);});
+  var order=['src','ins','tool','note'];
+  var isFs=document.body.classList.contains('canvas-fullscreen');
+  var startX=isFs?80:300, startY=70, colGap=360, rowGap=170;
+  order.forEach(function(t,ci){
+    cols[t].forEach(function(n,ri){
+      n.x=startX+ci*colGap;
+      n.y=startY+ri*rowGap;
+    });
+  });
+  state.canvasPanX=0;state.canvasPanY=0;state.canvasZoom=1;
+  saveCanvasState();renderCanvas();
+  if(!silent) toast('已整理布局');
+}
+
+// 全屏 = 整个浏览器窗口（非区域全屏），ESC 退出
+function toggleCanvasFullscreen(){
+  var root=document.documentElement;
+  var req=root.requestFullscreen||root.webkitRequestFullscreen||root.mozRequestFullScreen;
+  var exit=document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen;
+  if(!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement){
+    if(req) req.call(root);
+  }else{
+    if(exit) exit.call(document);
+  }
+}
+
+// 全屏切换：进入即全沉浸（隐藏侧边栏/顶栏），仅显示画布 + 主题研究标题；退出还原
+function syncCanvasFullscreen(){
+  var fs=document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement;
+  var isFs=!!fs;
+  document.body.classList.toggle('canvas-fullscreen',isFs);
+  if(isFs){
+    var p=getPurpose(state.ws,state.purposeId);
+    var title=(p&&p.name)||state.purposeId||'未命名研究';
+    var tag=(p&&p.ws==='ops')?'运营目的':'用户洞察';
+    $('#canvasFsTitle').innerHTML='<span class="fs-tag">'+escHtml(tag)+'</span>主题研究：'+escHtml(title);
+  } else {
+    document.body.classList.remove('fs-drawer-collapsed','fs-tools-collapsed');
+    state.drawerOpen=true;state.toolsOpen=true;
+  }
+}
+if(!window.__canvasFsBound){
+  document.addEventListener('fullscreenchange',syncCanvasFullscreen);
+  document.addEventListener('webkitfullscreenchange',syncCanvasFullscreen);
+  document.addEventListener('mozfullscreenchange',syncCanvasFullscreen);
+  window.__canvasFsBound=true;
 }
 
 function saveCanvasState(){
@@ -10355,20 +10591,27 @@ function loadCanvasState(){
 function onDrawerDrag(e){
   e.dataTransfer.setData('text/plain',JSON.stringify({type:e.target.dataset.type,id:e.target.dataset.id,idx:e.target.dataset.idx}));
 }
-canvasEl&&(canvasEl.addEventListener('dragover',function(e){e.preventDefault()}));
-canvasEl&&(canvasEl.addEventListener('drop',function(e){
-  e.preventDefault();
-  try{
-    var d=JSON.parse(e.dataTransfer.getData('text/plain'));
-    var cRect=canvasEl.getBoundingClientRect();
-    var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-70;
-    var y=(e.clientY-cRect.top-state.canvasPanY)/state.canvasZoom-30;
-    if(d.type==='src'){var s=getSource(d.id);if(s){state.canvasNodes.push({id:'n-src-d-'+Date.now(),x:x,y:y,type:'src',title:s.name,sub:d.id,sourceId:d.id});}}
-    else if(d.type==='ins'){var ins=(getInsights(state.purposeId)||[])[parseInt(d.idx)];if(ins){state.canvasNodes.push({id:'n-ins-d-'+Date.now(),x:x,y:y,type:'ins',title:ins.title,body:ins.body});}}
-    else if(d.type==='note'){state.canvasNodes.push({id:'n-note-d-'+Date.now(),x:x,y:y,type:'note',title:'批注',body:''});}
-    saveCanvasState();renderCanvas();toast('已添加到画布');
-  }catch(err){console.error(err);}
-}));
+
+// 绑定拖放（在 renderCanvasArea 内、canvasEl 已就绪后调用，仅绑定一次）
+function bindCanvasDrop(){
+  if(state._canvasDropBound||!canvasEl) return;
+  state._canvasDropBound=true;
+  canvasEl.addEventListener('dragover',function(e){e.preventDefault();});
+  canvasEl.addEventListener('drop',function(e){
+    e.preventDefault();
+    try{
+      var d=JSON.parse(e.dataTransfer.getData('text/plain'));
+      var cRect=canvasEl.getBoundingClientRect();
+      var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-70;
+      var y=(e.clientY-cRect.top-state.canvasPanY)/state.canvasZoom-30;
+      if(d.type==='src'){var s=getSource(d.id);if(s){state.canvasNodes.push({id:'n-src-d-'+Date.now(),x:x,y:y,type:'src',title:s.name,sub:d.id,sourceId:d.id});}}
+      else if(d.type==='ins'){var ins=(getInsights(state.purposeId)||[])[parseInt(d.idx)];if(ins){state.canvasNodes.push({id:'n-ins-d-'+Date.now(),x:x,y:y,type:'ins',title:ins.title,body:ins.body});}}
+      else if(d.type==='note'){state.canvasNodes.push({id:'n-note-d-'+Date.now(),x:x,y:y,type:'note',title:'批注',body:''});}
+      saveCanvasState();renderCanvas();toast('已添加到画布');
+      if(state.drawerAll) renderDrawer(getPurpose(state.ws,state.purposeId)); // 刷新"已加入"标记
+    }catch(err){console.error(err);}
+  });
+}
 
 // ============================================================
 // MODE TOGGLE (截图2)
@@ -11683,7 +11926,7 @@ if(typeof initFloatBar==='function') initFloatBar();
         '<input type="checkbox" class="cart-chk" '+(x._sel!==false?'checked':'')+' data-id="'+x.id+'">'+
         '<div class="cart-item-info"><div class="cart-item-src">'+esc(x.source)+'</div>'+
         '<div class="cart-item-filter">'+esc(x.filter||'全部')+'</div>'+
-        '<div class="cart-item-meta">'+x.count+' 条 · '+d+'</div></div>'+
+        '<div class="cart-item-meta">'+(x.docType?'文档 · ':'')+x.count+' 条 · '+d+'</div></div>'+
         '<button class="cart-item-del" data-id="'+x.id+'" title="移除">✕</button></div></div>';
     }).join('');
     body.querySelectorAll('.cart-chk').forEach(function(c){ c.addEventListener('change',function(){ var id=c.dataset.id; var arr=get(); var it=arr.find(function(z){return z.id===id;}); if(it){it._sel=c.checked; set(arr);} updateDlLabel(); selAll.checked=arr.every(function(z){return z._sel!==false;}); }); });
@@ -11695,9 +11938,21 @@ if(typeof initFloatBar==='function') initFloatBar();
     var a=get(); var sel=a.filter(function(z){return z._sel!==false;});
     if(!sel.length){ ctoast('请先勾选要下载的项'); return; }
     var ts=stamp();
-    if(fmt==='json'){ var blob=new Blob([JSON.stringify(sel,null,2)],{type:'application/json'}); saveBlob(blob,'cih_export_'+ts+'.json'); ctoast('已下载 JSON（'+sel.length+' 组）'); }
-    else if(fmt==='multi'){ sel.forEach(function(x,i){ var csv=toCSV(x.items,x.columns); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); setTimeout(function(){saveBlob(blob,safeName(x.source+'_'+x.filter)+'_'+ts+'.csv');},i*400); }); ctoast('已分批下载 '+sel.length+' 个 CSV'); }
-    else { var cols=unionCols(sel); var rows=mergeRows(sel); var csv=toCSV(rows,cols); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); saveBlob(blob,'cih_export_merge_'+ts+'.csv'); ctoast('已下载合并 CSV（'+rows.length+' 行）'); }
+    // 文档型数据源：单独导出 .md
+    var docs = sel.filter(function(z){return z.docType;});
+    var tabs = sel.filter(function(z){return !z.docType;});
+    if(docs.length){
+      docs.forEach(function(x,i){
+        var md = (x.docContent||'');
+        var blob=new Blob([md],{type:'text/markdown;charset=utf-8'});
+        setTimeout(function(){ saveBlob(blob, safeName(x.source+'_'+x.filter)+'_'+ts+'.md'); }, i*400);
+      });
+      ctoast('已下载文档 '+docs.length+' 个 .md');
+    }
+    if(!tabs.length) return;
+    if(fmt==='json'){ var blob=new Blob([JSON.stringify(tabs,null,2)],{type:'application/json'}); saveBlob(blob,'cih_export_'+ts+'.json'); ctoast('已下载 JSON（'+tabs.length+' 组）'); }
+    else if(fmt==='multi'){ tabs.forEach(function(x,i){ var csv=toCSV(x.items,x.columns); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); setTimeout(function(){saveBlob(blob,safeName(x.source+'_'+x.filter)+'_'+ts+'.csv');},i*400); }); ctoast('已分批下载 '+tabs.length+' 个 CSV'); }
+    else { var cols=unionCols(tabs); var rows=mergeRows(tabs); var csv=toCSV(rows,cols); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); saveBlob(blob,'cih_export_merge_'+ts+'.csv'); ctoast('已下载合并 CSV（'+rows.length+' 行）'); }
   }
   fab.addEventListener('click',open);
   document.getElementById('cartClose').addEventListener('click',close);

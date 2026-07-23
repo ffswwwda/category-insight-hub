@@ -211,6 +211,31 @@
   .kv .v{color:var(--ink)}
   .empty{padding:50px 20px;text-align:center;color:var(--muted)}
   .section-gap{margin-bottom:16px}
+
+  /* 可视化分段切换 */
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .panel-head h3{margin:0}
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:9px;overflow:hidden;background:var(--panel-2)}
+  .seg button{border:0;background:transparent;padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s}
+  .seg button.on{background:var(--rad-grad);color:#fff}
+  .vchart{padding:6px 2px}
+  .vtitle{font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:10px}
+  .vbar{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+  .vlab{width:230px;flex:0 0 230px;font-size:11.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vtrack{flex:1;height:14px;background:var(--line);border-radius:6px;overflow:hidden}
+  .vfill{display:block;height:100%;background:var(--rad-grad);border-radius:6px;transition:width .4s}
+  .vnum{width:64px;text-align:right;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* 视图图层多选 + 批量条 */
+  .vl-item.selected{background:var(--accent-weak);border-color:#c9b8f0}
+  .vl-check{width:15px;height:15px;flex:0 0 15px;margin:0 2px 0 0;cursor:pointer;accent-color:#7c3aed}
+  .vl-batch{margin-top:12px;border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--panel-2);position:sticky;bottom:0}
+  .vl-batch-info{font-size:12px;color:var(--ink-2);margin-bottom:10px}
+  .vl-batch-info b{color:var(--accent)}
+  .vl-batch-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .vl-batch-actions button{border:1px solid var(--border);background:#fff;color:var(--ink-2);padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+  .vl-batch-actions button:hover{border-color:var(--accent)}
+  .vl-batch-actions button.primary{background:var(--rad-grad);color:#fff;border:0}
 </style>
 </head>
 <body>
@@ -253,6 +278,16 @@
     <div class="view-layers" id="viewLayers">
       <div class="vl-head"><span>📑 视图图层</span><span class="vl-count" id="vlCount">0</span></div>
       <div class="vl-list" id="vlList"><div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div></div>
+    </div>
+
+    <div class="vl-batch" id="vlBatch" style="display:none">
+      <div class="vl-batch-info">已选 <b id="vlSelCount">0</b> 个视图</div>
+      <div class="vl-batch-actions">
+        <button type="button" id="vlBatchAll">全选</button>
+        <button type="button" id="vlBatchAdd" class="primary">批量加入购物车</button>
+        <button type="button" id="vlBatchDl">批量下载</button>
+        <button type="button" id="vlBatchClear">取消</button>
+      </div>
     </div>
 
     <div class="sidebar-foot">
@@ -338,8 +373,14 @@
       </div>
 
       <div class="panel">
-        <h3>原始商品数据 <span class="sub">点击任意行展开详情</span></h3>
-        <div class="table-wrap">
+        <div class="panel-head">
+          <h3>原始商品数据 <span class="sub" id="rawSub">点击任意行展开详情</span></h3>
+          <div class="seg" id="rawSeg">
+            <button type="button" data-mode="table" class="on">表格</button>
+            <button type="button" data-mode="chart">图表</button>
+          </div>
+        </div>
+        <div class="table-wrap" id="rawTableView">
           <table>
             <thead>
               <tr>
@@ -349,6 +390,7 @@
             <tbody id="raw-body"></tbody>
           </table>
         </div>
+        <div id="rawChartView" style="display:none"></div>
       </div>
 
       <div class="empty" id="empty-state" style="display:none">没有符合当前筛选条件的商品，试试放宽条件。</div>
@@ -687,6 +729,8 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     renderDist(arr);
     renderLowStar(arr);
     renderTable(arr);
+    if(_rawMode === 'chart') renderViz(arr);
+    $("#rawSub").textContent = (_rawMode === 'chart' ? '图表视图（销量 TOP 15）' : '点击任意行展开详情');
     // 同步排序下拉
     $("#sort-sel").value = state.sort;
   }
@@ -841,6 +885,7 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
   function deleteView(id, e){
     if(e)e.stopPropagation();
     SAVED_VIEWS = SAVED_VIEWS.filter(function(v){return v.id!==id;});
+    _vlSel.delete(id); updateVlBatch();
     if(ACTIVE_VIEW_ID===id) ACTIVE_VIEW_ID=null;
     renderViewLayers();
   }
@@ -866,7 +911,9 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     }
     list.innerHTML = SAVED_VIEWS.map(function(v){
       var isActive=(v.id===ACTIVE_VIEW_ID);
-      return '<div class="vl-item'+(isActive?' active':'')+'" data-vid="'+v.id+'" role="button" tabindex="0">'+
+      var isSel=_vlSel.has(v.id);
+      return '<div class="vl-item'+(isActive?' active':'')+(isSel?' selected':'')+'" data-vid="'+v.id+'" role="button" tabindex="0">'+
+        '<input type="checkbox" class="vl-check" data-vid="'+v.id+'"'+(isSel?' checked':'')+'>'+
         '<span class="vl-dot"></span>'+
         '<span class="vl-name" title="'+escapeHtml(v.name)+'">'+escapeHtml(v.name)+'</span>'+
         '<span class="vl-meta">'+v.hitCount+'款</span>'+
@@ -893,8 +940,9 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
 
   // 视图图层点击委托（vl-item 点击 = 加载视图）
   $("#vlList").addEventListener("click", function(e){
-    // 点了删除按钮时不触发视图切换（由内联 onclick 处理）
+    // 点了删除按钮或复选框时不触发视图切换
     if(e.target.closest('.vl-del')) return;
+    if(e.target.closest('.vl-check')) return;
     var item = e.target.closest('.vl-item');
     if(!item) return;
     var vid = Number(item.dataset.vid);
@@ -936,11 +984,13 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     {key:'size',label:'尺寸'},{key:'launch',label:'上架'},{key:'catPath',label:'类目路径'}
   ];
   // ── 购物车状态管理 ──
-  var _cartAddedFilter = ''; // 记录当前已加入购物车的筛选指纹
+  var _cartAddedKeys = new Set(); // 已加入购物车的视图指纹集合（支持多视图独立状态）
+  var _vlSel = new Set();         // 视图图层多选集合
+  var _rawMode = 'table';         // 原始数据面板：表格 / 图表
   function updateCartButtonState(){
     var btn = document.getElementById('cartBtn');
     var curFp = generateViewName();
-    if(_cartAddedFilter && _cartAddedFilter === curFp){
+    if(_cartAddedKeys.has(curFp)){
       btn.classList.add('cart-added');
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M20 6L9 17l-5-5"/></svg>已加入购物车';
     } else {
@@ -974,7 +1024,7 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     };
     // 通知父窗口（主站购物车面板）。同源 iframe 下也直接写 localStorage，父窗口会刷新
     try{ window.parent.postMessage({type:'cih-cart-add', item:item}, '*'); }catch(e){}
-    _cartAddedFilter = generateViewName();
+    _cartAddedKeys.add(generateViewName());
     updateCartButtonState();
     if(window.parent===window){
       // 独立打开（非 iframe）时降级：直接写共享 localStorage
@@ -990,6 +1040,121 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     }
   }
   $("#cartBtn").addEventListener("click", addToCart);
+
+  // ---- 可视化（表格/图表切换）----
+  function renderViz(arr){
+    var top = arr.slice().sort(function(a,b){return (b.sales||0)-(a.sales||0);}).slice(0,15);
+    var max = Math.max(1, Math.max.apply(null, top.map(function(r){return r.sales||0;})));
+    var rows = top.map(function(r){
+      var t = (r.title||'');
+      if(t.length>30) t = t.slice(0,29)+'…';
+      var w = Math.round((r.sales||0)/max*100);
+      return '<div class="vbar"><span class="vlab" title="'+escAttr(r.title)+'">'+escapeHtml(t)+'</span>'+
+        '<span class="vtrack"><span class="vfill" style="width:'+w+'%"></span></span>'+
+        '<span class="vnum">'+(r.sales||0)+'</span></div>';
+    }).join('');
+    $("#rawChartView").innerHTML = '<div class="vchart"><div class="vtitle">销量 TOP 15（当前筛选）</div>'+(rows||'<div class="empty">无数据</div>')+'</div>';
+  }
+  (function bindRawSeg(){
+    var seg = $("#rawSeg"); if(!seg) return;
+    seg.addEventListener('click', function(e){
+      var b = e.target.closest('button[data-mode]'); if(!b) return;
+      _rawMode = b.dataset.mode;
+      Array.prototype.forEach.call(seg.querySelectorAll('button'), function(x){ x.classList.toggle('on', x===b); });
+      $("#rawTableView").style.display = (_rawMode==='table') ? '' : 'none';
+      $("#rawChartView").style.display = (_rawMode==='chart') ? '' : 'none';
+      if(_rawMode==='chart') renderViz(filtered());
+      $("#rawSub").textContent = (_rawMode==='chart' ? '图表视图（销量 TOP 15）' : '点击任意行展开详情');
+    });
+  })();
+
+  // ---- 视图图层多选 + 批量 ----
+  function updateVlBatch(){
+    var n=_vlSel.size;
+    var c=$("#vlSelCount"); if(c) c.textContent=n;
+    var bar=$("#vlBatch"); if(bar) bar.style.display = (n>0) ? '' : 'none';
+  }
+  function toggleVlSel(id, on){ if(on) _vlSel.add(id); else _vlSel.delete(id); updateVlBatch(); }
+  $("#vlList").addEventListener('change', function(e){
+    var cb = e.target.closest('.vl-check'); if(!cb) return;
+    toggleVlSel(Number(cb.dataset.vid), cb.checked);
+  });
+  // 计算某视图（不改动全局状态）筛选后的商品行
+  function computeViewItems(v){
+    var savedF = JSON.stringify(state.facets), savedS = state.sort;
+    var savedC = {}; Object.keys(chipState).forEach(function(k){ savedC[k]=chipState[k]; });
+    state.facets = cloneFacets(v.facets); state.sort = v.sort||'sales_desc';
+    Object.keys(chipState).forEach(function(k){ chipState[k]=false; });
+    Object.keys(v.chipState||{}).forEach(function(k){ if(v.chipState[k]) chipState[k]=true; });
+    var arr = filtered();
+    state.facets = JSON.parse(savedF); state.sort = savedS;
+    Object.keys(chipState).forEach(function(k){ chipState[k] = savedC[k]||false; });
+    return arr;
+  }
+  function csvCell(v){ v = (v==null?'':String(v)); if(/[",\n]/.test(v)) v = '"'+v.replace(/"/g,'""')+'"'; return v; }
+  function downloadBlob(name, content, mime){
+    try{
+      var blob = new Blob([content], {type:mime||'text/plain;charset=utf-8'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href=url; a.download=name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 120);
+    }catch(e){ toast('下载失败：'+((e&&e.message)||e)); }
+  }
+  // 独立打开时写共享 localStorage 购物车（供主站读取）
+  function pushLocalCart(item){
+    var key='cih_cart_v1', a=[];
+    try{ a=JSON.parse(localStorage.getItem(key))||[]; }catch(e){}
+    var dup=a.find(function(x){return x.source===item.source && x.filter===item.filter;});
+    if(dup){ dup.items=item.items; dup.count=item.count; dup.addedAt=item.addedAt; }
+    else a.push(item);
+    try{ localStorage.setItem(key, JSON.stringify(a)); }catch(e){}
+  }
+  function batchAddToCart(){
+    if(!_vlSel.size){ toast('请先勾选视图'); return; }
+    var added=0;
+    SAVED_VIEWS.forEach(function(v){
+      if(!_vlSel.has(v.id)) return;
+      var items = computeViewItems(v).map(function(r){ var o={}; CART_COLUMNS.forEach(function(c){ o[c.key]=r[c.key]; }); return o; });
+      var item = {
+        id:'cart_'+Date.now()+'_'+v.id+'_'+Math.floor(Math.random()*9999),
+        source:'德国站 · 男性倒模', sourceKey:'de', filter:v.name, count:items.length,
+        addedAt:new Date().toISOString(), columns:CART_COLUMNS, items:items, _sel:true
+      };
+      try{ window.parent.postMessage({type:'cih-cart-add', item:item}, '*'); }catch(e){}
+      if(window.parent===window) pushLocalCart(item);
+      _cartAddedKeys.add(v.name);
+      added++;
+    });
+    toast('已批量加入 '+added+' 个视图到购物车');
+    updateCartButtonState();
+  }
+  function batchDownload(){
+    if(!_vlSel.size){ toast('请先勾选视图'); return; }
+    var cols = CART_COLUMNS, rows=[];
+    SAVED_VIEWS.forEach(function(v){
+      if(!_vlSel.has(v.id)) return;
+      var items = computeViewItems(v).map(function(r){ var o={}; cols.forEach(function(c){ o[c.key]=r[c.key]; }); return o; });
+      items.forEach(function(it){ it.__view=v.name; rows.push(it); });
+    });
+    if(!rows.length){ toast('所选视图无数据'); return; }
+    var header = ['视图'].concat(cols.map(function(c){return c.label;}));
+    var lines = [header.join(',')];
+    rows.forEach(function(it){
+      var cells = [csvCell(it.__view)].concat(cols.map(function(c){return csvCell(it[c.key]);}));
+      lines.push(cells.join(','));
+    });
+    downloadBlob('德国站-多视图-'+rows.length+'条.csv', '﻿'+lines.join('\n'), 'text/csv;charset=utf-8');
+  }
+  // 批量按钮绑定
+  $("#vlBatchAdd").addEventListener('click', batchAddToCart);
+  $("#vlBatchDl").addEventListener('click', batchDownload);
+  $("#vlBatchClear").addEventListener('click', function(){ _vlSel.clear(); renderViewLayers(); updateVlBatch(); });
+  $("#vlBatchAll").addEventListener('click', function(){
+    var all = SAVED_VIEWS.length>0 && SAVED_VIEWS.every(function(v){return _vlSel.has(v.id);});
+    if(all) _vlSel.clear(); else SAVED_VIEWS.forEach(function(v){ _vlSel.add(v.id); });
+    renderViewLayers(); updateVlBatch();
+  });
 
   // ---- 初始化 ----
   renderChips();
