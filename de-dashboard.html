@@ -229,13 +229,17 @@
   /* 视图图层多选 + 批量条 */
   .vl-item.selected{background:var(--accent-weak);border-color:#c9b8f0}
   .vl-check{width:15px;height:15px;flex:0 0 15px;margin:0 2px 0 0;cursor:pointer;accent-color:#7c3aed}
-  .vl-batch{margin-top:12px;border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--panel-2);position:sticky;bottom:0}
-  .vl-batch-info{font-size:12px;color:var(--ink-2);margin-bottom:10px}
+  .vl-batch{margin-top:12px;border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--panel-2);position:sticky;bottom:0;display:flex;flex-direction:column;gap:9px}
+  .vl-batch-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .vl-batch-info{font-size:12px;color:var(--ink-2)}
   .vl-batch-info b{color:var(--accent)}
-  .vl-batch-actions{display:flex;flex-wrap:wrap;gap:8px}
-  .vl-batch-actions button{border:1px solid var(--border);background:#fff;color:var(--ink-2);padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
-  .vl-batch-actions button:hover{border-color:var(--accent)}
-  .vl-batch-actions button.primary{background:var(--rad-grad);color:#fff;border:0}
+  .vl-batch-cancel{background:transparent;border:0;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;padding:3px 8px;border-radius:6px;transition:.15s}
+  .vl-batch-cancel:hover{color:var(--ink-2);background:var(--panel)}
+  .vl-batch-primary{width:100%;border:0;background:var(--rad-grad);color:#fff;padding:9px 12px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(0,195,243,.2);transition:.15s}
+  .vl-batch-primary:hover{box-shadow:0 3px 14px rgba(0,195,243,.32)}
+  .vl-batch-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .vl-batch-row button{border:1px solid var(--border);background:var(--panel);color:var(--ink-2);padding:8px 10px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+  .vl-batch-row button:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -281,12 +285,14 @@
     </div>
 
     <div class="vl-batch" id="vlBatch" style="display:none">
-      <div class="vl-batch-info">已选 <b id="vlSelCount">0</b> 个视图</div>
-      <div class="vl-batch-actions">
+      <div class="vl-batch-head">
+        <div class="vl-batch-info">已选 <b id="vlSelCount">0</b> 个视图</div>
+        <button type="button" id="vlBatchClear" class="vl-batch-cancel">取消</button>
+      </div>
+      <button type="button" id="vlBatchAdd" class="vl-batch-primary">批量加入购物车</button>
+      <div class="vl-batch-row">
         <button type="button" id="vlBatchAll">全选</button>
-        <button type="button" id="vlBatchAdd" class="primary">批量加入购物车</button>
         <button type="button" id="vlBatchDl">批量下载</button>
-        <button type="button" id="vlBatchClear">取消</button>
       </div>
     </div>
 
