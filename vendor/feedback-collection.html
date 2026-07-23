@@ -167,8 +167,10 @@
   .cgroup-fill{height:100%;border-radius:4px;background:var(--rad-grad)}
   .cgroup-docs{margin-top:10px;display:none;flex-direction:column;gap:5px}
   .cgroup.open .cgroup-docs{display:flex}
-  .cgroup-docs .cd{font-size:12px;color:var(--ink-2);padding:5px 10px;background:var(--panel-2);border-radius:7px;border:1px solid var(--border)}
+  .cgroup-docs .cd{font-size:12px;color:var(--ink-2);padding:5px 10px;background:var(--panel-2);border-radius:7px;border:1px solid var(--border);display:flex;gap:7px;align-items:baseline}
   .cgroup-docs .cd:hover{border-color:var(--accent);color:var(--accent)}
+  .cgroup-docs .cd .ctag{flex:none;font-size:10px;color:#7c3aed;background:rgba(168,85,247,.1);padding:1px 6px;border-radius:6px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cgroup-docs .cd .ctext{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 
   .doc{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:var(--radius);padding:15px 17px 15px 20px;margin-bottom:12px;cursor:pointer;box-shadow:var(--shadow);transition:.18s;position:relative;overflow:hidden}
   .doc::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:3px;background:var(--rad-grad)}
@@ -413,15 +415,129 @@ function dimValue(d, dim){
   }
   return null;
 }
-const DIM_LABELS = {board:'子看板',source:'来源',market:'市场',year:'年份',scale:'记录规模',ailabel:'AI意图分类',rating:'评分档位'};
+const DIM_LABELS = {board:'子看板',source:'来源',market:'市场',year:'年份',scale:'记录规模',ailabel:'AI意图分类',rating:'评分档位',
+  ctopic:'投诉主题',cprod:'评论商品',cchan:'评论渠道',ctype:'评论类型',mintent:'邮件意图',mstore:'邮件店铺',mdir:'往来方向'};
 function dimLabel(d){ return DIM_LABELS[d]||d; }
 
+/* ===== 内容聚类维度（基于真实数据列，而非文档元数据） ===== */
+const CONTENT_DIMS = ['ctopic','cprod','cchan','ctype','mintent','mstore','mdir'];
+
+function headerOf(d){
+  // 不同子看板的真实表头位置不一致：客诉在 sample[0]，评论/邮件在 cols。
+  // 取「含表头特征词更多」的那一份作为权威表头。
+  const HDR_RE=/内容|商品|类型|渠道|评分|一级分类|二级分类|客诉|反馈|描述|summary|label|subject|store|direction|body|from|to|id|date|邮箱|订单|用户|时间|分类|问题|要求|文字|店铺|SKU|收货|物流/i;
+  const c=(d.cols||[]); const s0=(d.sample&&d.sample[0])||[];
+  const sc=c.filter(x=>x&&HDR_RE.test(String(x))).length;
+  const ss=s0.filter(x=>x&&HDR_RE.test(String(x))).length;
+  return (ss>sc)? s0 : c;
+}
+function colIdxList(d, re){
+  return headerOf(d).map((c,i)=>({c:(c||'').trim(),i})).filter(o=>re.test(o.c)).map(o=>o.i);
+}
+// 返回数据行（自动剔除作为表头的 sample[0]，若其确为表头）
+function dataRows(d){
+  const s=d.sample||[];
+  if(s.length && headerOf(d)===s[0]) return s.slice(1);
+  return s;
+}
+const COMPLAINT_CANON=['产品问题','客户问题','交付问题','功能问题','缺货','支付平台客诉','外观问题','订单问题','物流问题','用户问题','不喜欢/不想要','操作/违规使用导致','装配不良','个人喜好','售完下架','多拍错拍','产品交付端问题'];
+function normalizeTopic(v){
+  v=String(v==null?'':v).trim(); if(!v) return null;
+  v=v.split('—')[0].split(' - ')[0].split(' -')[0].split('-')[0].trim();
+  if(/不想要|不喜欢|不感兴趣/.test(v)) return '不喜欢/不想要';
+  for(const c of COMPLAINT_CANON){ if(v===c||v.startsWith(c)) return c; }
+  return v;
+}
+// 返回该文档在指定内容维度下的所有主题键（可多值）
+function contentKeys(d, dim){
+  const grab=(re)=>{ const idxs=colIdxList(d,re); const set={}; const s=dataRows(d);
+    s.forEach(r=>idxs.forEach(j=>{ const raw=r[j]; if(raw!=null&&String(raw).trim()){ const t=String(raw).trim(); set[t]=(set[t]||0)+1; } }));
+    return set; };
+  if(dim==='ctopic'){
+    if(d.board!=='客诉历史记录') return ['未标注'];
+    const set=grab(/一级分类|客诉大类|客诉分类|客诉原因分类|问题类型/);
+    const ks=Object.keys(set).map(normalizeTopic).filter(Boolean);
+    return ks.length?ks:['未标注'];
+  }
+  if(dim==='cprod'){
+    if(d.board!=='用户评论与留言') return ['未标注'];
+    const set=grab(/^商品名称$/); const ks=Object.keys(set);
+    return ks.length?ks:['未标注'];
+  }
+  if(dim==='cchan'){
+    const set=grab(/^渠道$/); const ks=Object.keys(set);
+    return ks.length?ks:['未标注'];
+  }
+  if(dim==='ctype'){
+    const set=grab(/^类型$/); const ks=Object.keys(set);
+    return ks.length?ks:['未标注'];
+  }
+  if(dim==='mintent'){
+    if(d.board!=='邮件原文') return ['未标注'];
+    const set=grab(/ai_label_raw|ai_intent_effective/); const ks=Object.keys(set);
+    return ks.length?ks:['未标注'];
+  }
+  if(dim==='mstore'){
+    if(d.board!=='邮件原文') return ['未标注'];
+    const set=grab(/^store_name$/); const ks=Object.keys(set);
+    return ks.length?ks:['未标注'];
+  }
+  if(dim==='mdir'){
+    if(d.board!=='邮件原文') return ['未标注'];
+    const set=grab(/^direction$/); const ks=Object.keys(set);
+    return ks.length?ks:['未标注'];
+  }
+  return ['未标注'];
+}
+// 返回该文档在内容维度下的真实内容行 {topic,text,doc}
+function docContentLines(d, dim){
+  const out=[];
+  const S=dataRows(d);
+  if(dim==='ctopic'){
+    const ti=colIdxList(d,/一级分类|客诉大类|客诉分类|客诉原因分类|问题类型/);
+    const xi=colIdxList(d,/用户反馈文字描述|客户投诉点及要求|用户反馈-原文（首条）|客诉信息/);
+    S.forEach(r=>{
+      const t=ti.map(i2=>normalizeTopic(r[i2])).find(x=>x);
+      let x=''; for(const i2 of xi){ if(r[i2]!=null&&String(r[i2]).trim()){ x=String(r[i2]).trim().replace(/\s+/g,' '); break; } }
+      if(t&&x) out.push({topic:t,text:x,doc:d.title});
+    });
+  } else if(dim==='cprod'){
+    const ti=colIdxList(d,/^商品名称$/); const xi=colIdxList(d,/^内容$/);
+    S.forEach(r=>{
+      const t=ti.map(i2=>r[i2]).find(x=>x!=null&&String(x).trim());
+      const x=xi.map(i2=>r[i2]).find(x=>x!=null&&String(x).trim());
+      if(t&&x) out.push({topic:String(t).trim(),text:String(x).trim().replace(/\s+/g,' '),doc:d.title});
+    });
+  } else if(dim==='cchan'||dim==='ctype'){
+    const ti=colIdxList(d, dim==='cchan'?/^渠道$/:/^类型$/); const xi=colIdxList(d,/^内容$/);
+    S.forEach(r=>{
+      const t=ti.map(i2=>r[i2]).find(x=>x!=null&&String(x).trim());
+      const x=xi.map(i2=>r[i2]).find(x=>x!=null&&String(x).trim());
+      if(t&&x) out.push({topic:String(t).trim(),text:String(x).trim().replace(/\s+/g,' '),doc:d.title});
+    });
+  } else if(dim==='mintent'||dim==='mstore'||dim==='mdir'){
+    const ti=colIdxList(d, dim==='mintent'?/ai_label_raw|ai_intent_effective/:dim==='mstore'?/^store_name$/:/^direction$/);
+    const xi=colIdxList(d,/extract_summary|^subject$/);
+    S.forEach(r=>{
+      const t=ti.map(i2=>r[i2]).find(x=>x!=null&&String(x).trim());
+      let x=''; for(const i2 of xi){ if(r[i2]!=null&&String(r[i2]).trim()){ x=String(r[i2]).trim().replace(/\s+/g,' '); break; } }
+      if(!x){ const bi=colIdxList(d,/^body_text$/); for(const i2 of bi){ if(r[i2]!=null&&String(r[i2]).trim()){ x=String(r[i2]).trim().replace(/\s+/g,' ').slice(0,120); break; } } }
+      if(t&&x) out.push({topic:String(t).trim(),text:x,doc:d.title});
+    });
+  }
+  return out;
+}
+function groupKeys(d, dim){
+  if(CONTENT_DIMS.indexOf(dim)>=0) return contentKeys(d,dim);
+  const v=dimValue(d,dim); return v==null?['未标注']:[v];
+}
+
 function availDims(){
-  const base=['source','market','year','scale'];
-  if(activeBoard==='全部') base.unshift('board');
-  if(activeBoard==='邮件原文' || activeBoard==='全部') base.push('ailabel');
-  if(activeBoard==='用户评论与留言' || activeBoard==='全部') base.push('rating');
-  return base;
+  if(activeBoard==='客诉历史记录') return ['ctopic','source','market','year','scale'];
+  if(activeBoard==='用户评论与留言') return ['cprod','cchan','ctype','source','market','year','rating'];
+  if(activeBoard==='邮件原文') return ['mintent','mstore','mdir','source','market','year'];
+  // 全部：内容维度跨看板不通用，保留元数据维度 + 各看板专属内容维度入口
+  return ['board','source','market','year','scale','ailabel','rating'];
 }
 
 /* ===== 筛选 ===== */
@@ -434,8 +550,12 @@ function filt(){
     if(fm && (d.market||'')!==fm) return false;
     if(fy && yearOf(d)!==fy) return false;
     if(state.drill){
-      const dv = dimValue(d, state.drill.dim);
-      if(dv!==state.drill.val) return false;
+      if(CONTENT_DIMS.indexOf(state.drill.dim)>=0){
+        if(!groupKeys(d, state.drill.dim).includes(state.drill.val)) return false;
+      } else {
+        const dv = dimValue(d, state.drill.dim);
+        if(dv!==state.drill.val) return false;
+      }
     }
     if(q){
       const hay=(d.file+' '+(d.source||'')+' '+(d.market||'')+' '+(d.period||'')+' '+d.cols.join(' ')).toLowerCase();
@@ -469,7 +589,10 @@ function setBoard(b){
   activeBoard=b;
   state.drill=null;
   const dims=availDims();
-  if(dims.indexOf(state.clusterDim)<0) state.clusterDim = dims[0];
+  // 进入具体子看板时，默认展示「内容聚类」（维度首位即内容维度）；
+  // 全部看板保留用户当前维度（若不存在再回退到子看板维度）
+  if(b!=='全部') state.clusterDim = dims[0];
+  else if(dims.indexOf(state.clusterDim)<0) state.clusterDim = dims[0];
   buildDimOptions();
   buildSide(); buildChips(); render();
 }
@@ -503,12 +626,20 @@ function barChart(pairs){
   }).join('')+'</div>';
 }
 function groupCount(docs, dim){
+  if(CONTENT_DIMS.indexOf(dim)>=0){
+    const m={};
+    docs.forEach(d=>{ contentKeys(d,dim).forEach(k=>{ m[k]=(m[k]||0)+1; }); });
+    return Object.keys(m).map(k=>({label:k,value:m[k]})).sort((a,b)=>b.value-a.value);
+  }
   const m={};
   docs.forEach(d=>{ const v=dimValue(d,dim); const k=v==null?'未标注':v; m[k]=(m[k]||0)+1; });
   return Object.keys(m).map(k=>({label:k,value:m[k]})).sort((a,b)=>b.value-a.value);
 }
 function renderViz(docs){
   const cards=[];
+  if(CONTENT_DIMS.indexOf(state.clusterDim)>=0){
+    cards.push(vizCard('i-tag','按'+dimLabel(state.clusterDim)+'分布', barChart(groupCount(docs,state.clusterDim).map(p=>({label:p.label,value:p.value,suffix:'篇'})))));
+  }
   cards.push(vizCard('i-bar','按来源分布', barChart(groupCount(docs,'source').map(p=>({label:p.label,value:p.value,suffix:'篇'})))));
   cards.push(vizCard('i-bar','按市场分布', barChart(groupCount(docs,'market').map(p=>({label:p.label,value:p.value,suffix:'篇'})))));
   cards.push(vizCard('i-clock','按年份分布', barChart(groupCount(docs,'year').map(p=>({label:p.label,value:p.value,suffix:'篇'})))));
@@ -522,22 +653,31 @@ function vizCard(icon,title,body){
 /* ===== 聚类区块 ===== */
 function renderCluster(docs){
   const dim=state.clusterDim;
+  const isContent = CONTENT_DIMS.indexOf(dim)>=0;
   const groups={};
   docs.forEach(d=>{
-    const v=dimValue(d,dim); const k=v==null?'未标注':v;
-    (groups[k]=groups[k]||[]).push(d);
+    groupKeys(d,dim).forEach(k=>{ (groups[k]=groups[k]||[]).push(d); });
   });
   const keys=Object.keys(groups).sort((a,b)=>groups[b].length-groups[a].length);
   const maxDocs=Math.max(...keys.map(k=>groups[k].length),1);
   const totalRows=keys.reduce((a,k)=>a+groups[k].reduce((x,d)=>x+(d.rows||0),0),0);
-  const head=`<div class="cluster-head"><svg class="ic-svg"><use href="#i-tag"/></svg>聚类结果`+
-    `<span class="ch-sub">按「${dimLabel(dim)}」分为 ${keys.length} 组 · 共 ${docs.length} 篇 / ${totalRows.toLocaleString()} 条记录 · 点击分组展开文档，再点一次收起</span></div>`;
+  const head=`<div class="cluster-head"><svg class="ic-svg"><use href="#i-tag"/></svg>${isContent?'内容聚类结果':'聚类结果'}`+
+    `<span class="ch-sub">按「${dimLabel(dim)}」分为 ${keys.length} 组 · 共 ${docs.length} 篇 / ${totalRows.toLocaleString()} 条记录${isContent?' · 内容主题由内联样例行提取，点击展开看真实内容':''} · 点击分组展开，再点一次收起</span></div>`;
   const body=keys.map(k=>{
     const arr=groups[k];
     const rows=arr.reduce((x,d)=>x+(d.rows||0),0);
     const w=Math.round(arr.length/maxDocs*100);
     const active=(state.drill && state.drill.dim===dim && state.drill.val===k)?' active':'';
-    const docsHtml=arr.map(d=>`<div class="cd" onclick="event.stopPropagation();openDetailAt('${esc(d.file)}')">${esc(d.title)} <span style="opacity:.6">· ${(d.rows||0).toLocaleString()}条</span></div>`).join('');
+    let docsHtml;
+    if(isContent){
+      const lines=[];
+      arr.forEach(d=>{ docContentLines(d,dim).forEach(l=>{ if(l.topic===k) lines.push(l); }); });
+      docsHtml = lines.length
+        ? lines.slice(0,60).map(l=>`<div class="cd" onclick="event.stopPropagation();openDetailAt('${esc(l.doc)}')" title="${esc(l.doc)}"><span class="ctag">${esc(l.doc.slice(0,16))}</span><span class="ctext">${esc(l.text).slice(0,150)}</span></div>`).join('')
+        : arr.map(d=>`<div class="cd" onclick="event.stopPropagation();openDetailAt('${esc(d.file)}')">${esc(d.title)} <span style="opacity:.6">· ${(d.rows||0).toLocaleString()}条</span></div>`).join('');
+    } else {
+      docsHtml=arr.map(d=>`<div class="cd" onclick="event.stopPropagation();openDetailAt('${esc(d.file)}')">${esc(d.title)} <span style="opacity:.6">· ${(d.rows||0).toLocaleString()}条</span></div>`).join('');
+    }
     return `<div class="cgroup${active}" onclick="toggleGroup('${esc(dim)}','${esc(k)}')">`+
       `<div class="cgroup-top"><div class="cgroup-name"><span class="dot"></span>${esc(k)}</div>`+
       `<div class="cgroup-meta"><b>${arr.length}</b> 篇 · ${(rows).toLocaleString()} 条</div></div>`+
@@ -554,11 +694,11 @@ function toggleGroup(dim,val){
 
 /* ===== 渲染主区 ===== */
 function snippetOf(d){
-  const cols=d.cols||[];
-  const idx=cols.findIndex(c=>/描述|内容|反馈|投诉点|要求|文字/.test(c));
-  const s=d.sample||[];
-  if(idx>=0 && s[0] && s[0][idx]!=null && String(s[0][idx]).trim()) return String(s[0][idx]).replace(/\s+/g,' ');
-  for(const r of s){ const t=r.filter(c=>c!=null && String(c).trim()).slice(0,2).join(' · '); if(t) return t; }
+  const h=headerOf(d);
+  const idx=h.findIndex(c=>/描述|内容|反馈|投诉|要求|文字|主题|摘要|summary/i.test(c));
+  const s=dataRows(d);
+  if(idx>=0){ for(const r of s){ if(r[idx]!=null&&String(r[idx]).trim()) return String(r[idx]).trim().replace(/\s+/g,' '); } }
+  for(const r of s){ const t=r.filter(c=>c!=null&&String(c).trim()).slice(0,2).join(' · '); if(t) return t; }
   return '';
 }
 function render(){
