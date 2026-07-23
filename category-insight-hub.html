@@ -1152,6 +1152,23 @@ body.dark .lab-status{color:#fbbf24}
 .mode-opt{flex:1;padding:7px 16px;font-size:12.5px;font-weight:650;border-radius:9px;cursor:pointer;
   text-align:center;transition:all .22s var(--rad-easing);color:var(--muted);border:1px solid transparent}
 .mode-opt.active{background:var(--panel-solid);color:var(--ink);box-shadow:var(--shadow-sm);border-color:var(--border)}
+.mode-opt.mode-canvas{position:relative;overflow:hidden}
+.mode-opt.mode-canvas::before{content:"";position:absolute;inset:-2px;background:var(--rad-grad);opacity:0;transition:opacity .22s;z-index:-1;border-radius:10px}
+.mode-opt.mode-canvas:hover::before{opacity:.18}
+.mode-opt.mode-canvas.active::before{opacity:.22}
+.mc-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--rad-grad);margin-right:6px;vertical-align:middle;box-shadow:0 0 8px rgba(0,195,243,.5);animation:mcPulse 1.8s infinite}
+@keyframes mcPulse{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.25)}}
+
+/* Mode canvas hint */
+.mode-canvas-hint{display:flex;align-items:center;gap:12px;margin:-4px 24px 8px;padding:10px 14px;border-radius:10px;
+  background:linear-gradient(90deg, rgba(0,195,243,.08), rgba(168,85,247,.08), rgba(255,107,157,.08));
+  border:1px dashed rgba(0,195,243,.35);cursor:pointer;transition:all .18s;z-index:4;position:relative}
+.mode-canvas-hint:hover{background:linear-gradient(90deg, rgba(0,195,243,.14), rgba(168,85,247,.14), rgba(255,107,157,.14));border-style:solid;transform:translateY(-1px)}
+.mode-canvas-hint.hidden{display:none}
+.mch-ico{font-size:16px;flex:0 0 auto}
+.mch-txt{flex:1;font-size:12px;color:var(--ink-2);line-height:1.5}
+.mch-txt b{color:var(--ink)}
+.mch-btn{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--accent);background:var(--panel-solid);padding:5px 11px;border-radius:7px;border:1px solid var(--border)}
 
 /* Workspace body - dual panel layout */
 .ws-body{display:flex;flex:1;min-height:0;overflow:hidden}
@@ -2669,7 +2686,12 @@ body.dark .emp-v1{color:#fbbf24}
         <!-- Mode toggle -->
         <div class="mode-toggle" id="modeToggle">
           <div class="mode-opt active" data-mode="struct">结构化模式 · 默认</div>
-          <div class="mode-opt" data-mode="canvas">无限画布模式</div>
+          <div class="mode-opt mode-canvas" data-mode="canvas"><span class="mc-dot"></span>无限画布模式</div>
+        </div>
+        <div class="mode-canvas-hint" id="modeCanvasHint" onclick="applyMode('canvas', getPurpose(state.ws, state.purposeId))">
+          <span class="mch-ico">🎨</span>
+          <span class="mch-txt">想自由混搭素材？点这里切换到 <b>无限画布模式</b> · 数据源 / 分析框架 / 洞察 / 创意 / 领先用户，随便拖、随便连。</span>
+          <span class="mch-btn">切换 →</span>
         </div>
 
         <!-- Workspace body -->
@@ -10480,7 +10502,7 @@ function renderCanvasLines(){
     // Bezier curve: right edge of "from" -> left edge of "to"
     var dx=to.lx-from.rx;
     var cx1=from.rx+dx*.45,cy1=from.ry;
-    var cx2=to.lx-dx*.45,cy2=to.ty;
+    var cx2=to.lx-dx*.45,cy2=to.ly;
 
     var path=document.createElementNS('http://www.w3.org/2000/svg','path');
     path.setAttribute('d','M'+from.rx+','+from.ry+' C'+cx1+','+cy1+' '+cx2+','+cy2+' '+to.lx+','+to.ly);
@@ -10490,7 +10512,7 @@ function renderCanvasLines(){
     svgEl.appendChild(path);
 
     // Endpoint dots
-    [from.rx,from.ry],[to.lx,to.ty].forEach(function(pt){
+    [from.rx,from.ry],[to.lx,to.ly].forEach(function(pt){
       var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
       c.setAttribute('cx',pt[0]);c.setAttribute('cy',pt[1]);c.setAttribute('r','3.5');
       c.setAttribute('fill','#0891B2');
@@ -10645,8 +10667,10 @@ canvasEl&&(canvasEl.addEventListener('drop',function(e){
 // MODE TOGGLE (截图2)
 // ============================================================
 function applyMode(mode, p){
+  console.log('[applyMode] start', mode, 'purposeId=', state.purposeId, 'ws=', state.ws);
   state.mode=mode;
-  var sp=$('#structPanel'), ca=$('.canvas-area');
+  var sp=$('#structPanel'), ca=$('.canvas-area'), hint=$('#modeCanvasHint');
+  if(!sp || !ca){ console.error('[applyMode] missing panels'); return; }
   $$('#modeToggle .mode-opt').forEach(function(el){
     el.classList.toggle('active',el.getAttribute('data-mode')===mode);
   });
@@ -10654,21 +10678,32 @@ function applyMode(mode, p){
     // 仅在此刻才生成 / 显示无限画布
     sp.style.display='none';
     ca.style.display='flex';
-    if(p)renderCanvasArea(p);
+    if(hint) hint.classList.add('hidden');
+    console.log('[applyMode] canvas DOM shown, calling renderCanvasArea');
+    try{
+      if(p)renderCanvasArea(p);
+      console.log('[applyMode] renderCanvasArea done');
+    }catch(err){ console.error('[applyMode] renderCanvasArea error:', err); }
   }else{
     // 默认结构化：三栏布局（左数据源 / 中分析框架 / 右结果+导出）
     ca.style.display='none';
     sp.style.display='flex';
     sp.style.flex='1';
     sp.style.width='auto';
+    if(hint) hint.classList.remove('hidden');
   }
 }
 
-$$('#modeToggle .mode-opt').forEach(function(el){
-  el.addEventListener('click',function(){
+// 事件委托：绑定在 #modeToggle 上，即使子元素动态变化也生效
+$('#modeToggle').addEventListener('click',function(ev){
+  var el=ev.target.closest('.mode-opt');
+  if(!el)return;
+  console.log('[modeToggle click]', el.getAttribute('data-mode'));
+  try{
     var p=getPurpose(state.ws,state.purposeId);
+    console.log('[modeToggle click] purpose=', !!p);
     applyMode(el.getAttribute('data-mode'), p);
-  });
+  }catch(err){ console.error('[modeToggle click] error:', err); }
 });
 
 // ============================================================
