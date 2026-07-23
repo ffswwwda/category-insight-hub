@@ -2764,6 +2764,16 @@ body.dark .emp-v1{color:#fbbf24}
         <iframe class="de-frame" id="feedbackFrame" src="" title="反馈情报看板"></iframe>
       </div>
 
+      <!-- ===== VIEW: FEEDBACK COLLECTION DASHBOARD ===== -->
+      <div class="view" id="viewFeedbackColl">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToSourceGallery()">返回</button>
+          <span class="ws-title">用户反馈信息合集 · 看板</span>
+          <span class="ws-tag">客诉 / 评论留言 / 邮件原文</span>
+        </div>
+        <iframe class="de-frame" id="feedbackCollFrame" src="" title="用户反馈信息合集"></iframe>
+      </div>
+
       <!-- ===== VIEW: PORNHUB DASHBOARD ===== -->
       <div class="view" id="viewPornhub">
         <div class="ws-bar">
@@ -2989,7 +2999,10 @@ var DATA = {
         records:747,status:'ready',hasDashboard:true,dashboard:'competitor'},
    s21:{id:'s21',name:'社媒监控品牌账号',type:'社媒',market:'全球',
         desc:'社媒监控数据库 · 50 个品牌账号 · 品牌/类目/平台/粉丝数 多维钻取看板',
-        records:50,status:'ready',hasDashboard:true,dashboard:'social'}
+        records:50,status:'ready',hasDashboard:true,dashboard:'social'},
+   s22:{id:'s22',name:'用户反馈信息合集',type:'售后/反馈',market:'全球',
+        desc:'客诉历史记录 + 用户评论与留言 + 邮件原文 · 三子看板统一检索合集',
+        records:0,status:'ready',hasDashboard:true,dashboard:'feedbackcoll'}
   },
 
   // ---- 双工作区定义（截图1）----
@@ -3471,6 +3484,15 @@ function openFeedbackDashboard(){
   if(f) f.src=ghBase()+'vendor/feedback-intel-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 
+function openFeedbackCollDashboard(){
+  state.purposeId=null;
+  setActiveNav('src-s22');
+  $('#viewFeedbackColl').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewFeedbackColl')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('feedbackCollFrame');
+  if(f) f.src=ghBase()+'vendor/feedback-collection.html?theme='+th+'&_cb='+Date.now();
+}
+
 function openPornhubDashboard(){
   state.purposeId=null; setActiveNav('src-s16');
   $('#viewPornhub').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewPornhub')v.classList.remove('active')});
@@ -3824,6 +3846,7 @@ function openSource(srcId){
     if(s.dashboard==='supplier'){ openSupplierDashboard(); return; }
     if(s.dashboard==='competitor'){ openCompetitorDashboard(); return; }
     if(s.dashboard==='social'){ openSocialDashboard(); return; }
+    if(s.dashboard==='feedbackcoll'){ openFeedbackCollDashboard(); return; }
     // Level1：s8 德国商品库 → 专属完整看板（已含筛选/导出/报告）
     $('#viewDe').classList.add('active');
     $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
