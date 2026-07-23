@@ -122,15 +122,16 @@
 
   /* ── 视图图层面板（PS 图层式多视图）── */
   .view-layers{margin:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--panel-2);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);overflow:hidden}
-  .vl-head{display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--line);user-select:none}
+  .vl-head{display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--line);user-select:none;cursor:pointer;transition:background .15s}
+  .vl-head:hover{background:rgba(0,195,243,.05)}
   .vl-head .vl-title{display:flex;align-items:center;gap:6px;flex:1}
   .vl-head .vl-icon{width:13px;height:13px;color:var(--muted)}
   .vl-head .vl-count{margin-left:auto;background:var(--rad-grad);color:#fff;font-size:9.5px;padding:1px 7px;border-radius:8px;font-weight:700}
-  .vl-head .vl-toggle{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:0;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;transition:.15s}
+  .vl-head .vl-toggle{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:0;border-radius:7px;background:transparent;color:var(--muted);cursor:pointer;transition:.15s;flex-shrink:0}
   .vl-head .vl-toggle:hover{background:var(--accent-weak);color:var(--accent)}
-  .vl-head .vl-toggle svg{width:13px;height:13px;transition:transform .2s}
+  .vl-head .vl-toggle svg{width:15px;height:15px;transition:transform .2s}
   .view-layers.collapsed .vl-list{display:none}
-  .view-layers.collapsed .vl-head{border-bottom:0;cursor:pointer}
+  .view-layers.collapsed .vl-head{border-bottom:0}
   .view-layers.collapsed .vl-toggle svg{transform:rotate(180deg)}
   .view-layers.collapsed + .vl-batch{display:none}
   .vl-list{padding:6px;max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;pointer-events:auto}
@@ -941,7 +942,7 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
         '<span class="vl-dot"></span>'+
         '<span class="vl-name" title="'+escapeHtml(v.name)+'">'+escapeHtml(v.name)+'</span>'+
         '<span class="vl-meta">'+v.hitCount+'款</span>'+
-        '<span class="vl-del" onclick="deleteView('+v.id+',event)" title="删除此视图">✕</span>'+
+        '<span class="vl-del" data-vid="'+v.id+'" title="删除此视图">✕</span>'+
         '</div>';
     }).join("");
   }
@@ -951,11 +952,16 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
     var panel = document.getElementById('viewLayers');
     var head = document.getElementById('vlHead');
     var btn = document.getElementById('vlToggle');
-    if(!panel || !btn) return;
-    function toggle(){ panel.classList.toggle('collapsed'); }
-    btn.addEventListener('click', function(e){ e.stopPropagation(); toggle(); });
+    if(!panel || !head) return;
+    function toggle(e){
+      if(e && e.type === 'click'){ e.stopPropagation(); e.preventDefault(); }
+      panel.classList.toggle('collapsed');
+    }
+    if(btn) btn.addEventListener('click', toggle);
+    // 点击标题栏任意位置也可收起/展开（避开复选框/删除按钮等内部元素）
     head.addEventListener('click', function(e){
-      if(panel.classList.contains('collapsed')) toggle();
+      if(e.target.closest('.vl-toggle, .vl-check, .vl-del, input, button')) return;
+      toggle(e);
     });
   })();
 
@@ -975,10 +981,15 @@ var DE_RECORDS_FULL = [{"asin": "B0BVBNL6SZ", "sku": "Farbe: Schwarz", "brand": 
   // 绑定保存按钮
   $("#saveViewBtn").addEventListener("click", saveCurrentView);
 
-  // 视图图层点击委托（vl-item 点击 = 加载视图）
+  // 视图图层点击委托（vl-item 点击 = 加载视图；删除按钮 = 删除视图）
   $("#vlList").addEventListener("click", function(e){
-    // 点了删除按钮或复选框时不触发视图切换
-    if(e.target.closest('.vl-del')) return;
+    var del = e.target.closest('.vl-del');
+    if(del){
+      var vid = Number(del.dataset.vid);
+      if(vid > 0){ deleteView(vid, e); }
+      return;
+    }
+    // 点了复选框时不触发视图切换
     if(e.target.closest('.vl-check')) return;
     var item = e.target.closest('.vl-item');
     if(!item) return;
