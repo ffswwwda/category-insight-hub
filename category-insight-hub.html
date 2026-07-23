@@ -2593,6 +2593,7 @@ body.dark .emp-v1{color:#fbbf24}
   <symbol id="w-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2.5"/><path d="M12 8V4M9 4h6"/><circle cx="9.5" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="14.5" cy="14" r="1.2" fill="currentColor" stroke="none"/><path d="M9 18h6"/></symbol>
   <symbol id="w-office" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7M3 21h18"/></symbol>
   <symbol id="w-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l2-5.5A8 8 0 1 1 21 12z"/><circle cx="8.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="12" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="w-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></symbol>
 </svg>
 
 <div class="scroll-progress" id="scrollProgress"></div>
@@ -12034,12 +12035,12 @@ if(typeof initFloatBar==='function') initFloatBar();
 </style>
 <div id="cartBackdrop"></div>
 <button id="cartFab" title="数据购物车">
-  <svg viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>
+  <svg viewBox="0 0 24 24" style="color:#fff"><use href="#w-cart"/></svg>
   <span id="cartBadge">0</span>
 </button>
 <div id="cartPanel">
   <div class="cart-head">
-    <h3><svg viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>数据购物车</h3>
+    <h3><svg viewBox="0 0 24 24" style="color:#fff"><use href="#w-cart"/></svg>数据购物车</h3>
     <button id="cartClose">✕</button>
   </div>
   <div class="cart-body" id="cartBody"></div>
@@ -12078,7 +12079,7 @@ if(typeof initFloatBar==='function') initFloatBar();
   function updateDlLabel(){ var n=get().filter(function(z){return z._sel!==false;}).length; dlLabel.textContent='下载选中（'+n+'）'; dlBtn.disabled=n===0; }
   function render(){
     var a=get();
-    if(!a.length){ body.innerHTML='<div class="cart-empty"><svg viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg><div>购物车是空的</div><div style="font-size:11px;margin-top:6px;opacity:.8">在任意数据源筛选后点「加入购物车」<br>即可跨数据源汇总，最后统一下载</div></div>';
+    if(!a.length){ body.innerHTML='<div class="cart-empty"><svg viewBox="0 0 24 24" style="color:#fff"><use href="#w-cart"/></svg><div>购物车是空的</div><div style="font-size:11px;margin-top:6px;opacity:.8">在任意数据源筛选后点「加入购物车」<br>即可跨数据源汇总，最后统一下载</div></div>';
       selAll.checked=false; updateDlLabel(); return; }
     body.innerHTML=a.map(function(x){
       var d=''; try{d=new Date(x.addedAt).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(e){}

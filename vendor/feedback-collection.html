@@ -56,7 +56,7 @@
   .src-card:hover{border-color:rgba(0,195,243,.35)}
   .src-card.active{border-color:var(--accent);background:var(--accent-weak);box-shadow:0 0 0 1px rgba(0,195,243,.15)}
   .src-card .ic-box{width:32px;height:32px;border-radius:9px;background:var(--rad-grad);display:grid;place-items:center;flex:none}
-  .src-card .ic-box .ic-svg{stroke:#fff;width:17px;height:17px}
+  .src-card .ic-box .ic-svg{color:#fff;width:17px;height:17px}
   .src-card .sc-name{font-size:13.5px;font-weight:700;line-height:1.35}
   .src-card .sc-meta{font-size:11px;color:var(--muted);margin-top:2px}
   .sidebar-foot{margin-top:auto;padding:13px 16px 16px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);line-height:1.5}
@@ -139,6 +139,10 @@
     <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></symbol>
     <symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.4L3 21l2.2-5.2A8.5 8.5 0 1 1 21 11.5z"/></symbol>
     <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M12 3 2 20h20z"/><path d="M12 9v5M12 17h.01"/></symbol>
+    <symbol id="w-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></symbol>
+    <symbol id="w-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20z"/><path d="M12 9v5M12 17h.01"/></symbol>
+    <symbol id="w-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.4L3 21l2.2-5.2A8.5 8.5 0 1 1 21 11.5z"/></symbol>
+    <symbol id="w-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></symbol>
     <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
     <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M20.6 13.4 12 22l-9-9V3h10z"/><circle cx="7.5" cy="7.5" r="1.4"/></symbol>
     <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
@@ -150,7 +154,7 @@
   <!-- 侧栏：三子看板 -->
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark"><svg class="ic-svg" style="stroke:#fff;width:20px;height:20px"><use href="#i-grid"/></svg></div>
+      <div class="brand-mark"><svg class="ic-svg" style="color:#fff;width:20px;height:20px"><use href="#w-grid"/></svg></div>
       <div>
         <div class="brand-name">用户反馈信息合集</div>
         <div class="brand-sub">FEEDBACK COLLECTION</div>
@@ -212,9 +216,9 @@ function goBack(){ if(window.parent && parent.goBackToSourceGallery) parent.goBa
 const FEEDBACK_DOCS = [];
 
 const BOARDS = [
-  {id:'客诉历史记录',   icon:'i-alert', label:'客诉历史记录',   sub:'售后问题 / 投诉'},
-  {id:'用户评论与留言', icon:'i-msg',   label:'用户评论与留言', sub:'评价 / 社媒留言'},
-  {id:'邮件原文',       icon:'i-doc',   label:'邮件原文',       sub:'往来邮件原始内容'},
+  {id:'客诉历史记录',   icon:'w-alert', label:'客诉历史记录',   sub:'售后问题 / 投诉'},
+  {id:'用户评论与留言', icon:'w-chat',  label:'用户评论与留言', sub:'评价 / 社媒留言'},
+  {id:'邮件原文',       icon:'w-doc',   label:'邮件原文',       sub:'往来邮件原始内容'},
 ];
 const boardIcon = b => (BOARDS.find(x=>x.id===b)||{}).icon || 'i-doc';
 let activeBoard = '全部';
@@ -232,7 +236,7 @@ function buildSide(){
 function buildChips(){
   const all = ['全部', ...BOARDS.map(b=>b.id)];
   document.getElementById('chips').innerHTML = all.map(b=>{
-    const ic = b==='全部'?'i-grid':boardIcon(b);
+    const ic = b==='全部'?'w-grid':boardIcon(b);
     const n = b==='全部'?FEEDBACK_DOCS.length:FEEDBACK_DOCS.filter(d=>d.board===b.id).length;
     const on = activeBoard===b?'on':'';
     return `<div class="chip ${on}" onclick="setBoard('${b}')"><svg class="ic-svg"><use href="#${ic}"/></svg>${b}<span class="c-n">${n}</span></div>`;
