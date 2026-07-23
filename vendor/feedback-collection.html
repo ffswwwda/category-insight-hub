@@ -44,9 +44,9 @@
   .app{display:flex;height:100vh;overflow:hidden}
 
   .sidebar{width:264px;flex:0 0 264px;background:rgba(255,255,255,.74);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-right:1px solid var(--border);
-    display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+    display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
   body.dark .sidebar{background:rgba(20,28,48,.6)}
-  .brand{display:flex;gap:11px;align-items:center;padding:18px 18px 14px}
+  .brand{display:flex;gap:11px;align-items:center;padding:18px 18px 14px;position:sticky;top:0;background:inherit;z-index:2}
   .brand-mark{width:36px;height:36px;border-radius:10px;background:var(--rad-grad);color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,195,243,.32)}
   .brand-name{font-weight:700;font-size:15px;letter-spacing:.2px}
   .brand-sub{font-size:11px;color:var(--muted);letter-spacing:.6px;margin-top:1px}
@@ -60,6 +60,44 @@
   .src-card .sc-meta{font-size:11px;color:var(--muted);margin-top:2px}
   .sidebar-foot{margin-top:auto;padding:13px 16px 16px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);line-height:1.5}
 
+  /* ===== 视图图层（与 de-dashboard 完全一致） ===== */
+  .view-layers{margin:10px 14px 4px;border:1px solid var(--border);border-radius:12px;background:var(--panel-2);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);overflow:hidden}
+  .vl-head{display:flex;align-items:center;gap:7px;padding:10px 13px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--border);user-select:none;cursor:pointer}
+  .vl-head .ic-svg{width:15px;height:15px;stroke:var(--accent)}
+  .vl-count{background:var(--accent-weak);color:var(--accent);border-radius:20px;padding:1px 8px;font-size:11px;font-weight:700;margin-left:2px}
+  .vl-head .vl-toggle{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:0;border-radius:7px;background:transparent;color:var(--muted);cursor:pointer;transition:.15s;flex-shrink:0}
+  .vl-head .vl-toggle:hover{background:var(--accent-weak);color:var(--accent)}
+  .vl-head .vl-toggle svg{width:15px;height:15px;transition:transform .2s}
+  .view-layers.collapsed .vl-list{display:none}
+  .view-layers.collapsed .vl-head{border-bottom:0}
+  .view-layers.collapsed .vl-toggle svg{transform:rotate(180deg)}
+  .view-layers.collapsed + .vl-batch{display:none}
+  .vl-list{padding:8px;display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto}
+  .vl-empty{font-size:11.5px;color:var(--muted);text-align:center;padding:14px 8px;line-height:1.7}
+  .vl-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;border:1px solid transparent;cursor:pointer;transition:all .15s;background:var(--panel);user-select:none;pointer-events:auto}
+  .vl-item:hover{border-color:rgba(0,195,243,.3);background:rgba(0,195,243,.05)}
+  .vl-item.active{border-color:var(--accent);background:var(--accent-weak);box-shadow:0 0 0 1px rgba(0,195,243,.15)}
+  .vl-item .vl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--rad-grad)}
+  .vl-item .vl-name{flex:1;font-size:11.5px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vl-item .vl-board{font-size:9px;color:var(--accent-2);background:rgba(168,85,247,.12);padding:1px 6px;border-radius:6px;flex-shrink:0;font-weight:700}
+  .vl-item .vl-meta{font-size:9.5px;color:var(--muted);flex-shrink:0}
+  .vl-item .vl-del{opacity:0;font-size:13px;color:var(--muted);cursor:pointer;flex-shrink:0;padding:2px 4px;border-radius:4px;transition:all .12s;pointer-events:auto}
+  .vl-item:hover .vl-del{opacity:.6}
+  .vl-item .vl-del:hover{opacity:1;color:var(--danger)}
+  .vl-item.selected{background:var(--accent-weak);border-color:#c9b8f0}
+  .vl-check{width:15px;height:15px;flex:0 0 15px;margin:0 2px 0 0;cursor:pointer;accent-color:#7c3aed}
+  .vl-batch{margin:0 14px 14px;border:1px solid var(--border);border-radius:12px;padding:12px;background:var(--panel-2);position:sticky;bottom:0;display:flex;flex-direction:column;gap:9px}
+  .vl-batch-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .vl-batch-info{font-size:12px;color:var(--ink-2)}
+  .vl-batch-info b{color:var(--accent)}
+  .vl-batch-cancel{background:transparent;border:0;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;padding:3px 8px;border-radius:6px;transition:.15s}
+  .vl-batch-cancel:hover{color:var(--ink-2);background:var(--panel)}
+  .vl-batch-primary{width:100%;border:0;background:var(--rad-grad);color:#fff;padding:9px 12px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(0,195,243,.2);transition:.15s}
+  .vl-batch-primary:hover{box-shadow:0 3px 14px rgba(0,195,243,.32)}
+  .vl-batch-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .vl-batch-row button{border:1px solid var(--border);background:var(--panel);color:var(--ink-2);padding:8px 10px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+  .vl-batch-row button:hover{border-color:var(--accent);color:var(--accent)}
+
   .main{flex:1;min-width:0;display:flex;flex-direction:column;gap:0}
   .topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.72);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
     border-bottom:1px solid var(--border);padding:16px 26px;display:flex;align-items:center;gap:18px;flex-shrink:0}
@@ -71,10 +109,12 @@
   .board-title{margin:0;font-size:18px;font-weight:700;letter-spacing:.2px}
   .board-sub{font-size:12px;color:var(--muted);margin-top:2px}
   .topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-  .search-box{display:flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 12px;width:320px}
+  .search-box{display:flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 12px;width:300px}
   .search-box input{border:0;outline:0;background:transparent;font-size:13px;width:100%;color:var(--ink);font-family:var(--font)}
   .search-box .ico{color:var(--accent);display:flex}
   .search-box .ico .ic-svg{stroke:var(--accent)}
+  .save-view-btn{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--panel);color:var(--ink-2);font-family:var(--font);font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:9px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .save-view-btn:hover{background:var(--accent-weak);border-color:var(--accent);color:var(--accent)}
 
   .filterbar{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-bottom:1px solid var(--border);padding:12px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:68px;z-index:19}
   body.dark .filterbar{background:rgba(20,28,48,.7)}
@@ -84,13 +124,51 @@
   .chip.on{background:var(--rad-grad);border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(0,195,243,.3)}
   .chip .ic-svg{stroke:currentColor}
   .chip .c-n{opacity:.7;font-size:11px}
-  .sortsel{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2);margin-left:auto}
-  .sortsel select{border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12.5px;font-family:var(--font);background:var(--panel);color:var(--ink);outline:0;cursor:pointer}
-  .sortsel .lbl{color:var(--muted)}
+  .chip.drill{background:rgba(168,85,247,.14);border-color:#c9b8f0;color:#7c3aed}
+  .chip.drill .ic-svg{stroke:#7c3aed}
+  .fsel{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+  .fsel select{border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12.5px;font-family:var(--font);background:var(--panel);color:var(--ink);outline:0;cursor:pointer}
+  .fsel .lbl{color:var(--muted)}
+  .fsel.cls{margin-left:auto}
 
   .board{flex:1;padding:18px 26px 60px;overflow:auto}
   .countline{font-size:13px;color:var(--ink-2);margin:0 2px 14px}
   .countline b{color:var(--accent);font-size:15px;font-weight:700}
+
+  .sumrow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .sumcard{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .sumcard .sv{font-size:24px;font-weight:800;background:var(--rad-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+  .sumcard .sl{font-size:12px;color:var(--muted);margin-top:4px}
+
+  .vizrow{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+  .viz{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .viz-title{font-size:12px;font-weight:800;color:var(--ink-2);letter-spacing:.3px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+  .viz-title .ic-svg{width:14px;height:14px;stroke:var(--accent-2)}
+  .barchart{display:flex;flex-direction:column;gap:9px}
+  .bar{display:grid;grid-template-columns:84px 1fr 56px;align-items:center;gap:10px}
+  .bar-label{font-size:12px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-track{height:9px;border-radius:5px;background:var(--panel-2);overflow:hidden}
+  .bar-fill{height:100%;border-radius:5px;background:var(--rad-grad);transition:width .4s}
+  .bar-val{font-size:11.5px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+
+  .cluster-sec{margin-bottom:16px}
+  .cluster-head{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;color:var(--ink);margin-bottom:11px}
+  .cluster-head .ic-svg{width:16px;height:16px;stroke:var(--accent)}
+  .cluster-head .ch-sub{font-size:11.5px;font-weight:600;color:var(--muted);margin-left:4px}
+  .cgroup{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:12px;padding:12px 15px;margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer;transition:.15s}
+  .cgroup:hover{border-color:rgba(0,195,243,.35)}
+  .cgroup.active{border-color:var(--accent);background:var(--accent-weak)}
+  .cgroup-top{display:flex;align-items:center;gap:10px}
+  .cgroup-name{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .cgroup-name .dot{width:9px;height:9px;border-radius:50%;background:var(--rad-grad);flex:none}
+  .cgroup-meta{font-size:11.5px;color:var(--muted);margin-left:auto;white-space:nowrap}
+  .cgroup-meta b{color:var(--accent);font-size:13px}
+  .cgroup-track{height:7px;border-radius:4px;background:var(--panel-2);overflow:hidden;margin-top:9px}
+  .cgroup-fill{height:100%;border-radius:4px;background:var(--rad-grad)}
+  .cgroup-docs{margin-top:10px;display:none;flex-direction:column;gap:5px}
+  .cgroup.open .cgroup-docs{display:flex}
+  .cgroup-docs .cd{font-size:12px;color:var(--ink-2);padding:5px 10px;background:var(--panel-2);border-radius:7px;border:1px solid var(--border)}
+  .cgroup-docs .cd:hover{border-color:var(--accent);color:var(--accent)}
 
   .doc{background:var(--panel);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:var(--radius);padding:15px 17px 15px 20px;margin-bottom:12px;cursor:pointer;box-shadow:var(--shadow);transition:.18s;position:relative;overflow:hidden}
   .doc::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:3px;background:var(--rad-grad)}
@@ -136,7 +214,7 @@
   .modal .rate .rbar .rt b{color:var(--star)}
   .modal .rate .rbar .rtrack{height:5px;border-radius:3px;background:var(--panel-2);overflow:hidden}
   .modal .rate .rbar .rfill{height:100%;border-radius:3px;background:var(--rad-grad)}
-  @media(max-width:760px){.sidebar{display:none}.search-box{width:160px}}
+  @media(max-width:760px){.sidebar{display:none}.search-box{width:160px}.sumrow{grid-template-columns:repeat(2,1fr)}.vizrow{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -151,13 +229,14 @@
     <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></symbol>
     <symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.4L3 21l2.2-5.2A8.5 8.5 0 1 1 21 11.5z"/></symbol>
     <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M12 3 2 20h20z"/><path d="M12 9v5M12 17h.01"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></symbol>
+    <symbol id="i-bar" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M7 21v-8M12 21V7M17 21v-4"/></symbol>
+    <symbol id="i-pie" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M12 3v9h9"/></symbol>
     <symbol id="w-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></symbol>
     <symbol id="w-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20z"/><path d="M12 9v5M12 17h.01"/></symbol>
     <symbol id="w-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.4L3 21l2.2-5.2A8.5 8.5 0 1 1 21 11.5z"/></symbol>
     <symbol id="w-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></symbol>
     <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
-    <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M9 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M15 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></symbol>
     <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2"><path d="M20.6 13.4 12 22l-9-9V3h10z"/><circle cx="7.5" cy="7.5" r="1.4"/></symbol>
     <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.8L21 9.4l-4.5 4.2 1.1 6.4L12 17.3 6.4 20l1.1-6.4L3 9.4l6.4-.6z"/></symbol>
   </defs>
@@ -174,7 +253,32 @@
     </div>
     <div class="side-label">三个子看板</div>
     <div id="sideList"></div>
-    <div class="sidebar-foot">客诉历史记录 · 用户评论与留言 · 邮件原文<br>统一检索合集</div>
+
+    <!-- 视图图层（与 de-dashboard 一致） -->
+    <div class="view-layers" id="viewLayers">
+      <div class="vl-head" id="vlHead">
+        <svg class="ic-svg"><use href="#i-layers"/></svg>
+        <span>视图图层</span>
+        <span class="vl-count" id="vlCount">0</span>
+        <button type="button" class="vl-toggle" id="vlToggle" title="收起/展开" aria-label="收起">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </div>
+      <div class="vl-list" id="vlList"><div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div></div>
+    </div>
+    <div class="vl-batch" id="vlBatch" style="display:none">
+      <div class="vl-batch-head">
+        <div class="vl-batch-info">已选 <b id="vlSelCount">0</b> 个视图</div>
+        <button type="button" id="vlBatchClear" class="vl-batch-cancel">取消</button>
+      </div>
+      <button type="button" id="vlBatchAdd" class="vl-batch-primary">批量加入购物车</button>
+      <div class="vl-batch-row">
+        <button type="button" id="vlBatchAll">全选 / 取消</button>
+        <button type="button" id="vlBatchDl">批量下载</button>
+      </div>
+    </div>
+
+    <div class="sidebar-foot">客诉历史记录 · 用户评论与留言 · 邮件原文<br>统一检索合集 · 支持聚类与视图图层</div>
   </aside>
 
   <main class="main">
@@ -182,25 +286,38 @@
       <div class="topbar-left">
         <div class="topbar-titlerow">
           <button class="back-btn" onclick="goBack()">← 返回</button>
-          <h1 class="board-title">用户反馈信息合集</h1>
+          <h1 class="board-title" id="boardTitle">用户反馈信息合集</h1>
         </div>
-        <div class="board-sub">客诉 / 评论留言 / 邮件原文 · 统一检索</div>
+        <div class="board-sub" id="boardSub">客诉 / 评论留言 / 邮件原文 · 统一检索与聚类</div>
       </div>
       <div class="topbar-right">
         <label class="search-box">
           <span class="ico"><svg class="ic-svg"><use href="#i-search"/></svg></span>
           <input id="q" type="text" placeholder="搜索文件名 / 来源 / 市场 / 周期 / 列名…" oninput="render()">
         </label>
+        <button class="save-view-btn" id="saveViewBtn" title="将当前筛选与聚类条件保存为一个新视图">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存为新视图
+        </button>
       </div>
     </div>
 
     <div class="filterbar">
       <div class="chips" id="chips"></div>
-      <div class="sortsel">
+      <div class="fsel">
         <span class="lbl">来源</span>
         <select id="fSrc" onchange="render()"><option value="">全部</option></select>
+      </div>
+      <div class="fsel">
         <span class="lbl">市场</span>
         <select id="fMkt" onchange="render()"><option value="">全部</option></select>
+      </div>
+      <div class="fsel">
+        <span class="lbl">年份</span>
+        <select id="fYear" onchange="render()"><option value="">全部</option></select>
+      </div>
+      <div class="fsel cls">
+        <span class="lbl">聚类维度</span>
+        <select id="fDim" onchange="setDim(this.value)"></select>
       </div>
     </div>
 
@@ -227,29 +344,108 @@
 </div>
 
 <script>
-/* ===== 主题跟随 ===== */
-(function(){var p=new URLSearchParams(location.search);if(p.get('theme')==='dark')document.body.classList.add('dark');})();
-function goBack(){ if(window.parent && parent.goBackToSourceGallery) parent.goBackToSourceGallery(); else history.back(); }
-
 /* ===== 真实数据（由上传的 47 个 xlsx 解析内联，零 CORS） ===== */
 const FEEDBACK_DOCS = [{"board": "客诉历史记录", "file": "AC美国客诉售后记录24.1-24.7.xlsx", "title": "AC美国客诉售后记录24.1-24.7", "source": "AC", "market": "美国", "period": "24.1 ~ 24.7", "rows": 767, "cols": ["站点", "客诉分类 (公式勿动）", "记录时间", "客诉信息", "", "", "", "", "", "", "", "", "", "", "客服备注", "", "", "", "", ""], "colCount": 20, "sample": [["", "", "", "订单号 (必填)", "店铺 (必填)", "产品SKU (必填)", "一级分类 (必填)", "二级分类 (必填)", "用户反馈文字描述 (必填)", "购买日期(年-月-日)", "投诉日期(年-月-日) (必填)", "客户邮箱 (必填)", "客服解决方案 (必填)", "用户是否满意 (必填)", "", "", "", "", "", ""], ["独立站美国组", "", "2024-01-02 00:00:00", "#141821", "acmejoy.com", "Y8164-ND-4，Y5336-4", "订单取消", "订单取消 - 无", "客户反馈是儿子下单的，非本人下单，取消订单", "45287", "45288", "mochakid26@gnail.com", "67.56", "满意", "", "", "", "", "", ""], ["独立站美国组", "", "2024-01-02 00:00:00", "#125554", "acmejoy.com", "100125546#1", "功能问题", "功能问题 - 开关机不良", "设备根本无法打开（没有灯亮起），使用2次后停止工作", "45181", "45286", "sikoramj@aol.com", "重发", "满意", "", "", "", "", "", ""], ["独立站美国组", "", "2024-01-03 00:00:00", "#136792", "acmejoy.com", "Y8196-ND-4，Y5152-ND-4，Y8163-BL-4", "客户拒收", "客户拒收 - 无", "PayPal客诉：客户指定USPS发货，拒收所有包裹，联系客户重发，客户未回复", "45256", "45294", "eyefarmerkarl@yahoo.com", "143.98", "满意", "同一客户订单", "", "", "", "", ""], ["独立站美国组", "", "2024-01-03 00:00:00", "#136717", "acmejoy.com", "100175498#1，100175149#1，Y5340-BR-4", "客户拒收", "客户拒收 - 无", "PayPal客诉：客户指定USPS发货，拒收所有包裹，联系客户重发，客户未回复", "45256", "45294", "eyefarmerkarl@yahoo.com", "154.22", "满意", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "AC美国客诉售后记录24.8-26.5.xlsx", "title": "AC美国客诉售后记录24.8-26.5", "source": "AC", "market": "美国", "period": "24.8 ~ 26.5", "rows": 1006, "cols": ["站点", "客诉分类 (公式勿动）", "记录时间", "客诉信息", "", "", "", "", "", "", "", "", "", "", "", "", "物流单号", "", "", ""], "colCount": 20, "sample": [["", "", "", "订单号 (必填)", "店铺 (必填)", "产品SKU (必填)", "一级分类 (必填)", "二级分类 (必填)", "投诉次数", "用户反馈文字描述 (必填)", "购买日期(年-月-日)", "投诉日期(年-月-日) (必填)", "客户邮箱 (必填)", "客服解决方案 (必填)", "客服解决方案备注", "用户是否满意 (必填)", "", "大金额订单备注", "", ""], ["独立站美国组", "交付问题", "2024-07-15 00:00:00", "#163429", "acmejoy.com", "100176041#1", "缺货", "缺货-其他", "1", "PayPal补偿申请：之前的订单，缺货没发，客户联系取消，后客户直接开启补偿申请", "2024-06-01 00:00:00", "2024-06-25 00:00:00", "fohlan@yahoo.com", "全额退款", "39.99", "满意", "", "", "", ""], ["独立站美国组", "交付问题", "2024-07-15 00:00:00", "#165492", "acmejoy.com", "100176163#1", "缺货", "缺货-其他", "1", "客户之前购买产品缺货，希望获得15%退款以补偿等待时间，考虑到产品价格较高，避免取消订单或客诉答应退款15%", "2024-06-21 00:00:00", "2024-07-04 00:00:00", "al0375@comcast.net", "部分退款", "22", "满意", "", "", "", ""], ["独立站美国组", "订单问题", "2024-07-15 00:00:00", "#167816", "acmejoy.com", "Y2071-4", "订单取消", "订单取消-无", "1", "客户下错订单，又买了其他的产品，取消这个", "2024-07-13 00:00:00", "2024-07-15 00:00:00", "atvjunkie660@gmail.com", "全额退款", "90.99", "满意", "", "", "", ""], ["独立站美国组", "物流问题", "2024-07-15 00:00:00", "#165971", "acmejoy.com", "100121347#1", "投递失败", "投递失败-无", "1", "产品第一次送货时被退回，买家后面想换货，支付差价和运费后给他换货", "2024-06-26 00:00:00", "2024-06-28 00:00:00", "ianroegels@gmail.com", "重发", "重发", "满意", "9.20019034976498e+21", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "BV美国客诉售后记录 24.8-25.6.xlsx", "title": "BV美国客诉售后记录 24.8-25.6", "source": "BV", "market": "美国", "period": "24.8 ~ 25.6", "rows": 4830, "cols": ["站点 (必填)", "客诉分类 (公式勿动）", "记录时间", "订单号 (必填)", "店铺 (必填)", "产品SKU (必填)", "类目", "一级分类 (必填)", "二级分类 (必填)", "用户反馈文字描述 (必填)", "购买日期", "投诉日期 (必填)", "客户邮箱 (必填)", "客服解决方案 (必填)", "客服解决方案备注", "用户是否满意 (必填)", "物流单号 & 备注 （必填）", "退款时间", "退款平台", "渠道", "Payment ID", "争议费", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], "colCount": 38, "sample": [["独立站美国组", "", "2024-08-01 00:00:00", "bv-312103", "bestvibe.com", "100176227#1", "", "投递失败", "投递失败-无", "地址问题包裹退回，确认地址后重发，客户留好评，但疑似被平台删除", "2024-03-19 00:00:00", "2024-07-15 00:00:00", "MICHAELMOORE52689@GMAIL.COM", "重发", "重发", "满意", "9434611106071888173671", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["独立站美国组", "", "2024-08-01 00:00:00", "bv-336300", "bestvibe.com", "100275752#1", "", "功能问题", "功能问题 — 开关机不良", "产品无法开机", "2024-07-13 00:00:00", "2024-07-20 00:00:00", "ernest@dharmatrading.com", "重发", "重发", "满意", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["独立站美国组", "", "2024-08-02 00:00:00", "bv-338191", "bestvibe.com", "100176010#3", "", "缺货", "缺货-其他", "德国订单，德国仓无货，客户不愿换货，要求退款", "2024-07-21 00:00:00", "2024-07-30 00:00:00", "Spookytorti@gmx.de", "全额退款", "83.2", "满意", "", "2024-08-06 00:00:00", "PayPal", "SEO", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "100125812#1", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "100126304#1", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "BV美国客诉售后记录 26.1-26.5.xlsx", "title": "BV美国客诉售后记录 26.1-26.5", "source": "BV", "market": "美国", "period": "26.1 ~ 26.5", "rows": 2145, "cols": ["", "客诉分类 (公式勿动）", "记录时间", "订单号 (必填)", "店铺 (必填)", "产品SKU (必填)", "类目", "一级分类 (必填)", "二级分类 (必填)", "用户反馈文字描述 (必填)", "购买日期", "投诉日期 (必填)", "客户邮箱 (必填)", "客服解决方案 (必填)", "客服解决方案备注", "用户是否满意 (必填)", "物流单号 & 备注 （必填）", "退款时间", "退款平台", "渠道", "Payment ID", "争议费", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], "colCount": 38, "sample": [["独立站美国组", "", "2026-01-01 00:00:00", "bv-435564", "bestvibe.com", "K0900231-D1", "", "支付平台客诉", "支付平台客诉", "Stripe 客诉：Fraudulent", "2025-11-04 00:00:00", "2025-11-12 00:00:00", "DawnLarso@yahoo.com", "全额退款", "76.11", "满意", "", "2026-01-01 00:00:00", "Stripe", "联盟", "pi_3SPhF8EipLA5K3LJ0YmzyEzd", "25.94", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "100226487#1", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["独立站美国组", "", "2026-01-03 00:00:00", "bv-439277", "bestvibe.com", "K0101043-D1", "", "支付平台客诉", "支付平台客诉", "Stripe 客诉：Product not received", "2025-11-23 00:00:00", "2025-12-14 00:00:00", "pbrewno@gmail.com", "全额退款", "64.33", "满意", "", "2026-01-03 00:00:00", "Stripe", "直接", "pi_3SWLf9EipLA5K3LJ1isy3Ebh", "25.92", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["独立站美国组", "", "2026-01-04 00:00:00", "bv-436806", "bestvibe.com", "100276059#1", "", "缺货", "缺货 — 售完下架", "产品缺货下架，客户要求退款", "2025-11-10 00:00:00", "2025-11-19 00:00:00", "kristiavila6@gmail.com", "全额退款", "46.97", "满意", "", "2026-01-04 00:00:00", "PayPal", "邮件", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["独立站美国组", "", "2026-01-04 00:00:00", "bv-447083", "bestvibe.com", "K3600412-D1", "", "缺货", "缺货-其他", "德国订单，德仓无货，客户要求退款", "2025-12-28 00:00:00", "2025-12-30 00:00:00", "naoyama406@gmail.com", "全额退款", "26.8", "满意", "", "2026-01-09 00:00:00", "PayPal", "邮件", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "BV美国客诉售后记录23.7-24.12.xlsx", "title": "BV美国客诉售后记录23.7-24.12", "source": "BV", "market": "美国", "period": "23.7 ~ 24.12", "rows": 1797, "cols": ["记录时间", "下单时间", "站点", "订单号", "SKU", "客诉大类", "客诉2级分类", "客户投诉点及要求", "处理结果", "退款/重发金额（如有）"], "colCount": 10, "sample": [["2023-07-01 00:00:00", "2023-07-01 00:00:00", "bestvibe.com", "bv-244539", "Y5354-B-4", "客户问题", "客户_不想要了", "客户不想要了，取消订单", "已解决", "82.99"], ["2023-07-01 00:00:00", "2023-06-24 00:00:00", "bestvibe.com", "bv-241869", "100195353#6，Y5061-B-4", "客户问题", "客户_不想要了", "客户不想要了，取消订单", "已解决", "55.65"], ["2023-07-01 00:00:00", "2023-06-29 00:00:00", "bestvibe.com", "bv-243930", "100125557#1", "客户问题", "客户_其他原因", "客户不想要了，客户说再不退款就没耐心了", "已解决", "80.99"], ["2023-07-01 00:00:00", "2023-07-19 00:00:00", "bestvibe.com", "bv-240274", "100125812#1，100175063#1", "产品交付端问题", "交付_缺货/无在途记录", "用户反映说包裹漏发，补发产品100175063#1", "已解决", "补发100175063#1"], ["2023-07-01 00:00:00", "2023-06-14 00:00:00", "bestvibe.com", "bv-238362", "Y6024-4", "产品交付端问题", "交付_缺货/无在途记录", "产品下架，换货处理，好评抵差价", "已解决", "换货Q1388-P-4"]], "ratingHist": null}, {"board": "客诉历史记录", "file": "BV美国客诉售后记录24.1-24.12.xlsx", "title": "BV美国客诉售后记录24.1-24.12", "source": "BV", "market": "美国", "period": "24.1 ~ 24.12", "rows": 1350, "cols": ["客诉分类", "记录时间", "订单号", "店铺", "产品SKU", "一级分类", "二级分类", "用户反馈文字描述", "购买日期 (年-月-日)", "投诉日期(年-月-日)", "客户邮箱", "客服解决方案", "客服备注"], "colCount": 13, "sample": [["产品问题", "2024-01-02 00:00:00", "bv-290852", "bestvibe.com", "100225755#1", "功能问题", "功能问题 - 震动不良", "原产品振动功能异常，顾客接受换货Y5239-BL-4重发", "2023-12-12 00:00:00", "2023-12-16 00:00:00", "chelsea.belle.miller@gmail.com", "重发", ""], ["订单问题", "2024-01-02 00:00:00", "bv-294819", "bestvibe.com", "Y7186-4，100125564#1，100275535#1", "订单支付", "订单支付 - 无", "客户反馈忘记使用折扣码，折扣退款$26.38，赠送润滑液，赠送100675014#1", "2023-12-29 00:00:00", "2023-12-30 00:00:00", "psed143@yahoo.com", "26.38", ""], ["产品问题", "2024-01-02 00:00:00", "bv-291153", "bestvibe.com", "100125651#1", "功能问题", "功能问题 - 充电不良", "原产品无法充电，顾客接受换货100175159#1重发。WEC0652312140123-1", "2023-12-13 00:00:00", "2023-12-29 00:00:00", "Milenkovic@sbcglobal.net", "重发", ""], ["产品问题", "2024-01-02 00:00:00", "bv-291838", "bestvibe.com", "Q2966-W-4", "外观问题", "外观问题 - 产品破损或瑕疵", "物品货到即损，顾客不接受重发，接受退款。", "2023-12-16 00:00:00", "2023-12-29 00:00:00", "goldensundesigns@yahoo.com", "50.25", ""], ["客户问题", "2024-01-02 00:00:00", "bv-288237", "bestvibe.com", "Y9206-ND-4", "不喜欢/不想要", "不喜欢/不想要 - 无", "PayPal争议：客户将使用说明上的建议搭配使用的产品理解为随单赠送的赠品，已完成自费退货沟通，收到退货后退款", "2023-12-01 00:00:00", "2023-12-12 00:00:00", "Countrycre@aol.com", "280", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "BV英国客诉售后记录22.01-22.12.xlsx", "title": "BV英国客诉售后记录22.01-22.12", "source": "BV", "market": "英国", "period": "22.01 ~ 22.12", "rows": 333, "cols": ["邮件日期", "下单时间", "订单号", "参考号", "邮箱", "sku", "问题类型", "处理结果", "", "", "", "", "", "", "", "", "", "", "", ""], "colCount": 20, "sample": [["2022-09-01 00:00:00", "2022-08-11 00:00:00", "WEC0832208110702", "uk-41975", "psvrworld@hotmail.com", "Y25242-1", "吮吸马达坏了", "已重发25242", "", "", "", "", "", "", "", "", "", "", "", ""], ["2022-09-01 00:00:00", "2022-07-25 00:00:00", "WEC0342207250906", "uk-38342", "garrygar40@yahoo.com", "Y25242-1", "Y25242-1无加热震动， 重发100125477#1无吮吸", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["2022-09-01 00:00:00", "2022-08-12 00:00:00", "WEC0882208120588", "uk-42145", "kbw37@hotmail.com", "Y25496-1", "持续时间短", "已重发25496", "", "", "", "", "", "", "", "", "", "", "", ""], ["2022-09-01 00:00:00", "2022-08-11 00:00:00", "WEC0752208110648", "uk-41938", "kpitman410@gmail.com", "Y25545-1", "已重发，存在同样的问题。 持续时间短后无法充电", "已退款80%", "", "", "", "", "", "", "", "", "", "", "", ""], ["2022-09-01 00:00:00", "2022-08-19 00:00:00", "WEC0482208190802", "uk-43708", "turner_stephen1@sky.com", "Y6984-W-4", "内胆损坏", "已重发Y6984", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "BV英国客诉售后记录23.01-23.12.xlsx", "title": "BV英国客诉售后记录23.01-23.12", "source": "BV", "market": "英国", "period": "23.01 ~ 23.12", "rows": 974, "cols": ["客诉日期", "下单时间", "站点", "订单号", "sku", "客诉大类", "客诉2级分类", "客户投诉点及要求", "处理结果", "是否产生重发或退款", "退款/重发金额（如有）", "", "", "", "", "", "", "", "", ""], "colCount": 20, "sample": [["2023-01-03 00:00:00", "2022-12-20 00:00:00", "bestvibe_co_uk", "WEC0972212200622", "Y5353-B-4", "产品问题", "产品_功能问题", "震动功能不起作用", "已解决", "已退款", "", "", "", "", "", "", "", "", "", ""], ["2023-01-03 00:00:00", "2023-01-04 00:00:00", "bestvibe_co_uk", "WEC0732210040501", "Q25151-1", "产品问题", "产品_功能问题", "产品无法启动", "已解决", "已重发", "", "", "", "", "", "", "", "", "", ""], ["2023-01-03 00:00:00", "2022-11-28 00:00:00", "bestvibe_co_uk", "WEC0962211281019", "100126104#1", "产品问题", "产品_功能问题", "设备故障， 无法开启", "已解决", "已重发", "", "", "", "", "", "", "", "", "", ""], ["2023-01-03 00:00:00", "2022-09-05 00:00:00", "bestvibe_co_uk", "WEC0222209060178", "Y7157-B-4", "产品问题", "产品_功能问题", "吮吸功能停止工作，按下按钮时只会发出咔哒声。 已经为设备充满电，但吮吸功能无法工作。", "已解决", "已退款", "", "", "", "", "", "", "", "", "", ""], ["2023-01-03 00:00:00", "2022-12-15 00:00:00", "bestvibe_co_uk", "WEC0972212160145", "Y7195-PL-4", "产品问题", "产品_功能问题", "充电后， 设备灯亮，但产品未旋转。", "已解决", "已重发", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "BV英国客诉售后记录24.01-24.12.xlsx", "title": "BV英国客诉售后记录24.01-24.12", "source": "BV", "market": "英国", "period": "24.01 ~ 24.12", "rows": 953, "cols": ["投诉日期", "购买日期", "订单号", "产品SKU", "客户邮箱", "客诉分类", "一级分类", "二级分类", "用户反馈文字描述", "解决措施", "", "", "", "", "", "", "", "", "", ""], "colCount": 20, "sample": [["2024-01-03 00:00:00", "2023-12-17 00:00:00", "WEC0872312180137", "100125242#1", "ialkayat@outlook.com", "产品问题", "功能问题", "伸缩不良", "振动和吸力仍然有效，但一旦使用伸缩功能，机器就会因自行关闭而停止运行", "", "", "", "", "", "", "", "", "", "", ""], ["2024-01-03 00:00:00", "2023-12-21 00:00:00", "WEC0292312220322", "100126480#1", "jpkillick2020@gmail.com", "客户问题", "用户问题", "操作/违规使用导致", "按下开机按钮，它都不会亮起", "", "", "", "", "", "", "", "", "", "", ""], ["2024-01-03 00:00:00", "2023-11-30 00:00:00", "WEC0402312010059", "100175363#1", "lynandrob.hodges@btopenworld.com", "产品问题", "功能问题", "伸缩不良", "大约 15 分钟内就完全停止了上/下运动。", "", "", "", "", "", "", "", "", "", "", ""], ["2024-01-03 00:00:00", "2023-12-19 00:00:00", "WEC0462312190342", "Y1073-4", "Mraasheikh@gmail.com", "产品问题", "功能问题", "开关机不良", "无法使用，该商品无法打开", "", "", "", "", "", "", "", "", "", "", ""], ["2024-01-03 00:00:00", "2023-12-16 00:00:00", "WEC0382312160648", "100226077#1", "kinnellanderson1@gmail.com", "交付问题", "缺货", "缺货-其他", "缺货导致延发， 要求退款", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "BV英国客诉售后记录25.01-25.06.xlsx", "title": "BV英国客诉售后记录25.01-25.06", "source": "BV", "market": "英国", "period": "25.01 ~ 25.06", "rows": 172, "cols": ["投诉日期", "购买日期", "订单号", "产品SKU", "客户邮箱", "客诉分类", "一级分类", "二级分类", "用户反馈文字描述", "", "", ""], "colCount": 12, "sample": [["2025-01-03 00:00:00", "2024-11-03 00:00:00", "WEC0442411040170", "100176260#1", "RAC-Stores@gmx.com", "产品问题", "外观问题", "产品破损或瑕疵", "产品撕裂", "", "", ""], ["2025-01-07 00:00:00", "2024-12-13 00:00:00", "WEC0982412140075", "Y5110-B-4", "scalderbray@gmail.com", "客户问题", "用户问题", "个人喜好", "噪音非常大", "", "", ""], ["2025-01-07 00:00:00", "2024-11-29 00:00:00", "WEC0952411290462", "100175192#1", "squidandester@hotmail.com", "产品问题", "功能问题", "充电不良", "设备无法开机或充电。我试过按住按钮，但没用，插入电源时它甚至不亮，如果一直充电，它会变热。", "", "", ""], ["2025-01-07 00:00:00", "2024-11-10 00:00:00", "WEC0132411100360", "100175454#1", "stevenhines23@gmail.com", "产品问题", "外观问题", "产品破损或瑕疵", "橡胶带突然断了", "", "", ""], ["2025-01-08 00:00:00", "2025-01-03 00:00:00", "WEC0582501030382", "100176391#1", "cristianstoica@ymail.com", "客户问题", "用户问题", "操作/违规使用导致", "无法启用振动功能", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "BV英国客诉售后记录26.01-26.05.xlsx", "title": "BV英国客诉售后记录26.01-26.05", "source": "BV", "market": "英国", "period": "26.01 ~ 26.05", "rows": 131, "cols": ["到期时间", "新增日期", "参考号", "订单号", "邮箱", "客诉原因", "客诉要求", "原因调查", "客诉原因分类", "跟进", "处理结果", "裁决结果", "PP单号", "金额", "备注", "", "", ""], "colCount": 18, "sample": [["2026-01-02 00:00:00", "", "uk-204582", "2025121611444385974", "info@revolutions33.co.uk", "物品未收到", "补偿申请", "购买的娃娃缺货，給推荐的客户不满意，顾客已同意换货发出", "", "已联系客户，再跟进", "12.31上传证据", "", "PP-R-TSA-608198345", "已取消", "", "", "", ""], ["2026-01-03 00:00:00", "", "uk-204043", "2025121309383650571", "Ruth Horridge m33ruth@gmail.com", "物品与描述不符", "补偿申请", "顾客收到产品，不满意", "", "已联系，已协商", "12.31上传证据", "", "PP-R-DVX-608127447", "胜诉", "", "", "", ""], ["2026-01-03 00:00:00", "", "uk-203538", "2025121010004030285", "m33ruth@gmail.com", "物品与描述不符", "补偿申请", "已发邮件询问原因", "", "已联系客户", "12.31上传证据", "", "PP-R-PJH-608129209", "胜诉", "", "", "", ""], ["2026-01-05 00:00:00", "", "uk-198544", "2025111019592937521", "SERGUEI MILECHINE kalym720@gmail.com", "物品未收到", "补偿申请", "客户之前购买的产品缺货，协商换货中", "", "已联系客户，再跟进,4号已跟进", "1.4上传证据", "", "PP-R-FNY-608645097", "败诉", "", "", "", ""], ["2026-01-05 00:00:00", "", "uk-205870", "2025122503191243241", "Kennedy Marcus marcus.kennedy2@gmail.com", "未经授权的交易", "补偿申请", "客户误下了两个订单，其中一笔订单已经取消，另外已经送达", "", "已联系客户，4号又跟进", "1.4上传证据", "", "PP-R-QWQ-608657689", "败诉", "", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "【最新版】所有独立站用户反馈记录26.5-26.7.20.xlsx", "title": "【最新版】所有独立站用户反馈记录26.5-26.7.20", "source": "", "market": "独立站", "period": "26.5 ~ 26.7.20", "rows": 1197, "cols": ["日期", "提交人", "客诉来源", "订单号", "客户邮箱", "店铺", "SKU", "类目", "客诉分类", "二级分类", "用户反馈-原文（首条）", "用户反馈文字描述", "购买日期", "投诉日期", "客服解决方案", "解决方案备注", "用户是否满意", "是否解决", "物流商", "物流单号", "退款金额", "争议手续费", "争议结果", "其他备注", "图片/视频凭证", "", "", "", "", "", "", ""], "colCount": 32, "sample": [["5月", "", "Klarna客诉", "", "", "acmejoy.de", "K2200789-D1", "", "", "装配不良", "用户首条有效反馈界定规则：以用户首次通过邮件、客诉、TP 反馈等渠道提交的含明确不满事由与明细信息的内容为准（同一用户多渠道反馈时，以最早提", "整个客诉过程的问题描述，包含客户反馈的问题，最后解决方案", "2026-05-20 00:00:00", "2026-05-20 00:00:00", "全额退款", "", "", "未解决", "DHL", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["5月", "周开芬", "邮件", "bv-478815", "jdbstajkowski4@aol.com", "bestvibe_official", "K2200789-D1", "", "", "售完下架", "不，我不需要另一件商品。请将已支付到我信用卡上的金额退还给我。 谢谢", "产品缺货下架，我们主动联系客户建议换货，客户不愿意要求退款", "2026-05-13 00:00:00", "2026-05-28 00:00:00", "全额退款", "", "满意", "已解决", "", "", "69.13", "", "", "", "", "", "", "", "", "", "", ""], ["5月", "周开芬", "邮件", "bv-482551", "krobinson226@hotmail.com", "bestvibe_official", "100175454#1", "", "", "多拍错拍-无", "不，我想取消其中一个订单，拜托了。我的订单好像没成功，所以我又下了另一个订单。", "重复下单，我们主动联系客户告知，客户取消一个", "2026-04-15 00:00:00", "2026-05-29 00:00:00", "全额退款", "", "满意", "已解决", "", "", "68.11", "", "", "", "", "", "", "", "", "", "", ""], ["5月", "胡静", "邮件", "#232606", "aj.bucci@yahoo.com", "acmejoy.com", "Y9180-B-4", "阴茎泵", "客户问题", "不喜欢不想要-无", "我想取消我的订单编号 232606。我于 5 月 24 日下了订单，但至今仍未收到您关于发运我订单的确认信息。根据您的退货政策，如果订单尚未", "未发货，要求取消订单，挽留无效", "2026-05-25 00:00:00", "2026-05-28 00:00:00", "全额退款", "", "满意", "已解决", "", "", "73.89", "", "", "", "", "", "", "", "", "", "", ""], ["5月", "胡静", "邮件", "#231653", "salmattia@gmail.com", "acmejoy.com", "K0301155-D1", "", "", "开关机不良", "当我首次购入这款产品时，我对其进行了完全充电。随后当我按下开启按钮时，它仅旋转了一瞬间便启动了，之后我便通过应用对其进行控制，一切运行得都很", "之前使用正常，后面只亮灯 不启动", "2026-05-13 00:00:00", "2026-05-27 00:00:00", "重发产品", "", "满意", "已解决", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "客诉历史记录", "file": "欧洲客诉售后记录23.1-26.5.xlsx", "title": "欧洲客诉售后记录23.1-26.5", "source": "欧洲", "market": "欧洲", "period": "23.1 ~ 26.5", "rows": 6835, "cols": ["类目", "客诉来源", "站点", "一级分类", "订单号", "店铺", "产品SKU", "二级分类", "用户反馈文字描述", "购买日期", "投诉日期", "投诉人（邮箱）", "退款/重发订单（如有）", "客服解决方案备注", "用户是否满意", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], "colCount": 44, "sample": [["飞机杯", "邮件", "独立站欧洲组", "交付问题", "#12341", "seekheart.es", "K0100476-D1", "缺货-其他", "缺货--不换--坚持退款，态度很差", "2026-04-17 00:00:00", "2026-05-03 00:00:00", "ionutbulacu69@gmail.com", "退款", "56.68", "满意", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["飞机杯", "邮件", "独立站欧洲组", "交付问题", "#94995", "acmejoy.de", "100195354#4", "不喜欢不想要-无", "客户原因自行退回", "2026-04-15 00:00:00", "2026-05-03 00:00:00", "happysound-music@online.de", "退款", "45.94", "满意", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["代发倒模", "邮件,TP差评", "独立站欧洲组", "交付问题", "#95200", "acmejoy.de", "K0801239-D1", "缺货-其他", "代发娃娃缺货，不等不换，差评后退款", "2026-04-19 00:00:00", "2026-05-03 00:00:00", "patrick.karolek@web.de", "退款", "565.03", "满意", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["其他", "paypal客诉", "独立站欧洲组", "交付问题", "sd-135724", "seekheart.de", "K3301210-D3", "缺货-其他", "润滑缺货，不需要。客诉到期退款", "2026-04-12 00:00:00", "2026-05-03 00:00:00", "musavialiii7@gmail.com", "退款", "20.94", "满意", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["飞机杯", "邮件", "独立站欧洲组", "交付问题", "sd-135444", "seekheart.de", "K0101323-D2", "缺货-其他", "缺货，不换，客诉关闭后退款", "2026-04-09 00:00:00", "2026-05-03 00:00:00", "casrex.yt@gmail.com", "退款", "45.1", "满意", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "用户评论与留言", "file": "de_comment.xlsx", "title": "de_comment", "source": "", "market": "德国", "period": "", "rows": 290, "cols": ["ID", "订单号", "用户", "商品ID", "商品货号", "商品名称", "类型", "评分", "内容", "时间", "渠道"], "colCount": 11, "sample": [["703", "3376", "P202208241738309378583", "183", "Q5353", "TORNADO - 2 in 1 transparente Version des Automatischer 7 Rotation 7 V", "文本", "2", "hallo mal in die runde, also das ware vom ei is das auch nicht hab mit", "2022-08-27 16:16:56", "1"], ["704", "3376", "P202208241738309378583", "118", "Y6984", "【HOT】S-HANDE - 2 IN1 9 Vibration 3 Saugmodi Penispumpe S-HANDE", "文本", "5", "das nen ich mal ne ordentliche schwanzpumpe, macht was es soll nur das", "2022-08-27 16:19:12", "1"], ["760", "3966", "P202209061850549750551", "188", "Y9216", "Prostata Analvibrator 7 Vibrieren 3 Stoßen mit Penisring BEIGE", "文本", "1", "Schon bei der ersten Anwendung ließ sich nur noch die Vibration aussch", "2022-09-06 18:52:51", "1"], ["1132", "6617", "P202210191829651903016", "73", "Q3457", "Fondlove BLOWJOB-GÖTTIN Oralsex Taschenmuschi 482G", "文本", "5", "Super schnell der Versand", "2022-10-21 14:57:54", "1"], ["1283", "7546", "P2022103108401556826032", "168", "Y5354", "【Everted Fleshy Labia】ROKA - 5-in-1 Multifunktionaler Masturbator 5 St", "文本", "1", "leider war es nicht in meinen Packet vorhanden wo ist es anstell war i", "2022-11-23 18:08:53", "1"]], "ratingHist": {"2.0": 16, "5.0": 204, "1.0": 48, "3.0": 11, "4.0": 11}}, {"board": "用户评论与留言", "file": "de_msg.xlsx", "title": "de_msg", "source": "", "market": "德国", "period": "", "rows": 5032, "cols": ["邮箱", "内容", "时间", "渠道"], "colCount": 4, "sample": [["hoffmann_peter@onlinehome.de", "Hat das mit meiner Bestellung geklappt?Mit freundlichen Grüßen Peter H", "2022-05-03 15:19:00", "2"], ["gilbertson.sherman@outlook.com", "Hi there, Have you ever wondered why new tokens listed on Uniswap, Pan", "2022-06-13 08:54:00", "2"], ["wittke.stolzenau@freenet.de", "hallo, ich kann meine bestellung nicht einsehen, Bestellnummer: 202206", "2022-06-27 10:35:00", "2"], ["eric.jones.z.mail@gmail.com", "Hi, Eric here with a quick thought about your website seekheart.de... ", "2022-07-14 05:12:00", "2"], ["liranseoexpert@gmail.com", "Hi , I don’t need to tell you how important it is to optimize every st", "2022-07-25 09:14:00", "2"]], "ratingHist": null}, {"board": "用户评论与留言", "file": "fr_comment.xlsx", "title": "fr_comment", "source": "", "market": "法国", "period": "", "rows": 109, "cols": ["ID", "订单号", "用户", "商品ID", "商品货号", "商品名称", "类型", "评分", "内容", "时间", "渠道"], "colCount": 11, "sample": [["2064", "1238", "P2023072714551771791061", "83", "Y5812", "Hardy - Masturbator Cup avec deux extrémités ouvertes et 3 mouvements ", "文本", "5", "Top, bien reçu. Délais tenu. Rien à dire. Merci", "2023-08-02 07:27:31", "1"], ["2100", "2092", "P2023081012512037798561", "242", "Y5156", "Stimulateur Prostatique billes 9 Va-et-vient Vibration APP&Télécommand", "文本", "5", "Super génial", "2023-08-17 10:57:21", "2"], ["2168", "3017", "P202308221650279921849", "172", "Y5353", "TORNADO 3 EN 1 Masturbateur Cup avec 5 rotations et 10 vibrations, See", "晒图", "5", "Je viens de le recevoir et je peux dire que c'est un excellent achat. ", "2023-09-03 12:40:36", "2"], ["2285", "4101", "P2023090712091082683421", "83", "Y5812", "Hardy - Masturbator Cup avec deux extrémités ouvertes et 3 mouvements ", "文本", "5", "Super produit jouissance de fou", "2023-09-15 13:45:16", "2"], ["2384", "5084", "P202307291054800230590", "34", "Y6127", "Sakura Masturbateurs réalistes avec petites fesses marron, poids de 2,", "文本", "5", "Très réaliste je recommande", "2023-09-27 14:52:13", "2"]], "ratingHist": {"5.0": 88, "4.0": 10, "3.0": 4, "1.0": 7}}, {"board": "用户评论与留言", "file": "fr_msg.xlsx", "title": "fr_msg", "source": "", "market": "法国", "period": "", "rows": 298, "cols": ["邮箱", "内容", "时间", "渠道"], "colCount": 4, "sample": [["guiseppepalminteri@sfr.fr", "monsieur je trouve que ma commande tarde a arriver donner moi une date", "2023-06-13 14:09:23", "2"], ["greniereliott@gmail.com", "J’ai passé commande impossible de voir l’avancement. 20230806143133818", "2023-08-08 09:33:39", "2"], ["didier.sant@sfr.fr", "bjr chris masturbation cup je les mi en charge le voyen bleu et allume", "2023-08-11 12:10:59", "2"], ["geogeobarphotos@gmail.com", "toujours pas recus ma livraison commende le 14/08/2023", "2023-08-16 09:58:34", "2"], ["jpv64600@gmail.com", "Madame, Monsieur Bonjour, après avoir commandé un produit sur votre si", "2023-08-18 09:41:42", "2"]], "ratingHist": null}, {"board": "用户评论与留言", "file": "jp_comment.xlsx", "title": "jp_comment", "source": "", "market": "日本", "period": "", "rows": 565, "cols": ["ID", "订单号", "用户", "商品ID", "商品货号", "商品名称", "类型", "评分", "内容", "时间", "渠道"], "colCount": 11, "sample": [["428", "10167103", "W202112301352112536505", "227", "Y1011", "ピストン＆喘ぎ声 吸盤付き ヒダ＆イボインナーホール 5種ピストン 電動オナホール", "文本", "4", "皆様が言うように思ったより大きかった（笑）ですが使いやすいのとコスパー良いかと思います。 初めての電動タイプの方にはコスパと安定を求めるなら", "2021-12-30 14:07:06", "2"], ["430", "10167146", "W2021122623161879334779", "735", "Y6984", "ディープバキュ Vortex 見て分かる増大力！ギンギン膨張99％実感 爆吸引x振動 透明チューブ 電動オナホ ペニスポンプ", "文本", "4", "届いた物が違いますが、使用してみて、とても良かったので、このまま継続していきたいです。 また、大きくなってくれれば嬉しいなぁー✨", "2022-01-06 03:08:18", "2"], ["431", "10167146", "W2021122623161879334779", "164", "Q20004", "射精時間延長 包茎改善 4点セット 高品質シリコン コックリング", "文本", "5", "意外と見た目よりしっかりしています。 結構、キツくなるので長時間の使用は、辞めた方がいいと思います。", "2022-01-06 03:10:47", "2"], ["749", "10167467", "P2022010509581219567560", "719", "Y8141", "オナホ 据置型 極上桃尻 ゆったり系 2穴 非貫通2.9kg 大型オナホ", "晒图", "5", "以前10Kgのトルソー型も所持していたのですがそこまで大きくなると行為後の手入れがもう大変なのです。シンクじゃ無理なので洗浄はお風呂場。大き", "2022-08-17 06:17:14", "1"], ["667", "10168095", "", "426", "Y6912", "6種高速ピストン 360°正反回転 角度調整吸盤 一時停止機能 電動オナホール", "文本", "1", "一週間で逝きました", "2022-05-21 09:33:13", "1"]], "ratingHist": {"4.0": 88, "5.0": 337, "1.0": 55, "3.0": 56, "2.0": 29}}, {"board": "用户评论与留言", "file": "jp_msg.xlsx", "title": "jp_msg", "source": "", "market": "日本", "period": "", "rows": 9182, "cols": ["邮箱", "内容", "时间", "渠道"], "colCount": 4, "sample": [["gomazou51@yahoo.co.jp", "段ボール以外、または小型の段ボール梱包はできますか", "2021-12-20 17:23:52", "2"], ["a000to000z@yahoo.co.jp", "送金したのですが反映にはどの位かかるのですか？", "2021-12-23 05:22:20", "2"], ["yun11127dj@ybb.ne.jp", "商品の発送はまだですか？", "2021-12-27 08:43:48", "2"], ["hisao1947@sirius.ocn.ne.jp", "AIR-2を購入しましたがスイッチが入らない パソコンに接続し3時間以上充電をしましたが電源入らず 再度、充電中ですが、スイッチのランプが点", "2022-01-15 02:29:24", "2"], ["arithon1414@gmail.com", "Hi, do you accept V-Preca as payment (pre-paid virtual card : LIFE Car", "2022-01-15 16:04:26", "2"]], "ratingHist": null}, {"board": "用户评论与留言", "file": "uk_comment.xlsx", "title": "uk_comment", "source": "", "market": "英国", "period": "", "rows": 611, "cols": ["ID", "订单号", "用户", "商品ID", "商品货号", "商品名称", "类型", "评分", "内容", "时间", "渠道"], "colCount": 11, "sample": [["91400", "3072", "P2021090121011956969974", "17293", "Y8102", "Bestvibe Detachable Sucking Vibrating Masturbation Cup", "文本", "1", "This item worked fine with only occasional use but then stopped workin", "2021-09-25 06:51:10", "1"], ["91535", "4422", "P202109202208179923754", "17293", "Y8102", "Bestvibe Detachable Sucking Vibrating Masturbation Cup", "文本", "1", "Initially impressed with the functions of the item review would have r", "2021-11-23 15:48:18", "2"], ["91428", "4669", "W2021091015321515954220", "17433", "Q3551", "Bestvibe Rotating Tongues Vibrating G-spot Vibrators", "文本", "1", "Didn't receive it. Ordered three items received 2. Awaiting response t", "2021-09-30 17:12:36", "2"], ["91429", "5207", "W202110072055201970334", "17278", "Q20086", "Bestvibe Thrusting Rotation Hand-free Automatic Masturbator", "文本", "5", "I just ordered this at the weekend after a few beers to many. Arrived ", "2021-10-07 21:01:05", "2"], ["91452", "7281", "W2021102902451511069642", "17293", "Y8102", "Bestvibe Detachable Sucking Vibrating Masturbation Cup", "文本", "5", "I’m loving it! It’s the best so far! I wish it last longer on charge.", "2021-11-09 02:23:00", "2"]], "ratingHist": {"1.0": 88, "5.0": 370, "2.0": 40, "4.0": 56, "3.0": 57}}, {"board": "用户评论与留言", "file": "uk_msg.xlsx", "title": "uk_msg", "source": "", "market": "英国", "period": "", "rows": 7258, "cols": ["邮箱", "内容", "时间", "渠道"], "colCount": 4, "sample": [["steve@explainervideos4u.xyz", "Hi, We'd like to introduce to you our explainer video service which we", "2021-07-07 16:43:43", "2"], ["ericajacksonmi0@yahoo.com", "Hi, We're wondering if you'd be interested in a 'dofollow' backlink to", "2021-07-15 12:26:42", "2"], ["eric.jones.z.mail@gmail.com", "Cool website! My name’s Eric, and I just found your site - bestvibe.co", "2021-07-18 18:14:28", "2"], ["brian.tracyw@btinternet.com", "I want to order one of these but my wife mustn't know. can you deliver", "2021-07-26 10:37:41", "2"], ["eric.jones.z.mail@gmail.com", "Cool website! My name’s Eric, and I just found your site - bestvibe.co", "2021-08-02 21:51:23", "2"]], "ratingHist": null}, {"board": "用户评论与留言", "file": "us_comment.xlsx", "title": "us_comment", "source": "", "market": "美国", "period": "", "rows": 879, "cols": ["ID", "订单号", "用户", "商品ID", "商品货号", "商品名称", "类型", "评分", "内容", "时间", "渠道"], "colCount": 11, "sample": [["96892", "64188", "", "227", "Y2209", "Male Prostate Vibe Massager With Penis Ring Remote Control", "文本", "1", "Battery does not charge. It came with a full charge, but once flat, it", "2022-02-23 00:31:37", "1"], ["91885", "66272", "", "974", "Y7111", "Warriors Series 8 Thrusting Rotating Swirling Automatic Masturbator", "晒图", "5", "Much better than this one in the photo that I tried first", "2021-10-05 15:36:22", "2"], ["91947", "70969", "P2021101411211391880799", "1237", "Y6950", "YUJI Rotating Telescopic Masturbator", "文本", "5", "This toy is inserted really well in frequency! The grain texture is ve", "2021-10-27 06:26:23", "1"], ["92008", "71483", "P2021101521331367632482", "1384", "Y6770", "Bestvibe 7.33 lbs Tianna Rose Lips Nipple Fit woman Realistic Masturba", "文本", "5", "Thank u very much. Package received.", "2021-11-07 10:21:39", "1"], ["91949", "73527", "W2021102807492042875766", "1253", "Y6971", "Realistic Glans 12 Thrusting Heating Anal Massager", "文本", "5", "This gadget is really realistic and heating function!", "2021-11-02 18:53:09", "2"]], "ratingHist": {"1.0": 189, "5.0": 554, "4.0": 45, "3.0": 50, "2.0": 41}}, {"board": "用户评论与留言", "file": "us_msg.xlsx", "title": "us_msg", "source": "", "market": "美国", "period": "", "rows": 11673, "cols": ["邮箱", "内容", "时间", "渠道"], "colCount": 4, "sample": [["den.diam@me.com", "Hey there ! I just ordered a product on your website and in the order ", "2021-09-22 22:53:53", "2"], ["jonaldridge1@verizon.net", "I cannot find any information about an order I placed on Tuesday 9/14 ", "2021-09-25 00:15:44", "2"], ["tolentino.carlos@bk.ru", "QGWGM0YT4EYF0KRWXF www.google.com Where are you located ? I want to co", "2021-09-25 18:24:57", "2"], ["marty72p@hotmail.com", "I have not received this order yet 33XHF334752601000935109", "2021-09-26 10:54:07", "2"], ["Ajm@gmail.com", "I need to be rich too and magic land. Teased you", "2021-09-26 19:22:28", "2"]], "ratingHist": null}, {"board": "邮件原文", "file": "AC欧洲3.1-3.31.xlsx", "title": "AC欧洲3.1-3.31", "source": "AC", "market": "欧洲", "period": "3.1 ~ 3.31", "rows": 4490, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["19451", "acmejoy.nl", "service@acmejoy.nl", "inbound", "<11482545688853193685@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.nl", "", "Report domain: acmejoy.nl Submitter: google.com Report-ID: 11482545688", "2026-03-31 23:59:59", "1", "", "", "这是一封来自Google的DMARC域报告，包含多个域名的验证报告，并非客户邮件。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9800", "AI", ""], ["19404", "acmejoy.it", "service@acmejoy.it", "inbound", "<8790016505146153518@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.it", "", "Report domain: acmejoy.it Submitter: google.com Report-ID: 87900165051", "2026-03-31 23:59:59", "1", "", "", "这是一封来自Google的DMARC域报告邮件，包含多个域名的自动报告，不包含客户请求。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["19428", "acmejoy.fr", "service@acmejoy.fr", "inbound", "<7183378574185257717@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.fr", "", "Report domain: acmejoy.fr Submitter: google.com Report-ID: 71833785741", "2026-03-31 23:59:59", "1", "", "", "这是一封来自Google的自动DMARC报告通知邮件，包含多个域名报告ID，并非客户邮件。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "1.0000", "AI", ""], ["19129", "acmejoy.nl", "service@acmejoy.nl", "inbound", "<69cc5e4e.050a0220.27bbaf.0eef@mx.google.com>", "", "service <aspltest3@gmail.com>", "service@acmejoy.nl", "", "需采取行动：维护您的账户使用权限 | REF: PP-ACT-005", "2026-03-31 23:52:46", "1", "<P> <TABLE role=presentation style='FONT-SIZE: 14px; FONT-FAMILY: Supr", "<P> <TABLE role=presentation style='FONT-SIZE: 14px; FONT-FAMILY: Supr", "这是一封来自PayPal的系统通知邮件，要求用户提供账户信息，并非客户发起的咨询邮件。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["19069", "acmejoy.it", "service@acmejoy.it", "inbound", "bizmx_3F043AD2160CBD5F5BB493EF@unknown.com", "", "service <no-reply@archivelofts.com>", "service@acmejoy.it", "", "需立即采取行动：账户合规性确认 | CASE ID: #C2-990", "2026-03-31 23:49:29", "1", "</p> <figure class=\"table\" style=\"width:580px;\"> <table style=\"backgro", "</p> <figure class=\"table\" style=\"width:580px;\"> <table style=\"backgro", "这是一封由PayPal发送的自动通知邮件，要求账户进行合规性确认，并非客户主动发出的咨询或请求。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "AC欧洲4.1-4.30.xlsx", "title": "AC欧洲4.1-4.30", "source": "AC", "market": "欧洲", "period": "4.1 ~ 4.30", "rows": 5415, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["36181", "acmejoy.de", "service@acmejoy.de", "inbound", "<7694518049687277507@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.de", "", "Report domain: acmejoy.de Submitter: google.com Report-ID: 76945180496", "2026-04-30 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 报告自动化邮件，不包含客户订单或请求。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["36182", "acmejoy.nl", "service@acmejoy.nl", "inbound", "<7330080333423583809@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.nl", "", "Report domain: acmejoy.nl Submitter: google.com Report-ID: 73300803334", "2026-04-30 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 报告自动通知邮件，不包含客户订单或咨询内容。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["36204", "acmejoy.it", "service@acmejoy.it", "inbound", "<1908312141564461668@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.it", "", "Report domain: acmejoy.it Submitter: google.com Report-ID: 19083121415", "2026-04-30 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 报告自动化邮件，包含多个域名报告记录，没有客户请求或订单信息。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["36178", "acmejoy.fr", "service@acmejoy.fr", "inbound", "<6652004698690951282@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.fr", "", "Report domain: acmejoy.fr Submitter: google.com Report-ID: 66520046986", "2026-04-30 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 报告邮件，包含多个域名报告，不是客户订单相关邮件。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["35972", "acmejoy.nl", "service@acmejoy.nl", "inbound", "<acmejoy.nl-1777590871@Aruba.it>", "", "dmarcreport@aruba.it", "service@acmejoy.nl", "", "Report Domain: acmejoy.nl Submitter: Aruba.it Report-ID: acmejoy.nl-17", "2026-04-30 23:14:31", "1", "This is a DMARC aggregate report for acmejoy.nl generated at Thu Apr 3", "", "这是一封来自 Aruba.it 的 DMARC 聚合报告邮件，包含对 acmejoy.nl 和 acmejoy.it 域名的安全报告，不属于", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "AC欧洲5.1-5.31.xlsx", "title": "AC欧洲5.1-5.31", "source": "AC", "market": "欧洲", "period": "5.1 ~ 5.31", "rows": 6304, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["75421", "acmejoy.fr", "service@acmejoy.fr", "inbound", "<5190862364166216029@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.fr", "", "Report domain: acmejoy.fr Submitter: google.com Report-ID: 51908623641", "2026-05-31 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 系统报告邮件，属于系统通知而非客户诉求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "1.0000", "AI", ""], ["75360", "acmejoy.it", "service@acmejoy.it", "inbound", "<6673341506688119260@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.it", "", "Report domain: acmejoy.it Submitter: google.com Report-ID: 66733415066", "2026-05-31 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 系统通知邮件，不属于客户服务请求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "0.9900", "AI", ""], ["75382", "acmejoy.nl", "service@acmejoy.nl", "inbound", "<1047507650138783543@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.nl", "", "Report domain: acmejoy.nl Submitter: google.com Report-ID: 10475076501", "2026-05-31 23:59:59", "1", "", "", "这是一封来自 Google 的系统报告邮件，不是客户发起的诉求邮件。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "0.9900", "AI", ""], ["75380", "acmejoy.de", "service@acmejoy.de", "inbound", "<4094722735616711962@google.com>", "", "noreply-dmarc-support@google.com", "service@acmejoy.de", "", "Report domain: acmejoy.de Submitter: google.com Report-ID: 40947227356", "2026-05-31 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 系统报告邮件，不是客户发出的服务请求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "1.0000", "AI", ""], ["74099", "acmejoy.fr", "service@acmejoy.fr", "inbound", "<CAMU50OrEpxTxx_Mqe+ih29dmnavsiNe+b5ZK8VhQyCTotqcsnw@mail.gmail.com>", "", "Atanda Sales <deoneeyconsult130@gmail.com>", "\"acmejoy.fr\" <service@acmejoy.fr>", "", "Re: Acmejoy 1 new Message", "2026-05-31 23:38:36", "1", "What are you afraid of? Because sometimes the difference between growt", "<div dir=\"auto\">What are you afraid of?<div dir=\"auto\"><br></div><div ", "这是一封来自外部销售人员的营销推广邮件，无客户服务诉求。", "[]", "ai", "非客户邮件", "营销推广", "", "", "", "", "非客户邮件", "营销推广", "", "非客户邮件/营销推广", "0.9800", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "AC欧洲6.1-6.30.xlsx", "title": "AC欧洲6.1-6.30", "source": "AC", "market": "欧洲", "period": "6.1 ~ 6.30", "rows": 7882, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["121947", "acmejoy.fr", "service@acmejoy.fr", "inbound", "<CAOtxDY_-o4eqcaGa8d_NY8N+Ug2s0qhVwZQPrRHezR5h0mnVBQ@mail.gmail.com>", "", "JEX SÆLË <teebright297@gmail.com>", "service@acmejoy.fr", "", "", "2026-06-30 23:00:40", "1", "Dïd yøu øffer a shïp āll countries?", "<div dir=\"auto\">Dïd yøu øffer a shïp āll countries?</div>", "客户询问是否提供全球发货服务。", "[]", "ai", "售前咨询", "产品咨询", "", "", "", "", "售前咨询", "产品咨询", "", "售前咨询/产品咨询", "0.9500", "AI", ""], ["121518", "acmejoy.it", "service@acmejoy.it", "inbound", "<000001dd08dd$1c9822f0$55c868d0$@it>", "", "\"Ludovica Benedetti\" <ludovicabenedetti@alice.it>", "\"'ACMEJOY'\" <service@acmejoy.it>", "", "stop vi denuncio", "2026-06-30 22:09:24", "1", "Da: ACMEJOY [mailto:service@acmejoy.it] Inviato: martedì 30 giugno 202", "<html xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-mic", "客户收到并投诉了多封营销邮件，要求停止发送并删除数据，属于非客户诉求的垃圾邮件/投诉。", "[]", "ai", "非客户邮件", "垃圾邮件/投诉", "", "", "", "", "非客户邮件", "垃圾邮件/投诉", "", "非客户邮件/垃圾邮件/投诉", "0.9500", "AI", ""], ["121979", "acmejoy.fr", "service@acmejoy.fr", "inbound", "<CAP-o2v1yBMyAdrUx6K7F5vX8whQuYUxbOMxvs0heMcQaHjvd3Q@mail.gmail.com>", "", "Elena Riley <elenariley604@gmail.com>", "service@acmejoy.fr", "", "Enjoy babesrater", "2026-06-30 21:52:40", "1", "Hi Sir, Hope you are doing well website DR Traffic https://babesrater.", "<div dir=\"ltr\"><div dir=\"ltr\">Hi Sir,<br>Hope you are doing well<br><b", "这是一封来自第三方网站的营销推广邮件，推销文章外链购买服务，无客户服务诉求。", "[]", "ai", "非客户邮件", "营销推广", "", "", "", "", "非客户邮件", "营销推广", "", "非客户邮件/营销推广", "0.9500", "AI", ""], ["121978", "acmejoy.fr", "service@acmejoy.fr", "inbound", "<CABU00TNGeZ3VWgeU6HRsQ9paxz19QyoBQgXSvLdx63Eb_-MeRQ@mail.gmail.com>", "", "Ava Era <era09633@gmail.com>", "service@acmejoy.fr", "", "We provide header links on adult sites", "2026-06-30 21:52:31", "1", "Hi We provide header links on adult sites Advertising inquiry:: https:", "<div dir=\"ltr\"><div dir=\"ltr\"><div style=\"font-size:inherit\">Hi</div><", "这是一封来自第三方网站的广告推广邮件，内容为成人网站链接推广，无客户服务诉求。", "[]", "ai", "非客户邮件", "营销推广", "", "", "", "", "非客户邮件", "营销推广", "", "非客户邮件/营销推广", "0.9900", "AI", ""], ["121946", "acmejoy.fr", "service@acmejoy.fr", "inbound", "<CAHvZP7eKjP3UkU_LUKpvZ5PvcbPdEnr7iBgB5uHGha1CjEbdmw@mail.gmail.com>", "", "Pierre Faugere <pfaugere7@gmail.com>", "\"service@acmejoy.fr\" <service@acmejoy.fr>", "", "Livraison", "2026-06-30 21:44:02", "1", "J’aimerais que mon colis soit livré jeudi ou vendredi", "J’aimerais que mon colis soit livré jeudi ou vendredi", "客户 Pierre Faugere 询问订单 #62673 的配送时间，希望周四或周五送达。", "[\"#62673\"]", "ai", "催发货", "缺货换货", "", "", "", "", "催发货", "缺货换货", "", "催发货/缺货换货", "0.8500", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "AC美国3.1-3.31.xlsx", "title": "AC美国3.1-3.31", "source": "AC", "market": "美国", "period": "3.1 ~ 3.31", "rows": 1634, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["19067", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAHjsOM1bn-O1yBruz98CETdW-v+ctbTiJa5CqvpHy6CoD5VxbQ@mail.gmail.com>", "", "Ronald Sisk <ronaldsisk9@gmail.com>", "support@acmejoy.com", "", "", "2026-03-31 23:34:18", "1", "how about a refund", "<div dir=\"auto\">how about a refund</div>", "客户询问订单是否被取消，并询问是否有订单在途，同时要求退款。", "[]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.8500", "AI", ""], ["19066", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAHjsOM3o5pV9FwUHyOCrdVoMZk2qkUA+3=8OmeHJtN-MDVG2vQ@mail.gmail.com>", "", "Ronald Sisk <ronaldsisk9@gmail.com>", "support@acmejoy.com", "", "", "2026-03-31 23:27:13", "1", "do I have an order coming or not", "<div dir=\"auto\">do I have an order coming or not</div>", "客户询问订单取消的真实性、是否有订单正在处理，并请求退款。", "[]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.8500", "AI", ""], ["19065", "acmejoy.com", "support@acmejoy.com", "inbound", "<69cc5759.630a0220.0d62.279f@mx.google.com>", "", "\"solidwilk.sw\" <solidwilk.sw@gmail.com>", "AcmeJoy <support@acmejoy.com>", "", "RE: Reminder: Your Package is Ready for Pickup (Order #225144)", "2026-03-31 23:23:03", "1", "Hello!I have received all of what I have ordered, so if you need to, y", "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charse", "客户确认收到订单225144的包裹，但询问产品\"cinder\"的应用程序控制功能，希望获取相关链接或二维码。", "[\"#225144\"]", "ai", "售后服务", "", "", "", "", "", "售后服务", "", "", "售后服务", "0.9000", "AI", ""], ["19064", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAHjsOM08v2zs=frX6b8RBcBd1t+ME5tOmVAqY2Usk=QHV=QTJw@mail.gmail.com>", "", "Ronald Sisk <ronaldsisk9@gmail.com>", "support@acmejoy.com", "", "", "2026-03-31 23:19:56", "1", "I received a email stating my order has been canceled is this true", "<div dir=\"auto\">I received a email stating my order has been canceled ", "客户询问订单是否被取消、是否有订单，并请求退款。", "[]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.7500", "AI", ""], ["19043", "acmejoy.com", "support@acmejoy.com", "inbound", "<CADa67NqB5+yp+REZd2B59qg+bhwH4Npes_Vh1rMs+5kV5pgCBA@mail.gmail.com>", "", "Jason Stone <jasonstonemed@gmail.com>", "AcmeJoy <support@acmejoy.com>", "", "Re: #226362", "2026-03-31 22:43:58", "1", "Thank you Annie. I didn’t figure that you’d want it back *snicker* On ", "<div dir=\"auto\">Thank you Annie. I didn’t figure that you’d want it ba", "客户回复邮件，对产品的极度不适和掉渣设计缺陷表示不满，并对客服提供的折扣表示嘲讽。", "[\"#226362\"]", "ai", "投诉", "", "", "", "", "", "投诉", "", "", "投诉", "0.9500", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "AC美国4.1-4.30.xlsx", "title": "AC美国4.1-4.30", "source": "AC", "market": "美国", "period": "4.1 ~ 4.30", "rows": 1347, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["35981", "acmejoy.com", "support@acmejoy.com", "inbound", "<209082555.4967250.1777589968232@mail.yahoo.com>", "", "ted kalina <tedkalina@yahoo.com>", "support@acmejoy.com", "", "Re: Order #230496 confirmed", "2026-04-30 22:59:28", "1", "Please cancel order. Yahoo Mail: Search, Organize, Conquer On Thu, Apr", "Please cancel order.<br><br><div id=\"ymail_android_signature\"><a id=\"y", "客户 Ted Kalina 要求取消订单号为 230496 的购买。", "[\"#230496\"]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.9500", "AI", ""], ["35980", "acmejoy.com", "support@acmejoy.com", "inbound", "<379629319.4968319.1777589904330@mail.yahoo.com>", "", "ted kalina <tedkalina@yahoo.com>", "support@acmejoy.com", "", "Re: Order #230496 confirmed", "2026-04-30 22:58:24", "1", "Yahoo Mail: Search, Organize, Conquer On Thu, Apr 30, 2026 at 1:47 PM,", "<br><br><div id=\"ymail_android_signature\"><a id=\"ymail_android_signatu", "客户要求取消订单号为 230496 的购买。", "[\"#230496\"]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.9500", "AI", ""], ["35969", "acmejoy.com", "support@acmejoy.com", "inbound", "<CABOHk=cgH0kU8aYqjDfFU1oS25vgnGS4rreyx=VAi3afxXgT5g@mail.gmail.com>", "", "Chris Thom <cthompson911@gmail.com>", "AcmeJoy <support@acmejoy.com>", "", "Re: Order #229570 confirmed", "2026-04-30 22:08:21", "1", "Please call me at 813-468-4274 On Wed, Apr 29, 2026, 11:51 PM AcmeJoy ", "<div dir=\"auto\">Please call me at 813-468-4274 </div><br><div class=\"g", "客户询问订单号为 229570 的包裹运输状态，表示尚未收到订单。", "[\"#229570\"]", "ai", "物流查询", "", "", "", "", "", "物流查询", "", "", "物流查询", "0.9500", "AI", ""], ["35968", "acmejoy.com", "support@acmejoy.com", "inbound", "<CABOHk=eqfxZvMnk7=UaVA3YwSJqigL2adOVWCcYJKEyVJkfFaQ@mail.gmail.com>", "", "Chris Thom <cthompson911@gmail.com>", "AcmeJoy <support@acmejoy.com>", "", "Re: Order #229570 confirmed", "2026-04-30 22:07:49", "1", "I have not received it yet. On Wed, Apr 29, 2026, 11:51 PM AcmeJoy <su", "<div dir=\"auto\">I have not received it yet.</div><br><div class=\"gmail", "客户 Chris Thom 询问订单 #229570 的物流状态，表示尚未收到包裹，并提供了联系电话。", "[\"#229570\"]", "ai", "物流查询", "", "", "", "", "", "物流查询", "", "", "物流查询", "0.9500", "AI", ""], ["35946", "acmejoy.com", "support@acmejoy.com", "inbound", "<220439177.4901939.1777583844212@mail.yahoo.com>", "", "Christopher Woods <christopherandtylerkage@yahoo.com>", "support@acmejoy.com", "", "Re:", "2026-04-30 21:17:24", "1", "Can I send it back and you can see for yourself as well? Yahoo Mail: S", "Can I send it back and you can see for yourself as well?<br><br><div i", "客户Christopher Woods投诉收到的产品有损坏（肩膀和手臂问题），因公司要求提供视频证明而多次沟通未果，情绪非常沮丧，要求全额退", "[]", "ai", "投诉", "", "", "", "", "", "投诉", "", "", "投诉", "0.9500", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "AC美国5.1-5.31.xlsx", "title": "AC美国5.1-5.31", "source": "AC", "market": "美国", "period": "5.1 ~ 5.31", "rows": 1985, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["73913", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAEBCr_NT4ridaw54YonP-PiP9pfNLhOWh1oqzD_H_72yMNyXLA@mail.gmail.com>", "", "Erwin Garcia <erwingarcia0617@gmail.com>", "AcmeJoy <support@acmejoy.com>", "", "Re: Order #232944 confirmed", "2026-05-31 21:29:46", "1", "Hello, what day would this order be shipped? On Fri, May 29, 2026 at 1", "<div dir=\"auto\">Hello, what day would this order be shipped? </div><di", "客户询问订单 #232944 何时发货，并表示愿意等待。", "[\"#232944\"]", "ai", "催发货", "愿意等待", "", "", "", "", "催发货", "愿意等待", "", "催发货/愿意等待", "0.9500", "AI", ""], ["73777", "acmejoy.com", "support@acmejoy.com", "inbound", "<0100019e7ef54ff1-60adb81c-1e76-4c7f-966f-7a4231745fb7-000000@email.am", "", "Stripe <notifications@stripe.com>", "support@acmejoy.com", "", "Suspected fraudulent payment on your Stripe account", "2026-05-31 16:54:26", "1", "We recently noticed a suspicious payment on your Stripe account for be", "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http:/", "这是一封来自 Stripe 的系统通知邮件，告知账户存在疑似欺诈支付和争议情况，无客户直接诉求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "1.0000", "AI", ""], ["73621", "acmejoy.com", "support@acmejoy.com", "inbound", "<SEYPR01MB419717983CF1C3BE410BA76EB2142@SEYPR01MB4197.apcprd01.prod.ex", "", "Radhika das <SearchWalaBanda@hotmail.com>", "Radhika das <SearchWalaBanda@hotmail.com>", "", "Re: Data-Driven Marketing for Better Results", "2026-05-31 13:25:43", "1", "Hi, I apologize for email again! Adding a Virtual Assistant can save y", "<html> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; char", "这是一封营销推广邮件，发件人试图推销虚拟助理服务及营销方案，非客户服务请求。", "[]", "ai", "非客户邮件", "营销推广", "", "", "", "", "非客户邮件", "营销推广", "", "非客户邮件/营销推广", "0.9900", "AI", ""], ["73598", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAADrWRKqiusAvP136Wwx2S2+wq8SGXdqq5hUXONX_XhhVNdxeg@mail.gmail.com>", "", "Renald Boulanger <renaldboulange@gmail.com>", "AcmeJoy <support@acmejoy.com>", "", "", "2026-05-31 12:04:33", "1", "Where is my fucking order !!", "<div dir=\"auto\">Where is my fucking order !!</div>", "客户 Renald Boulanger 对订单 #230147 表示极度不满，称包裹显示已送达但未收到，要求立即处理。", "[\"#230147\"]", "ai", "物流查询", "已送达未收到", "", "", "", "", "物流查询", "已送达未收到", "", "物流查询/已送达未收到", "0.9500", "AI", ""], ["73429", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAMrkU9oHiz-zft2goSq7k56=1e9+vyjdVgtttZoSf67MBEWyYg@mail.gmail.com>", "", "Scott Brink <scottbrink67@gmail.com>", "AcmeJoy <support@acmejoy.com>", "", "Re: Customer account confirmation", "2026-05-31 08:46:23", "1", "Your crazy with those prices I can get the same exact ones made by the", "<div dir=\"auto\">Your crazy with those prices I can get the same exact ", "客户因产品价格过高及产品形态不满，要求停止联系并删除邮件。", "[]", "ai", "投诉", "个人原因", "", "", "", "", "投诉", "个人原因", "", "投诉/个人原因", "0.9200", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "AC美国6.1-6.30.xlsx", "title": "AC美国6.1-6.30", "source": "AC", "market": "美国", "period": "6.1 ~ 6.30", "rows": 1891, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["120435", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAAf3d=_GQ_0w7BwLKrGKr9Zq0oPfhzR6rfLa+cDs-AaC29cD=Q@mail.gmail.com>", "", "\"kreshawn0514@gmail.com\" <kreshawn0514@gmail.com>", "\"support@acmejoy.com\" <support@acmejoy.com>", "", "ORDER #235580", "2026-06-30 22:31:49", "1", "can you send it with a pantie. kreshawn ellis", "<div dir=\"auto\">can you send it with a pantie.<br clear=\"all\"><br clea", "客户咨询订单 #235580 的商品是否可搭配裤装发货。", "[\"#235580\"]", "ai", "售前咨询", "产品咨询", "", "", "", "", "售前咨询", "产品咨询", "", "售前咨询/产品咨询", "0.8500", "AI", ""], ["120434", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAGPA0W782SjvmqCS1tzwrSS0KmHQs+U=EyZ2EjevjbxEB4ezBg@mail.gmail.com>", "", "László Gajjas <gajjaslaszlo51@gmail.com>", "support@acmejoy.com", "", "", "2026-06-30 20:47:57", "1", "Dear ACMEJOY!Thank you for your message.When I first visited your webs", "<div dir=\"ltr\">Dear ACMEJOY!Thank you for your message.When I first vi", "客户在邮件中表示因未仔细阅读网站，误以为店铺只发往美洲和大洋洲，现向位于欧洲的匈牙利客户表达歉意并确认发货区域。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "0.9800", "AI", ""], ["120433", "acmejoy.com", "support@acmejoy.com", "inbound", "<6ECBF9E5-E89B-4FB8-92B2-239FEB8402EB@gmail.com>", "", "Preston Pierce <ppierce1225@gmail.com>", "AcmeJoy <support@acmejoy.com>", "", "Re: Order # 234866", "2026-06-30 20:24:21", "1", "", "<html class=\"apple-mail-supports-explicit-dark-mode\"><head><meta http-", "客户咨询订单 #234866 物流停滞，追踪号显示未签收且包裹疑似丢失，请求调查并补发。", "[\"#234866\"]", "ai", "物流查询", "物流丢包", "", "", "", "", "物流查询", "物流丢包", "", "物流查询/物流丢包", "0.9500", "AI", ""], ["120431", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAKdkiWY1S7wEBhLVdRFCk8iMcXOC61bdpt+qKvLSfYypHHhCPw@mail.gmail.com>", "", "Gerald Mcneal <jmcneal4581@gmail.com>", "support@acmejoy.com", "", "Doll", "2026-06-30 19:49:09", "1", "Please send more info. gerald mcneal", "<div dir=\"auto\"><div><br></div><div>Please send more info.</div><div d", "客户询问 Doll 产品的更多信息。", "[]", "ai", "售前咨询", "产品咨询", "", "", "", "", "售前咨询", "产品咨询", "", "售前咨询/产品咨询", "0.9500", "AI", ""], ["120430", "acmejoy.com", "support@acmejoy.com", "inbound", "<CAGGFvQfWmG_K1yn1dns81jBu04YQx00wUm=hbjpzGJQC4ZGFrA@mail.gmail.com>", "", "Randy Thomas <randythomas1270@gmail.com>", "support@acmejoy.com", "", "", "2026-06-30 19:14:03", "1", "HOW DO I TRACK MY ORDER", "<div dir=\"auto\">HOW DO I TRACK MY ORDER </div>", "客户询问如何追踪订单，未提供具体订单号。", "[]", "ai", "物流查询", "在途查询", "", "", "", "", "物流查询", "在途查询", "", "物流查询/在途查询", "0.8500", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV美国3.1-3.31.xlsx", "title": "BV美国3.1-3.31", "source": "BV", "market": "美国", "period": "3.1 ~ 3.31", "rows": 3131, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["19061", "Bestvibe.com", "service@bestvibe.com", "inbound", "<42d05e7e-097c-49fd-b586-9a3177264f39@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.com", "", "Transcript of Tuesday, March 31, 2026, 11:41:07 pm. Operator: Chatbot.", "2026-03-31 23:49:01", "1", "## Chat transcript ## Name: Ryan Redlawsk E-mail: rredlawsk126@gmail.c", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "该邮件为LiveChat自动生成的聊天记录摘要，包含多位访客的对话记录，并非直接的客户请求。", "[\"2026032621453195481\"]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9500", "AI", ""], ["19060", "Bestvibe.com", "service@bestvibe.com", "inbound", "<CANZF9rqofX0F7NzuhMr8mAYDUT9vYW7Me3nAPObHAbhr=w8fTA@mail.gmail.com>", "", "Ryan Redlawsk <rredlawsk126@gmail.com>", "\"service@bestvibe.com\" <service@bestvibe.com>", "", "2026032621453195481", "2026-03-31 23:44:01", "1", "Good Afternoon, Would you be able to tell me when my purchase will be ", "Good Afternoon,<div dir=\"auto\"><br></div><div dir=\"auto\">Would you be ", "客户询问订单预计送达时间，因为系统显示订单状态为待处理。", "[]", "ai", "物流查询", "", "", "", "", "", "物流查询", "", "", "物流查询", "0.9500", "AI", ""], ["19059", "Bestvibe.com", "service@bestvibe.com", "inbound", "<2b81a37a-bfb9-4242-a00f-9427f18b2de0@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.com", "", "Transcript of Tuesday, March 31, 2026, 11:23:35 pm. Operator: Chatbot.", "2026-03-31 23:37:51", "1", "## Chat transcript ## Name: Paul DeClement E-mail: pdeclement@yahoo.co", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "这是一封由LiveChat系统自动发送的聊天记录摘要邮件，包含多个用户的自助服务对话记录，并非来自客户的有效请求。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9800", "AI", ""], ["19058", "Bestvibe.com", "service@bestvibe.com", "inbound", "<4d9b6a76-c0f1-423d-bf0b-d27ade41110d@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.com", "", "Transcript of Tuesday, March 31, 2026, 11:20:28 pm. Operator: Chatbot.", "2026-03-31 23:31:43", "1", "## Chat transcript ## Name: Donnie R Todd E-mail: donnietodd28@yahoo.c", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "这是一封包含多个聊天机器人对话记录的邮件，客户Ryan Redlawsk咨询了订单状态和退货流程等售后服务问题。", "[\"2026032621453195481\"]", "ai", "售后服务", "", "", "", "", "", "售后服务", "", "", "售后服务", "0.7500", "AI", ""], ["19057", "Bestvibe.com", "service@bestvibe.com", "inbound", "<E3BF0292-9077-48EA-9891-F6E095C25E9A@yahoo.com>", "", "Paul DeClement <pdeclement@yahoo.com>", "service@bestvibe.com", "", "refund", "2026-03-31 23:28:36", "1", "My item arrived an hour ago and its not as the description stated. How", "", "客户收到商品后发现与描述不符，要求退货并获得全额退款。", "[]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.9000", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV美国4.1-4.30.xlsx", "title": "BV美国4.1-4.30", "source": "BV", "market": "美国", "period": "4.1 ~ 4.30", "rows": 2804, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["35985", "Bestvibe.com", "service@bestvibe.com", "inbound", "<1602377560.3327353.1777593302895@mail.yahoo.com>", "", "Tom Buelow <teebone_39@yahoo.com>", "service@bestvibe.com", "", "Re: New offline message [LC #13001448.TE3ADNGNM8]", "2026-04-30 23:55:02", "1", "Bcs I found one way cheaper and it will arrive tomorrow. Please cancel", "Bcs I found one way cheaper and it will arrive tomorrow. Please cancel", "客户Tom Buelow要求取消订单#13001448并申请退款，因已找到更便宜的选择。", "[\"#13001448\"]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.9500", "AI", ""], ["35979", "Bestvibe.com", "service@bestvibe.com", "inbound", "<CAMbzdDX7Fod_Ak=VEunMWna4XBw2UT7d-ZzQyVtnm6w+vdQH9Q@mail.gmail.com>", "", "M M <tmichaelmoon@gmail.com>", "Bestvibe Service <service@bestvibe.com>", "", "Re: Tracking Information", "2026-04-30 23:34:01", "1", "I have not received anything yet. On Mon, Apr 27, 2026 at 10:27 PM Bes", "<div>I have not received anything yet.</div><div><br><div class=\"gmail", "客户 Michael 持续查询订单 2026042100204227456 的物流状态，表示未收到包裹，尽管 USPS 追踪显示已送达。", "[\"#2026042100204227456\"]", "ai", "物流查询", "", "", "", "", "", "物流查询", "", "", "物流查询", "0.9500", "AI", ""], ["35978", "Bestvibe.com", "service@bestvibe.com", "inbound", "<D4GEn3OMTnm_otp0Tig6XQ@geopod-ismtpd-21>", "", "OpenAI <noreply@email.openai.com>", "service@bestvibe.com", "", "Update to our privacy policy and more controls", "2026-04-30 23:26:53", "1", "", "<!DOCTYPE html> <html dir=\"ltr\"> <head> <meta charset=\"utf-8\"> <meta h", "这是一封关于隐私政策更新的通知邮件，来自 OpenAI 官方账户，非客户咨询。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["35977", "Bestvibe.com", "service@bestvibe.com", "inbound", "<88E4DAEA-DE78-4529-AAFC-A9EA2522461E@yahoo.com>", "", "Charlene Williams <charlene_williams88@yahoo.com>", "Bestvibe Service <service@bestvibe.com>", "", "Re: Your bestvibe.com receipt [#1480-2472]", "2026-04-30 23:22:27", "1", "", "<html class=\"apple-mail-supports-explicit-dark-mode\"><head><meta http-", "客户 Charlene Williams 确认包裹已被拦截，要求取消订单并全额退款。", "[\"#1480-2472\"]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.9500", "AI", ""], ["35976", "Bestvibe.com", "service@bestvibe.com", "inbound", "<69f3e2e5.050a0220.89696.a78e.GMR@mx.google.com>", "", "Mail Delivery Subsystem <mailer-daemon@googlemail.com>", "service@bestvibe.com", "", "Delivery Status Notification (Delay)", "2026-04-30 23:16:53", "1", "** Delivery incomplete ** There was a temporary problem delivering you", "<html> <head> <style> * { font-family:Roboto, \"Helvetica Neue\", Helvet", "这是一封来自 Google 邮件系统的自动投递状态通知邮件，提示有多封邮件因收件人邮箱存储已满或 DNS 错误而未能成功送达，属于系统自动生", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV美国5.1-5.31.xlsx", "title": "BV美国5.1-5.31", "source": "BV", "market": "美国", "period": "5.1 ~ 5.31", "rows": 5000, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["74111", "Bestvibe.com", "service@bestvibe.com", "outbound", "<cvnyXOoiqFq82cQjDOEsR4pHFXzmLD3mfkkAQluTEDQ@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "rtmsharp99@gmail.com", "", "Order Details", "2026-05-31 23:58:56", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["74098", "Bestvibe.com", "service@bestvibe.com", "outbound", "<0nSCJfvtHM8MskqWKtWo9NGr64N83gsgZYRePgDUs@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "dan71946@gmail.com", "", "Order Details", "2026-05-31 23:27:59", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["74097", "Bestvibe.com", "service@bestvibe.com", "outbound", "<1yZJ3EOymj2PM4EviM5e67B1S7kefMWyclSJbf6dtE@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "tkd@qualitycircuitbreaker.com", "", "Order Details", "2026-05-31 23:24:27", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["74096", "Bestvibe.com", "service@bestvibe.com", "outbound", "<xjwJs36TiDZxMDWd8uVxE6InDL2hPaa4kcXcvdbuc@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "bryanram76@icloud.com", "", "Order Details", "2026-05-31 23:23:14", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["74095", "Bestvibe.com", "service@bestvibe.com", "outbound", "<8ENTC2rSdC32WEFUrwNxHujnDKQnSahweXvVibvdxPo@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "haschelouise3@gmail.com", "", "Order Details", "2026-05-31 23:10:11", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV美国6.1-6.15.xlsx", "title": "BV美国6.1-6.15", "source": "BV", "market": "美国", "period": "6.1 ~ 6.15", "rows": 5000, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["99039", "Bestvibe.com", "service@bestvibe.com", "inbound", "<CAAc8wDi5WEmuQCmZmORe7SwR5zEsmBEYZTZ+04hVCrj2pFzL0A@mail.gmail.com>", "", "Gary Lopez <garylopez1960@gmail.com>", "\"service@bestvibe.com\" <service@bestvibe.com>", "", "My purchase when will I receive my order", "2026-06-15 23:55:59", "1", "", "", "客户咨询何时能收到订单，但邮件正文缺失，无法提取具体订单号。", "[]", "ai", "物流查询", "在途查询", "", "", "", "", "物流查询", "在途查询", "", "物流查询/在途查询", "0.6000", "AI", ""], ["99038", "Bestvibe.com", "service@bestvibe.com", "inbound", "<35e9c3a0-5d54-45d7-877d-e17cae3686eb@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.com", "", "Transcript of Monday, June 15, 2026, 11:46:30 pm. Operator: Chatbot. V", "2026-06-15 23:52:02", "1", "## Chat transcript ## Name: Jordan E-mail: jwentkc@gmail.com default_N", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "这是一封包含多段聊天记录的 LiveChat 系统通知邮件，非客户主动诉求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "0.9800", "AI", ""], ["99021", "Bestvibe.com", "service@bestvibe.com", "inbound", "<CACCZzYoETzFLrNJuec38kFJz6AVLLwMcvpZ48bE-VsjifwgG8w@mail.gmail.com>", "", "Jordan <jwentkc@gmail.com>", "service@bestvibe.com", "", "Order Cancel", "2026-06-15 23:50:48", "1", "Hello. This order below was placed by mistake and I would like to canc", "<div dir=\"auto\"><div dir=\"auto\">Hello. This order below was placed by ", "客户 Jordan 表示订单是误下单并要求取消。", "[]", "ai", "退款", "误下单", "", "", "", "", "退款", "误下单", "", "退款/误下单", "0.9500", "AI", ""], ["99027", "Bestvibe.com", "service@bestvibe.com", "outbound", "<JSzWMzPgy8WKxXtS7RKz8LkjktlrxWDfG9e3vQr9Fs@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "bspencer115@gmail.com", "", "Order Details", "2026-06-15 23:49:43", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["99026", "Bestvibe.com", "service@bestvibe.com", "outbound", "<fEIXlkxuoZofsENtYyfPWJ0PSHRXtXPfqoFVIsnnw4@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "Sh2927384@gmail.com", "", "Order Details", "2026-06-15 23:37:18", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV美国6.16-6.30.xlsx", "title": "BV美国6.16-6.30", "source": "BV", "market": "美国", "period": "6.16 ~ 6.30", "rows": 5000, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["128563", "Bestvibe.com", "service@bestvibe.com", "outbound", "<kRx7y0RUpDSluvEzqmwWTjUzRnaqTmleSsRGKiY@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "angieross84@yahoo.com", "", "Order Details", "2026-06-30 23:53:23", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["128562", "Bestvibe.com", "service@bestvibe.com", "outbound", "<ZdFET11HKrxW5Dk2ka8N7EChUpl1tj6ILxqAgZz8mc@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "Jlesperance62@gmail.com", "", "Order Details", "2026-06-30 23:48:10", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["128561", "Bestvibe.com", "service@bestvibe.com", "outbound", "<1eucmJQnrfeaDmjJs9bimmtpWLj2M1T0FqzEQsfPck@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "arunkumarroxx@gmail.com", "", "Order Details", "2026-06-30 23:38:33", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["128560", "Bestvibe.com", "service@bestvibe.com", "outbound", "<a9W8hRKxmxvltZ5oNHmDUdjClYVdf9tLmoqSNEJhXbU@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "angerines75@gmail.com", "", "Order Details", "2026-06-30 23:34:06", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["128559", "Bestvibe.com", "service@bestvibe.com", "outbound", "<WrHPhOTnwE9zBYFEGYtHbocG6ucITJCbc7gZT2NJIk@a0c7778cb1c9>", "", "Bestvibe <service@bestvibe.com>", "Curtis.sawin@outlook.com", "", "Tracking Information", "2026-06-30 23:32:22", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV英国3.1-3.31.xlsx", "title": "BV英国3.1-3.31", "source": "BV", "market": "英国", "period": "3.1 ~ 3.31", "rows": 3697, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["19052", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<690f339c-84b7-4461-84ac-9508ad713c69@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.co.uk", "", "Transcript of Tuesday, March 31, 2026, 11:18:10 pm. Operator: Bestvibe", "2026-03-31 23:23:28", "1", "## Chat transcript ## Name: Kasharn Nixon E-mail: Kasharnn@yahoo.com d", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "这是一封由LiveChat自动发送的聊天记录摘要邮件，包含多个客户的咨询对话，并非客户主动发出的服务请求。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9500", "AI", ""], ["19051", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<9a5d28a4-7608-4793-a814-cf55a38af310@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.co.uk", "", "Transcript of Tuesday, March 31, 2026, 11:07:29 pm. Operator: Bestvibe", "2026-03-31 23:13:50", "1", "## Chat transcript ## Name: Khoshnaw Aziz Hawes E-mail: aziz-hawes@hot", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "这是一封包含多个客户聊天记录转储的系统自动邮件，其中涉及订单取消、退货和退款咨询，但没有具体的客户原始请求。", "[\"2026032621453195481\"]", "ai", "售后服务", "", "", "", "", "", "售后服务", "", "", "售后服务", "0.7000", "AI", ""], ["19050", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<PA4PR10MB5562C3112F94A2BB410C20428253A@PA4PR10MB5562.EURPRD10.PROD.OU", "", "Khoshnaw Hawes <aziz-hawes@hotmail.com>", "Bestvibe Service <service@bestvibe.co.uk>", "", "Re: 2026031719552685085", "2026-03-31 23:09:56", "1", "ID2026031719552685085 Skickat från Outlook för Android<https://aka.ms/", "<html> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; char", "客户因订单缺货要求退款，并拒绝接受替代商品。", "[\"2026031719552685085\"]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.9000", "AI", ""], ["19049", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<PA4PR10MB5562AFD2F89F9243499A209C8253A@PA4PR10MB5562.EURPRD10.PROD.OU", "", "Khoshnaw Hawes <aziz-hawes@hotmail.com>", "Bestvibe Service <service@bestvibe.co.uk>", "", "Re: 2026031719552685085", "2026-03-31 23:09:30", "1", "Jag köpte 17/03 Skickat från Outlook för Android<https://aka.ms/AAb9ys", "<html> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; char", "客户在订单被延误且缺货的情况下要求退款或更换其想要的商品。", "[\"2026031719552685085\"]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.9000", "AI", ""], ["19048", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<PA4PR10MB55620E838C1CBF088171BA848253A@PA4PR10MB5562.EURPRD10.PROD.OU", "", "Khoshnaw Hawes <aziz-hawes@hotmail.com>", "\"service@bestvibe.co.uk\" <service@bestvibe.co.uk>", "", "", "2026-03-31 23:09:08", "1", "Hej vart är min beställning? Skickat från Outlook för Android<https://", "<html> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; char", "客户询问其订单2026031719552685085的物流状态，因为尚未收到包裹。", "[\"2026031719552685085\"]", "ai", "物流查询", "", "", "", "", "", "物流查询", "", "", "物流查询", "0.8500", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV英国4.1-4.30.xlsx", "title": "BV英国4.1-4.30", "source": "BV", "market": "英国", "period": "4.1 ~ 4.30", "rows": 3749, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["35973", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<7ed3e631-4f64-467a-b1c8-c9fad8463cea@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.co.uk", "", "Transcript of Thursday, April 30, 2026, 11:11:32 pm. Operator: Bestvib", "2026-04-30 23:19:43", "1", "## Chat transcript ## Name: Gareth Graham E-mail: garethgraham1999@out", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "这是一封来自 Bestvibe 的自动聊天记录邮件，记录客户 Gareth Graham 咨询订单配送时间（Shipping/Deliver", "[]", "ai", "物流查询", "", "", "", "", "", "物流查询", "", "", "物流查询", "0.9000", "AI", ""], ["35961", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<e6f8f4ce-96d4-4cb3-83a4-5322f5fdc5d2@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.co.uk", "", "Transcript of Thursday, April 30, 2026, 10:10:48 pm. Operator: Bestvib", "2026-04-30 22:18:17", "1", "## Chat transcript ## Name: Cameron Sloan E-mail: cameronsloan66@gmail", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "客户Cameron Sloan在Bestvibe网站通过LiveChat寻求产品购买建议。", "[]", "ai", "售前咨询", "", "", "", "", "", "售前咨询", "", "", "售前咨询", "0.9000", "AI", ""], ["35960", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<69f3d26a.050a0220.e1679.867f.GMR@mx.google.com>", "", "Mail Delivery Subsystem <mailer-daemon@googlemail.com>", "service@bestvibe.co.uk", "", "Delivery Status Notification (Delay)", "2026-04-30 22:06:34", "1", "** Delivery incomplete ** There was a temporary problem while deliveri", "<html> <head> <style> * { font-family:Roboto, \"Helvetica Neue\", Helvet", "这是一封邮件系统自动发送的投递状态通知，报告了三封邮件的投递失败或延迟问题，并非客户咨询邮件。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9800", "AI", ""], ["35959", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<536b6b30-7673-492e-8f3f-e801851469bb@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.co.uk", "", "Transcript of Thursday, April 30, 2026, 09:56:41 pm. Operator: Bestvib", "2026-04-30 22:01:48", "1", "## Chat transcript ## Name: Josh E-mail: turnerjw95@yahoo.com default_", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "客户Cameron Sloan在Bestvibe网站通过LiveChat咨询产品选择建议，客服提供了官方博客链接作为参考。", "[]", "ai", "售前咨询", "", "", "", "", "", "售前咨询", "", "", "售前咨询", "0.9000", "AI", ""], ["35938", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<CAOnN59yqPgfyRoPM6LvD7DZshWFBiwLoxq3u69OpxzXaKQb3iA@mail.gmail.com>", "", "Loui Dolan <patrickloui29@gmail.com>", "Bestvibe Service <service@bestvibe.co.uk>", "", "Re: 2026032413334218775", "2026-04-30 21:15:36", "1", "Hi, That is the correct amount, yes. Thanks for your help, On Mon, 27 ", "<div dir=\"ltr\">Hi,<div><br></div><div>That is the correct amount, yes.", "客户Loui Dolan要求取消订单2026032413334218775并全额退款114.88英镑，同时曾提及另一个订单12589456存", "[\"2026032413334218775\", \"12589456\"]", "ai", "退款", "", "", "", "", "", "退款", "", "", "退款", "0.9800", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV英国5.1-5.15.xlsx", "title": "BV英国5.1-5.15", "source": "BV", "market": "英国", "period": "5.1 ~ 5.15", "rows": 4287, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["51242", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<6a07b2c6.27661b89.1b1cf7.8e3e.GMR@mx.google.com>", "", "Mail Delivery Subsystem <mailer-daemon@googlemail.com>", "service@bestvibe.co.uk", "", "Delivery Status Notification (Delay)", "2026-05-15 23:56:54", "1", "** Delivery incomplete ** There was a temporary problem while deliveri", "<html> <head> <style> * { font-family:Roboto, \"Helvetica Neue\", Helvet", "这是一封 Gmail 邮件投递状态通知系统邮件，非客户订单或客服诉求邮件。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "0.9900", "AI", ""], ["59283", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<5zL8meuVp5tuu0V0tpPkMzOu1A29LQ06848p9JMI@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "jamesrance69@googlemail.com", "", "Order Details", "2026-05-15 23:54:23", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["59282", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<SSi7AHhu25Q0t94CROjnpUcghSHRopNsI7MiyxBX88U@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "mccaffertytom63@gmail.com", "", "Order Details", "2026-05-15 23:45:13", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["59281", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<RADHjgSD8B07hDTHSSMjwAdlbZq46lz5JFab332Q6HQ@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "paulcmcdonald86@gmail.com", "", "Order Details", "2026-05-15 23:42:04", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["59280", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<fxqKs4ujxzh5KB7D5vIWTwf5G2jstwNh3HnxzYpzk@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "dion0309@googlemail.com", "", "Order Details", "2026-05-15 23:23:40", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV英国5.16-5.31.xlsx", "title": "BV英国5.16-5.31", "source": "BV", "market": "英国", "period": "5.16 ~ 5.31", "rows": 7140, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["74109", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<jqU8lpdXhAu7Ah5Z4rjfi8qmi1VxZJpNo1qsKEFZI@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "nxiixxi@gmail.com", "", "Order Details", "2026-05-31 23:57:03", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["74108", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<7VJ0R4j4m9Y1kbKktnKXmZRgVsRdhgUbX9yBe03tco@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "gmstaniforth@outlook.com", "", "Order Details", "2026-05-31 23:56:36", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["74107", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<Cbxdt3Ar1eGZ4rlyUit3GfNf71sQXBfwtRzu8JafcM@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "antsnape83@gmail.com", "", "Order Details", "2026-05-31 23:51:57", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["74106", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<MO15W3PJeMoCqqxD9PzC8mvpIZKuyTaJHtvDNmz1fw@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "antsnape83@gmail.com", "", "Welcome to Bestvibe! Start Your Shopping Journey Today", "2026-05-31 23:46:22", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["74105", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<8rTJJJkVoM7ahWJ4XcQ7bWP13S4RcVLHknAiswJI@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "antsnape83@gmail.com", "", "Verify your new Bestvibe account", "2026-05-31 23:46:21", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV英国6.1-6.15.xlsx", "title": "BV英国6.1-6.15", "source": "BV", "market": "英国", "period": "6.1 ~ 6.15", "rows": 5000, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["99013", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<93d4a7c4-f01f-4cba-8ed9-7e0365032dbd@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.co.uk", "", "Transcript of Monday, June 15, 2026, 11:22:24 pm. Operator: Bestvibe. ", "2026-06-15 23:28:17", "1", "## Chat transcript ## Name: Ibrahim Abba Tijjani E-mail: tijjaniabbaib", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "这是一封由客服系统自动发送的聊天对话记录归档邮件，并非客户主动发起的诉求邮件。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "1.0000", "AI", ""], ["99016", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<HcLKDL6fbKlAnSBaqt35se5gmIEm45Q7CFRP8MMqTM@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "mwildig8@gmail.com", "", "Order Details", "2026-06-15 23:14:39", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["99015", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<a3asioid8Vl8C4iquQiIkI3J5jAmoAYFRRXQiETJ8I@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "madidu4u@yahoo.co.uk", "", "Order Details", "2026-06-15 23:06:21", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["99014", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<TCNxOaCCqeaM4sgoqaiAIpVvKtHJxNcUf7XkhIk@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "markrandall1991@gmail.com", "", "Order Details", "2026-06-15 23:01:42", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["99012", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<8a109b29-ddd2-413c-89de-8ee03d19cbbd@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.co.uk", "", "Transcript of Monday, June 15, 2026, 10:46:34 pm. Operator: Bestvibe. ", "2026-06-15 22:54:06", "1", "## Chat transcript ## Name: Broinninn Kelly E-mail: broinninnkelly05@g", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "客户 Broinninn Kelly 反馈订单自 5 月 28 日起状态仍显示 Pending，询问发货进度，客服建议联系人工处理，客户未表", "[]", "ai", "催发货", "愿意等待", "", "", "", "", "催发货", "愿意等待", "", "催发货/愿意等待", "0.9200", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "BV英国国6.16-6.30.xlsx", "title": "BV英国国6.16-6.30", "source": "BV", "market": "英国", "period": "6.16 ~ 6.30", "rows": 6903, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["128183", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<6Ik54eJ7cf1YZwSkWhmO5utqaSu9CGpOMrGGYflw@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "thedorsetgeordie@gmail.com", "", "Order Details", "2026-06-30 23:56:28", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["128182", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<sOul1nGmmtS5z3qwAA4CMvJHyfmmM6dC5KKF8Q1dl0@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "elainedavis183@gmail.com", "", "Order Details", "2026-06-30 23:52:13", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["128181", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<YxuJoIegCaDWOmv2t1QQy9mTtGIShQmj6EDqWj7P48@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "Sharuk_askor@outlook.com", "", "Order Details", "2026-06-30 23:42:08", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["128180", "bestvibe.co.uk", "service@bestvibe.co.uk", "outbound", "<s5cUuNcqGZtUFsNJDbRvRBM1OAU3SQZsw8lq4Przhg@b2dfc2571169>", "", "Bestvibe <service@bestvibe.co.uk>", "lenon.betton@sky.com", "", "Order Details", "2026-06-30 23:21:07", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["122490", "bestvibe.co.uk", "service@bestvibe.co.uk", "inbound", "<50f109db-ce02-4b96-a7e7-77d47d73b762@mtasv.net>", "", "LiveChat <support@livechatinc.com>", "service@bestvibe.co.uk", "", "Transcript of Tuesday, June 30, 2026, 11:10:50 pm. Operator: Bestvibe.", "2026-06-30 23:16:32", "1", "## Chat transcript ## Name: Hkk E-mail: jackharry24bb@gmail.com defaul", "<!DOCTYPE html><html><head> <meta charset=\"UTF-8\"> <title>Transcript o", "这是一封 LiveChat 系统自动生成的对话记录邮件，非客户本人发出的邮件，属于系统通知。", "[]", "ai", "物流查询", "在途查询", "", "", "", "", "物流查询", "在途查询", "", "物流查询/在途查询", "0.8500", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "SH所有站点3.1-3.31.xlsx", "title": "SH所有站点3.1-3.31", "source": "SH", "market": "独立站", "period": "3.1 ~ 3.31", "rows": 3386, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["19407", "seekheart.de", "service@seekheart.de", "inbound", "<4010245944991539733@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.de", "", "Report domain: seekheart.de Submitter: google.com Report-ID: 401024594", "2026-03-31 23:59:59", "1", "", "", "这是一封来自Google的DMARC域名报告通知邮件，非客户邮件。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["19375", "seekheart.fr", "service@seekheart.fr", "inbound", "<211302462694604081@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.fr", "", "Report domain: seekheart.fr Submitter: google.com Report-ID: 211302462", "2026-03-31 23:59:59", "1", "", "", "这是一封来自 Google 的自动 DMARC 域报告，不是客户邮件。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["19376", "SeekHeart.ES", "service@seekheart.es", "inbound", "<8731389432601076961@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.es", "", "Report domain: seekheart.es Submitter: google.com Report-ID: 873138943", "2026-03-31 23:59:59", "1", "", "", "这是一封来自Google的自动DMARC域报告邮件，不包含客户请求。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["19062", "SeekHeart.ES", "service@seekheart.es", "inbound", "<69cc5c6d.df0a0220.de87.8ec5@mx.google.com>", "", "service <phpdevnarjis@gmail.com>", "service@seekheart.es", "", "PayPal 合规团队：请确认您的账户详情 | REF: COMP-TEAM", "2026-03-31 23:44:45", "1", "<figure class=\"table\" style=\"width:100%;\"> <table style=\"-webkit-text-", "<figure class=\"table\" style=\"width:100%;\"> <table style=\"-webkit-text-", "这是一封仿冒PayPal的合规通知邮件，要求验证纳税人身份，并非真实客户请求。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["19046", "seekheart.de", "service@seekheart.de", "inbound", "<CADpBmP80Ee84wwSx3cXnse5gwqZi_negOBNjJPHhQAyAN+z0wA@mail.gmail.com>", "", "Alf Koenig <jophiel.ak@googlemail.com>", "Service Seekheart <service@seekheart.de>", "", "Re: Defekte Artikel", "2026-03-31 22:39:01", "1", "Okay, anbei erhalten sie je ein Video, wie die Geräte geladen werden. ", "<div dir=\"auto\">Okay, anbei erhalten sie je ein Video, wie die Geräte ", "客户提供了两台损坏产品的视频证据，并请求更换这两个无法工作的设备。", "[\"2025120309102064487\", \"2025123018194867198\"]", "ai", "售后服务", "", "", "", "", "", "售后服务", "", "", "售后服务", "0.9500", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "SH所有站点4.1-4.31.xlsx", "title": "SH所有站点4.1-4.31", "source": "SH", "market": "独立站", "period": "4.1 ~ 4.31", "rows": 3614, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["36206", "SeekHeart.ES", "service@seekheart.es", "inbound", "<10964599841512901778@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.es", "", "Report domain: seekheart.es Submitter: google.com Report-ID: 109645998", "2026-04-30 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 域名报告自动通知邮件，包含对 seekheart.es、acmejoy.it 和 seekhea", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["36185", "seekheart.de", "service@seekheart.de", "inbound", "<444978974640375537@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.de", "", "Report domain: seekheart.de Submitter: google.com Report-ID: 444978974", "2026-04-30 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 报告自动化邮件，包含对多个域名的安全报告，不涉及任何电商订单或客户服务请求。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["36193", "seekheart.fr", "service@seekheart.fr", "inbound", "<1321113002438418091@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.fr", "", "Report domain: seekheart.fr Submitter: google.com Report-ID: 132111300", "2026-04-30 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 域名报告通知邮件，非客户订单相关邮件。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9900", "AI", ""], ["35957", "seekheart.de", "service@seekheart.de", "inbound", "<69f3d74a.050a0220.639f4.c7f1.GMR@mx.google.com>", "", "Mail Delivery Subsystem <mailer-daemon@googlemail.com>", "service@seekheart.de", "", "Delivery Status Notification (Delay)", "2026-04-30 22:27:22", "1", "** 未完成递送 ** 发生临时性问题，无法将您的邮件递送至 josephfarrag@gmail.com。在接下来的 47 小时内，Gma", "<html> <head> <style> * { font-family:Roboto, \"Helvetica Neue\", Helvet", "这是一封来自 Google 邮件系统的邮件投递状态通知，报告了邮件递送失败或延迟的情况。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9800", "AI", ""], ["35956", "seekheart.de", "service@seekheart.de", "inbound", "<trinity-b014ccc5-c922-440b-ae2f-4a63c8b1d5bf-1777587453241@trinity-ms", "", "Karsten Wolters <Karsten-Wolters@web.de>", "service@seekheart.de", "", "Aw: Pay me🍒Play me", "2026-04-30 22:17:33", "1", "", "<html><body>Hallo, ich habe am 20.4.26 bei Ihnen eingekauf aber noch k", "这是一封来自 Karsten Wolters 的邮件，主题为'Pay me🍒Play me'，但邮件正文为空，无法确定具体意图。", "[]", "ai", "非客户邮件", "", "", "", "", "", "非客户邮件", "", "", "非客户邮件", "0.9500", "AI", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "SH所有站点5.1-5.31.xlsx", "title": "SH所有站点5.1-5.31", "source": "SH", "market": "独立站", "period": "5.1 ~ 5.31", "rows": 5000, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["75358", "seekheart.fr", "service@seekheart.fr", "inbound", "<7442179347468840499@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.fr", "", "Report domain: seekheart.fr Submitter: google.com Report-ID: 744217934", "2026-05-31 23:59:59", "1", "", "", "这是一封来自 Google DMARC 系统的自动通知邮件，非客户服务请求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "0.9800", "AI", ""], ["75336", "seekheart.eu", "service@seekheart.de", "inbound", "<12285002188906696341@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.de", "", "Report domain: seekheart.de Submitter: google.com Report-ID: 122850021", "2026-05-31 23:59:59", "1", "", "", "这是一封来自 Google DMARC 系统的域名报告通知邮件，非客户诉求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "1.0000", "AI", ""], ["75362", "SeekHeart.ES", "service@seekheart.es", "inbound", "<1940022884592532898@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.es", "", "Report domain: seekheart.es Submitter: google.com Report-ID: 194002288", "2026-05-31 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 系统报告邮件，无客户服务诉求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "0.9800", "AI", ""], ["74084", "seekheart.eu", "service@seekheart.de", "outbound", "<6tlQDQYbh2srM2LIv87mjwaY8Nek9Sqz0GxVc3KOJE@localhost.localdomain>", "", "Seekheart <service@seekheart.de>", "karagkezidisaris@gmail.com", "", "Ihr neues Seekheart-Konto verifizieren", "2026-05-31 23:18:01", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["74083", "seekheart.eu", "service@seekheart.de", "outbound", "<lULXRS7Ve60HdSLcdwoQQexWvsUyRcOB0VcOsflAWHM@localhost.localdomain>", "", "Seekheart <service@seekheart.de>", "karagkezidisaris@gmail.com", "", "Passwort zurücksetzen", "2026-05-31 23:17:01", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "SH所有站点6.1-6.15.xlsx", "title": "SH所有站点6.1-6.15", "source": "SH", "market": "独立站", "period": "6.1 ~ 6.15", "rows": 5000, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["100702", "SeekHeart.ES", "service@seekheart.es", "inbound", "<13510275191283393649@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.es", "", "Report domain: seekheart.es Submitter: google.com Report-ID: 135102751", "2026-06-15 23:59:59", "1", "", "", "这是一封来自 Google DMARC 系统的安全报告通知邮件，非客户咨询。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "0.9800", "AI", ""], ["100681", "seekheart.fr", "service@seekheart.fr", "inbound", "<1565923227134553471@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.fr", "", "Report domain: seekheart.fr Submitter: google.com Report-ID: 156592322", "2026-06-15 23:59:59", "1", "", "", "这是一封来自 Google 的 DMARC 系统通知邮件，非客户诉求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "1.0000", "AI", ""], ["100692", "seekheart.de", "service@seekheart.de", "inbound", "<18069146024626603070@google.com>", "", "noreply-dmarc-support@google.com", "service@seekheart.de", "", "Report domain: seekheart.de Submitter: google.com Report-ID: 180691460", "2026-06-15 23:59:59", "1", "", "", "这是一封来自 Google 的系统通知邮件，非客户服务诉求。", "[]", "ai", "非客户邮件", "系统通知", "", "", "", "", "非客户邮件", "系统通知", "", "非客户邮件/系统通知", "1.0000", "AI", ""], ["99009", "seekheart.de", "service@seekheart.de", "inbound", "<CAFsAcWifJw6Wa2Tqg9jaitG-LRW4f1DWY+h0Uz6TCA4Fg-r51Q@mail.gmail.com>", "", "Hasan Jamal <hasanjemo999@gmail.com>", "service@seekheart.de", "", "", "2026-06-15 23:50:17", "1", "مرحبا لقد قمت الغاء الطلب الذي طلبته ولم تعيد لي اموالي", "<div dir=\"auto\">مرحبا لقد قمت الغاء الطلب الذي طلبته ولم تعيد لي اموال", "客户 Hasan Jamal 表示已取消订单并要求退款，相关邮件显示订单号为 2026061523091393537。", "[\"2026061523091393537\"]", "ai", "退款", "取消订单", "", "", "", "", "退款", "取消订单", "", "退款/取消订单", "0.9500", "AI", ""], ["99011", "seekheart.de", "service@seekheart.de", "outbound", "<nLZ6mQU3obsE1NL5qjcPLTRahwVVPjZMPGaMrCwPn4@localhost.localdomain>", "", "Seekheart <service@seekheart.de>", "r.papra@gmx.de", "", "Ihr neues Seekheart-Konto verifizieren", "2026-06-15 23:48:35", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}, {"board": "邮件原文", "file": "SH所有站点6.16-6.30.xlsx", "title": "SH所有站点6.16-6.30", "source": "SH", "market": "独立站", "period": "6.16 ~ 6.30", "rows": 8079, "cols": ["id", "store_name", "mailbox", "direction", "message_id", "thread_id", "from_address", "to_address", "cc_address", "subject", "mail_date", "is_processed", "body_text", "body_html", "extract_summary", "extract_order_numbers_json", "extract_method", "ai_label_raw", "ai_secondary_label_raw", "ai_tertiary_label_raw", "ai_corrected_label", "ai_corrected_secondary_label", "ai_corrected_tertiary_label", "ai_intent_effective", "ai_intent_secondary_effective", "ai_intent_tertiary_effective", "ai_intent_path_effective", "ai_confidence", "ai_intent_source", "ai_corrected_by"], "colCount": 30, "sample": [["119783", "seekheart.eu", "service@seekheart.de", "inbound", "<CAKBGqCNEi-S-NBr19QAK8UrgeAg9fuaLzkNUHUPLTaudF2Cnug@mail.gmail.com>", "", "Fahim Talash <talashfahim033@gmail.com>", "Seekheart <service@seekheart.de>", "", "Sehr geehrtes Seekheart-Team, ich habe am 30.06.2026 eine Bestellung b", "2026-06-30 23:45:46", "1", "Seekheart <service@seekheart.de> schrieb am Di. 30. Juni 2026 um 12:15", "<div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\"", "客户 Fahim Talash 咨询订单 2026063010114262375 的发货状态及物流单号，并表示愿意等待发货。", "[\"2026063010114262375\"]", "ai", "催发货", "愿意等待", "", "", "", "", "催发货", "愿意等待", "", "催发货/愿意等待", "0.9500", "AI", ""], ["119782", "seekheart.eu", "service@seekheart.de", "inbound", "<000201dd08e4$1fad7510$5f085f30$@t-online.de>", "", "\"W. Kruttschnitt\" <wkruttschnitt@t-online.de>", "\"'Seekheart'\" <service@seekheart.de>", "", "AW: Bestellinformationen", "2026-06-30 22:59:35", "1", "Hallo! Sie werben innerhalb von 3-4 Tagen zu liefern? Ich habe noch ke", "<html xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-mic", "客户询问订单 2026062612255870661 尚未发货且询问发货时效，催促尽快发货。", "[\"2026062612255870661\"]", "ai", "催发货", "缺货待发", "", "", "", "", "催发货", "缺货待发", "", "催发货/缺货待发", "0.9200", "AI", ""], ["122981", "seekheart.fr", "service@seekheart.fr", "inbound", "<CACxVh28wSrdgt9qS8YYDqAGLRXBiydUk3oGfvo-0oAd_x-+htQ@mail.gmail.com>", "", "Aba One <abaone78@gmail.com>", "Seekheart Service <service@seekheart.fr>", "", "Re: INFORMATIONS DE COMMANDE", "2026-06-30 22:56:50", "1", "Bonjour, Je ne comprends pas , je viens d'aller sur le site le produit", "<div dir=\"auto\"><div>Bonjour,<div dir=\"auto\">Je ne comprends pas , je ", "客户对订单 2026060712032639490 因缺货未发货表示不满，但邮件中明确提及希望收到原商品，且客服已提出换货方案，客户核心诉求", "[\"2026060712032639490\"]", "ai", "催发货", "缺货换货", "", "", "", "", "催发货", "缺货换货", "", "催发货/缺货换货", "0.9500", "AI", ""], ["124205", "seekheart.fr", "service@seekheart.fr", "outbound", "<09HmaSU5Z6dervkh8gDYNA5o2Od1iZ9CKYQRU@655efbab01f5>", "", "Seekheart <service@seekheart.fr>", "sebastien.louin@hotmail.fr", "", "INFORMATIONS DE COMMANDE", "2026-06-30 22:35:19", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["128865", "seekheart.eu", "service@seekheart.de", "outbound", "<QH7zNKVwOB3fPIK9vjvrKcLrsdMOqfQZ6N10SoWAs4@localhost.localdomain>", "", "Seekheart <service@seekheart.de>", "thomas.stieler@t-online.de", "", "Bestellinformationen", "2026-06-30 22:30:26", "1", "", "<div style=\"Margin-top:20px;Margin-left:auto;Margin-right:auto;width:5", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "ratingHist": null}];
-
 const BOARDS = [
   {id:'客诉历史记录',   icon:'w-alert', label:'客诉历史记录',   sub:'售后问题 / 投诉'},
   {id:'用户评论与留言', icon:'w-chat',  label:'用户评论与留言', sub:'评价 / 社媒留言'},
   {id:'邮件原文',       icon:'w-doc',   label:'邮件原文',       sub:'往来邮件原始内容'},
 ];
+
+/* ===== 主题跟随 / 返回 ===== */
+(function(){var p=new URLSearchParams(location.search);if(p.get('theme')==='dark')document.body.classList.add('dark');})();
+function goBack(){ if(window.parent && parent.goBackToSourceGallery) parent.goBackToSourceGallery(); else history.back(); }
+
 const boardIcon = b => (BOARDS.find(x=>x.id===b)||{}).icon || 'i-doc';
+
+/* ===== 状态 ===== */
 let activeBoard = '全部';
+const state = {
+  filters:{ src:'', mkt:'', year:'', q:'' },
+  clusterDim:'source',
+  drill:null
+};
+let SAVED_VIEWS = [];
+let ACTIVE_VIEW_ID = null;
+let _viewIdCounter = 0;
+const _vlSel = new Set();
 
-/* 派生来源/市场下拉 */
-(function(){
-  const srcs=[...new Set(FEEDBACK_DOCS.map(d=>d.source).filter(Boolean))].sort();
-  const mkts=[...new Set(FEEDBACK_DOCS.map(d=>d.market).filter(Boolean))].sort();
-  const se=document.getElementById('fSrc'); srcs.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;se.appendChild(o);});
-  const me=document.getElementById('fMkt'); mkts.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;me.appendChild(o);});
-})();
+/* ===== 派生维度 ===== */
+function yearOf(d){
+  const m=(d.period||'').match(/(\d{2})\./);
+  return m ? ('20'+m[1]) : '未知';
+}
+function scaleBand(d){
+  const r=d.rows||0;
+  if(r<1000) return '小规模 (<1k)';
+  if(r<5000) return '中规模 (1k-5k)';
+  return '大规模 (>5k)';
+}
+function dominantAiLabel(d){
+  if(d.board!=='邮件原文') return null;
+  const idx=(d.cols||[]).indexOf('ai_label_raw');
+  if(idx<0) return null;
+  const cnt={};
+  (d.sample||[]).forEach(r=>{const v=r[idx]; if(v!=null && String(v).trim()){const s=String(v).trim(); cnt[s]=(cnt[s]||0)+1;}});
+  let best=null, bn=0;
+  Object.keys(cnt).forEach(k=>{ if(cnt[k]>bn){bn=cnt[k];best=k;} });
+  return best || '未标注';
+}
+function ratingBand(d){
+  if(d.board!=='用户评论与留言' || !d.ratingHist) return null;
+  const ks=Object.keys(d.ratingHist); if(!ks.length) return '未评分';
+  let sum=0,n=0;
+  ks.forEach(k=>{ const v=parseFloat(k); sum+=v*(d.ratingHist[k]||0); n+=d.ratingHist[k]; });
+  const avg=n?sum/n:0;
+  if(avg<2.5) return '低分 (1-2.5★)';
+  if(avg<3.5) return '中分 (2.5-3.5★)';
+  return '高分 (>3.5★)';
+}
+function dimValue(d, dim){
+  switch(dim){
+    case 'board': return d.board;
+    case 'source': return (d.source&&d.source.trim())?d.source.trim():'未标注';
+    case 'market': return (d.market&&d.market.trim())?d.market.trim():'未标注';
+    case 'year': return yearOf(d);
+    case 'scale': return scaleBand(d);
+    case 'ailabel': return dominantAiLabel(d);
+    case 'rating': return ratingBand(d);
+  }
+  return null;
+}
+const DIM_LABELS = {board:'子看板',source:'来源',market:'市场',year:'年份',scale:'记录规模',ailabel:'AI意图分类',rating:'评分档位'};
+function dimLabel(d){ return DIM_LABELS[d]||d; }
 
+function availDims(){
+  const base=['source','market','year','scale'];
+  if(activeBoard==='全部') base.unshift('board');
+  if(activeBoard==='邮件原文' || activeBoard==='全部') base.push('ailabel');
+  if(activeBoard==='用户评论与留言' || activeBoard==='全部') base.push('rating');
+  return base;
+}
+
+/* ===== 筛选 ===== */
+function filt(){
+  const q=state.filters.q.trim().toLowerCase();
+  const fs=state.filters.src, fm=state.filters.mkt, fy=state.filters.year;
+  return FEEDBACK_DOCS.filter(d=>{
+    if(activeBoard!=='全部' && d.board!==activeBoard) return false;
+    if(fs && (d.source||'')!==fs) return false;
+    if(fm && (d.market||'')!==fm) return false;
+    if(fy && yearOf(d)!==fy) return false;
+    if(state.drill){
+      const dv = dimValue(d, state.drill.dim);
+      if(dv!==state.drill.val) return false;
+    }
+    if(q){
+      const hay=(d.file+' '+(d.source||'')+' '+(d.market||'')+' '+(d.period||'')+' '+d.cols.join(' ')).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+/* ===== 侧栏 / 顶部 ===== */
 function buildSide(){
   document.getElementById('sideList').innerHTML = BOARDS.map(b=>{
     const n = FEEDBACK_DOCS.filter(d=>d.board===b.id).length;
@@ -267,58 +463,144 @@ function buildChips(){
     const n = b==='全部'?FEEDBACK_DOCS.length:FEEDBACK_DOCS.filter(d=>d.board===b.id).length;
     const on = activeBoard===b?'on':'';
     return `<div class="chip ${on}" onclick="setBoard('${b}')"><svg class="ic-svg"><use href="#${ic}"/></svg>${b}<span class="c-n">${n}</span></div>`;
-  }).join('');
+  }).join('') + (state.drill?`<div class="chip drill" onclick="clearDrill()"><svg class="ic-svg"><use href="#i-tag"/></svg>聚类下钻：${esc(state.drill.val)} ✕</div>`:'');
 }
-function setBoard(b){ activeBoard=b; buildSide(); buildChips(); render(); }
+function setBoard(b){
+  activeBoard=b;
+  state.drill=null;
+  const dims=availDims();
+  if(dims.indexOf(state.clusterDim)<0) state.clusterDim = dims[0];
+  buildDimOptions();
+  buildSide(); buildChips(); render();
+}
+function setDim(v){ state.clusterDim=v; state.drill=null; render(); }
+function clearDrill(){ state.drill=null; render(); }
 
-function filt(){
-  const q=document.getElementById('q').value.trim().toLowerCase();
-  const fs=document.getElementById('fSrc').value;
-  const fm=document.getElementById('fMkt').value;
-  return FEEDBACK_DOCS.filter(d=>{
-    if(activeBoard!=='全部' && d.board!==activeBoard) return false;
-    if(fs && d.source!==fs) return false;
-    if(fm && d.market!==fm) return false;
-    if(q){
-      const hay=(d.file+' '+(d.source||'')+' '+(d.market||'')+' '+(d.period||'')+' '+d.cols.join(' ')).toLowerCase();
-      if(!hay.includes(q)) return false;
-    }
-    return true;
+function buildDimOptions(){
+  const sel=document.getElementById('fDim');
+  const cur=state.clusterDim;
+  sel.innerHTML = availDims().map(d=>`<option value="${d}" ${d===cur?'selected':''}>${dimLabel(d)}</option>`).join('');
+}
+
+(function(){
+  const srcs=[...new Set(FEEDBACK_DOCS.map(d=>d.source).filter(Boolean))].sort();
+  const mkts=[...new Set(FEEDBACK_DOCS.map(d=>d.market).filter(Boolean))].sort();
+  const yrs=[...new Set(FEEDBACK_DOCS.map(d=>yearOf(d)))].sort();
+  const se=document.getElementById('fSrc'); srcs.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;se.appendChild(o);});
+  const me=document.getElementById('fMkt'); mkts.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;me.appendChild(o);});
+  const ye=document.getElementById('fYear'); yrs.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;ye.appendChild(o);});
+})();
+
+/* ===== 可视化（条形图） ===== */
+function barChart(pairs){
+  if(!pairs.length) return '<div class="vl-empty">无数据</div>';
+  const max=Math.max(...pairs.map(p=>p.value),1);
+  return '<div class="barchart">'+pairs.map(p=>{
+    const pct=Math.round(p.value/max*100);
+    return `<div class="bar"><div class="bar-label" title="${esc(p.label)}">${esc(p.label)}</div>`+
+      `<div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>`+
+      `<div class="bar-val">${p.value.toLocaleString()}${p.suffix||''}</div></div>`;
+  }).join('')+'</div>';
+}
+function groupCount(docs, dim){
+  const m={};
+  docs.forEach(d=>{ const v=dimValue(d,dim); const k=v==null?'未标注':v; m[k]=(m[k]||0)+1; });
+  return Object.keys(m).map(k=>({label:k,value:m[k]})).sort((a,b)=>b.value-a.value);
+}
+function renderViz(docs){
+  const cards=[];
+  cards.push(vizCard('i-bar','按来源分布', barChart(groupCount(docs,'source').map(p=>({label:p.label,value:p.value,suffix:'篇'})))));
+  cards.push(vizCard('i-bar','按市场分布', barChart(groupCount(docs,'market').map(p=>({label:p.label,value:p.value,suffix:'篇'})))));
+  cards.push(vizCard('i-clock','按年份分布', barChart(groupCount(docs,'year').map(p=>({label:p.label,value:p.value,suffix:'篇'})))));
+  cards.push(vizCard('i-pie','按记录规模分布', barChart(groupCount(docs,'scale').map(p=>({label:p.label,value:p.value,suffix:'篇'})))));
+  return cards.join('');
+}
+function vizCard(icon,title,body){
+  return `<div class="viz"><div class="viz-title"><svg class="ic-svg"><use href="#${icon}"/></svg>${title}</div>${body}</div>`;
+}
+
+/* ===== 聚类区块 ===== */
+function renderCluster(docs){
+  const dim=state.clusterDim;
+  const groups={};
+  docs.forEach(d=>{
+    const v=dimValue(d,dim); const k=v==null?'未标注':v;
+    (groups[k]=groups[k]||[]).push(d);
   });
+  const keys=Object.keys(groups).sort((a,b)=>groups[b].length-groups[a].length);
+  const maxDocs=Math.max(...keys.map(k=>groups[k].length),1);
+  const totalRows=keys.reduce((a,k)=>a+groups[k].reduce((x,d)=>x+(d.rows||0),0),0);
+  const head=`<div class="cluster-head"><svg class="ic-svg"><use href="#i-tag"/></svg>聚类结果`+
+    `<span class="ch-sub">按「${dimLabel(dim)}」分为 ${keys.length} 组 · 共 ${docs.length} 篇 / ${totalRows.toLocaleString()} 条记录 · 点击分组展开文档，再点一次收起</span></div>`;
+  const body=keys.map(k=>{
+    const arr=groups[k];
+    const rows=arr.reduce((x,d)=>x+(d.rows||0),0);
+    const w=Math.round(arr.length/maxDocs*100);
+    const active=(state.drill && state.drill.dim===dim && state.drill.val===k)?' active':'';
+    const docsHtml=arr.map(d=>`<div class="cd" onclick="event.stopPropagation();openDetailAt('${esc(d.file)}')">${esc(d.title)} <span style="opacity:.6">· ${(d.rows||0).toLocaleString()}条</span></div>`).join('');
+    return `<div class="cgroup${active}" onclick="toggleGroup('${esc(dim)}','${esc(k)}')">`+
+      `<div class="cgroup-top"><div class="cgroup-name"><span class="dot"></span>${esc(k)}</div>`+
+      `<div class="cgroup-meta"><b>${arr.length}</b> 篇 · ${(rows).toLocaleString()} 条</div></div>`+
+      `<div class="cgroup-track"><div class="cgroup-fill" style="width:${w}%"></div></div>`+
+      `<div class="cgroup-docs">${docsHtml}</div></div>`;
+  }).join('');
+  return `<div class="cluster-sec">${head}${body}</div>`;
+}
+function toggleGroup(dim,val){
+  if(state.drill && state.drill.dim===dim && state.drill.val===val){ state.drill=null; }
+  else { state.drill={dim,val}; }
+  render();
 }
 
-/* 取一条代表性正文（优先「描述/内容/反馈/投诉点/要求」列） */
+/* ===== 渲染主区 ===== */
 function snippetOf(d){
   const cols=d.cols||[];
   const idx=cols.findIndex(c=>/描述|内容|反馈|投诉点|要求|文字/.test(c));
   const s=d.sample||[];
   if(idx>=0 && s[0] && s[0][idx]!=null && String(s[0][idx]).trim()) return String(s[0][idx]).replace(/\s+/g,' ');
-  // 否则拼接前两个非空单元格
-  for(const r of s){
-    const t=r.filter(c=>c!=null && String(c).trim()).slice(0,2).join(' · ');
-    if(t) return t;
-  }
+  for(const r of s){ const t=r.filter(c=>c!=null && String(c).trim()).slice(0,2).join(' · '); if(t) return t; }
   return '';
 }
-
 function render(){
-  const list=filt();
+  state.filters.q=document.getElementById('q').value;
+  state.filters.src=document.getElementById('fSrc').value;
+  state.filters.mkt=document.getElementById('fMkt').value;
+  state.filters.year=document.getElementById('fYear').value;
+
+  const docs=filt();
+  document.getElementById('boardTitle').textContent = activeBoard==='全部'?'用户反馈信息合集':activeBoard;
+  document.getElementById('boardSub').textContent = activeBoard==='全部'
+    ? '客诉 / 评论留言 / 邮件原文 · 统一检索与聚类'
+    : BOARDS.find(b=>b.id===activeBoard).sub+' · 聚类与可视化';
+
   const el=document.getElementById('board');
   if(!document.getElementById('countline')){
     el.insertAdjacentHTML('beforebegin','<div class="countline" id="countline"></div>');
   }
-  const qt=document.getElementById('q').value.trim();
-  let totalRows=list.reduce((a,d)=>a+(d.rows||0),0);
+  const qt=state.filters.q;
+  const totalRows=docs.reduce((a,d)=>a+(d.rows||0),0);
   document.getElementById('countline').innerHTML =
-    '共 <b>'+list.length+'</b> 个文档'+(activeBoard!=='全部'?' · '+esc(activeBoard):'')+
-    ' · 含 <b>'+totalRows.toLocaleString()+'</b> 条记录'+(qt?' · 关键词「'+esc(qt)+'」':'');
-  if(list.length===0){
+    '共 <b>'+docs.length+'</b> 个文档'+(activeBoard!=='全部'?' · '+esc(activeBoard):'')+
+    ' · 含 <b>'+totalRows.toLocaleString()+'</b> 条记录'+(qt?' · 关键词「'+esc(qt)+'」':'')+
+    (state.drill?' · 聚类下钻：'+esc(state.drill.val):'');
+
+  if(docs.length===0){
     el.innerHTML = `<div class="empty"><div class="e-ico"><svg class="ic-svg"><use href="#i-doc"/></svg></div>
       <div style="font-size:15px;color:var(--ink-2);margin-bottom:6px">没有匹配的文档</div>
-      <div>调整关键词、子看板或来源/市场筛选再试。</div></div>`;
+      <div>调整关键词、子看板或来源/市场/年份筛选再试。</div></div>`;
     return;
   }
-  el.innerHTML = list.map((d,i)=>{
+  const srcN=new Set(docs.map(d=>d.source).filter(Boolean)).size;
+  const mktN=new Set(docs.map(d=>d.market).filter(Boolean)).size;
+  const sum=`<div class="sumrow">
+    <div class="sumcard"><div class="sv">${docs.length}</div><div class="sl">文档数</div></div>
+    <div class="sumcard"><div class="sv">${totalRows.toLocaleString()}</div><div class="sl">总记录数</div></div>
+    <div class="sumcard"><div class="sv">${srcN}</div><div class="sl">来源数</div></div>
+    <div class="sumcard"><div class="sv">${mktN}</div><div class="sl">市场数</div></div>
+  </div>`;
+  const viz=`<div class="vizrow">${renderViz(docs)}</div>`;
+  const cluster=renderCluster(docs);
+  const list=docs.map((d,i)=>{
     const snip=snippetOf(d).slice(0,150);
     const tags=[];
     if(d.source) tags.push(d.source);
@@ -339,29 +621,37 @@ function render(){
       ${tagHtml?`<div class="tags">${tagHtml}</div>`:''}
     </div>`;
   }).join('');
+  el.innerHTML = sum + viz + cluster + list;
 }
 
+/* ===== 详情 ===== */
+function openDetailAt(file){
+  const idx = FEEDBACK_DOCS.findIndex(d=>d.file===file);
+  if(idx>=0) openDetail(idx);
+}
 function openDetail(i){
   const d=filt()[i]; if(!d) return;
   document.getElementById('mType').innerHTML=`<svg class="ic-svg"><use href="#${boardIcon(d.board)}"/></svg>`;
   document.getElementById('mTitle').textContent=d.title;
+  const ext=[];
+  if(d.board==='邮件原文'){ const l=dominantAiLabel(d); if(l) ext.push('AI意图：<b>'+esc(l)+'</b>'); }
+  if(d.board==='用户评论与留言' && d.ratingHist){ const ks=Object.keys(d.ratingHist); if(ks.length){let s=0,n=0;ks.forEach(k=>{s+=parseFloat(k)*(d.ratingHist[k]||0);n+=d.ratingHist[k];});ext.push('平均评分：<b>'+(n?(s/n).toFixed(2):'—')+'★</b>');}}
   document.getElementById('mMeta').innerHTML=
     `<span>子看板：<b>${esc(d.board)}</b></span>`+
     `<span>来源：<b>${esc(d.source||'—')}</b></span>`+
     `<span>市场：<b>${esc(d.market||'—')}</b></span>`+
     `<span>周期：<b>${esc(d.period||'—')}</b></span>`+
     `<span>记录数：<b>${(d.rows||0).toLocaleString()}</b></span>`+
-    `<span>字段数：<b>${d.colCount||0}</b></span>`;
+    `<span>字段数：<b>${d.colCount||0}</b></span>`+
+    (ext.length?ext.map(e=>`<span>${e}</span>`).join(''):'');
   document.getElementById('mColN').textContent=d.colCount||0;
   document.getElementById('mCols').innerHTML=(d.cols||[]).map(c=>`<span class="tag">${esc(c)}</span>`).join('');
-  // sample table
   const cols=d.cols||[];
   const samp=d.sample||[];
   let th='<tr>'+cols.map(c=>`<th>${esc(c)}</th>`).join('')+'</tr>';
   let tb=samp.map(r=>'<tr>'+cols.map((c,ci)=>`<td title="${esc(r[ci]||'')}">${esc(r[ci]||'')}</td>`).join('')+'</tr>').join('');
   document.getElementById('mSamp').innerHTML=th+tb;
   document.getElementById('mSampNote').textContent='仅展示前 '+samp.length+' 行样例（共 '+(d.rows||0).toLocaleString()+' 条记录，全量数据存于原始 xlsx 文件）。';
-  // rating hist
   const rt=document.getElementById('mRate'); const rtt=document.getElementById('mRateTitle');
   if(d.ratingHist && Object.keys(d.ratingHist).length){
     const max=Math.max(...Object.values(d.ratingHist));
@@ -374,7 +664,217 @@ function openDetail(i){
 function closeDetail(){document.getElementById('mask').classList.remove('on');}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
-buildSide(); buildChips(); render();
+/* ===================== 视图图层（与 de-dashboard 一致） ===================== */
+function generateViewName(){
+  const parts=[];
+  if(activeBoard!=='全部') parts.push('看板:'+activeBoard);
+  if(state.filters.src) parts.push('来源:'+state.filters.src);
+  if(state.filters.mkt) parts.push('市场:'+state.filters.mkt);
+  if(state.filters.year) parts.push('年份:'+state.filters.year);
+  if(state.filters.q) parts.push('关键词:'+state.filters.q);
+  if(state.drill) parts.push('聚类:'+state.drill.val);
+  parts.push('维度:'+dimLabel(state.clusterDim));
+  return parts.join(' · ');
+}
+function currentViewKey(){
+  return JSON.stringify({b:activeBoard,f:state.filters,dim:state.clusterDim,drill:state.drill});
+}
+function saveCurrentView(){
+  const key=currentViewKey();
+  const dup=SAVED_VIEWS.find(v=>v.key===key);
+  if(dup){ toast('该视图组合已存在：'+dup.name); setActiveView(dup.id); return; }
+  _viewIdCounter++;
+  const view={
+    id:_viewIdCounter,
+    name:generateViewName(),
+    board:activeBoard,
+    filters:JSON.parse(JSON.stringify(state.filters)),
+    clusterDim:state.clusterDim,
+    drill:state.drill?JSON.parse(JSON.stringify(state.drill)):null,
+    hitCount:filt().length,
+    key:key,
+    createdAt:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})
+  };
+  SAVED_VIEWS.push(view);
+  setActiveView(view.id);
+  renderViewLayers();
+  try{ localStorage.setItem('fb_saved_views', JSON.stringify(SAVED_VIEWS)); }catch(e){}
+  toast('已保存视图：'+view.name);
+}
+function loadView(id){
+  const v=SAVED_VIEWS.find(x=>x.id===id); if(!v) return;
+  activeBoard=v.board||'全部';
+  state.filters=JSON.parse(JSON.stringify(v.filters||{src:'',mkt:'',year:'',q:''}));
+  state.clusterDim=v.clusterDim||'source';
+  state.drill=v.drill?JSON.parse(JSON.stringify(v.drill)):null;
+  document.getElementById('q').value=state.filters.q||'';
+  document.getElementById('fSrc').value=state.filters.src||'';
+  document.getElementById('fMkt').value=state.filters.mkt||'';
+  document.getElementById('fYear').value=state.filters.year||'';
+  const dims=availDims(); if(dims.indexOf(state.clusterDim)<0) state.clusterDim=dims[0];
+  buildDimOptions();
+  buildSide(); buildChips(); render();
+  setActiveView(id);
+}
+function deleteView(id,e){
+  if(e&&e.stopPropagation) e.stopPropagation();
+  SAVED_VIEWS=SAVED_VIEWS.filter(v=>v.id!==id);
+  _vlSel.delete(id); updateVlBatch();
+  if(ACTIVE_VIEW_ID===id) ACTIVE_VIEW_ID=null;
+  renderViewLayers();
+  try{ localStorage.setItem('fb_saved_views', JSON.stringify(SAVED_VIEWS)); }catch(e){}
+}
+function setActiveView(id){
+  ACTIVE_VIEW_ID=id;
+  document.querySelectorAll('.vl-item').forEach(el=>el.classList.toggle('active', el.dataset.vid===String(id)));
+}
+function renderViewLayers(){
+  const list=document.getElementById('vlList');
+  document.getElementById('vlCount').textContent=String(SAVED_VIEWS.length);
+  if(!SAVED_VIEWS.length){
+    list.innerHTML='<div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div>';
+    return;
+  }
+  list.innerHTML=SAVED_VIEWS.map(v=>{
+    const isActive=(v.id===ACTIVE_VIEW_ID);
+    const isSel=_vlSel.has(v.id);
+    const boardTag=(v.board&&v.board!=='全部')?`<span class="vl-board">${esc(v.board)}</span>`:'';
+    return `<div class="vl-item${isActive?' active':''}${isSel?' selected':''}" data-vid="${v.id}" role="button" tabindex="0">`+
+      `<input type="checkbox" class="vl-check" data-vid="${v.id}"${isSel?' checked':''}>`+
+      `<span class="vl-dot"></span>`+
+      `<span class="vl-name" title="${esc(v.name)}">${esc(v.name)}</span>`+
+      boardTag+
+      `<span class="vl-meta">${v.hitCount}篇</span>`+
+      `<span class="vl-del" data-vid="${v.id}" title="删除此视图">✕</span>`+
+      `</div>`;
+  }).join('');
+}
+(function bindViewLayersToggle(){
+  const panel=document.getElementById('viewLayers');
+  const head=document.getElementById('vlHead');
+  const btn=document.getElementById('vlToggle');
+  if(!panel||!head) return;
+  function toggle(e){ if(e&&e.type==='click'){e.stopPropagation();e.preventDefault();} panel.classList.toggle('collapsed'); }
+  if(btn) btn.addEventListener('click',toggle);
+  head.addEventListener('click',function(e){
+    if(e.target.closest('.vl-toggle, .vl-check, .vl-del, input, button')) return;
+    toggle(e);
+  });
+})();
+function toast(msg){
+  let t=document.getElementById('toast');
+  if(!t){ t=document.createElement('div'); t.id='toast';
+    t.style.cssText='position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;padding:8px 18px;border-radius:10px;font-size:12.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.76);backdrop-filter:blur(8px);pointer-events:none;opacity:0;transition:opacity .25s';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(toast._tm); toast._tm=setTimeout(function(){t.style.opacity='0';},2000);
+}
+function updateVlBatch(){
+  const n=_vlSel.size;
+  document.getElementById('vlSelCount').textContent=n;
+  document.getElementById('vlBatch').style.display=(n>0)?'':'none';
+}
+function toggleVlSel(id,on){ if(on)_vlSel.add(id); else _vlSel.delete(id); updateVlBatch(); }
+function computeViewDocs(v){
+  const savedB=activeBoard, savedF=JSON.parse(JSON.stringify(state.filters)), savedDim=state.clusterDim, savedDrill=state.drill;
+  activeBoard=v.board||'全部';
+  state.filters=JSON.parse(JSON.stringify(v.filters||{src:'',mkt:'',year:'',q:''}));
+  state.clusterDim=v.clusterDim||'source';
+  state.drill=v.drill?JSON.parse(JSON.stringify(v.drill)):null;
+  const arr=filt();
+  activeBoard=savedB; state.filters=savedF; state.clusterDim=savedDim; state.drill=savedDrill;
+  return arr;
+}
+function csvCell(v){ v=(v==null?'':String(v)); if(/[",\n]/.test(v)) v='"'+v.replace(/"/g,'""')+'"'; return v; }
+function downloadBlob(name,content,mime){
+  try{
+    const blob=new Blob([content],{type:mime||'text/plain;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},120);
+  }catch(e){ toast('下载失败：'+((e&&e.message)||e)); }
+}
+const FB_CART_COLUMNS=[
+  {key:'file',label:'文件名'},{key:'title',label:'标题'},{key:'source',label:'来源'},
+  {key:'market',label:'市场'},{key:'period',label:'周期'},{key:'rows',label:'记录数'},{key:'board',label:'子看板'}
+];
+function pushLocalCart(item){
+  const key='cih_cart_v1', a=[];
+  try{ a=JSON.parse(localStorage.getItem(key))||[]; }catch(e){}
+  const dup=a.find(x=>x.source===item.source && x.filter===item.filter);
+  if(dup){ dup.items=item.items; dup.count=item.count; dup.addedAt=item.addedAt; }
+  else a.push(item);
+  try{ localStorage.setItem(key,JSON.stringify(a)); }catch(e){}
+}
+function batchAddToCart(){
+  if(!_vlSel.size){ toast('请先勾选视图'); return; }
+  let added=0;
+  SAVED_VIEWS.forEach(function(v){
+    if(!_vlSel.has(v.id)) return;
+    const items=computeViewDocs(v).map(function(d){ const o={}; FB_CART_COLUMNS.forEach(function(c){ o[c.key]=(d[c.key]==null?'':d[c.key]); }); return o; });
+    const item={
+      id:'cart_'+Date.now()+'_'+v.id+'_'+Math.floor(Math.random()*9999),
+      source:'用户反馈信息合集 · '+(v.board||'全部'), filter:v.name, count:items.length,
+      addedAt:new Date().toISOString(), columns:FB_CART_COLUMNS, items:items, _sel:true
+    };
+    try{ window.parent.postMessage({type:'cih-cart-add',item:item},'*'); }catch(e){}
+    if(window.parent===window) pushLocalCart(item);
+    added++;
+  });
+  toast('已批量加入 '+added+' 个视图到购物车');
+}
+function batchDownload(){
+  if(!_vlSel.size){ toast('请先勾选视图'); return; }
+  const rows=[];
+  SAVED_VIEWS.forEach(function(v){
+    if(!_vlSel.has(v.id)) return;
+    const items=computeViewDocs(v).map(function(d){ const o={}; FB_CART_COLUMNS.forEach(function(c){ o[c.key]=(d[c.key]==null?'':d[c.key]); }); return o; });
+    items.forEach(function(it){ it.__view=v.name; rows.push(it); });
+  });
+  if(!rows.length){ toast('所选视图无数据'); return; }
+  const header=['视图'].concat(FB_CART_COLUMNS.map(function(c){return c.label;}));
+  const lines=[header.join(',')];
+  rows.forEach(function(it){
+    const cells=[csvCell(it.__view)].concat(FB_CART_COLUMNS.map(function(c){return csvCell(it[c.key]);}));
+    lines.push(cells.join(','));
+  });
+  downloadBlob('用户反馈合集-多视图-'+rows.length+'条.csv','﻿'+lines.join('\n'),'text/csv;charset=utf-8');
+}
+
+/* ===== 初始化 ===== */
+(function initViews(){
+  try{ const raw=localStorage.getItem('fb_saved_views'); if(raw) SAVED_VIEWS=JSON.parse(raw)||[]; }catch(e){}
+  SAVED_VIEWS.forEach(v=>{ if(v.id>_viewIdCounter)_viewIdCounter=v.id; });
+})();
+buildDimOptions();
+buildSide(); buildChips(); render(); renderViewLayers();
+document.getElementById('saveViewBtn').addEventListener('click',saveCurrentView);
+document.getElementById('vlList').addEventListener('click',function(e){
+  const del=e.target.closest('.vl-del');
+  if(del){ const vid=Number(del.dataset.vid); if(vid>0) deleteView(vid,e); return; }
+  if(e.target.closest('.vl-check')) return;
+  const item=e.target.closest('.vl-item'); if(!item) return;
+  const vid=Number(item.dataset.vid); if(vid>0) loadView(vid);
+});
+document.getElementById('vlList').addEventListener('keydown',function(e){
+  if(e.key!=='Enter'&&e.key!==' ') return;
+  const item=e.target.closest('.vl-item'); if(!item) return;
+  e.preventDefault(); const vid=Number(item.dataset.vid); if(vid>0) loadView(vid);
+});
+document.getElementById('vlList').addEventListener('change',function(e){
+  const cb=e.target.closest('.vl-check'); if(!cb) return;
+  toggleVlSel(Number(cb.dataset.vid),cb.checked);
+});
+document.getElementById('vlBatchAdd').addEventListener('click',batchAddToCart);
+document.getElementById('vlBatchDl').addEventListener('click',batchDownload);
+document.getElementById('vlBatchClear').addEventListener('click',function(){_vlSel.clear();renderViewLayers();updateVlBatch();});
+document.getElementById('vlBatchAll').addEventListener('click',function(){
+  const all=SAVED_VIEWS.length>0 && SAVED_VIEWS.every(function(v){return _vlSel.has(v.id);});
+  if(all) _vlSel.clear(); else SAVED_VIEWS.forEach(function(v){_vlSel.add(v.id);});
+  renderViewLayers(); updateVlBatch();
+});
 </script>
 </body>
 </html>
