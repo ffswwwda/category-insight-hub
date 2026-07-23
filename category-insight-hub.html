@@ -2639,7 +2639,6 @@ body.dark .emp-v1{color:#fbbf24}
       <div class="topbar-right">
         <div class="tb-search"><input type="text" placeholder="搜索数据源 / 洞察 / 工具..." id="globalSearch"></input></div>
         <button class="tb-btn" onclick="toast('筛选功能待接入')">筛选</button>
-        <button class="tb-btn tb-primary" onclick="openExportModal()">导出到智能体</button>
         <button class="theme-toggle ripple-host" id="themeToggle" title="切换明暗主题">🌓</button>
       </div>
     </header>
@@ -2662,9 +2661,6 @@ body.dark .emp-v1{color:#fbbf24}
           <button class="ws-back" onclick="goBackToGrid()">返回</button>
           <span class="ws-title" id="wsPurposeTitle">新品打造</span>
           <span class="ws-tag" id="wsWsTag">B · 运营目的</span>
-          <div style="margin-left:auto;display:flex;gap:6px">
-            <button class="ct-btn primary" onclick="openExportModal()">导出到智能体</button>
-          </div>
         </div>
 
         <!-- Mode toggle -->
@@ -2882,26 +2878,6 @@ body.dark .emp-v1{color:#fbbf24}
 
     </section>
   </main>
-</div>
-
-<!-- Export Modal -->
-<div class="modal-overlay" id="exportModal">
-  <div class="modal-box">
-    <div class="mb-title">导出到智能体</div>
-    <div class="mb-sub">生成包含当前上下文的提示词，复制后粘贴给智能体使用</div>
-    <div class="mb-field">
-      <div class="mb-label">我的问题 / 推导方向</div>
-      <textarea class="mb-textarea" id="expQuestion" placeholder="例如：我想了解这个细分市场的核心痛点是什么，应该优先优化哪个维度？"></textarea>
-    </div>
-    <div class="mb-field">
-      <div class="mb-label">生成结果（可编辑）</div>
-      <textarea class="mb-textarea" id="expResult" style="min-height:200px" readonly></textarea>
-    </div>
-    <div class="mb-actions">
-      <button class="mb-close" onclick="closeExportModal()">关闭</button>
-      <button class="mb-copy" onclick="copyPrompt()">复制提示词</button>
-    </div>
-  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -10851,89 +10827,6 @@ function runVocTagger(inputId,tagsId,resultId,outputId){
   toast('规则引擎执行完成');
 }
 
-// ============================================================
-// EXPORT TO AI PROMPT (截图3)
-// ============================================================
-function gatherContext(){
-  var ctx={workspace:'',purpose:'',purposeDesc:'',sources:[],nlSources:[],frameworks:[],methods:'',
-           insights:[],analysis:{},canvasSummary:''};
-
-  // Workspace & purpose
-  ctx.workspace=DATA.workspaces[state.ws].label;
-  if(state.purposeId){
-    var p=getPurpose(state.ws,state.purposeId);
-    if(p){ctx.purpose=p.name;ctx.purposeDesc=p.desc;ctx.methods=p.methods;ctx.tools=p.tools;
-      p.sources.forEach(function(s){var src=getSource(s);if(src)ctx.sources.push(src.name+'('+src.type+')');});
-    }
-    // Insights
-    var ins=getInsights(state.purposeId);
-    ins.forEach(function(i){ctx.insights.push(i.title+': '+i.body);});
-  }
-
-  // Level2：自然语言补充获取的数据源
-  state.nlAcquired.forEach(function(sid){
-    var s=getSource(sid);if(s)ctx.nlSources.push(s.name+'('+s.type+')');
-  });
-
-  // Level2：选中的分析框架
-  state.selectedFrameworks.forEach(function(fid){
-    var f=DATA.frameworks.find(function(x){return x.id===fid;});
-    if(f)ctx.frameworks.push(f.name+'：'+f.desc);
-  });
-
-  // Level2：基础分析结论
-  ctx.analysis=state.analysisSummary||{};
-
-  // Canvas context
-  if(state.canvasNodes.length){
-    ctx.canvasSummary='画布上有 '+state.canvasNodes.length+' 个节点（'+
-      state.canvasNodes.filter(function(n){return n.type==='src'}).length+' 数据源 / '+
-      state.canvasNodes.filter(function(n){return n.type==='ins'}).length+' 洞察 / '+
-      state.canvasNodes.filter(function(n){return n.type==='note'}).length+' 批注）'+
-      (state.canvasLines.length?', '+state.canvasLines.length+' 条连线':'');
-  }
-
-  return ctx;
-}
-
-function generatePrompt(ctx,question){
-  var q=question&&question.trim()?question.trim():'请帮我综合以上信息，给出深度分析和可行动的建议。';
-  var prompt=
-'# 分析任务提示词（请将以下内容完整复制给智能体）\n\n'+
-'## 角色设定\n你是一名严谨的类目用户研究分析师。请把自己当作**第一次接触我们数据**的人——'+
-'在阅读下方材料前不要做任何先验假设，所有结论都必须基于所提供的材料，并明确区分「数据已支持 / 需要验证 / 外部补充」。\n\n'+
-'## 一、当前目的（最重要）\n'+
-'- 工作方向：'+ctx.workspace+'\n'+
-'- 当前目的：'+(ctx.purpose||'全局概览')+'\n'+
-'- 目的说明：'+(ctx.purposeDesc||'—')+'\n\n'+
-'## 二、数据源（上下文）\n'+
-'- 该目的已绑定的数据源：\n'+(ctx.sources.length?ctx.sources.map(function(s){return '  · '+s}).join('\n'):'  · 无')+'\n'+
-(ctx.nlSources.length?'- 通过自然语言补充获取的数据源：\n'+ctx.nlSources.map(function(s){return '  · '+s}).join('\n')+'\n':'')+
-'## 三、使用的分析框架\n'+
-(ctx.frameworks.length?ctx.frameworks.map(function(f){return '  · '+f}).join('\n')+'\n':'  · 由你判断选用合适框架\n')+
-'## 四、已有基础分析结论（skill 简化版自动产出，供你延展，非终稿）\n'+
-'- 需求四象限：'+(ctx.analysis.quad||'未生成')+'\n'+
-'- 细分市场：'+(ctx.analysis.segments||'未生成')+'\n'+
-'- 购买旅程：'+(ctx.analysis.journey||'未生成')+'\n'+
-'## 五、关键洞察（来自数据源与交叉分析）\n'+
-(ctx.insights.length?ctx.insights.map(function(i){return '  · '+i}).join('\n'):'  · 暂无')+'\n'+
-(ctx.canvasSummary?('## 六、画布推导状态\n'+ctx.canvasSummary+'\n'):'')+
-'\n## 七、我的问题\n'+q+'\n\n'+
-'## 八、输出要求（务必遵守）\n'+
-'1. **复述理解**：先用自己的话复述你对以上数据、目的与上下文的理解，确认没有误解后再展开。\n'+
-'2. **三类结论标注**：所有结论必须归入「数据已支持 / 需要验证 / 外部补充」三类，且**每条必标出处**（注明来自哪个数据源或框架）。\n'+
-'3. **行动建议**：给出 2-3 个具体可执行的下一步行动，按优先级排列，并说明预期收益与所需验证。\n'+
-'4. **多轮深化**：如信息不足以支撑某结论，明确指出缺口并建议补充哪类数据，而非编造。';
-  return prompt;
-}
-
-function openExportModal(){
-  $('#exportModal').classList.add('show');
-  var ctx=gatherContext();
-  var q=$('#expQuestion').value.trim();
-  $('#expResult').value=generatePrompt(ctx,q);
-}
-
 // --- 目的核对引擎（目的类型识别 → 数据源/框架精准匹配 → 方案核对）---
 // 目的类型规则库：把「目的」映射到该目的真正需要的数据源（优先已就绪 ready）与分析框架
 var PURPOSE_RULES=[
@@ -11703,15 +11596,6 @@ function copyPlanPrompt(){
   navigator.clipboard.writeText(promptText).then(
     function(){toast('提示词已复制');},
     function(){/* fallback */}
-  );
-}
-
-function closeExportModal(){$('#exportModal').classList.remove('show')}
-function copyPrompt(){
-  var t=$('#expResult').value;
-  navigator.clipboard.writeText(t).then(
-    function(){toast('提示词已复制到剪贴板')},
-    function(){/* fallback */$('#expResult').select();document.execCommand('copy');toast('已复制')}
   );
 }
 
