@@ -3546,7 +3546,7 @@ function renderNavLab(){
       '<span class="ni-name">虚拟用户压力测试</span></div>'+
     '<div class="nav-item" data-nav="nav-cap" onclick="openCapabilityIntro()">'+
       '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gear"/></svg></span>'+
-      '<span class="ni-name">能力风险引擎</span></div>'+
+      '<span class="ni-name">思考盲点扫描引擎</span></div>'+
     '<div class="nav-item" data-nav="nav-pano" onclick="openPanoIntro()">'+
       '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></span>'+
       '<span class="ni-name">AI 办公全景</span></div>'+
@@ -7134,7 +7134,7 @@ function jumpToCapability(){
 function openCapabilityIntro(){
   setActiveNav('nav-cap');
   $('#subnav').classList.remove('show');
-  $('#topbarTitle').textContent='能力风险引擎 · 通用思考引擎';
+  $('#topbarTitle').textContent='思考盲点扫描引擎 · 通用思考引擎（盲点扫描）';
   setView('Principle');
   var viz=
     '<svg viewBox="0 0 240 200" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">'+
@@ -7162,10 +7162,10 @@ function openCapabilityIntro(){
       // Hero
       '<div class="lab-hero">'+
         '<div class="lab-hero-text">'+
-          '<span class="lab-eyebrow"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-compass"/></svg> 能力风险引擎 · THINK ENGINE</span>'+
-          '<div class="lab-title">通用思考引擎</div>'+
+          '<span class="lab-eyebrow"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-compass"/></svg> 思考盲点扫描引擎 · THINK ENGINE</span>'+
+          '<div class="lab-title">通用思考引擎（盲点扫描）</div>'+
           '<div class="lab-tagline">把任何岗位，<span class="accent">套进同一套思考路径</span></div>'+
-          '<p class="lab-desc">这是一个「通用思考引擎」：无论你是运营、产品、市场还是创始人，都用同一条思考路径工作——差异只在「知识库」（岗位领域数据）与「经验」。引擎内核是固定的方法论（矛盾论 / 调查研究 / 实践论 / 实事求是 + 四步循环），岗位知识库可插拔。把一段想法、计划或素材倒进去，它做盲点扫描、压力测试、结构解构，而不是替你拍板。</p>'+
+          '<p class="lab-desc">这是一个「通用思考引擎（盲点扫描）」：无论你是运营、产品、市场还是创始人，都用同一条思考路径工作——差异只在「知识库」（岗位领域数据）与「经验」。引擎内核是固定的方法论（矛盾论 / 调查研究 / 实践论 / 实事求是 + 四步循环），岗位知识库可插拔。把一段想法、计划或素材倒进去，它做盲点扫描、压力测试、结构解构，而不是替你拍板。</p>'+
           '<div class="lab-stats">'+
             statChip('1 套','思考路径')+
             statChip('岗位','知识库可插拔')+
@@ -7187,8 +7187,8 @@ function openCapabilityIntro(){
       '</div>'+
       // CTA
       '<div class="lab-cta">'+
-        '<div class="ct-txt"><b>去试试这个通用思考引擎？</b><span>打开独立页面，输入一段想法或计划，看它怎么帮你查漏补缺。</span></div>'+
-        '<button class="lab-btn" onclick="jumpToCapability()">进入能力风险引擎 <span class="arr">↗</span></button>'+
+        '<div class="ct-txt"><b>去试试这个通用思考引擎（盲点扫描）？</b><span>打开独立页面，输入一段想法或计划，看它怎么帮你查漏补缺。</span></div>'+
+        '<button class="lab-btn" onclick="jumpToCapability()">进入思考盲点扫描引擎 <span class="arr">↗</span></button>'+
       '</div>'+
       '<div class="lab-note">纯规则 MVP · 推理机 + 知识库分离架构 · 通用思考路径 + 可插拔岗位知识库 · GitHub Pages 部署</div>'+
     '</div>';
@@ -8824,7 +8824,7 @@ var LAYER_DATA = [
    examples:[
      {t:'数字世界虚拟', d:'据评价数据生成智能体，模拟真实实际的发展与传播。'},
      {t:'虚拟用户压力测试', d:'基于真实评价 + 研究理论方法，随机生成用户，对新品 / 活动做挑刺式压力测试。'},
-     {t:'能力风险引擎', d:'获取倒模类目知识库，按逻辑方法评估想法 / 方案 / 决策的盲点、风险点。'},
+     {t:'思考盲点扫描引擎', d:'获取倒模类目知识库，按逻辑方法评估想法 / 方案 / 决策的盲点、风险点。'},
      {t:'AI 办公室', d:'同逻辑，基座=倒模类目用户知识库，按目的组合成复杂项目。'}
    ],
    note:'定位：基座之上，自定义造功能'}
