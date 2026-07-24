@@ -1,0 +1,108 @@
+{
+  "package_id": "new-product-dev",
+  "purpose": "新品开发 / 创新孵化",
+  "core_question": "用户还有哪些未被满足的需求？我该造什么新产品 / 新概念？",
+  "version": "1.0.0",
+  "generated": "2026-07-22",
+  "data_lineage": "样本切片来自 category-insight-hub.html 内联真实 VOC（SOURCE_POOL）与看板；s14/s20/s9 为结构示例，生成器将替换为完整筛选集。",
+  "run_order": [
+    "00-README.md",
+    "01-提示词/SYSTEM.md",
+    "02-数据包/*.csv",
+    "03-技能包/voc-tagger/SKILL.md",
+    "04-交付模板/输出模板.md",
+    "04-交付模板/校验清单.md"
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "label": "亚马逊评论",
+      "market": "DE/US/JP/UK/EU",
+      "file": "02-数据包/亚马逊评论.csv",
+      "status": "ready",
+      "nature": "真实样本"
+    },
+    {
+      "id": "s13",
+      "label": "美亚倒膜&名器评论",
+      "market": "US",
+      "file": "02-数据包/美亚评论.csv",
+      "status": "ready",
+      "nature": "真实样本"
+    },
+    {
+      "id": "s15",
+      "label": "用户反馈情报汇总",
+      "market": "全球",
+      "file": "02-数据包/反馈情报.csv",
+      "status": "ready",
+      "nature": "真实样本"
+    },
+    {
+      "id": "s8",
+      "label": "德国商品库",
+      "market": "DE",
+      "file": "02-数据包/德国商品库.csv",
+      "status": "ready",
+      "nature": "真实样本"
+    },
+    {
+      "id": "s3",
+      "label": "竞品分析",
+      "market": "DE/US",
+      "file": "02-数据包/竞品分析.csv",
+      "status": "ready",
+      "nature": "真实样本"
+    },
+    {
+      "id": "s12",
+      "label": "Reddit社媒标签",
+      "market": "全球",
+      "file": "02-数据包/Reddit标签.csv",
+      "status": "ready",
+      "nature": "真实样本"
+    },
+    {
+      "id": "s14",
+      "label": "亚马逊关键词搜索量",
+      "market": "全球",
+      "file": "02-数据包/搜索量.csv",
+      "status": "ready",
+      "nature": "含结构示例"
+    },
+    {
+      "id": "s20",
+      "label": "核心竞品KOL合作",
+      "market": "全球",
+      "file": "02-数据包/KOL合作.csv",
+      "status": "ready",
+      "nature": "含结构示例"
+    },
+    {
+      "id": "s9",
+      "label": "类目趋势",
+      "market": "EU/US",
+      "file": "02-数据包/类目趋势.csv",
+      "status": "ready",
+      "nature": "含结构示例"
+    }
+  ],
+  "frameworks": [
+    "quad",
+    "compass",
+    "triz",
+    "extreme",
+    "jtbd",
+    "needs"
+  ],
+  "skill_dependencies": [
+    {
+      "id": "voc-tagger",
+      "path": "03-技能包/voc-tagger/SKILL.md",
+      "required": true,
+      "used_for": "对 02-数据包 中 VOC 评论做九维打标"
+    }
+  ],
+  "output_template": "04-交付模板/输出模板.md",
+  "verify_checklist": "04-交付模板/校验清单.md"
+}

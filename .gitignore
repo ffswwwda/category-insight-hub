@@ -1,2 +1,11 @@
 ai-office-3d/
 .workbuddy/
+# 生成的中间数据（可从 xlsx + gen_sales_data.py 重建，避免仓库膨胀）
+sales_data_new.json
+# 临时探查/构建副产物
+probe_xlsx.py
+probe_xlsx2.py
+probe_xlsx3.py
+probe_tags.py
+canvas_preview.png
+layer5-forge.html
