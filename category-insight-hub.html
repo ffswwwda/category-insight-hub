@@ -1070,6 +1070,7 @@ body.dark .lab-status{color:#fbbf24}
   border:1px solid var(--border);border-radius:10px;padding:7px 12px;width:260px}
 .tb-search input{border:0;outline:0;background:transparent;font-size:12.5px;width:100%;color:var(--ink);font-family:inherit}
 .tb-search .ico{color:var(--muted);font-size:13px}
+.gs-hidden{display:none!important}
 .tb-btn{appearance:none;border:1px solid var(--border);background:var(--glass-bg);backdrop-filter:var(--glass-blur);
   color:var(--ink-2);font-family:inherit;font-size:12px;font-weight:600;padding:6px 13px;border-radius:9px;cursor:pointer;
   transition:all .2s var(--rad-easing)}
@@ -6530,7 +6531,7 @@ function openSourceGallery(){
         (s.hasDashboard?'<span class="gal-badge">看板</span>':'')+'</div>'+
       '<div class="gal-type">'+escHtml(s.type)+' · '+escHtml(s.market)+'</div>'+
       '<div class="gal-desc">'+escHtml(s.desc)+'</div>'+
-      '<div class="gal-foot"><span class="gal-rec">'+ready+' · '+rec+'</span><span class="gal-go">进入</span></div>'+
+      '<div class="gal-foot"><span class="gal-rec">'+(ready?'已接入':'样本数据')+' · '+rec+'</span><span class="gal-go">进入</span></div>'+
     '</div>';
   }
   // 购买旅程阶段映射（一个源可跨多个阶段）
@@ -11653,10 +11654,45 @@ $('#wsTabs').addEventListener('click',function(e){
   if(tab)switchWorkspace(tab.getAttribute('data-ws'));
 });
 
-// Global search (basic)
-$('#globalSearch')&&$('#globalSearch').addEventListener('keyup',function(e){
-  if(e.key==='Enter'){toast('搜索: '+this.value+' —— 全文搜索待接入');}
-});
+// Global search — 全局关键词筛选（数据源 / 工具 / 框架 / 目的卡片）
+(function(){
+  var input=document.getElementById('globalSearch');
+  if(!input) return;
+  // 可搜索的选择器列表（按优先级）
+  var SEARCHABLES=[
+    {sel:'.gal-card', fields:['.gal-name','.gal-type','.gal-desc']},
+    {sel:'.ai-card',  fields:['.ai-name','.ai-desc']},
+    {sel:'.fw-card', fields:['.fw-name']},
+    {sel:'.pg-card', fields:['.pg-name','.pg-sub']},
+    {sel:'.emp-card',fields:['.emp-name','.emp-role']}
+  ];
+  function getText(el,selectors){
+    var t='';
+    for(var i=0;i<selectors.length;i++){
+      var c=el.querySelector(selectors[i]); if(c) t+=' '+c.textContent;
+    }
+    return t.toLowerCase();
+  }
+  function doSearch(){
+    var q=input.value.trim().toLowerCase();
+    if(!q){ // 空查询 → 全部恢复
+      document.querySelectorAll('.gs-hidden').forEach(function(el){ el.classList.remove('gs-hidden'); });
+      return;
+    }
+    var hitCount=0;
+    SEARCHABLES.forEach(function(group){
+      document.querySelectorAll(group.sel).forEach(function(card){
+        var txt=getText(card,group.fields);
+        if(txt.indexOf(q)>=0){ card.classList.remove('gs-hidden'); hitCount++; }
+        else{ card.classList.add('gs-hidden'); }
+      });
+    });
+  }
+  // 实时搜索（input 事件），防抖 180ms
+  var timer=null;
+  input.addEventListener('input',function(){ clearTimeout(timer); timer=setTimeout(doSearch,180); });
+  input.addEventListener('keyup',function(e){ if(e.key==='Escape'){ input.value=''; doSearch(); input.blur(); } });
+})();
 
 // ============================================================
 // INIT
