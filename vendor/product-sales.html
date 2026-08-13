@@ -270,6 +270,34 @@
 .lf-chip.on{background:linear-gradient(135deg,#00d4ff,#a855f7,#ff6b9d);color:#fff;border-color:transparent}
 .lf-chip.on i{background:rgba(255,255,255,.25);color:#fff}
 .lf-chip.um i{background:rgba(127,127,127,.18)}
+
+<style>
+/* ----- 标签字段 chip 行（快捷筛选区第二行）----- */
+.lbl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.lbl-row-hint{font-size:11.5px;color:var(--muted);margin-right:4px;white-space:nowrap}
+.lbl-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--ink);cursor:pointer;background:var(--panel);transition:.15s;user-select:none;position:relative}
+.lbl-chip:hover{border-color:#a855f7;color:#a855f7}
+.lbl-chip .arr{font-size:10px;transition:transform .2s;color:var(--muted)}
+.lbl-chip.active{border-color:#a855f7;background:rgba(168,85,247,.06);color:#a855f7;font-weight:600}
+.lbl-chip.active .arr{transform:rotate(180deg);color:#a855f7}
+.lbl-chip.has-sel::after{content:'';position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#a855f7,#ff6b9d)}
+
+/* ----- 展开面板（值列表）----- */
+.lbl-panel{display:none;margin-top:8px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--panel);animation:lpIn .18s ease}
+.lbl-panel.show{display:block}
+@keyframes lpIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.lbl-panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.lbl-panel-title{font-size:12.5px;font-weight:700;color:var(--ink)}
+.lbl-panel-close{font-size:17px;cursor:pointer;color:var(--muted);line-height:1;padding:0 4px;border-radius:4px;transition:.15s}
+.lbl-panel-close:hover{background:rgba(0,0,0,.06);color:var(--ink)}
+.lbl-vals{display:flex;flex-wrap:wrap;gap:5px}
+.lbl-val{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border:1px solid var(--border);border-radius:999px;font-size:11.5px;color:var(--ink);cursor:pointer;background:var(--panel);transition:.12s;user-select:none}
+.lbl-val:hover{border-color:#a855f7}
+.lbl-val.on{background:linear-gradient(135deg,#00d4ff,#a855f7,#ff6b9d);color:#fff;border-color:transparent}
+.lbl-val i{font-style:normal;font-size:10px;color:var(--muted);background:rgba(127,127,127,.1);border-radius:999px;padding:0 5px}
+.lbl-val.on i{background:rgba(255,255,255,.25);color:#fff}
+.lbl-val.um i{background:rgba(127,127,127,.14)}
+</style>
 </style>
 </head>
 <body>
@@ -357,8 +385,12 @@
     <!-- 筛选栏 -->
     <div class="filterbar">
       <div class="fb-hint">快捷筛选（可叠加）：试试组合 <code>20欧以下</code> · <code>1-3星差评</code> · <code>中国卖家</code> · <code>FBA</code> · <code>有视频</code> · <code>有A+页面</code> · <code>有标签</code></div>
-      <div class="chips" id="chips"></div>
-      <div class="fb-foot">
+      <div class="chips" id="chips"></div>      <div class="lbl-row" id="labelChipRow">
+        <span class="lbl-row-hint">按标签筛选：</span>
+        <div id="labelChips"></div>
+        <div class="lbl-panel" id="labelExpandPanel"></div>
+      </div>
+<div class="fb-foot">
         <div class="seg" id="viewSeg" title="总表 / 月度切换">
           <button type="button" data-view="total" class="on">总表</button>
           <button type="button" data-view="month">月度</button>
@@ -412,7 +444,7 @@
         </div>
       </div>
 
-      <div class="panel" id="labelPanel">
+      <div class="panel" id="labelPanel" style="display:none">
         <h3>按标签字段筛选 <span class="sub">字段之间“且”，同一字段多选取“或”；点击切换选中，再次点击取消</span></h3>
         <div id="labelFilters" class="lf-wrap"></div>
       </div>
@@ -896,7 +928,86 @@ var SALES_DATA = {"currency":{"美亚":"$","日亚":"¥","欧亚（德国+英国
     {key:'tags', label:'有标签', facet:()=>{state.facets.hasTags=!state.facets.hasTags;}},
     {key:'lowstar', label:'≤3星差评', facet:()=>{ if(state.facets.starMax===3){state.facets.starMin=null;state.facets.starMax=null;} else {state.facets.starMin=null;state.facets.starMax=3;} }}
   ];
-  function syncChips(){
+  
+  // ---------- 标签字段 chip 行（点击展开值列表筛选） ----------
+  let expandedLabelKey = null; // 当前展开的字段 key
+  const LABEL_CHIP_TOP = 14;
+
+  function renderLabelChips(){
+    const row = $('#labelChipRow');
+    if(!row) return;
+    const arr = getProducts();
+    const chipBox = $('#labelChips');
+    const panel = $('#labelExpandPanel');
+
+    // 渲染字段名 chip
+    chipBox.innerHTML = LABEL_FILTERS.map(([key,lab])=>{
+      const sel = (state.facets.labelSel && state.facets.labelSel[key]) || [];
+      const hasSel = sel.length > 0;
+      const active = (expandedLabelKey === key);
+      return `<span class="lbl-chip${active?' active':''}${hasSel?' has-sel':''}" data-lbl-key="${escAttr(key)}">${esc(lab)}<span class="arr">&#9662;</span></span>`;
+    }).join('');
+
+    // 绑定字段 chip 点击 → 展开/收起
+    $$('#labelChips .lbl-chip').forEach(el=>el.addEventListener('click',()=>{
+      const k = el.dataset.lblKey;
+      if(expandedLabelKey === k){ expandedLabelKey = null; panel.classList.remove('show'); panel.innerHTML=''; renderLabelChips(); return; }
+      expandedLabelKey = k;
+      renderExpandedPanel(k);
+      renderLabelChips(); // 刷新 active 状态
+    }));
+
+    // 如果有展开的字段，渲染展开面板内容
+    if(expandedLabelKey && !panel.classList.contains('show')){
+      renderExpandedPanel(expandedLabelKey);
+    }
+  }
+
+  function renderExpandedPanel(key){
+    const panel = $('#labelExpandPanel');
+    if(!panel) return;
+    const lab = LABEL_FILTERS.find(x=>x[0]===key);
+    const arr = getProducts();
+    const cnt = {}; let unmarked=0;
+    arr.forEach(r=>{ if(lblEmpty(r,key)){ unmarked++; return; } const v=lblVal(r,key); cnt[v]=(cnt[v]||0)+1; });
+    const entries = Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0, LABEL_CHIP_TOP);
+    const sel = (state.facets.labelSel && state.facets.labelSel[key]) || [];
+
+    let valsHtml = entries.map(v=>{
+      const on = sel.indexOf(v)>=0;
+      return `<span class="lbl-val${on?' on':''}" data-k="${escAttr(key)}" data-v="${escAttr(v)}">${esc(v)}<i>${cnt[v]}</i></span>`;
+    }).join('');
+    if(unmarked > 0){
+      const umOn = sel.indexOf('__UNMARKED__')>=0;
+      valsHtml += `<span class="lbl-val um${umOn?' on':''}" data-k="${escAttr(key)}" data-v="__UNMARKED__">（未标注）<i>${unmarked}</i></span>`;
+    }
+    const totalVals = Object.keys(cnt).length;
+    const moreHint = totalVals > LABEL_CHIP_TOP ? `<span style="font-size:11px;color:var(--muted);margin-left:6px">等 ${totalVals} 个值（显示前 ${LABEL_CHIP_TOP}）</span>` : '';
+
+    panel.innerHTML = `
+      <div class="lbl-panel-head">
+        <span class="lbl-panel-title">${lab?esc(lab[1]):esc(key)} · ${arr.length} 款商品${moreHint}</span>
+        <span class="lbl-panel-close" id="lblClose">&times;</span>
+      </div>
+      <div class="lbl-vals">${valsHtml || '<span style="font-size:11.5px;color:var(--muted)">该字段无有效值</span>'}</div>`;
+    panel.classList.add('show');
+
+    // 绑定值 chip 点击 → 切换筛选
+    $$('#labelExpandPanel .lbl-val').forEach(el=>el.addEventListener('click',()=>{
+      const k=el.dataset.k, v=el.dataset.v;
+      if(!state.facets.labelSel) state.facets.labelSel={};
+      if(!state.facets.labelSel[k]) state.facets.labelSel[k]=[];
+      const a=state.facets.labelSel[k];
+      const i=a.indexOf(v);
+      if(i>=0) a.splice(i,1); else a.push(v);
+      if(!a.length) delete state.facets.labelSel[k];
+      renderAll(); // 重绘全部（保留展开状态）
+    }));
+    // 关闭按钮
+    $('#lblClose').addEventListener('click',()=>{ expandedLabelKey=null; panel.classList.remove('show'); panel.innerHTML=''; renderLabelChips(); });
+  }
+
+function syncChips(){
     $('#chips').innerHTML = CHIP_DEFS.map(ch=>{
       let on=false;
       if(ch.key==='priceLow') on = state.facets.priceMax===20;
@@ -912,6 +1023,7 @@ var SALES_DATA = {"currency":{"美亚":"$","日亚":"¥","欧亚（德国+英国
       const ch = CHIP_DEFS.find(x=>x.key===el.dataset.key);
       ch.facet(); renderAll();
     }));
+    renderLabelChips();
   }
 
   // ---------- 切换板 / 市场 / 视图 ----------
