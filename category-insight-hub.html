@@ -1096,6 +1096,11 @@ body.dark .lab-status{color:#fbbf24}
 .view{display:none;min-height:100%}
 .view.active{display:block;animation:fadeInUp .5s var(--rad-easing)}
 
+/* 仅作用于目的工作区视图：用 flex 列布局给 ws-body 可靠的 100% 高度基准
+   —— 用 id 作用域，绝不动全局 .view，避免影响其它视图（上次布局崩的根因） */
+#viewWorkspace{display:none}
+#viewWorkspace.active{display:flex;flex-direction:column;height:100%}
+
 /* ========== VIEW: PURPOSE GRID ========== */
 .purpose-grid-wrap{padding:22px 24px 40px}
 .purpose-header{margin-bottom:18px;animation:fadeInUp .5s var(--rad-easing)}
@@ -1162,19 +1167,12 @@ body.dark .lab-status{color:#fbbf24}
   scrollbar-width:thin;background:var(--bg)}
 .struct-col:last-child{border-right:none}
 .col-header{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.8px;text-transform:uppercase;
-  padding-bottom:10px;margin-bottom:12px;border-bottom:2px solid var(--rad-grad);display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  padding-bottom:10px;margin-bottom:12px;border-bottom:2px solid var(--rad-grad);display:flex;align-items:center;gap:6px;
   background:linear-gradient(90deg,var(--rad-grad),transparent);background-size:100% 2px;background-repeat:no-repeat}
-.col-sub{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0;text-transform:none;opacity:.8}
 .struct-section{margin-bottom:18px}
 .ss-head{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px;
   display:flex;align-items:center;gap:8px}
 .ss-head::before{content:'';width:4px;height:14px;border-radius:2px;background:var(--rad-grad)}
-.ss-info{font-size:12px;font-weight:800;color:var(--accent);cursor:help;margin-left:2px;border-radius:50%;
-  width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);
-  background:var(--panel-solid);text-transform:none;letter-spacing:0;line-height:1}
-.ss-sub{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0;text-transform:none;margin:-6px 0 10px}
-.mc-rel{font-size:11px;color:var(--muted);background:var(--panel-solid);border:1px dashed var(--border);
-  border-radius:var(--radius-sm);padding:8px 10px;margin-top:10px;line-height:1.5}
 
 /* Source/Insight cards in structured mode */
 .s-card{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
@@ -1258,10 +1256,15 @@ body.dark .lab-status{color:#fbbf24}
 .ct-btn.primary{background:var(--rad-grad);border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(0,195,243,.3)}
 .ct-btn.primary:hover{filter:brightness(1.06)}
 
-/* Canvas material drawer */
-.canvas-drawer{position:absolute;top:12px;right:12px;width:220px;z-index:20;
+/* Canvas material drawer (LEFT, below toolbar row) */
+.canvas-drawer{position:absolute;top:56px;left:12px;width:240px;z-index:20;
   background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
-  box-shadow:var(--shadow-md);max-height:calc(100% - 80px);overflow-y:auto;backdrop-filter:var(--glass-blur)}
+  box-shadow:var(--shadow-md);max-height:calc(100% - 124px);overflow-y:auto;backdrop-filter:var(--glass-blur)}
+.canvas-drawer::-webkit-scrollbar{width:8px}
+.canvas-drawer::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+
+/* Right-aligned toolbar cluster */
+.canvas-toolbar-right{left:auto;right:12px}
 .cd-head{padding:12px 14px 8px;font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.5px;
   border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
 .cd-toggle{cursor:pointer;color:var(--accent);font-size:11px;font-weight:700}
@@ -1272,8 +1275,9 @@ body.dark .lab-status{color:#fbbf24}
 .cdi-name{font-size:12px;font-weight:700;color:var(--ink)}
 .cdi-sub{font-size:10.5px;color:var(--muted);margin-top:2px}
 
-/* Canvas SVG layer (connections + cards) */
-.canvas-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+/* Canvas world layer (only nodes + lines are transformed; toolbar/drawer stay fixed) */
+.canvas-world{position:absolute;top:0;left:0;width:100%;height:100%;transform-origin:0 0;z-index:1}
+.canvas-svg{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .canvas-svg line{stroke:rgba(0,195,243,.4);stroke-width:1.5}
 .canvas-svg circle{fill:var(--accent);r:4}
 
@@ -1292,80 +1296,76 @@ body.dark .lab-status{color:#fbbf24}
 .cn-type.note{color:var(--green-a)}
 .cn-title{font-size:13px;font-weight:700;margin-bottom:3px}
 .cn-body{font-size:11px;color:var(--ink-2);line-height:1.45}
+.cn-filter{margin-top:8px;padding:6px 9px;border-radius:8px;background:rgba(0,195,243,.10);
+  border:1px solid rgba(0,195,243,.32);font-size:10.5px;line-height:1.5;color:var(--accent)}
+.cn-filter .cf-cap{display:inline-block;font-weight:800;opacity:.85;margin-right:4px}
 .cn-port{position:absolute;right:-6px;top:50%;width:12px;height:12px;border-radius:50%;
   background:var(--rad-grad);cursor:crosshair;transform:translateY(-50%);z-index:5}
 .cn-port-left{right:auto;left:-6px}
 
-/* Canvas zoom indicator */
-.zoom-indicator{position:absolute;bottom:12px;left:12px;z-index:20;
+/* Canvas node close (remove) button */
+.cn-close{position:absolute;top:-9px;right:-9px;width:20px;height:20px;border-radius:50%;
+  background:var(--panel-solid);border:1px solid var(--border);color:var(--muted);
+  font-size:12px;line-height:18px;text-align:center;cursor:pointer;z-index:8;
+  box-shadow:var(--shadow-sm);transition:all .15s}
+.cn-close:hover{color:#fff;background:#ef4444;border-color:#ef4444}
+.cn-node.src{cursor:pointer}
+
+/* Canvas fullscreen title pill (only shown in fullscreen) */
+.canvas-fs-title{display:none;position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:30;
+  align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--border);
+  background:var(--panel-solid);border-radius:30px;font-size:12px;font-weight:700;color:var(--ink);
+  box-shadow:var(--shadow-sm);pointer-events:none;white-space:nowrap;max-width:52vw;overflow:hidden;text-overflow:ellipsis}
+.canvas-fs-title .fs-tag{font-size:10px;font-weight:700;color:#fff;background:var(--rad-grad);padding:2px 9px;border-radius:20px}
+
+/* Fullscreen immersion: hide all chrome, canvas fills the screen */
+body.canvas-fullscreen .sidebar{display:none!important}
+body.canvas-fullscreen .topbar{display:none!important}
+body.canvas-fullscreen .subnav{display:none!important}
+body.canvas-fullscreen #viewWorkspace{padding:0!important;height:100vh!important}
+body.canvas-fullscreen .ws-bar{display:none!important}
+body.canvas-fullscreen .mode-toggle{display:none!important}
+body.canvas-fullscreen .ws-body{padding:0!important}
+body.canvas-fullscreen #structPanel{display:none!important}
+body.canvas-fullscreen .board{overflow:hidden!important}
+body.canvas-fullscreen .canvas-area{position:fixed;inset:0;width:100vw;height:100vh;z-index:60}
+body.canvas-fullscreen .canvas-fs-title{display:flex}
+
+/* Fullscreen: drawer & toolbars visible by default (no auto-hide).
+   Each can be collapsed via its own toggle; a persistent visible tab remains to reopen. */
+body.canvas-fullscreen .canvas-drawer{display:block!important}
+body.fs-drawer-collapsed .canvas-drawer{display:none!important}
+/* Collapsed toolbars hide in BOTH normal and fullscreen mode (generic rule) */
+body.fs-tools-collapsed .canvas-toolbar-left,
+body.fs-tools-collapsed .canvas-toolbar-right,
+body.fs-tools-collapsed .zoom-indicator{display:none!important}
+
+/* Persistent reopen tabs: positioned inside .canvas-area (absolute), visible in BOTH
+   normal and fullscreen mode whenever that panel is collapsed. They sit at the same
+   edge where the original toolbar/drawer lived (left side), so reopening is intuitive. */
+.canvas-reopen{display:none;position:absolute;z-index:72;align-items:center;gap:6px;
+  padding:9px 15px;border:none;border-radius:0 12px 12px 0;cursor:pointer;
+  background:var(--rad-grad);color:#fff;font-size:12px;font-weight:700;box-shadow:var(--shadow-md);font-family:inherit}
+.canvas-reopen:hover{filter:brightness(1.06)}
+#drawerReopen{left:0;top:56px}
+#toolsReopen{left:0;top:12px}
+body.fs-drawer-collapsed #drawerReopen{display:flex}
+body.fs-tools-collapsed #toolsReopen{display:flex}
+
+/* Drawer "all materials" toggle */
+.cd-all-on{color:var(--purple)!important}
+.cd-on{font-size:9.5px;font-weight:700;color:var(--green-a);background:rgba(34,197,94,.12);
+  padding:1px 6px;border-radius:10px;margin-left:6px}
+
+/* Canvas zoom indicator (right of left drawer) */
+.zoom-indicator{position:absolute;bottom:12px;left:264px;z-index:20;
   background:var(--panel-solid);border:1px solid var(--border);border-radius:9px;padding:5px 11px;
   font-size:11px;font-weight:600;color:var(--muted);font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
 
-/* ── 素材抽屉：分类面板 ── */
-.canvas-drawer{position:absolute;top:12px;right:12px;width:240px;z-index:20;
-  background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);
-  box-shadow:var(--shadow-md);max-height:calc(100% - 90px);overflow-y:auto;backdrop-filter:var(--glass-blur)}
-.cd-head{padding:12px 14px 8px;font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.5px;
-  border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--panel-solid);z-index:1}
-.cd-toggle{cursor:pointer;color:var(--accent);font-size:11px;font-weight:700}
-.cd-group{padding:8px 10px 4px;border-bottom:1px solid var(--line)}
-.cd-group:last-child{border-bottom:0}
-.cd-g-title{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin:4px 2px 6px;display:flex;justify-content:space-between;align-items:center}
-.cd-g-hint{font-size:9.5px;font-weight:600;color:var(--muted);opacity:.7;letter-spacing:0}
-.cd-item{padding:9px 10px;border-radius:9px;cursor:grab;transition:background .12s,transform .1s;display:flex;gap:9px;align-items:flex-start}
-.cd-item:hover{background:rgba(0,195,243,.1);transform:translateX(1px)}
-.cd-item:active{cursor:grabbing}
-.cd-item.cd-add{border:1px dashed var(--border);margin-top:2px}
-.cd-item.cd-add:hover{border-color:var(--accent);background:rgba(168,85,247,.08)}
-.cd-ico{flex:0 0 auto;width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
-.cd-ico svg{width:14px;height:14px}
-.ico-src svg{stroke:var(--accent)} .ico-fw svg{stroke:var(--purple)} .ico-ins svg{stroke:var(--gold)}
-.ico-lf svg{stroke:var(--green-a)} .ico-idea svg{stroke:var(--accent)}
-.cdi-main{min-width:0}
-.cdi-name{font-size:12px;font-weight:700;color:var(--ink);line-height:1.25}
-.cdi-sub{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.cd-empty{font-size:10.5px;color:var(--muted);padding:4px 4px 8px;opacity:.7}
-
-/* ── 画布节点：新类型 ── */
-.cn-type.fw{color:var(--purple)} .cn-type.lf{color:var(--green-a)} .cn-type.idea{color:var(--accent)}
-.cn-sub{font-size:10.5px;color:var(--muted);margin-top:2px}
-.cn-node.cn-fw{border-left:3px solid var(--purple)} .cn-node.cn-lf{border-left:3px solid var(--green-a)}
-.cn-node.cn-idea{border-left:3px solid var(--accent);background:linear-gradient(135deg,rgba(0,195,243,.06),rgba(168,85,247,.05))}
-.cn-hint{font-size:9px;color:var(--muted);margin-top:5px;opacity:.65}
-
-/* ── 通用卡片弹窗（框架/洞察/领先用户含义）── */
-.cm-overlay{position:fixed;inset:0;z-index:300000;background:rgba(12,16,40,.5);display:none;
-  align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.cm-overlay.show{display:flex}
-.cm-modal{width:min(460px,92vw);max-height:84vh;overflow:auto;background:var(--panel-solid);border:1px solid var(--border);
-  border-radius:var(--radius);box-shadow:var(--shadow-lg);backdrop-filter:var(--glass-blur)}
-.cm-head{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel-solid)}
-.cm-title{font-size:14px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:7px;flex:1}
-.cm-title svg{width:16px;height:16px;stroke:var(--accent)}
-.cm-close{width:28px;height:28px;border:none;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;border-radius:6px}
-.cm-close:hover{background:var(--bg);color:var(--ink)}
-.cm-body{padding:16px}
-.cm-desc{font-size:12.5px;color:var(--ink-2);line-height:1.6;margin-bottom:10px}
-.cm-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-.cm-meta span{font-size:10.5px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:4px 8px}
-.cm-meta b{color:var(--ink);margin-right:3px}
-.cm-sec-title{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin:12px 0 6px;text-transform:uppercase}
-.cm-steps{margin:0;padding-left:18px;font-size:12px;color:var(--ink-2);line-height:1.7}
-.cm-steps li{margin-bottom:3px}
-.cm-tags{display:flex;flex-wrap:wrap;gap:6px}
-.cm-tag{font-size:10.5px;padding:3px 9px;border-radius:20px;background:rgba(0,195,243,.12);color:var(--accent);font-weight:600}
-.cm-quote{margin:8px 0;padding:8px 12px;border-left:3px solid var(--purple);background:var(--bg);border-radius:0 8px 8px 0;
-  font-size:12px;color:var(--ink-2);font-style:italic;line-height:1.5}
-.cm-note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px;padding:9px 11px;background:var(--bg);border-radius:8px;border:1px dashed var(--border)}
-
-/* ── 画布空状态提示 ── */
-.canvas-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;text-align:center;
-  color:var(--muted);font-size:13px;max-width:320px;line-height:1.7;pointer-events:none}
-.canvas-hint b{color:var(--ink);display:block;font-size:15px;margin-bottom:6px}
-
-/* ── 全屏模式 ── */
-.canvas-area.fullscreen{position:fixed;inset:0;z-index:200000;background:var(--bg)}
-.ct-sep{width:1px;height:22px;background:var(--border);margin:0 2px}
+/* Canvas hint (subtle, shown only when explicitly set) */
+.canvas-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;
+  text-align:center;color:var(--muted);font-size:13px;max-width:320px;line-height:1.7;
+  pointer-events:none;display:none}
 
 /* ========== VOC TAGGER (in structured panel) ========== */
 .tagger-panel{background:var(--panel-solid);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
@@ -1430,6 +1430,16 @@ body.dark .lab-status{color:#fbbf24}
   background:var(--rad-grad);color:#fff;border:0;cursor:pointer;font-family:inherit;position:relative;overflow:hidden}
 .mb-close{padding:9px 20px;border-radius:10px;font-size:12.5px;font-weight:700;
   background:var(--glass-bg);border:1px solid var(--border);cursor:pointer;font-family:inherit;color:var(--ink-2)}
+
+/* Visual card shown for "介绍" type materials (not an edit box) */
+.mb-card{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg);margin-bottom:4px}
+.mb-card-head{display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(168,85,247,.10),rgba(255,107,157,.10));
+  border-bottom:1px solid var(--border)}
+.mb-card-sub{font-size:11.5px;color:var(--muted)}
+.mb-card-body{padding:16px 18px;font-size:13px;line-height:1.85;color:var(--ink);white-space:pre-wrap;max-height:46vh;overflow-y:auto}
+.mb-card-tag{margin:0 16px 14px;font-size:11px;color:var(--muted);padding:7px 11px;border-radius:9px;
+  background:var(--glass-bg);border:1px dashed var(--border)}
 
 /* Toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);
@@ -2583,6 +2593,7 @@ body.dark .emp-v1{color:#fbbf24}
   <symbol id="w-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2.5"/><path d="M12 8V4M9 4h6"/><circle cx="9.5" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="14.5" cy="14" r="1.2" fill="currentColor" stroke="none"/><path d="M9 18h6"/></symbol>
   <symbol id="w-office" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7M3 21h18"/></symbol>
   <symbol id="w-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l2-5.5A8 8 0 1 1 21 12z"/><circle cx="8.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="12" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="w-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></symbol>
 </svg>
 
 <div class="scroll-progress" id="scrollProgress"></div>
@@ -2628,7 +2639,6 @@ body.dark .emp-v1{color:#fbbf24}
       <div class="topbar-right">
         <div class="tb-search"><input type="text" placeholder="搜索数据源 / 洞察 / 工具..." id="globalSearch"></input></div>
         <button class="tb-btn" onclick="toast('筛选功能待接入')">筛选</button>
-        <button class="tb-btn tb-primary" onclick="openExportModal()">导出到智能体</button>
         <button class="theme-toggle ripple-host" id="themeToggle" title="切换明暗主题">🌓</button>
       </div>
     </header>
@@ -2651,9 +2661,6 @@ body.dark .emp-v1{color:#fbbf24}
           <button class="ws-back" onclick="goBackToGrid()">返回</button>
           <span class="ws-title" id="wsPurposeTitle">新品打造</span>
           <span class="ws-tag" id="wsWsTag">B · 运营目的</span>
-          <div style="margin-left:auto;display:flex;gap:6px">
-            <button class="ct-btn primary" onclick="openExportModal()">导出到智能体</button>
-          </div>
         </div>
 
         <!-- Mode toggle -->
@@ -2669,23 +2676,37 @@ body.dark .emp-v1{color:#fbbf24}
 
           <!-- Canvas Area (right) -->
           <div class="canvas-area" id="canvasArea">
-            <div class="canvas-toolbar">
-              <button class="ct-btn" onclick="zoomCanvas(1.2)">+ 放大</button>
-              <button class="ct-btn" onclick="zoomCanvas(.8)">- 缩小</button>
-              <button class="ct-btn" onclick="fitCanvas()">适应</button>
+            <div class="canvas-toolbar canvas-toolbar-left">
+              <button class="ct-btn" onclick="zoomCanvas(1.12)" title="放大">＋ 放大</button>
+              <button class="ct-btn" onclick="zoomCanvas(.89)" title="缩小">－ 缩小</button>
+              <button class="ct-btn" onclick="fitCanvas()" title="重置视图">适应</button>
+              <button class="ct-btn" onclick="organizeCanvas()" title="一键整理成清晰布局">一键整理</button>
               <button class="ct-btn" onclick="clearCanvas()">清空</button>
-              <button class="ct-btn" onclick="toggleCanvasFullscreen()" title="全屏 / 退出全屏">⛶ 全屏</button>
-              <span class="ct-sep"></span>
-              <button class="ct-btn" onclick="openPlanDetailModal()">查看完整方案</button>
-              <button class="ct-btn primary" onclick="downloadPlanPackage()">导出方案包（.zip）</button>
+              <button class="ct-btn" onclick="toggleTools()" title="收起顶部工具（再点边缘按钮展开）">收起</button>
             </div>
-            <svg class="canvas-svg" id="canvasSvg"></svg>
-            <div class="canvas-hint" id="canvasHint"><b>这是个自由画布</b>从右上角「素材」拖入或点击卡片，随便放、随便连。<br>数据源 / 分析框架 / 洞察 / 创意 / 领先用户，想到什么放什么。</div>
+            <div class="canvas-toolbar canvas-toolbar-right">
+              <button class="ct-btn" onclick="toggleCanvasFullscreen()" title="全屏工作（ESC 退出）">⛶ 全屏</button>
+              <button class="ct-btn" onclick="openPlanDetailModal()" title="查看完整方案">查看完整方案</button>
+              <button class="ct-btn primary" onclick="downloadPlanPackage()" title="导出方案包（.zip）">导出方案包</button>
+            </div>
+            <div class="canvas-world" id="canvasWorld">
+              <svg class="canvas-svg" id="canvasSvg"></svg>
+            </div>
             <div class="canvas-drawer" id="matDrawer">
-              <div class="cd-head">素材 <span class="cd-toggle" onclick="toggleDrawer()">收起</span></div>
+              <div class="cd-head">
+                <span>素材</span>
+                <span style="display:flex;gap:10px">
+                  <span class="cd-toggle" id="drawerAllToggle" onclick="toggleDrawerAll()" title="展开全部网站素材，可拖入画布">全部素材 +</span>
+                  <span class="cd-toggle" onclick="toggleDrawer()">收起</span>
+                </span>
+              </div>
               <div id="drawerItems"></div>
             </div>
+            <div class="canvas-fs-title" id="canvasFsTitle"></div>
+            <div class="canvas-hint" id="canvasHint"></div>
             <div class="zoom-indicator" id="zoomIndicator">100%</div>
+            <button class="canvas-reopen" id="drawerReopen" onclick="toggleDrawer()">⟨ 素材</button>
+            <button class="canvas-reopen" id="toolsReopen" onclick="toggleTools()">⌃ 工具</button>
           </div>
         </div>
       </div>
@@ -2738,6 +2759,26 @@ body.dark .emp-v1{color:#fbbf24}
           <span class="ws-tag">已接入 · 87情报/815事实 · 售后反馈</span>
         </div>
         <iframe class="de-frame" id="feedbackFrame" src="" title="反馈情报看板"></iframe>
+      </div>
+
+      <!-- ===== VIEW: FEEDBACK COLLECTION DASHBOARD ===== -->
+      <div class="view" id="viewFeedbackColl">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToSourceGallery()">返回</button>
+          <span class="ws-title">用户反馈信息合集 · 看板</span>
+          <span class="ws-tag">客诉 / 评论留言 / 邮件原文</span>
+        </div>
+        <iframe class="de-frame" id="feedbackCollFrame" src="" title="用户反馈信息合集"></iframe>
+      </div>
+
+      <!-- ===== VIEW: PRODUCT SALES DASHBOARD ===== -->
+      <div class="view" id="viewProductSales">
+        <div class="ws-bar">
+          <button class="ws-back" onclick="goBackToSourceGallery()">返回</button>
+          <span class="ws-title">商品销售数据 · 看板</span>
+          <span class="ws-tag">美亚 / 日亚 / 欧亚（德国+英国）</span>
+        </div>
+        <iframe class="de-frame" id="productSalesFrame" src="" title="商品销售数据"></iframe>
       </div>
 
       <!-- ===== VIEW: PORNHUB DASHBOARD ===== -->
@@ -2849,26 +2890,6 @@ body.dark .emp-v1{color:#fbbf24}
   </main>
 </div>
 
-<!-- Export Modal -->
-<div class="modal-overlay" id="exportModal">
-  <div class="modal-box">
-    <div class="mb-title">导出到智能体</div>
-    <div class="mb-sub">生成包含当前上下文的提示词，复制后粘贴给智能体使用</div>
-    <div class="mb-field">
-      <div class="mb-label">我的问题 / 推导方向</div>
-      <textarea class="mb-textarea" id="expQuestion" placeholder="例如：我想了解这个细分市场的核心痛点是什么，应该优先优化哪个维度？"></textarea>
-    </div>
-    <div class="mb-field">
-      <div class="mb-label">生成结果（可编辑）</div>
-      <textarea class="mb-textarea" id="expResult" style="min-height:200px" readonly></textarea>
-    </div>
-    <div class="mb-actions">
-      <button class="mb-close" onclick="closeExportModal()">关闭</button>
-      <button class="mb-copy" onclick="copyPrompt()">复制提示词</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <!-- ===== 五层设计体系 · 隐藏演示入口 ===== -->
@@ -2898,6 +2919,8 @@ body.dark .emp-v1{color:#fbbf24}
 // ============================================================
 // DATA MODEL — 完整架构（截图1）
 // ============================================================
+var DE_ROWS = [{"asin":"B0BVBNL6SZ","brand":"Defomy","title":"Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann","cat":"Realistische Masturbatoren","market":"DE","star":4.2,"price":19.99,"sales":2641,"ratings":782,"launch":"2023-02-14","sellerLoc":"CN","size":"17,6 x 10,7 x 10,6 cm","video":true,"aplus":true},{"asin":"B09M6ZX6BB","brand":"VIJISA","title":"Masturbieren für Männer Sex Spielzeug,3 in 1 Masturbator für Männers Tragbare 3D Masturbatoren, Mehrkanal Sex Spielzeug für Die Männer Mastrubrator Sexs toyset für man Sexspielzeug für Männers Solo","cat":"Realistische Masturbatoren","market":"DE","star":4.6,"price":20.99,"sales":0,"ratings":440,"launch":"2021-12-03","sellerLoc":"CN","size":"16 x 9 x 8 cm","video":true,"aplus":true},{"asin":"B0F8QFN1L7","brand":"seekheart","title":"Realistischer Masturbator Taschenmuschi Silikon Masturbieren Sex Spielzeug mit 5D Klitoris Doppelkanal Masturbator Groß für Mann 2 in 1 Sexspielzeug für die Männer solo (Pfirsichrosa)","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":18.99,"sales":1664,"ratings":465,"launch":"2025-05-19","sellerLoc":"DE","size":"18,2 x 10,9 x 9,5 cm","video":true,"aplus":true},{"asin":"B0FSSNTL7T","brand":"Cacuola","title":"3-in-1 Realistische Masturbatoren für Männer – Masturbator Set mit Mini KI-Interaktivem Vibrator & Penisringen, Weiche Flüssigsilikon, Sex Spielzeug für Männer & Paare","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":19.99,"sales":642,"ratings":20,"launch":"2025-10-20","sellerLoc":"CN","size":"17,2 x 10,4 x 9,2 cm","video":false,"aplus":true},{"asin":"B0FHKRQP2L","brand":"LOVE STICKS","title":"Realistische Masturbator Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Pocket Pussy Sex Spielzeug für die Männer Braun","cat":"Realistische Masturbatoren","market":"DE","star":4.6,"price":16.99,"sales":563,"ratings":41,"launch":"2025-07-31","sellerLoc":"DE","size":"17,7 x 10,8 x 10,7 cm","video":false,"aplus":true},{"asin":"B0CWKTRF5J","brand":"Defomy","title":"Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann (Elektrischer Masturbator)","cat":"Realistische Masturbatoren","market":"DE","star":4.2,"price":23.99,"sales":3044,"ratings":776,"launch":"2024-04-14","sellerLoc":"CN","size":"17,7 x 10,6 x 10,6 cm","video":false,"aplus":false},{"asin":"B0CYZQ1LDD","brand":"Defomy","title":"Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann (WeißeHautfarbe).","cat":"Realistische Masturbatoren","market":"DE","star":4.2,"price":19.99,"sales":2641,"ratings":782,"launch":"2024-04-15","sellerLoc":"CN","size":"17,7 x 11,3 x 10,2 cm","video":false,"aplus":true},{"asin":"B0DKSW785H","brand":"seekheart","title":"Realistischer Masturbator Taschenmuschi Silikon Masturbieren Sex Spielzeug mit 5D Klitoris Doppelkanal Masturbator Groß für Mann 2 in 1 Sexspielzeug für die Männer solo (braun)","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":16.99,"sales":1664,"ratings":465,"launch":"2025-11-18","sellerLoc":"DE","size":"17,7 x 10,8 x 9,5 cm","video":true,"aplus":true},{"asin":"B0FCS1L6JB","brand":"Kexyz","title":"Realistischer Masturbator Taschenmuschi Silikon Masturbieren Sex Spielzeug mit 5D Klitoris Doppelkanal Masturbator Groß für Mann 2 in 1 Anal Erotik Sexspielzeug für die Männer solo","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":16.99,"sales":405,"ratings":27,"launch":"2025-08-12","sellerLoc":"CN","size":"17,8 x 10,7 x 10,4 cm","video":true,"aplus":true},{"asin":"B0FD4D7VCR","brand":"DynaVigor","title":"Taschenmuschi Sex Spielzeug für die Männer, 2 in 1 Masturbieren Masturbator Sexspielzeug mit 3D Vagina für Männer Solo, Anal Masturbatoren Pocket Pussy Sex Toys Mann, 650g, Braun","cat":"Realistische Masturbatoren","market":"DE","star":4.6,"price":16.99,"sales":242,"ratings":15,"launch":"2025-06-15","sellerLoc":"CN","size":"17,6 x 10,8 x 10,7 cm","video":true,"aplus":true},{"asin":"B08YYH24CR","brand":"SANLAIHGJY","title":"Masturbation Stroker B-est Geschenk für männliche Stroker Intelligent Fits Sticker Tasche Pussey Gay Sèx Produkte für Frauen Pleasure Toys für Männer","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":3.4,"price":17.99,"sales":0,"ratings":45,"launch":"2021-04-26","sellerLoc":"CN","size":"16,7 x 8,5 x 8,3 cm","video":true,"aplus":true},{"asin":"B0BQJ1YS47","brand":"Yotcoc","title":"742G 2in1 Realistisch Masturbieren Taschenmuschi Groß Sex Spielzeug , Sexpuppe, Masturbator Vagina Anal Klitoris Erotik Sexspielzeug für Männer solo","cat":"Realistische Masturbatoren","market":"DE","star":4.2,"price":20.99,"sales":0,"ratings":487,"launch":"2023-02-12","sellerLoc":"CN","size":"18,4 x 10,8 x 10,5 cm","video":false,"aplus":true},{"asin":"B0CKTGC3VZ","brand":"Defomy","title":"Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann (DunkleSchokoladenfarbe)","cat":"Realistische Masturbatoren","market":"DE","star":4.2,"price":19.99,"sales":2641,"ratings":782,"launch":"2023-10-31","sellerLoc":"CN","size":"17,6 x 10,7 x 10,5 cm","video":false,"aplus":true},{"asin":"B0F3862QDJ","brand":"Mikymiky","title":"600G Realistische Masturbator, Masturbator für Männer Sex Spielzeug Anus Realistisch Groß mit 3D Anal Arsch Erotik Sexspielzeug für Männer Masturbieren","cat":"Realistische Masturbatoren","market":"DE","star":4,"price":21.99,"sales":154,"ratings":19,"launch":"2025-04-11","sellerLoc":"CN","size":"17,4 x 10,9 x 10,5 cm","video":false,"aplus":true},{"asin":"B0F3XKM6Q3","brand":"seekheart","title":"Realistischer Masturbator Taschenmuschi Silikon Masturbieren Sex Spielzeug mit 5D Klitoris Doppelkanal Masturbator Groß für Mann 2 in 1 Sexspielzeug für die Männer solo (fleisch)","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":15.99,"sales":1664,"ratings":465,"launch":"2025-04-13","sellerLoc":"DE","size":"16,2 x 9,7 x 9,6 cm","video":true,"aplus":true},{"asin":"B0FGY6ZC2P","brand":"LOVE STICKS","title":"Realistische Masturbator Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Pocket Pussy Sex Spielzeug für die Männer Braun Weiß","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":18.99,"sales":174,"ratings":22,"launch":"2025-07-22","sellerLoc":"DE","size":"18,5 x 10,8 x 10,7 cm","video":false,"aplus":true},{"asin":"B0FLD9YCXG","brand":"Fidech","title":"Realistischer Masturbieren für Männer, 2 in 1 Taschenmuschi Masturbator für Männer, Silikon Pocket Pussy mit 3D Klitoris Doppelkanal Masturbator, Groß Sexspielzeug für die Männer Solo und Paar","cat":"Realistische Masturbatoren","market":"DE","star":4.8,"price":16.99,"sales":123,"ratings":17,"launch":"2025-08-07","sellerLoc":"CN","size":"18,5 x 10,9 x 10,6 cm","video":false,"aplus":true},{"asin":"B0FS6J63L4","brand":"seekheart","title":"Realistischer Masturbator Taschenmuschi Silikon Masturbieren Sex Spielzeug mit 5D Klitoris Doppelkanal Masturbator Groß für Mann 2 in 1 Sexspielzeug für die Männer solo (Dunkelbraun)","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":15.99,"sales":1677,"ratings":465,"launch":"2025-10-27","sellerLoc":"DE","size":"17,9 x 10,8 x 9,5 cm","video":true,"aplus":true},{"asin":"B0FVWWT49X","brand":"amiufans","title":"Hohe Qualität Masturbator, Männer Mastubratoren, Trainer Einfach Sexspielzeug für Männer Solo, Sex Toys Masturbator aus hochwertigen langlebigen Materialien, Weich und Bequem Masturbieren für Männer","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":4.3,"price":75.93,"sales":194,"ratings":24,"launch":"2025-11-28","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0FYD7SZ6M","brand":"Keyoung","title":"Masturbieren für Männer Masturbator, Realistischer Masturbator Pussy Taschenmuschi Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für die Männer Solo","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":15.45,"sales":179,"ratings":7,"launch":"2025-11-12","sellerLoc":"CN","size":"20 x 9,2 x 8,9 cm","video":false,"aplus":false},{"asin":"B08YY5H8BG","brand":"SANLAIHGJY","title":"Masturbator Taschenmuschi Blowjob Masturbatoren, Silikon Anal Sexspielzeug (500G), 2 In 1 Vaginalmasturbator, 17,78 cm Realistischer Masturbator","cat":"Realistische Masturbatoren","market":"DE","star":3.6,"price":17.99,"sales":0,"ratings":42,"launch":"2021-04-04","sellerLoc":"CN","size":"18,2 x 7,7 x 7,4 cm","video":true,"aplus":true},{"asin":"B09B13Y3QH","brand":"SANLAIHGJY","title":"Realistische Masturbator TPE Material 3D Erotik Realistische Vagina Klitoris Sexspielzeug Masturbation Tragbare Taschenmuschi","cat":"Realistische Masturbatoren","market":"DE","star":4.1,"price":17.99,"sales":0,"ratings":9,"launch":"2022-01-07","sellerLoc":"CN","size":"18,2 x 8,8 x 6,6 cm","video":true,"aplus":true},{"asin":"B09WVTCSNC","brand":"marielove für neuen schwung.","title":"Sex Spielzeug für die Männer – Realistische Taschenmuschi aus TPE – Masturbator Vagina Pussy – Mastubator Taschen Muschi Pocketpussy Sexpuppe – Sex Toy Männer – Gummi Muschi – Travel Pussy 17cm","cat":"Realistische Masturbatoren","market":"DE","star":4.3,"price":16.99,"sales":0,"ratings":74,"launch":"2022-04-06","sellerLoc":"DE","size":"18 x 10,2 x 10,2 cm","video":false,"aplus":false},{"asin":"B0BN2VMJSP","brand":"Banysin","title":"2 IN 1Masturbieren für Männer, Taschenmuschi Masturbator für Männer, Realistische Pocket Pussy Sexy Doppelkanal kompakt Vagina Anal Tragbare 3D Masturbatoren,Erotik sex spielzeug für die männer solo","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":19.99,"sales":0,"ratings":262,"launch":"2023-03-09","sellerLoc":"CN","size":"10 x 5 x 5 cm","video":false,"aplus":true},{"asin":"B0BZRSSH5H","brand":"Naughty devil","title":"760G Masturbator Sex Spielzeug für die Männer Taschenmuschi Realistisch Groß mit Vibrator 3D Vagina Klitoris Anal 6X Penisring Masturbieren für Männer Pocket Pussy SexSpielzeug für Paare Extrem Sex","cat":"Realistische Masturbatoren","market":"DE","star":3.8,"price":19.55,"sales":90,"ratings":133,"launch":"2023-08-08","sellerLoc":"CN","size":"17,6 x 10,7 x 10,6 cm","video":false,"aplus":true},{"asin":"B0F37MHHKL","brand":"XSAXLYX","title":"635g 2in1 Realistische TPE-Sexpuppe für Männer, Doppelte Stimulation mit Vagina & Anus, Weiche Pocket Pussy mit 3D-Textur Erwachsenenspielzeug, Male sex toy für Männer","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":3.4,"price":13.99,"sales":95,"ratings":4,"launch":"2025-06-13","sellerLoc":"CN","size":"10.5 x 8.6 x 16 cm","video":false,"aplus":true},{"asin":"B0FD32XTD2","brand":"DVG","title":"Realistischer Masturbator Taschenmuschi Masturbieren für Männer Sex Spielzeug mit 5D Klitoris Pussy Doppelkanal Masturbator Groß für Mann 2 in 1 Anal Erotik Sexspielzeug für die Männer solo","cat":"Realistische Masturbatoren","market":"DE","star":2.5,"price":10.99,"sales":118,"ratings":4,"launch":"2025-06-16","sellerLoc":"CN","size":"18,1 x 11,1 x 10,4 cm","video":false,"aplus":true},{"asin":"B0FFT423ZL","brand":"amiufans","title":"Masturbator 12 Vibrationsmodi Sex Spielzeug für die Männer Masturbieren für Männer, Masturbatoren Vibratorensets Sex Toyset für Man Mastrubrator Sexspielzeug für Man Solo Mastubator Sextoysets für Men","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":5,"price":74.99,"sales":83,"ratings":6,"launch":"2025-06-30","sellerLoc":"CN","size":"24,5 x 18 x 14,3 cm","video":false,"aplus":false},{"asin":"B0FN3K9KYW","brand":"Vibrosol","title":"Stoßfunktion & Vibration Masturbieren für Männer, Sex Spielzeug für die Männer Taschenmuschi Masturbator, Sexpuppe Masturbatoren Sex Toys, Sex Toyset für Man Vibratorensets Pocket Pussy (L)","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":34.99,"sales":84,"ratings":26,"launch":"2025-11-21","sellerLoc":"CN","size":"23,8 x 12,9 x 11,9 cm","video":true,"aplus":true},{"asin":"B0FNQSDDWB","brand":"Zatsaog","title":"Taschenmuschi Sex Spielzeug für die männer - Masturbieren für MännerUnd Spielzeug für Erwachsene Männlicher Masturbator Taschenmuschi mit Masturbationstasse","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":12.99,"sales":96,"ratings":0,"launch":"2025-08-26","sellerLoc":"CN","size":"17,7 x 9,6 x 9,5 cm","video":false,"aplus":false},{"asin":"B0FS6FRTY6","brand":"seekheart","title":"Realistischer Masturbator Taschenmuschi Silikon Masturbieren Sex Spielzeug mit 5D Klitoris Doppelkanal Masturbator Groß für Mann 2 in 1 Sexspielzeug für die Männer solo (Penisring Masturbator1)","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":20.99,"sales":1661,"ratings":465,"launch":"2025-09-29","sellerLoc":"DE","size":"17,8 x 10,5 x 9,8 cm","video":true,"aplus":true},{"asin":"B0FS6QKQHH","brand":"seekheart","title":"Realistischer Masturbator Taschenmuschi Silikon Masturbieren Sex Spielzeug mit 5D Klitoris Doppelkanal Masturbator Groß für Mann 2 in 1 Sexspielzeug für die Männer solo (Penisring Masturbator)","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":20.99,"sales":1661,"ratings":465,"launch":"2025-09-30","sellerLoc":"DE","size":"17,7 x 10,8 x 9,6 cm","video":false,"aplus":true},{"asin":"B0FSJ1QF4P","brand":"VIJISA","title":"Masturbieren für Männer Masturbator,3 in 1 Sex Spielzeug für die Männer Silikon 3D Masturbatoren,Multi-Kanal-Design Sexspielzeug für Männers Solo Erotik Realistischer","cat":"Realistische Masturbatoren","market":"DE","star":4.3,"price":16.89,"sales":95,"ratings":103,"launch":"2025-10-26","sellerLoc":"CN","size":"20,2 x 9,1 x 1,3 cm","video":false,"aplus":false},{"asin":"B0FSZR6KTC","brand":"Mikymiky","title":"Masturbieren, 2 in 1Taschenmuschi, Realistische Pocket Pussy Sexy Doppelkanal kompakt Vagina Anal Tragbare 3D Masturbatoren, Erotik sex spielzeug für die männer solo (Elektrischer Masturbator)","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":23.99,"sales":257,"ratings":6,"launch":"2025-10-20","sellerLoc":"CN","size":"17,2 x 10 x 10 cm","video":false,"aplus":false},{"asin":"B0FX2ZLP9X","brand":"Defomy","title":"Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann (Milchteebraun)","cat":"Realistische Masturbatoren","market":"DE","star":4.8,"price":15.99,"sales":244,"ratings":19,"launch":"2025-11-07","sellerLoc":"CN","size":"17,5 x 10,7 x 10,6 cm","video":false,"aplus":true},{"asin":"B0C4TCF95D","brand":"Gobeken","title":"700G Realistische Masturbator Sex Spielzeug für die Männer Taschenmuschi Realistisch Groß mit Vibrator 3D Vagina Klitoris Anal Erotik Pocket Pussy Muschi Masturbieren für männer Penis Sexspielzeug","cat":"Realistische Masturbatoren","market":"DE","star":4.3,"price":23.99,"sales":0,"ratings":698,"launch":"2023-06-12","sellerLoc":"GB","size":"17,9 x 10,2 x 9,2 cm","video":true,"aplus":true},{"asin":"B0CM9H42R8","brand":"Hmxseu","title":"Hmxseu Realistischer Masturbator mit Penis Hoden Masturbationsbecher 3D Analtunnel Sex toy Fleischfarbe Masturbator Solo Taschenmuschi Penis Masturbation Sexspielzeug für Männer Homosexuell","cat":"Realistische Masturbatoren","market":"DE","star":3.1,"price":22.39,"sales":0,"ratings":8,"launch":"2023-11-12","sellerLoc":"CN","size":"20 x 11 x 8 cm","video":false,"aplus":true},{"asin":"B015JB2E12","brand":"Eurohandisplay","title":"sexy-1 weiblich Schaufensterfigure Schaufensterpuppe Mannequin","cat":"Liebespuppen","market":"DE","star":3.4,"price":209.99,"sales":0,"ratings":9,"launch":"2016-08-14","sellerLoc":"DE","size":"89 x 63 x 178 cm","video":false,"aplus":true},{"asin":"B08G8J5F9N","brand":"zuzis","title":"AFYH Schaufensterpuppe Fuß, Silikon Mannequin Fuß Echte Kopie von sexy schönen Beinen und klare Textur des schönen Fußmodells, mit sehr realistischem 36A Fußmodell","cat":"Liebespuppen","market":"DE","star":null,"price":197.01,"sales":0,"ratings":0,"launch":"2022-12-16","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B08MF71B4Z","brand":"NCBH","title":"NCBH Silicone Feet Fetish, Feet Fetisch, Fußfetisch, Silikon, Echtgröße, Weiblich, Fuß, Schuhe, Schaufenstermodell, Ausstellungsmodell, Skizzen, Sandalensocke","cat":"Liebespuppen","market":"DE","star":null,"price":57.99,"sales":0,"ratings":0,"launch":"2021-03-11","sellerLoc":"CN","size":"A2","video":false,"aplus":false},{"asin":"B08MF6FMCN","brand":"NCBH","title":"NCBH Silicone Feet Fetish, Feet Fetisch, Fußfetisch, Silikon, Echtgröße, Weiblich, Fuß, Schuhe, Schaufenstermodell, Ausstellungsmodell, Skizzen, Sandalensocke","cat":"Liebespuppen","market":"DE","star":null,"price":57.99,"sales":0,"ratings":0,"launch":"2022-03-12","sellerLoc":"CN","size":"A1","video":false,"aplus":false},{"asin":"B08MF6VCZS","brand":"NCBH","title":"NCBH Fussmodell Silikon, Realistische Füße Spielzeug, Schaufensterpuppe 37 Mädchen Fuß Modell, Knöchel Hobby Kunst Simulation, Dark Complexion, A2","cat":"Liebespuppen\r\nModellbau (Spielzeug)","market":"DE","star":null,"price":57.99,"sales":0,"ratings":0,"launch":"2020-12-10","sellerLoc":"CN","size":"A2","video":false,"aplus":false},{"asin":"B08MF69V3R","brand":"NCBH","title":"NCBH Silicone Feet Fetish, Feet Fetisch, Fußfetisch, Silikon, Echtgröße, Weiblich, Fuß, Schuhe, Schaufenstermodell, Ausstellungsmodell, Skizzen, Sandalensocke","cat":"Liebespuppen","market":"DE","star":null,"price":99.99,"sales":0,"ratings":0,"launch":"2023-06-10","sellerLoc":"CN","size":"B","video":false,"aplus":false},{"asin":"B092SK5SVH","brand":"zuzis","title":"AFYH Silikon Füße Modell, Real Shot Platin TPE 36# Weiblicher Fuß 22 cm, Für Schuhe Und Socken Zeigen Und Massageunterricht (1 Paar)","cat":"Liebespuppen","market":"DE","star":2.3,"price":147,"sales":0,"ratings":2,"launch":"2022-12-16","sellerLoc":"CN","size":"22Cm","video":false,"aplus":false},{"asin":"B099X24PJN","brand":"NCBH","title":"NCBH Füße Modell Silikon, Silikon Füße Weiblich, Fußmodell, Mannequin Fuß, Silikon lebensgroße weibliche Mannequin Fuß Sandale Schuhwerk Socke Anzeige Art Skizze mit Nail,A2,36","cat":"Liebespuppen","market":"DE","star":2.7,"price":65.99,"sales":0,"ratings":5,"launch":"2021-08-02","sellerLoc":"CN","size":"1 x 1 x 1 cm","video":false,"aplus":false},{"asin":"B099X1FB6P","brand":"NCBH","title":"Füße Modell Silikon, Silikon Füße Weiblich, Fußmodell, Mannequin Fuß, Silikon lebensgroße weibliche Mannequin Fuß Sandale Schuhwerk Socke Anzeige Art Skizze mit Nail,B,36","cat":"Liebespuppen","market":"DE","star":3.7,"price":100.99,"sales":0,"ratings":5,"launch":"2021-08-02","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B09M3KB8LL","brand":"TDHLW","title":"Silikon Füße, Silikon Schaufensterpuppe Fuß, Silikon Weibliche Fuß Lebensgröße Schaufensterpuppe Fußmodell Kann Zehennägel als Skizze Nail Art Praxis Schmuck Schuh Socke Display wählen, B, 37","cat":"Liebespuppen","market":"DE","star":5,"price":52.42,"sales":0,"ratings":1,"launch":"2022-12-31","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0BC2T7T63","brand":"LIFI","title":"2 Paar Silikon-Mannequin Fuß, Fussmodell Silikon, Foot Fetish, Fußfetisch Spielzeug Frau Füße Schimmel Display Schmuck Sandale Schuh Socke Display Kunst Skizze","cat":"Liebespuppen","market":"DE","star":null,"price":79.96,"sales":0,"ratings":0,"launch":"2022-12-16","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0BRXVX515","brand":"TDHLW","title":"SilikonfüßE 1 Paar LebensgroßE MäNnliche Mannequin-FußAnzeige Aus Silikon mit Knochenanzeige Jewerly Sandale Schuhsockenanzeige Kunstskizze,Pair,46","cat":"Liebespuppen","market":"DE","star":5,"price":222.82,"sales":0,"ratings":1,"launch":"2024-09-06","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0C8HZWJ19","brand":"Lmgoc","title":"Realistische Gebärmutter Masturbator Super weich Mann Penis Masturbation Sex Spielzeug Pussy Taschenmuschi S/M/L Erotik Penis Masturbatoren Sexspielzeug für Männer (Reifen Frau L)","cat":"Realistische Masturbatoren","market":"DE","star":2.9,"price":21.99,"sales":0,"ratings":8,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0C8J415KR","brand":"Lmgoc","title":"Realistische Gebärmutter Masturbator Super weich Mann Penis Masturbation Sex Spielzeug Pussy Taschenmuschi S/M/L Erotik Penis Masturbatoren Sexspielzeug für Männer (Jugendlicher S)","cat":"Realistische Masturbatoren","market":"DE","star":2.9,"price":14.64,"sales":0,"ratings":8,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0C8J39FYW","brand":"Lmgoc","title":"Realistische Gebärmutter Masturbator Super weich Mann Penis Masturbation Sex Spielzeug Pussy Taschenmuschi S/M/L Erotik Penis Masturbatoren Sexspielzeug für Männer (Jugendlicher L)","cat":"Realistische Masturbatoren","market":"DE","star":2.9,"price":21.99,"sales":0,"ratings":8,"launch":"2023-06-20","sellerLoc":"CN","size":"18 x 10 x 9 cm","video":false,"aplus":false},{"asin":"B0C8J5F6DD","brand":"Lmgoc","title":"Lmgoc Realistische Gebärmutter Masturbator Super weich Mann Penis Masturbation Sex Spielzeug Pussy Taschenmuschi S/M/L Erotik Penis Masturbatoren Sexspielzeug für Männer (Reifen Frau S)","cat":"Realistische Masturbatoren","market":"DE","star":3.3,"price":14.64,"sales":0,"ratings":7,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CBCRDKSX","brand":"QIJIHE","title":"Tragbare Pinchable Pfirsich Realistische Masturbieren für Männer Solo, Taschenmuschi Masturbator Cup 3D Durchgang Masturbatoren Erotik Dekompression Sexspielzeug Pocket Pussy (Peach Cup)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":15.99,"sales":0,"ratings":0,"launch":"2023-07-28","sellerLoc":"CN","size":"10 x 10 x 10 cm","video":false,"aplus":false},{"asin":"B0CGTQMLR6","brand":"SMGKB","title":"SMGKB Tragbare 3D Masturbieren für Männer,Taschenmuschi Masturbator für Männer,Realistische Pocket Pussy Sexy Doppelkanal kompakt Vagina Anal Masturbatoren,Erotik sexspielzeug für die männer solo (S)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":21.73,"sales":0,"ratings":0,"launch":"2023-09-12","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CJJCK7PP","brand":"Seckoe","title":"Kalebasse Masturbator 3D Vagina Tunnel Taschenmuschi Männer Sex Sexspielzeug mit Brüste Mastubator Pocket Pussy Gummimuschi Hautähnliche Textur Masturbieren Sex Toys (Rot)","cat":"Realistische Masturbatoren","market":"DE","star":3.4,"price":15.92,"sales":0,"ratings":13,"launch":"2023-09-22","sellerLoc":"CN","size":"18 x 10 x 9 cm","video":false,"aplus":true},{"asin":"B0CK1HTGRK","brand":"Gtbxfu","title":"Gtbxfu Masturbieren für Männer, 3 Stile Design Realistische Masturbator Taschenmuschi, Tragbare Pocket Pussy Sexy kompakt 3D Vagina Anal Blowjob Erotik Real Sex Spielzeug für Männliche (Anal)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":12.57,"sales":0,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CK1TZ345","brand":"Gtbxfu","title":"Gtbxfu Masturbieren für Männer, 3 Stile Design Realistische Masturbator Taschenmuschi, Tragbare Pocket Pussy Sexy kompakt 3D Vagina Anal Blowjob Erotik Real Sex Spielzeug für Männliche (Vaginen)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":12.57,"sales":0,"ratings":0,"launch":"2023-10-21","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CKVRGGQF","brand":"Yuewen","title":"Yuewen Life-Size Silikon Weibliche Fuß Mode Touch und Look Realistisch für Cosplay Jewerly Display Schuh Display Nagel Praxis (Beige, Rechter Fuß)","cat":"Bodypainting","market":"DE","star":4.5,"price":63.2,"sales":0,"ratings":2,"launch":"","sellerLoc":"CN","size":"25 x 20 x 10 cm","video":false,"aplus":false},{"asin":"B0CKVSCNHS","brand":"Yuewen","title":"Yuewen Life-Size Silikon Weibliche Fuß Mode Touch und Look Realistisch für Cosplay Jewerly Display Schuh Display Nagel Praxis (Elfenbeinweiß, Rechter Fuß)","cat":"Bodypainting","market":"DE","star":4.5,"price":79,"sales":0,"ratings":2,"launch":"","sellerLoc":"CN","size":"29,6 x 17,2 x 9,9 cm","video":false,"aplus":false},{"asin":"B0CKVSWLH6","brand":"Yuewen","title":"Yuewen Life-Size Silikon Weibliche Fuß Mode Touch und Look Realistisch für Cosplay Jewerly Display Schuh Display Nagel Praxis (Braun, Rechter Fuß)","cat":"Bodypainting","market":"DE","star":null,"price":79,"sales":0,"ratings":0,"launch":"2023-11-10","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CKVSM4N6","brand":"Yuewen","title":"Yuewen Life-Size Silikon Weibliche Fuß Mode Touch und Look Realistisch für Cosplay Jewerly Display Schuh Display Nagel Praxis (Braun, Linker Fuß)","cat":"Bodypainting","market":"DE","star":null,"price":79,"sales":0,"ratings":0,"launch":"2023-12-25","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CTC67BCK","brand":"Oppaionaho","title":"Realistisches Silikon, Reborn Boy, weiche Ganzkörper-Lippen, 45 cm, anatomisch korrekt","cat":"Liebespuppen","market":"DE","star":null,"price":199.99,"sales":0,"ratings":0,"launch":"2024-02-08","sellerLoc":"CN","size":"45.7 x 12.7 x 20.3 cm","video":true,"aplus":true},{"asin":"B0CTXWHJHZ","brand":"Seckoe","title":"Realistischer Masturbator Pocket Pussy Mastubator Pussy Taschenmuschi Realistisch Groß, Mastrubator mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann (B)","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":37.46,"sales":0,"ratings":1,"launch":"2024-02-09","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CTY5BY7T","brand":"Seckoe","title":"Realistischer Masturbator Pocket Pussy Mastubator Pussy Taschenmuschi Realistisch Groß, Mastrubator mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann (A)","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":38.37,"sales":0,"ratings":1,"launch":"2024-02-07","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CX1TKLD9","brand":"Linman","title":"Linman Realistische Masturbator Pussy Taschenmuschi Masturbation Simulierter Vaginalmasturbator Penismassagegerät Penistrainer Realistisch Groß 3D Vagina Klitoris Erotik Sexspielzeug für Männer Solo","cat":"Realistische Masturbatoren","market":"DE","star":4.1,"price":23.99,"sales":0,"ratings":3,"launch":"2024-04-06","sellerLoc":"CN","size":"17 x 10,5 x 8,6 cm","video":false,"aplus":true},{"asin":"B0D1CJGRS4","brand":"Qomoviso","title":"Qomoviso Masturbator 3 in 1Sex Spielzeug für die Männer, Masturbatoren，Masturbieren ，Sex Toyset für Man，Mastrubrator für Manner， Spielzeug-78","cat":"Realistische Masturbatoren","market":"DE","star":4.6,"price":119.93,"sales":0,"ratings":7,"launch":"2024-04-25","sellerLoc":"CN","size":"32,5 x 27,3 x 17,7 cm","video":false,"aplus":false},{"asin":"B0D4V8MSGY","brand":"Waymaytecy","title":"630G Realistische Masturbator, Masturbieren für Männer, Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris, Klitoris Anal Erotik Sexspielzeug für Paare,Sex Toy","cat":"Realistische Masturbatoren","market":"DE","star":3.4,"price":13.99,"sales":0,"ratings":61,"launch":"2024-07-07","sellerLoc":"GB","size":"18 x 9,1 x 9 cm","video":false,"aplus":true},{"asin":"B0DG5V3PYN","brand":"Leyuye","title":"Realistische Gummimuschi Masturbator, Mastubrator Cup Mann Sex Spielzeug Taschenmuschi Realistisch mit 3D Vagina Anal Tunnel Travel Pussy Masturbieren Erotik Sexspielzeug für Männer Solo(C)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":18.74,"sales":0,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0DGLJN55Y","brand":"Leyuye","title":"Masturbieren Sexspielzeug für Männer Solo 2 in 1 Pocket Pussy Groß Masturbator Cup mit lebensecht Vagina Klitoris Anal Tunnel Taschenmuschi Masturbatoren Tragbare Erotik Sex Spielzeug für Men","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":24.98,"sales":0,"ratings":0,"launch":"2025-03-26","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0DHXJSP9P","brand":"EvcgoX","title":"Taschenmuschi für die Männer,masturbieren Sex Spielzeug mit 3D V agina und Anal Holes Pocket Pussy Sexspielzeug für die Männer solo","cat":"Realistische Masturbatoren","market":"DE","star":3.6,"price":13.99,"sales":0,"ratings":12,"launch":"2024-11-26","sellerLoc":"CN","size":"17 x 9 x 10 cm","video":true,"aplus":true},{"asin":"B0DP4J266N","brand":"ZYLEDW","title":"Masturbieren Für Männer Masturbator,Masturbieren Für Die Männer Solo, Doppelkanal Kompakt Vagina Anal Tragbare 3D Masturbatoren,Erotik Sexspielzeug Sex Toys","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":null,"price":34.99,"sales":0,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0DP4H68CQ","brand":"ZYLEDW","title":"Masturbieren Für Männer Masturbator,Masturbieren Für Die Männer Solo, Doppelkanal Kompakt Vagina Anal Tragbare 3D Masturbatoren,Erotik Sexspielzeug Sex Toys","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":null,"price":34.99,"sales":0,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0DP4J68M2","brand":"ZYLEDW","title":"Masturbieren Für Männer Masturbator,Masturbieren Für Die Männer Solo, Doppelkanal Kompakt Vagina Anal Tragbare 3D Masturbatoren,Erotik Sexspielzeug Sex Toys","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":null,"price":34.99,"sales":0,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0DTTMKCST","brand":"Wodokana","title":"Sex Spielzeug für die Männer, Masturbieren, für Männer Masturbator, Taschenmuschi für die Männer, Sex Spielzeug für die Paare, Sex Toyset für Man, Sexspielzeug für Männer Solo Männer Sex Sexspielzeug2","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":30,"sales":0,"ratings":2,"launch":"2025-02-05","sellerLoc":"CN","size":"17 x 10 x 9 cm","video":false,"aplus":false},{"asin":"B0DWX5C6YX","brand":"Wodokana","title":"Sex Spielzeug für die Männer, Masturbieren, für Männer Masturbator, Taschenmuschi für die Männer, Sex Spielzeug für die Paare, Sex Toyset für Man, Sexspielzeug für Männer Solo Männer Sex Sexspielzeug9","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":30,"sales":0,"ratings":7,"launch":"2025-02-24","sellerLoc":"CN","size":"17 x 10 x 9 cm","video":false,"aplus":true},{"asin":"B0FRFVXVNQ","brand":"LOVE STICKS","title":"Realistische Masturbator mit 10 Vibrationen Modes Elektrisch Sex Spielzeug Pussy Taschenmuschi Realistisch Tragbar mit 3D Vagina Klitoris Anal Erotik Pocket Pussy Sex Spielzeug für die Männer Braun","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":22.99,"sales":0,"ratings":0,"launch":"2025-09-22","sellerLoc":"DE","size":"18,1 x 10,7 x 10,7 cm","video":false,"aplus":true},{"asin":"B0FYW1T1BJ","brand":"CZNBZIU","title":"Silicone Realistic Dildo Pennis Cuff Sleeve Masturbator Cup with Vagina Dildo Sleeve Extender Pocket Pussy Pussy Sleeve Extension Men","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":null,"price":15.99,"sales":0,"ratings":0,"launch":"2025-12-25","sellerLoc":"CN","size":"19,4 x 6,1 x 1,87 cm","video":false,"aplus":false},{"asin":"B0FYZ82SNL","brand":"LOVE STICKS","title":"Realistische Masturbator mit 10 Vibrationen Modes Elektrisch Sex Spielzeug Pussy Taschenmuschi Realistisch Tragbar mit 3D Vagina Klitoris Anal Erotik Pocket Pussy Sex Spielzeug für die Männer Weiß","cat":"","market":"DE","star":null,"price":19.99,"sales":0,"ratings":0,"launch":"2025-12-29","sellerLoc":"DE","size":"18,3 x 10,7 x 10,4 cm","video":false,"aplus":false},{"asin":"B0FGDWJ8L2","brand":"Long.Session","title":"3in1 Taschenmuschi für die Männer, realistischer STRESSKILLER 2.0, NEU, Sex Spielzeug Männer, Masturbator Mann, Sexspielzeug, Masturbieren, Pocket Pussy","cat":"Realistische Masturbatoren","market":"DE","star":4.3,"price":17.99,"sales":0,"ratings":11,"launch":"2025-07-09","sellerLoc":"DE","size":"19 x 8 x 9.5 cm","video":true,"aplus":true},{"asin":"B0FS81SHJ7","brand":"SEYYTOYS","title":"Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann","cat":"Realistische Masturbatoren","market":"DE","star":4.1,"price":14.99,"sales":0,"ratings":11,"launch":"2025-09-24","sellerLoc":"CN","size":"16,5 x 10,2 x 10 cm","video":false,"aplus":true},{"asin":"B0GCMZH885","brand":"Siyooer","title":"Masturbieren für Männer Masturbator - 2 in 1 Pocket Pussy mit 3D Vagina Anal Taschenmuschi Masturbatoren Doppelkanal Masturbieren Tragbare Erotik sex spielzeug für die männer solo (660g)","cat":"Realistische Masturbatoren","market":"DE","star":2.8,"price":23.99,"sales":0,"ratings":2,"launch":"2025-12-31","sellerLoc":"CN","size":"17,1 x 14,7 x 9 cm","video":true,"aplus":true},{"asin":"B0FXGZC7DR","brand":"XSAXLYX","title":"600 2in1 Realistische TPE-Sexpuppe für Männer, Doppelte Stimulation mit Vagina & Anus, Weiche Pocket Pussy mit 3D-Textur Erwachsenenspielzeug, Male sex toy für Männer","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":14.99,"sales":0,"ratings":0,"launch":"2025-11-25","sellerLoc":"CN","size":"18 x 10 x 10 cm","video":false,"aplus":true},{"asin":"B0G4D1VCXT","brand":"LumivibeAi","title":"18CM Dildo Mastrubrator für Manner, Masturbator Taschenmuschi für die Männer, Mastubator Sextoysets für Men 3.8KG","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":49.99,"sales":0,"ratings":0,"launch":"2025-12-02","sellerLoc":"CN","size":"20 x 14 x 25 cm","video":false,"aplus":false},{"asin":"B0882QCZSJ","brand":"WJH","title":"WJH Silikon Füße Modell - Simulation der männlichen Fuß - Schuh-Socken-Anzeige Art Skizze Nail Medical Malerei Pediküre Unterricht Schöne Beine,A Pair","cat":"Liebespuppen","market":"DE","star":5,"price":106.5,"sales":1,"ratings":12,"launch":"2020-11-15","sellerLoc":"CN","size":"Livsstorlek","video":false,"aplus":false},{"asin":"B099WYNWH5","brand":"NCBH","title":"NCBH Füße Modell Silikon, Silikon Füße Weiblich, Fußmodell, Mannequin Fuß, Silikon lebensgroße weibliche Mannequin Fuß Sandale Schuhwerk Socke Anzeige Art Skizze mit Nail,A1,36","cat":"Liebespuppen","market":"DE","star":1,"price":59.99,"sales":5,"ratings":1,"launch":"2021-08-02","sellerLoc":"CN","size":"1 x 1 x 1 cm","video":false,"aplus":false},{"asin":"B09HCC4JZ9","brand":"bsqipsd","title":"670G Realistische Masturbator Taschenmuschi Sex spielzeug für die Männer Erotik Sexspielzeug Muschi mit 3D Silikon l Sex Toy masturbieren für Männe","cat":"Realistische Masturbatoren","market":"DE","star":3.7,"price":22.94,"sales":1,"ratings":113,"launch":"2021-12-10","sellerLoc":"","size":"19,2 x 8,6 x 8,4 cm","video":true,"aplus":true},{"asin":"B09M3SL9VL","brand":"TDHLW","title":"Fußmodell Silikon Füße Weiblich lebensgroße weibliche Schaufensterpuppe Fußanzeige Jewerly Sandale Socke Display Kunstskizze mit Nagel,C,37","cat":"Liebespuppen","market":"DE","star":null,"price":107.14,"sales":5,"ratings":0,"launch":"2022-07-01","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0B2PSDNXS","brand":"EIS","title":"Realistischer Masturbator 17,5 cm EIS | Sex-Spielzeug Männer Taschenmuschi | Sex Mann Toy Pussy Groß mit Vagina und Klitoris | Realistisch Muschi Sexpuppe Extrem für Penis","cat":"Realistische Masturbatoren","market":"DE","star":2.3,"price":9.99,"sales":70,"ratings":12,"launch":"2022-05-31","sellerLoc":"DE","size":"28,3 x 21,2 x 5,8 cm","video":false,"aplus":false},{"asin":"B0BMDW6FYY","brand":"bsqipsd","title":"Realistische Masturbator Taschenmuschi Sex spielzeug für die Männer Erotik Sexspielzeug Pussy Muschi mit 3D Silikon Vagina Klitoris Anal Sex Toy masturbieren für Männer(880G Brown)","cat":"Realistische Masturbatoren","market":"DE","star":3.7,"price":19.46,"sales":1,"ratings":113,"launch":"2023-02-09","sellerLoc":"","size":"16,8 x 10,2 x 10 cm","video":false,"aplus":true},{"asin":"B0BNLL72CF","brand":"ZYLEDW","title":"850G Realistische Masturbator,masturbrator Taschenmuschi Sex Spielzeug Für Die Männer, Mann Sex Spielzeug Pussy Taschenmuschi Groß Mit 3D Vagina Klitoris Anal Erotik Sexspielzeug Für Männer","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":39.99,"sales":5,"ratings":0,"launch":"2023-11-15","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0BWMTCJGY","brand":"bsqipsd","title":"Realistische Masturbator Taschenmuschi Sex spielzeug für die Männer Erotik Sexspielzeug Pussy Muschi mit 3D Silikon Vagina Klitoris Anal Sex Toy masturbieren für Männer(710G Wheat)","cat":"Realistische Masturbatoren","market":"DE","star":3.8,"price":22.25,"sales":1,"ratings":112,"launch":"","sellerLoc":"","size":"16,2 x 10,3 x 10 cm","video":false,"aplus":false},{"asin":"B0C348L33X","brand":"bsqipsd","title":"Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann","cat":"Realistische Masturbatoren","market":"DE","star":2.4,"price":9.99,"sales":9,"ratings":3,"launch":"2023-07-02","sellerLoc":"CN","size":"16,3 x 10,5 x 10,2 cm","video":true,"aplus":true},{"asin":"B0C6Q5DT3W","brand":"Woniyal","title":"BBW Masturbieren für Männer Masturbator - 2 in 1 Pocket Pussy Groß mit 3D Vagina Klitoris Anal Taschenmuschi Masturbatoren Doppelkanal Tragbare Erotik sex spielzeug für die männer solo (760g)","cat":"Realistische Masturbatoren","market":"DE","star":3.1,"price":18.99,"sales":19,"ratings":34,"launch":"2023-07-19","sellerLoc":"CN","size":"17 x 11,1 x 10,1 cm","video":false,"aplus":true},{"asin":"B0C7KQWQP1","brand":"Phyllida","title":"Phyllida 3 in 1 2000g, Groß Realistische Masturbator, 3D Taschenmuschi, Sexspielzeug für Männer mit Internen Stützknochen, Für die Männliche Masturbation, Leicht zu Reinigen, Sicheres TPE-Material","cat":"Realistische Masturbatoren","market":"DE","star":3.9,"price":62.99,"sales":71,"ratings":3,"launch":"2023-06-25","sellerLoc":"CN","size":"28 x 17 x 10 cm","video":false,"aplus":false},{"asin":"B0CB919FP5","brand":"13AM","title":"13AM Realistische Masturbator [Dark] - Sex Spielzeug für die Männer - Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal - 584G - Masturbieren für Männer - Pocket Pussy Sex Spielzeug für Paare","cat":"Realistische Masturbatoren","market":"DE","star":3.7,"price":19.99,"sales":20,"ratings":58,"launch":"2023-07-10","sellerLoc":"DE","size":"16.5 x 9 x 9 cm","video":false,"aplus":true},{"asin":"B0CCL4QRHX","brand":"Mikymiky","title":"Masturbieren, 2 in 1Taschenmuschi, Realistische Pocket Pussy Sexy Doppelkanal kompakt Vagina Anal Tragbare 3D Masturbatoren, Erotik sex spielzeug für die männer solo (Weißehautfarbe)","cat":"Realistische Masturbatoren","market":"DE","star":4.2,"price":18.99,"sales":257,"ratings":224,"launch":"2023-09-01","sellerLoc":"CN","size":"17,8 x 10,9 x 10,4 cm","video":true,"aplus":true},{"asin":"B0CCVRHYWB","brand":"MEILOV","title":"840Gramm leicht braun, 2in1 Doppelkanal Masturbator realistisch, Taschenmuschi für Männer, sex spielzeug Pussy Realistisch Groß mit 3D Muschi Klitoris Anal Erotik Sexspielzeug für Männer","cat":"Realistische Masturbatoren","market":"DE","star":2,"price":13.99,"sales":7,"ratings":1,"launch":"2025-08-06","sellerLoc":"","size":"17 x 11 x 9 cm","video":false,"aplus":true},{"asin":"B0CD23RHL2","brand":"TDHLW","title":"Silikon Füße Weiblich, Damen Fuß Silikon,Lebensgroßes Mädchen-Füße-Modell,Rechts","cat":"Liebespuppen","market":"DE","star":null,"price":49.43,"sales":3,"ratings":0,"launch":"2023-08-17","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CD22PJYS","brand":"TDHLW","title":"Silikon Füße Weiblich, Damen Fuß Silikon,Lebensgroßes Mädchen-Füße-Modell,Paar","cat":"Liebespuppen","market":"DE","star":null,"price":93.65,"sales":3,"ratings":0,"launch":"2023-08-17","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CG8ZT4CS","brand":"Lmgoc","title":"320G Realistische Masturbator Groß mit 3D Vagina Masturbator Eingebauter Penisring Männer Taschenmuschi Realistisch Masturbieren Masturbatoren Pocket Pussy Erotik Sexspielzeug für Männer","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":18.1,"sales":14,"ratings":0,"launch":"2023-08-26","sellerLoc":"CN","size":"16 x 8 x 7 cm","video":false,"aplus":false},{"asin":"B0CGTL25X2","brand":"Gobeken","title":"700G Realistische Masturbator Sex Spielzeug für die Männer Taschenmuschi Realistisch Groß mit Vibrator 3D Vagina Klitoris Anal Erotik Pocket Pussy Muschi Masturbieren für männer Penis Sexspielzeug","cat":"Realistische Masturbatoren","market":"DE","star":4.4,"price":23.99,"sales":27,"ratings":708,"launch":"2023-09-20","sellerLoc":"CN","size":"17,7 x 10,3 x 8,9 cm","video":true,"aplus":true},{"asin":"B0CH892QC6","brand":"Seckoe","title":"Realistische Masturbator Taschenmuschi Masturbiere Simulation 3D Gebärmutter Vagina Klitoris Gebärmutterhals Anal Erotik Penis Masturbatoren Sex Spielzeug für Männer Solo Pocket Pussy (L)","cat":"Realistische Masturbatoren","market":"DE","star":3.1,"price":21.15,"sales":18,"ratings":18,"launch":"2023-09-17","sellerLoc":"CN","size":"17 x 10,7 x 8,7 cm","video":false,"aplus":true},{"asin":"B0CH89XY77","brand":"Seckoe","title":"Realistische Masturbator Taschenmuschi Masturbiere Simulation 3D Gebärmutter Vagina Klitoris Gebärmutterhals Anal Erotik Penis Masturbatoren Sex Spielzeug für Männer Solo Pocket Pussy (M)","cat":"Realistische Masturbatoren","market":"DE","star":2.9,"price":16.23,"sales":18,"ratings":17,"launch":"2023-10-30","sellerLoc":"CN","size":"17 x 10,7 x 8,7 cm","video":false,"aplus":true},{"asin":"B0CH8B85TX","brand":"Seckoe","title":"Realistische Masturbator Taschenmuschi Masturbiere Simulation 3D Gebärmutter Vagina Klitoris Gebärmutterhals Anal Erotik Penis Masturbatoren Sex Spielzeug für Männer Solo Pocket Pussy (S)","cat":"Realistische Masturbatoren","market":"DE","star":3.1,"price":9.28,"sales":18,"ratings":18,"launch":"2023-10-31","sellerLoc":"CN","size":"15 x 9 x 7,2 cm","video":false,"aplus":true},{"asin":"B0CJBZXKZ7","brand":"Humbuzz","title":"Realistischer Masturbator Sex Spielzeug für die Männer solo, Taschenmuschi Masturbieren Mann Silikon Pocket Pussy Masturbatoren Sexspielzeug Blowjob realistisch Groß mit 3D Vagina Anus Muschi Toy","cat":"Realistische Masturbatoren","market":"DE","star":4.4,"price":22.99,"sales":274,"ratings":311,"launch":"2024-05-08","sellerLoc":"CN","size":"16,9 x 11,1 x 10,4 cm","video":true,"aplus":true},{"asin":"B0CKKNKDSP","brand":"Koxnict","title":"710G Realistische Masturbatoren Sex Spielzeug für die Männer - 3D Taschenmuschi Realistisch Groß Masturbieren für Männer Weichem Silikon Vagina Masturbator Pocket Pussy Sexspielzeug for Männer Solo","cat":"Realistische Masturbatoren","market":"DE","star":4.3,"price":19.99,"sales":34,"ratings":197,"launch":"2023-11-24","sellerLoc":"FR","size":"19,3 x 9,9 x 9,5 cm","video":false,"aplus":true},{"asin":"B0CLCFMXWR","brand":"BDSMJOY","title":"Masturbieren für Männer,Masturbator Taschenmuschi 2 IN 1,mit Dildos & 3D Anal Tunnel Pocket Pussy,Dildo Penis Anal Dildo,Analdusche für Analverkehr,Sex Spielzeug Beide (A)","cat":"Realistische Masturbatoren","market":"DE","star":3.2,"price":20.99,"sales":34,"ratings":8,"launch":"2023-11-10","sellerLoc":"CN","size":"20,3 x 10,4 x 7,7 cm","video":false,"aplus":false},{"asin":"B0CLNKG8CV","brand":"Seckoe","title":"Homosexuell Masturbator und Dildo 2 in 1 mit 3D Anal Tunnel Realistischer Penis Masturbieren Extrem Eng Gummi Muschi Sex Spielzeug für Männer Frauen und Gay Solo Taschenmuschi Mastrubrator Seckoe","cat":"Realistische Masturbatoren","market":"DE","star":4.6,"price":22.88,"sales":19,"ratings":2,"launch":"2023-10-25","sellerLoc":"CN","size":"24 x 9 x 9 cm","video":false,"aplus":false},{"asin":"B0CLNPBJXG","brand":"Seckoe","title":"Homosexuell Masturbator und Dildo 2 in 1 mit 3D Vagina Tunnel Realistischer Penis Masturbieren Extrem Eng Gummi Muschi Sex Spielzeug für Männer Frauen und Gay Solo Taschenmuschi Mastrubrator Seckoe","cat":"Realistische Masturbatoren","market":"DE","star":2.8,"price":25.58,"sales":30,"ratings":8,"launch":"2023-10-25","sellerLoc":"CN","size":"24,2 x 9,2 x 9,2 cm","video":false,"aplus":true},{"asin":"B0CM9HGDH2","brand":"Hmxseu","title":"Realistischer Uterus Masturbator 3D Simulation Uterus Masturbator S/L Vagina Klitoris Taschenmuschi Penis Trainer Erotische Masturbation Sexspielzeug für Männer Professionelle Spieler (L)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":21.99,"sales":21,"ratings":0,"launch":"2023-12-01","sellerLoc":"CN","size":"19 x 9,9 x 7,4 cm","video":false,"aplus":false},{"asin":"B0CMLDPLJX","brand":"Kuaecr","title":"600g Realistische Masturbator Sex spielzeug für Gay Solo, Homosexuell Masturbieren Cup Sex Toy mit Realistischer Penis 3D kompakt Anal Dildos Sexspielzeug für die Mann Schwuler (Hautfarbe)","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":25.68,"sales":20,"ratings":1,"launch":"2023-12-17","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CMQH9BBQ","brand":"PinkLure","title":"640G Taschenmuschi mit Gleitmittel, 2 in 1 Masturbator mit 3D Vagina Anal Masturbieren für Männer, Sex Spielzeug für die Männer, Masturbatoren, Sexspielzeug Sex Toys, Sex Spielzeug Pocket Pussy","cat":"Realistische Masturbatoren","market":"DE","star":4,"price":21.99,"sales":27,"ratings":56,"launch":"2024-01-03","sellerLoc":"CN","size":"16 x 11 x 8.5 cm","video":true,"aplus":true},{"asin":"B0CNTHVJSD","brand":"Leyuye","title":"Realistischer Lippenform Masturbator Blowjob Taschenmuschi Einkanal Pocket Pussy Leyuye mit 3D Partikeln Penisstimulator Handheld Masturbationsgerät Erotische Masturbation Sexspielzeug für Männer Solo","cat":"Realistische Masturbatoren","market":"DE","star":3.3,"price":15.71,"sales":27,"ratings":6,"launch":"2023-12-01","sellerLoc":"CN","size":"12,1 x 6,7 x 5,5 cm","video":false,"aplus":true},{"asin":"B0CPCGBCPZ","brand":"ORLEMO","title":"Sex Spielzeug für die Männer Sëxpüppë Masturbator, Sex Püppë echt für Männer, Masturbieren für Männer für Männer Solo Taschenmuschi Realistisch Groß Sex Toyset Herren Pocket Pussy","cat":"Realistische Masturbatoren","market":"DE","star":2,"price":49.98,"sales":38,"ratings":1,"launch":"","sellerLoc":"CN","size":"21 x 20 x 11,5 cm","video":false,"aplus":false},{"asin":"B0CQFYF6RQ","brand":"Hmxseu","title":"Realistischer Masturbatoren Drei Arten Manueller Cup-Masturbator Einkanal Masturbator mit 3D Fleischwürfel Taschenmuschi Penis Trainer Masturbation Orgasmus Sexspielzeug für Männer Solo (Typ C)","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":25.09,"sales":9,"ratings":1,"launch":"2024-07-27","sellerLoc":"CN","size":"17 x 10 x 8 cm","video":false,"aplus":true},{"asin":"B0CQFYR65M","brand":"Hmxseu","title":"Realistischer Masturbatoren Drei Arten Manueller Cup-Masturbator Einkanal Masturbator mit 3D Fleischwürfel Taschenmuschi Penis Trainer Masturbation Orgasmus Sexspielzeug für Männer Solo (Typ B)","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":207.44,"sales":9,"ratings":1,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":true},{"asin":"B0CSD1CC17","brand":"ORSLUM","title":"Sex Spielzeug Für Die Männer Masturbator, Masturbieren Für Männer 3 IN 1 Mastubator 3D Sex Sexspielzeug, Masturbatoren Sexspielzeug","cat":"Realistische Masturbatoren","market":"DE","star":4.2,"price":18.99,"sales":49,"ratings":124,"launch":"2024-04-08","sellerLoc":"CN","size":"19 x 9 x 9 cm","video":true,"aplus":true},{"asin":"B0CTC9HBH7","brand":"amiufans","title":"amiufans Tragbares Masturbator Sex Spielzeug für die Männer, 3D Realistische Taschenmuschi für die Männer, Masturbieren für Männēr, Masturbatoren Sexspielzeug für Mänñer Solo, Sex Toyset für Man","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":27.99,"sales":34,"ratings":4,"launch":"2025-10-11","sellerLoc":"CN","size":"17 x 10 x 9 cm","video":false,"aplus":false},{"asin":"B0CTCCGLWP","brand":"Qomoviso","title":"Qomoviso Sëx Spielzeug für die Männër Mastrubator, Masturbieren für Männer Sëx Toyset für Man, Männër Sex Sexspielzeug Sex Dòll, Realistische Masturbatoren Sexspielzeug für Männer Solo","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":83.95,"sales":14,"ratings":57,"launch":"2024-07-26","sellerLoc":"CN","size":"32,6 x 19,8 x 15,6 cm","video":true,"aplus":true},{"asin":"B0CX5DX7MD","brand":"SQYROY","title":"SQYROY Realistische Silikon Fake Vagina Pad, Transgender Crossdressing Pad-Handmade-Kleine Spielzeug","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":6.99,"sales":11,"ratings":0,"launch":"2025-01-13","sellerLoc":"CN","size":"15 x 8.5 x 3 cm","video":false,"aplus":false},{"asin":"B0CX5F1T55","brand":"SQYROY","title":"SQYROY Realistische Silikon Fake Vagina Pad, Transgender Crossdressing Pad-Handmade-Kleine Spielzeug","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":6.99,"sales":11,"ratings":0,"launch":"2024-09-07","sellerLoc":"CN","size":"15 x 8.5 x 3 cm","video":false,"aplus":false},{"asin":"B0CX5GN269","brand":"SQYROY","title":"SQYROY Realistische Silikon Fake Vagina Pad, Transgender Crossdressing Pad-Handmade-Kleine Spielzeug","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":6.99,"sales":11,"ratings":0,"launch":"2024-04-07","sellerLoc":"CN","size":"15 x 8.5 x 3 cm","video":false,"aplus":false},{"asin":"B0CXX57CY7","brand":"Mikymiky","title":"Masturbieren, 2 in 1Taschenmuschi, Realistische Pocket Pussy Sexy Doppelkanal kompakt Vagina Anal Tragbare 3D Masturbatoren, Erotik sex spielzeug für die männer solo (Milchteefarbe)","cat":"Realistische Masturbatoren","market":"DE","star":4.4,"price":18.99,"sales":257,"ratings":29,"launch":"2024-04-17","sellerLoc":"CN","size":"17,7 x 10,7 x 10,7 cm","video":false,"aplus":true},{"asin":"B0CYCBCTQ8","brand":"Lmgoc","title":"Sex Spielzeug für die Männer Realistische Masturbator 710g Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann","cat":"Realistische Masturbatoren","market":"DE","star":4.1,"price":35.18,"sales":55,"ratings":2,"launch":"2024-04-08","sellerLoc":"CN","size":"18 x 11 x 9 cm","video":false,"aplus":true},{"asin":"B0CYWLD61V","brand":"Seckoe","title":"2 in 1 Realistischer Masturbator mit Dildo Geeignet für Vagina Anal Penis Masturbieren Extrem Eng Gummimuschi Sex Spielzeug für Männer Frauen und Gay Solo Taschenmuschi Mastrubrator","cat":"Realistische Masturbatoren","market":"DE","star":4,"price":23.56,"sales":11,"ratings":1,"launch":"2024-03-29","sellerLoc":"CN","size":"23,4 x 11,4 x 7,3 cm","video":false,"aplus":false},{"asin":"B0CZ46DMYD","brand":"Seckoe","title":"Taschenmuschi Realistisch Groß Realistische Masturbator mit 3D Vagina Klitoris Mastubrator Mann Sex Spielzeug Taschen Pocket Pussy Erotik Sexspielzeug für Männer Solo Masturbieren","cat":"Realistische Masturbatoren","market":"DE","star":3.1,"price":30.89,"sales":32,"ratings":4,"launch":"2024-04-03","sellerLoc":"CN","size":"21 x 19 x 13 cm","video":false,"aplus":false},{"asin":"B0D1G21XRH","brand":"Hmxseu","title":"Realistischer Dildo mit Vaginal Muschi Masturbator 2-in-1 Manueller Cup-Masturbator mit 3D-Kanal Masturbatoren Penisvergrößerer Taschenmuschi SM-Sexspielzeug für Männer Frauen Homosexuell","cat":"Realistische Masturbatoren","market":"DE","star":1,"price":15.15,"sales":7,"ratings":1,"launch":"2024-09-01","sellerLoc":"CN","size":"15 x 10 x 5 cm","video":false,"aplus":false},{"asin":"B0D46GWJT8","brand":"Waaosavio","title":"3 in 1 Masturbator Sex Spielzeug für die Männer Solo, Masturbieren für Männer, Masturbatoren Sex Sexspielzeug, Sex Toyset für Man Toys-4","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":269.93,"sales":19,"ratings":4,"launch":"2024-05-19","sellerLoc":"CN","size":"64 x 37 x 26,5 cm","video":false,"aplus":true},{"asin":"B0D46H47ZT","brand":"Waaosavio","title":"Masturbator Sex Spielzeug für die Männer, Sexspielzeug für Männer Solo, Masturbator, Keine Kondome erforderlich Masturbieren Sex Toyset für Man, Amiufans","cat":"Realistische Masturbatoren","market":"DE","star":4.7,"price":119.93,"sales":94,"ratings":29,"launch":"2024-05-19","sellerLoc":"CN","size":"32,79 x 27,1 x 18,1 cm","video":false,"aplus":false},{"asin":"B0D5Y7VY8M","brand":"Fallinsexy","title":"Realistische Masturbator, Sexspielzeug für Männer, 855G Schwergewichts Masturbator, Taschenmuschi, Realistischer großer Riemen, 3D-Vagina, Klitoris, Anus, tragbarer 3D Masturbator erotisches 2025","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":16.99,"sales":53,"ratings":36,"launch":"2024-07-26","sellerLoc":"CN","size":"17,6 x 10,7 x 10,6 cm","video":false,"aplus":true},{"asin":"B0D6WTVW9Y","brand":"ORLEMO","title":"ORLEMO Masturbator Sex Spielzeug für die Männër, Sëx Puppë echt für Männër, Sex Toys taschenmuschi für die männer Pocket Pussy Masturbieren für Männer Masturbatoren Sexspielzeug für Männer Solo","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":4.4,"price":110.95,"sales":79,"ratings":26,"launch":"2024-06-14","sellerLoc":"CN","size":"42 x 24,6 x 18,2 cm","video":false,"aplus":false},{"asin":"B0D6X29QMQ","brand":"ORLEMO","title":"ORLEMO 3-in-1 Masturbator für Männer – 3D Stroker & Multifunktionales Sex Toyset für Man, Intensives Masturbieren für Männer & Diskrete Erotik für Paare","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":4.6,"price":89.95,"sales":5,"ratings":20,"launch":"2024-06-14","sellerLoc":"CN","size":"36,6 x 27,6 x 19,8 cm","video":false,"aplus":false},{"asin":"B0D8BLZP2C","brand":"QUEEN'S STORY","title":"Tragbare Pinchable Pfirsich Realistische Masturbatoren für Männer, Manuelle Masturbator Cup Sex Spielzeug für die Männer, 3D Realistische Vagina Oralsex, masturbieren für männer, Penis Trainingsgerät","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":2.6,"price":9.66,"sales":17,"ratings":5,"launch":"2024-07-22","sellerLoc":"CN","size":"12,9 x 8,6 x 8,5 cm","video":true,"aplus":true},{"asin":"B0D8THJ5VP","brand":"Hmxseu","title":"Realistische Taschenmuschi 1000 g Manueller Cup-Masturbator Handheld Masturbatoren mit Zunge Pocket Pussy Blowjob Masturbator Einkanal Penistraining Masturbation Sexspielzeug für Männer Solo","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":44.81,"sales":36,"ratings":3,"launch":"2024-07-05","sellerLoc":"CN","size":"23,4 x 14,3 x 11,7 cm","video":false,"aplus":false},{"asin":"B0D9MG9S6V","brand":"amiufans","title":"amiufans Taschenmuschi Sex Spielzeug für die Männer Masturbator, Masturbieren für Männer Sexspielzeug für Männer Solo Realistisch Groß, Mastubator Sex Toy","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":4.6,"price":25.95,"sales":50,"ratings":24,"launch":"2024-07-19","sellerLoc":"CN","size":"17,8 x 10,2 x 9,1 cm","video":false,"aplus":false},{"asin":"B0D9QC4Q1B","brand":"eterfore","title":"2-in-1 Sexspielzeug für Männer, männlicher Masturbator in Pennis Form, 9-Zoll realistischer Dildo mit penetrierbarem Pee-Loch und Anus, Pocket Pussy mit Bällen und Venen, Rosa","cat":"Realistische Masturbatoren","market":"DE","star":4.1,"price":29.99,"sales":68,"ratings":28,"launch":"2025-01-05","sellerLoc":"CN","size":"18,2 x 9,2 x 9,1 cm","video":true,"aplus":true},{"asin":"B0D9QFLQMX","brand":"eterfore","title":"2-in-1 Sexspielzeug für Männer, männlicher Masturbator in Pennis Form, 9-Zoll realistischer Dildo mit penetrierbarem Pee-Loch und Anus, Pocket Pussy mit Bällen und Venen","cat":"Realistische Masturbatoren","market":"DE","star":4.1,"price":29.99,"sales":68,"ratings":28,"launch":"2024-11-21","sellerLoc":"CN","size":"10.2 x 10.2 x 22.9 cm","video":true,"aplus":true},{"asin":"B0D9SJ9ZF9","brand":"Yun Xin Toys","title":"Masturbieren für Männer Masturbator - 2 in 1 Pocket Pussy Groß mit 3D Vagina Klitoris Anal Taschenmuschi Masturbatoren Doppelkanal Tragbare Erotik sex spielzeug für die männer solo (755g)","cat":"Realistische Masturbatoren","market":"DE","star":4,"price":18.99,"sales":89,"ratings":55,"launch":"2024-09-21","sellerLoc":"CN","size":"18,3 x 9,7 x 9,6 cm","video":true,"aplus":true},{"asin":"B0D9SK41HP","brand":"Yun Xin Toys","title":"BBW Masturbieren für Männer Masturbator - 2 in 1 Pocket Pussy Groß mit 3D Vagina Klitoris Anal Taschenmuschi Masturbatoren Doppelkanal Tragbare Erotik sex spielzeug für die männer solo (760g)","cat":"Realistische Masturbatoren","market":"DE","star":4,"price":18.99,"sales":89,"ratings":55,"launch":"2024-10-01","sellerLoc":"CN","size":"17,4 x 10,8 x 10,4 cm","video":false,"aplus":true},{"asin":"B0DB8FBKVT","brand":"IntimZeit","title":"2 in1 Taschenmuschi Set für Männer inkl. Gleitgel lubricant, Flashlight Sexspielzeug Mann realistisch & extrem weich - Pocket Pussy Masturbator Sex Spielzeug","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":5,"price":17.9,"sales":3,"ratings":1,"launch":"2024-08-20","sellerLoc":"DE","size":"18 x 11 x 11 cm","video":false,"aplus":true},{"asin":"B0DCJKMV3N","brand":"ORLEMO","title":"ORLEMO Taschenmuschi Sex Spielzeug für die Männer Masturbator, Masturbieren für Männer Sexspielzeug für Männer Solo Realistisch Groß, Mastubator Sex Toy","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":25.95,"sales":19,"ratings":21,"launch":"2024-08-10","sellerLoc":"CN","size":"18,5 x 8 x 8 cm","video":false,"aplus":false},{"asin":"B0DCJVR5HC","brand":"ORLEMO","title":"ORLEMO Taschenmuschi Sex Spielzeug für die Männer Masturbator, Masturbieren für Männer Sexspielzeug für Männer Solo Realistisch Groß, Mastubator Sex Toy","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":25.95,"sales":19,"ratings":21,"launch":"2024-08-10","sellerLoc":"CN","size":"18,5 x 8 x 8 cm","video":false,"aplus":false},{"asin":"B0DFH9S9JQ","brand":"amiufans","title":"amiufans Masturbieren für Männer Sexspielzeug für Männer Solo -1","cat":"Realistische Vibratoren","market":"DE","star":3,"price":25.95,"sales":4,"ratings":1,"launch":"2024-11-30","sellerLoc":"CN","size":"17,2 x 10,3 x 9,5 cm","video":false,"aplus":false},{"asin":"B0DG87JWZK","brand":"bsqipsd","title":"600G Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann - 600g","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":15.99,"sales":93,"ratings":1,"launch":"2024-11-15","sellerLoc":"CN","size":"18 x 8 x 8 cm","video":true,"aplus":true},{"asin":"B0DGKJ95N9","brand":"Warmfeel","title":"Realistische Masturbator Sex Spielzeug für Die Männer, Eingebauter Vibrator Muschi Sex Toys, Masturbieren für Männer Doppelkanal Taschenmuschi mit Vagina und Anal, Sexspielzeug für Men Solo","cat":"Realistische Masturbatoren","market":"DE","star":3.9,"price":15.99,"sales":22,"ratings":6,"launch":"2024-10-11","sellerLoc":"CN","size":"15,5 x 9,5 x 9 cm","video":false,"aplus":false},{"asin":"B0DGKKPKPP","brand":"Warmfeel","title":"Realistische Masturbator Sex Spielzeug für Die Männer, Eingebauter Vibrator Muschi Sex Toys, Masturbieren für Männer Doppelkanal Taschenmuschi mit Vagina und Anal, Sexspielzeug für Men Solo","cat":"Realistische Masturbatoren","market":"DE","star":3.9,"price":16.99,"sales":22,"ratings":6,"launch":"2024-09-10","sellerLoc":"CN","size":"15,9 x 9,5 x 9,4 cm","video":false,"aplus":false},{"asin":"B0DKNHZGXZ","brand":"Hmxseu","title":"Realistische Gebärmutter Masturbator 3D Simulation Klitoris Vagina Taschenmuschi mit Eierstock Masturbations Massagegerät 3 Kanal Pocket Pussy Erotische Masturbation Sex Spielzeug für Männer","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":30.51,"sales":32,"ratings":2,"launch":"2024-11-08","sellerLoc":"CN","size":"18,1 x 12,8 x 7,3 cm","video":false,"aplus":false},{"asin":"B0DMNSR7KJ","brand":"Wodokana","title":"Sexspielzeug Set für Paare, 3D Masturbator für Männer, weich und komfortabel, formschönes und stilvolles Design","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":5,"price":55.95,"sales":101,"ratings":19,"launch":"2024-11-18","sellerLoc":"CN","size":"19,1 x 18,3 x 13,1 cm","video":false,"aplus":false},{"asin":"B0DR82YT7B","brand":"M MUNCASO","title":"Sex Spielzeug für die Männer Taschenmuschi Masturbator Taschenmuschi Masturbatoren,Vagina Erotisches Orgasmus-Sexspielzeug für","cat":"Realistische Masturbatoren","market":"DE","star":1,"price":8.99,"sales":13,"ratings":4,"launch":"2024-12-29","sellerLoc":"CN(HK)","size":"10 x 6 x 2 cm","video":false,"aplus":false},{"asin":"B0DTQ2PCXF","brand":"DieLiYa","title":"Sex Spielzeug für die Männer, 3 in 1 Masturbator Sextoysets für Men Solo Sex Toys Sex Toyset für Man Masturbatoren Mastubator, Athletischer Typ Ganzkörper","cat":"Realistische Masturbatoren","market":"DE","star":4,"price":89.99,"sales":187,"ratings":31,"launch":"2025-01-23","sellerLoc":"CN","size":"36,7 x 21,1 x 16,7 cm","video":false,"aplus":false},{"asin":"B0DTQ2PF1P","brand":"DieLiYa","title":"Sex Spielzeug für die Männer, 3 in 1 Masturbator Sextoysets für Men Solo Sex Toys Sex Toyset für Man Masturbatoren Mastubator, Jugendlicher Typ Ganzkörper","cat":"Realistische Masturbatoren","market":"DE","star":4,"price":69.99,"sales":187,"ratings":31,"launch":"2025-01-23","sellerLoc":"CN","size":"30,3 x 29,1 x 14,8 cm","video":false,"aplus":false},{"asin":"B0DTTV7N2X","brand":"Wodokana","title":"Sex Spielzeug für die Männer Masturbator Masturbieren für Männer Sexspielzeug für Männër Solo Sex Toys Sex Toyset für Man Masturbatoren Mastubator","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":4.7,"price":62.99,"sales":62,"ratings":56,"launch":"2025-02-25","sellerLoc":"CN","size":"29,2 x 19 x 12,9 cm","video":false,"aplus":true},{"asin":"B0F132KD7T","brand":"MLON","title":"Sex Spielzeug für die Männer, Sex Toys Taschenmuschi für Men mastubator, Masturbator Taschenmuschi für die Männer Solo, Sexspielzeug Muschi Sex Sexspielzeug","cat":"Realistische Masturbatoren","market":"DE","star":4.3,"price":49.99,"sales":119,"ratings":8,"launch":"2025-08-04","sellerLoc":"CN(HK)","size":"20,4 x 17,6 x 16,5 cm","video":false,"aplus":true},{"asin":"B0F1N7TMRT","brand":"Leyuye","title":"Masturbieren für Männer Realistische Pocket Pussy mit 3D Vagina Analtunnel Realistische Masturbator Sex Spielzeug für die Männer Solo Masturbatoren Taschenmuschi für die Männer Sexspielzeug (A)","cat":"Realistische Masturbatoren","market":"DE","star":3,"price":39.02,"sales":19,"ratings":2,"launch":"2025-05-29","sellerLoc":"CN","size":"20 x 8 x 8 cm","video":false,"aplus":false},{"asin":"B0F1N5ZWQP","brand":"Leyuye","title":"Masturbieren für Männer Realistische Pocket Pussy mit 3D Vagina Analtunnel Realistische Masturbator Sex Spielzeug für die Männer Solo Masturbatoren Taschenmuschi für die Männer Sexspielzeug (B)","cat":"Realistische Masturbatoren","market":"DE","star":3,"price":38.89,"sales":19,"ratings":2,"launch":"2025-03-27","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F1YH6NVR","brand":"Klpertoror","title":"3-in-1 Pocket pussy Taschenmuschi - Sexspielzeug Realistische Masturbatoren 3D Gummimuschi Kunstvagina Masturbator für die Männer, Sexspielzeug mit titten, vaginalem und analem für Sex","cat":"Realistische Masturbatoren","market":"DE","star":4.7,"price":22.99,"sales":56,"ratings":39,"launch":"2025-05-29","sellerLoc":"CN","size":"21,4 x 13,8 x 11,2 cm","video":false,"aplus":true},{"asin":"B0F28QB9GL","brand":"XSAXLYX","title":"880g Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann-Hautfarbe","cat":"Realistische Masturbatoren","market":"DE","star":2,"price":11.99,"sales":78,"ratings":3,"launch":"2025-07-16","sellerLoc":"CN","size":"16,6 x 10,4 x 10,1 cm","video":true,"aplus":true},{"asin":"B0F37JMQQJ","brand":"XSAXLYX","title":"600g 2in1 Realistische sex spielzeug für Männer Paare Taschenmuschi für die Masturbator Sexpuppe TPE Pocket Pussy, 3D-Texturierte Kanäle Masturbation Cup Sex Toys Sexspielzeug für Männer - Flesh","cat":"Realistische Masturbatoren","market":"DE","star":3.7,"price":13.99,"sales":83,"ratings":8,"launch":"2025-06-13","sellerLoc":"CN","size":"18 x 8 x 8 cm","video":false,"aplus":true},{"asin":"B0F37QBS9R","brand":"XSAXLYX","title":"600g 2in1 Realistische sex spielzeug für Männer Paare Taschenmuschi für die Masturbator Sexpuppe TPE Pocket Pussy, 3D-Texturierte Kanäle Masturbation Cup Sex Toys Sexspielzeug für Männer Wheat","cat":"Realistische Masturbatoren","market":"DE","star":3.7,"price":13.22,"sales":83,"ratings":8,"launch":"2025-07-09","sellerLoc":"CN","size":"18,1 x 8,7 x 8,3 cm","video":true,"aplus":true},{"asin":"B0F5V3X6VD","brand":"amiufans","title":"amiufans Taschenmuschi Sex Spielzeug für die Männer Masturbator, Masturbieren für Männer Sexspielzeug für Männer Solo Realistisch Groß, Mastubator Sex Toy","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":4.6,"price":15.95,"sales":32,"ratings":26,"launch":"2025-05-06","sellerLoc":"CN","size":"17,8 x 10,2 x 9,1 cm","video":false,"aplus":false},{"asin":"B0F7X1MCHK","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (P)","cat":"Realistische Masturbatoren","market":"DE","star":3.2,"price":26.99,"sales":4,"ratings":9,"launch":"2025-05-13","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7X1MCHL","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (J)","cat":"Realistische Masturbatoren","market":"DE","star":3.2,"price":26.99,"sales":4,"ratings":9,"launch":"2025-05-13","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7X4GSC4","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (A)","cat":"Realistische Masturbatoren","market":"DE","star":3.2,"price":22.99,"sales":4,"ratings":9,"launch":"2025-05-10","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7X525XS","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (S)","cat":"Realistische Masturbatoren","market":"DE","star":3.2,"price":26.99,"sales":4,"ratings":9,"launch":"2025-05-24","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7WY9BJP","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (I)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7X5MYGV","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (O)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7X5WJT3","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (M)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7X9W7CL","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (C)","cat":"Realistische Masturbatoren","market":"DE","star":3.2,"price":26.99,"sales":4,"ratings":9,"launch":"2025-05-12","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7XB7718","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (B)","cat":"Realistische Masturbatoren","market":"DE","star":3.2,"price":26.99,"sales":4,"ratings":9,"launch":"2025-05-11","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7X8LXMQ","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (R)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"2025-05-12","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7XBL6M9","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (F)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7XDR41C","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (N)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"2025-05-12","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7XHFS5B","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (E)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"2025-05-12","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7XK4JFB","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Aufbewahrungsbeutel, Sex Spielzeug für die männer","cat":"Realistische Masturbatoren","market":"DE","star":4.6,"price":19.99,"sales":21,"ratings":8,"launch":"2025-05-11","sellerLoc":"CN","size":"18 x 11 x 10 cm","video":true,"aplus":true},{"asin":"B0F7XL4MLT","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (K)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7XP1C79","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (G)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7XL9FBK","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (L)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"2025-05-13","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F7XP54BQ","brand":"Texidiy","title":"Aufgerüstet Elektrischer Realistische Masturbator mit 10 Vibrations Dicke Hochelastische Flüssigsilikon Taschenmuschi Masturbieren für Männer 820G, Masturbatoren Sex Spielzeug für die Männer","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":4.7,"price":25.99,"sales":356,"ratings":48,"launch":"2025-09-05","sellerLoc":"CN","size":"20,9 x 9,9 x 9,7 cm","video":true,"aplus":true},{"asin":"B0F7XP76Q9","brand":"YEDIEDAN","title":"Realistische Taschenmuschi für Männer – Weicher Masturbator aus hautfreundlichem Silikon, inkl. Heizstab & Gleitgel & Aufbewahrungsbeutel (H)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":26.99,"sales":4,"ratings":0,"launch":"","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0F93RLVS5","brand":"bsqipsd","title":"600G Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann - 600g","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":14.66,"sales":93,"ratings":5,"launch":"2025-08-05","sellerLoc":"CN","size":"18 x 8 x 8 cm","video":true,"aplus":true},{"asin":"B0F9PGG4MR","brand":"Xzayy","title":"Xzayy Sex Spielzeug für die Männer Realistische Masturbator 740G Taschenmuschi Groß für Paare mit 3D Vagina Klitoris Anal Sexspielzeug Masturbieren, Pocket Pussy Muschi","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":4.4,"price":17.99,"sales":12,"ratings":25,"launch":"2025-06-16","sellerLoc":"CN","size":"17,9 x 10,8 x 10,6 cm","video":false,"aplus":true},{"asin":"B0FB423P92","brand":"Veyjuns","title":"Muschi Vagina Tragbare Taschenmuschi - Sex Spielzeug Masturbator Taschenmuschi Für Die Männer Solo Sexspielzeug - Realistisch Groß Masturbieren Für Männer 3D Sex Toys Pocket Pussy Masturbatoren","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":39.69,"sales":15,"ratings":0,"launch":"2025-06-22","sellerLoc":"CN","size":"20 x 12,7 x 9 cm","video":false,"aplus":false},{"asin":"B0FD9SVT7V","brand":"FOXWAND","title":"Tragbare Realistischer Masturbator,FOXWAND Mastubrator,Silikon Taschenmuschi,3 in 1Masturbatoren für Männer,Doppelkanal Realistische Pocket Pussy mit 3D Texturierte Kanäle,Anal Erotik Sexspielzeug","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":17.98,"sales":9,"ratings":0,"launch":"2025-09-01","sellerLoc":"CN","size":"18,1 x 10,2 x 10 cm","video":false,"aplus":true},{"asin":"B0FF43JHBM","brand":"ORLEMO","title":"Masturbator Sex Spielzeug für die Männer Masturbieren für Män̲ner, Sexspielzeug für Männer Solo Masturbatoren, Mastubator Sex Toyset für Man Mastrubrator Sextoysets für Men S𝑒𝓍 toys","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":189.99,"sales":33,"ratings":5,"launch":"2025-07-01","sellerLoc":"CN","size":"40,4 x 33,79 x 22 cm","video":false,"aplus":false},{"asin":"B0FFGLXCT7","brand":"SUSSIGKEIT","title":"Realistische Masturbator Taschenmuschi Masturbieren Sex Spielzeug 2 in 1 Doppelkanal Vagina Klitoris Anal Erotik Sexspielzeug für Männer (Farbe)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":13.99,"sales":14,"ratings":0,"launch":"2025-08-02","sellerLoc":"CN","size":"17,9 x 10,2 x 9,2 cm","video":false,"aplus":true},{"asin":"B0FFHD9RRX","brand":"Generic","title":"Realistische Masturbator, 2-in-1 Taschenmuschi mit Doppelkanal Vagina & Anus + 5D Vagina, 720g Schwergewicht, Tragbar Erotiksexspielzeug für Männer","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":17.99,"sales":49,"ratings":1,"launch":"2025-10-26","sellerLoc":"CN","size":"18.4 x 10.2 x 10 cm","video":false,"aplus":true},{"asin":"B0FG8C4QB9","brand":"Generic","title":"Realistische Masturbator, 5D-Vagina & Anal-Kanal, 720g Füllgewicht, Hautnahe Textur, Tragbares Erotiksexspielzeug für Männer","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":23.99,"sales":7,"ratings":1,"launch":"2025-10-20","sellerLoc":"CN","size":"17.3 x 10 x 9.8 cm","video":false,"aplus":true},{"asin":"B0FGC238BQ","brand":"LOVE STICKS","title":"Realistische Masturbator Sex Spielzeug die Männer Solo, Masturbieren für die Männer Realistisch Groß, Muschi, Pussy, Masturbator Taschenmuschi, Masturbieren Sex Toyset für Man","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":71.99,"sales":10,"ratings":6,"launch":"2025-09-02","sellerLoc":"DE","size":"25 x 18 x 15 cm","video":false,"aplus":true},{"asin":"B0FGX5TL2B","brand":"Zatsaog","title":"Taschenmuschi Männlicher Masturbator - Masturbator Sexspielzeug für Männer Mit abnehmbarem Bullet-Vibrator, Realistisches Spielzeug für Erwachsene 3D-Innentextur mit 10 Vibrationsmodi","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":15.99,"sales":51,"ratings":6,"launch":"2025-07-08","sellerLoc":"CN","size":"16,9 x 8,6 x 8,4 cm","video":false,"aplus":true},{"asin":"B0FH4PDMBH","brand":"LumivibeAi","title":"3.8KG Masturbieren für Männer, 20CM Dildo Masturbieren Taschenmuschi für die Männer, Mastubator Sextoysets für Men,sex spielzeug für die Männër","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":35.88,"sales":7,"ratings":0,"launch":"2025-09-24","sellerLoc":"CN","size":"28 x 20 x 31 cm","video":false,"aplus":false},{"asin":"B0FHD1R1NQ","brand":"amiufans","title":"amiufans Sex Spielzeug für die Männer Masturbator Masturbieren für Män̲ner Sexspielzeug Solo Masturbatoren Mastrubrator Sex Toyset für Man Mastubator Sextoysets für Men Sex Toys FT10","cat":"Realistische Masturbatoren","market":"DE","star":4.3,"price":99.99,"sales":35,"ratings":25,"launch":"2025-07-13","sellerLoc":"CN","size":"44,5 x 24,6 x 18 cm","video":false,"aplus":false},{"asin":"B0FK37CC1K","brand":"XSAXLYX","title":"880g Taschenmuschi für die Männer aus TPE – Masturbator Sexspielzeug mit realistischem Pussy-Design – Sexpuppe & Mastubator Pocketpussy mit 3 Öffnungen – Sex Toy Vagina für Männer","cat":"Realistische Masturbatoren","market":"DE","star":3.6,"price":13.99,"sales":11,"ratings":2,"launch":"2025-08-08","sellerLoc":"CN","size":"16 x 10 x 10 cm","video":false,"aplus":true},{"asin":"B0FK3B2L3D","brand":"XSAXLYX","title":"750g 2in1 Realistische TPE-Sexpuppe für Männer, Doppelte Stimulation mit Vagina & Anus, Weiche Pocket Pussy mit 3D-Textur Erwachsenenspielzeug, Male sex toy für Männer","cat":"Realistische Masturbatoren","market":"DE","star":3.7,"price":13.99,"sales":108,"ratings":8,"launch":"2025-07-28","sellerLoc":"CN","size":"17,5 x 11,5 x 9,5 cm","video":false,"aplus":true},{"asin":"B0FKG63CFF","brand":"VelvetWhisper","title":"Realistischer Silikon Masturbieren für Männer,2 in 1Taschenmuschi Masturbator für Männer Sexy Doppelkanal kompakt Vagina Anal 3D Masturbatoren,Erotik Sexspielzeug für die männer solo","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":15.99,"sales":47,"ratings":12,"launch":"2025-08-04","sellerLoc":"CN","size":"17,6 x 10,7 x 10,7 cm","video":true,"aplus":true},{"asin":"B0FMNQ67NW","brand":"fallmilk","title":"2 in 1 Realistischer Masturbator mit 3 Penisringe Taschenmuschi Groß Silikon Masturbieren Sex Spielzeug 5D Klitoris Anal Vagina Doppelkanal Pocket Pussy Erotik Sexspielzeug für die Männer Solo Sex Toy","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":17.95,"sales":59,"ratings":9,"launch":"2025-09-16","sellerLoc":"CN","size":"17,5 x 10,7 x 10,7 cm","video":false,"aplus":true},{"asin":"B0FMRGQ878","brand":"DieLiYa","title":"Masturbieren für Männer, 2 in 1 Taschenmuschi Masturbator für Männer Realistische Pocket Pussy Sexy Doppelkanal sex spielzeug für die männer solo","cat":"Realistische Masturbatoren","market":"DE","star":4.8,"price":36.99,"sales":187,"ratings":26,"launch":"2025-08-22","sellerLoc":"CN","size":"21 x 15 x 22 cm","video":false,"aplus":false},{"asin":"B0FQ2LSQ4B","brand":"bsqipsd","title":"Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann Milchteefarbe - 700g","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":14.99,"sales":93,"ratings":5,"launch":"2025-12-09","sellerLoc":"CN","size":"18 x 8 x 8 cm","video":true,"aplus":true},{"asin":"B0FQ4NX6SK","brand":"XSAXLYX","title":"710g Realistischer Masturbator Taschenmuschi Silikon Masturbieren Sex Spielzeug mit 3D Klitoris Doppelkanal Masturbator Groß für Mann 2 in 1 Anal Erotik Sexspielzeug für die Männer","cat":"Realistische Masturbatoren","market":"DE","star":3.7,"price":14.22,"sales":83,"ratings":8,"launch":"2025-11-25","sellerLoc":"CN","size":"20 x 8 x 8 cm","video":false,"aplus":false},{"asin":"B0FQ64PSNG","brand":"YUHENG","title":"Masturbator Taschenmuschi Blowjob Masturbatoren, Silikon Anal Sexspielzeug (800G), 2 In 1 Vaginalmasturbator, 16cm Realistischer Masturbator","cat":"Realistische Masturbatoren","market":"DE","star":4.5,"price":18,"sales":1,"ratings":2,"launch":"2025-11-12","sellerLoc":"CN","size":"16 x 6 x 10 cm","video":false,"aplus":false},{"asin":"B0FQC3HCPV","brand":"bsqipsd","title":"600G Realistische Masturbator, Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für Männer Masturbieren Mann - 600g","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":14.22,"sales":93,"ratings":5,"launch":"2025-12-09","sellerLoc":"CN","size":"18 x 8 x 8 cm","video":true,"aplus":true},{"asin":"B0FR1XKBBK","brand":"LumivibeAi","title":"Masturbatoren Sexspielzeug für m-änner Solo,Masturbator Taschenmuschi für die Männër, Masturbieren für Männer, 5.5KG Mastubator Sextoysets für Men","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":null,"price":61.88,"sales":25,"ratings":0,"launch":"2025-09-22","sellerLoc":"CN","size":"25 x 17 x 34 cm","video":false,"aplus":false},{"asin":"B0FTSLHXQ9","brand":"YunJiaoon","title":"Realistischer Masturbator Taschenmuschi Masturbieren für Männer Sex Spielzeug mit 3D Klitoris Pussy Doppelkanal Masturbator Groß für Mann 2 in 1 Anal Erotik Sexspielzeug für die Männer solo","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":3.8,"price":12.99,"sales":149,"ratings":15,"launch":"2025-11-29","sellerLoc":"CN","size":"16,1 x 10,3 x 9,5 cm","video":false,"aplus":true},{"asin":"B0FVTHZ8L2","brand":"YunJiaoon","title":"Realistische Masturbator Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Pocket Pussy Sex Spielzeug für die Männer","cat":"Realistische Masturbatoren","market":"DE","star":4,"price":13.99,"sales":525,"ratings":17,"launch":"2025-10-19","sellerLoc":"CN","size":"17,3 x 9,3 x 9,2 cm","video":false,"aplus":true},{"asin":"B0FWHZ8Y8C","brand":"DieLiYa","title":"Realistischer Masturbieren für Männer, 2 in 1 Taschenmuschi Masturbator mit Integriertem Cockring und 5D Kanal, Sex Spielzeug für die Männer Solo","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":18.99,"sales":12,"ratings":4,"launch":"2025-11-24","sellerLoc":"CN","size":"10 x 10 x 17 cm","video":true,"aplus":true},{"asin":"B0FWHV8ZVD","brand":"DieLiYa","title":"Realistischer Masturbieren für Männer, 2 in 1 Taschenmuschi Masturbator mit 5D Kanal, Sex Spielzeug für die Männer Solo","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":16.99,"sales":12,"ratings":4,"launch":"2025-11-24","sellerLoc":"CN","size":"10 x 10 x 17 cm","video":true,"aplus":true},{"asin":"B0FWQLC9TQ","brand":"amiufans","title":"AI Interaktion Masturbieren für männer 10 Modi Vibratorensets für manner, Abnehmbar Masturbator Sexspielzeug für die Männer, Multifunktional Masturbator Sexspielzeug Sex Toyset für Man","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":null,"price":59.99,"sales":34,"ratings":0,"launch":"2025-11-10","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0FX17DM1Q","brand":"YunJiaoon","title":"Realistische Masturbator Mastubrator Mann Sex Spielzeug Pussy Taschenmuschi Realistisch Groß mit 3D Vagina Klitoris Anal Erotik Sexspielzeug für die Männer Solo Sex Toy","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":3.8,"price":9.99,"sales":64,"ratings":8,"launch":"2025-12-04","sellerLoc":"CN","size":"17,5 x 9,4 x 8,9 cm","video":false,"aplus":true},{"asin":"B0FXWZXPQ9","brand":"amiufans","title":"3D Sex Spielzeug für die Männer, Geschenk für ihn Masturbator Sex Toyset für Man, TPE Material Masturbieren für Männer, hochwertiges Masturbatoren, leicht zu reinigen, diskrete Verpackung","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":5,"price":85.95,"sales":16,"ratings":4,"launch":"2025-11-09","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0FZ8WRB6V","brand":"Fallinsexy","title":"Elektrischer Realistische Masturbator, Sexspielzeug für Männer, 855G Schwergewichts Masturbator,Taschenmuschi, Realistischer großer Riemen, 3D-Vagina, Klitoris, Anus, tragbarer 3D Masturbator","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":19.99,"sales":22,"ratings":1,"launch":"2025-12-20","sellerLoc":"CN","size":"17,8 x 10,7 x 10,5 cm","video":false,"aplus":false},{"asin":"B0FZQZ47TG","brand":"KING STORY","title":"Realistischer Masturbator mit 3D Vagina Klitoris Sex Spielzeug für die Männer solo,Taschenmuschi Masturbieren Mann TPE-Sexpuppe Weiche Pocket Pussy Male sex toy für Männe","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":14.88,"sales":6,"ratings":0,"launch":"2025-12-04","sellerLoc":"CN","size":"16 x 8 x 8 cm","video":false,"aplus":false},{"asin":"B0G1KKHS1V","brand":"amiufans","title":"Premium Silikon Masturbator für Solo Genuss, Langlebiges Männer Sex Spielzeug Weich Materialien, Einfache Bedienung, Ideal für Komfortables Masturbieren für Männer","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":5,"price":199.93,"sales":38,"ratings":5,"launch":"2025-12-16","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0G3WF6S28","brand":"LumivibeAi","title":"Masturbieren für Männer,Masturbatoren Sexspielzeug für m-änner Solo,Masturbieren für Männer Sëx Spielzeug für die Mänñer,7KG","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":null,"price":67.88,"sales":30,"ratings":0,"launch":"2025-11-27","sellerLoc":"CN","size":"22 x 18 x 43 cm","video":false,"aplus":false},{"asin":"B0G3WRJYG1","brand":"LumivibeAi","title":"4KG Masturbieren für Männer,Masturbator Sexspielzeug für Männër Solo, Mastubator Sextoysets für Men,Sex Toyset für Man Muschi","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":5,"price":51.99,"sales":41,"ratings":1,"launch":"2025-12-10","sellerLoc":"CN","size":"23 x 15 x 30 cm","video":false,"aplus":false},{"asin":"B0G3X43QRB","brand":"LumivibeAi","title":"Masturbieren für Männer,Masturbator Taschenmuschi für die Männër,Sex Toyset für Man,Mastrubrator für Manner,Masturbator Sexspielzeug für Männër Solo 10KG","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":null,"price":71.88,"sales":51,"ratings":0,"launch":"2025-12-02","sellerLoc":"CN","size":"30 x 20 x 37 cm","video":false,"aplus":false},{"asin":"B0G48M9STJ","brand":"LumivibeAi","title":"2KG Masturbieren für Männer,Sex Toyset für Man,Mastrubrator für Manner,Masturbieren für Männer Sëx Spielzeug für die Mänñer","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":null,"price":29.99,"sales":27,"ratings":0,"launch":"2025-12-10","sellerLoc":"CN","size":"17 x 13 x 24 cm","video":false,"aplus":false},{"asin":"B0G4934C8H","brand":"LumivibeAi","title":"2.5KG Masturbieren für Männer,Mastubator Sextoysets für Men,Masturbator Taschenmuschi für die Männër,Sex Toyset für Man","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":null,"price":30.99,"sales":11,"ratings":0,"launch":"2025-12-08","sellerLoc":"CN","size":"17 x 13 x 21 cm","video":false,"aplus":false},{"asin":"B0G4939QR9","brand":"LumivibeAi","title":"5.3KG Masturbieren für Männer,Masturbator Sexspielzeug für Männër Solo,Mastubator Sextoysets für Men,Masturbator Taschenmuschi für die Männër","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":null,"price":49.88,"sales":13,"ratings":0,"launch":"2025-12-08","sellerLoc":"CN","size":"17 x 13 x 28 cm","video":false,"aplus":false},{"asin":"B0G4TZJ53P","brand":"LumivibeAi","title":"Masturbieren für Männer Sëx Spielzeug für die Mänñer，Sex Toyset für Man 8KG","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":null,"price":68.88,"sales":22,"ratings":0,"launch":"2025-12-04","sellerLoc":"CN","size":"28 x 18 x 37 cm","video":false,"aplus":false},{"asin":"B0G5MHZ2ZQ","brand":"LOVE STICKS","title":"Realistische Masturbator Sex Spielzeug die Männer Solo, Masturbieren für die Männer Realistisch Groß, Muschi, Pussy, Masturbator Taschenmuschi, Masturbieren Sex Toyset für Man","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":69.99,"sales":40,"ratings":0,"launch":"2025-12-24","sellerLoc":"DE","size":"24 x 22 x 18 cm","video":false,"aplus":true},{"asin":"B0FSLWB6RG","brand":"SEYYTOYS","title":"1750g 2-in-1 realistischer Masturbator für Männer mit 3D-Vagina, lebensechtem, realistisch strukturiertem Taschenvagina, Sexspielzeug für Männer, Penisstimulation, manueller Masturbator","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":3.3,"price":24.99,"sales":46,"ratings":3,"launch":"2025-09-25","sellerLoc":"CN","size":"20,9 x 14,5 x 12,7 cm","video":false,"aplus":true},{"asin":"B0CTC7LDQ5","brand":"amiufans","title":"amiufans 170mm Dildo Sex Spielzeug für die Frau, xxl Dildo Sex Toyset für Woman, Sëx Dòll Sexspielzeug für Frauen Solo Sextoy","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":4.6,"price":89.99,"sales":25,"ratings":26,"launch":"2025-10-17","sellerLoc":"CN","size":"27,5 x 21 x 18,5 cm","video":false,"aplus":false},{"asin":"B0FX9JPQ6J","brand":"amiufans","title":"Masturbator 10 Saugmodi & Vibration Masturbieren Sex Spielzeug für die Männer Sex Sexspielzeug für Solo mit APP Masturbatoren","cat":"Elektrische Cup-Masturbatoren","market":"DE","star":5,"price":110.99,"sales":15,"ratings":7,"launch":"2025-11-23","sellerLoc":"CN","size":"27,5 x 21 x 18,5 cm","video":false,"aplus":false},{"asin":"B0D12SP2RP","brand":"Qomoviso","title":"Qomoviso Masturbieren für Männer, Wasserdichter Masturbator, Spiralmasturbator Sex Sexspielzeug, Sexspielzeug für Solo, Masturbatoren Aus Neuestem Material, Weich und Hochelastisch-1","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":5,"price":14,"sales":0,"ratings":14,"launch":"2024-11-08","sellerLoc":"","size":"","video":false,"aplus":false},{"asin":"B0G1HZ54W3","brand":"Qomoviso","title":"Masturbator Männer Masturbieren Weich im Griff,Ipx7 Wasserdicht,Gewinde Sexspielzeug für Männer Solo, Geeignet für Paare Sexspielzeug für die Paare Masturbator","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":5,"price":269.93,"sales":0,"ratings":7,"launch":"2025-11-28","sellerLoc":"","size":"","video":false,"aplus":false},{"asin":"B0FS78JKN5","brand":"amiufans","title":"amiufans Verbesserter Massage Sex Spielzeug für Männer, Praktisches Masturbator für Männer, Sextoyset für Men Solo Spiel, Mastubator, Vielseitige Sex Toys Masturbatoren für Alltag Entspannung","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":5,"price":45.99,"sales":98,"ratings":4,"launch":"2025-09-23","sellerLoc":"CN","size":"62 x 31 x 19,5 cm","video":false,"aplus":false},{"asin":"B0FWR15RY8","brand":"amiufans","title":"amiufans Die Komplett Neue Dritte Generation Sex Spielzeug für die Männer komfortable Masturbator Masturbieren für Män̲ner Leicht zu Reinigen Sex Toyset für Man Sex Toys Sexspielzeug Solo Sextoysets","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":null,"price":129.99,"sales":19,"ratings":0,"launch":"2025-11-10","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0FX9PKX2H","brand":"amiufans","title":"Masturbator Sex Spielzeug für die Männer, Masturbieren für Männer Sex Sexspielzeug für Men Solo Masturbatoren, Mastrubrator Toyset für Man Mastubator Mastubratoren Sextoysets für Men Y7","cat":"Manuelle Cup-Masturbatoren","market":"DE","star":5,"price":79.99,"sales":0,"ratings":22,"launch":"2025-10-22","sellerLoc":"","size":"","video":false,"aplus":false},{"asin":"B0FWJBQ6HD","brand":"Generisch","title":"Realistischer Masturbator Masturbieren für die Männer, Sex Spielzeug für die Männer mit 3D Pocket Pussy, Muschi Taschenmuschi Realistisch Groß Sexspielzeug Sex Toys","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":7.99,"sales":34,"ratings":0,"launch":"2025-10-15","sellerLoc":"CN","size":"17 x 11 x 8,5 cm","video":false,"aplus":false},{"asin":"B0BNBKTWF6","brand":"Cacuola","title":"Masturbator für die Männer","cat":"Realistische Masturbatoren","market":"DE","star":4.4,"price":19.99,"sales":0,"ratings":138,"launch":"2022-12-04","sellerLoc":"","size":"16,7 x 10,2 x 9,1 cm","video":true,"aplus":true},{"asin":"B0CQH992HN","brand":"Phyllida","title":"Phyllida 3 in 1 2000g, Groß Realistische Masturbator, 3D Taschenmuschi, Sexspielzeug für Männer mit Internen Stützknochen, Für die Männliche Masturbation, Leicht zu Reinigen, Sicheres TPE-Material","cat":"Realistische Masturbatoren","market":"DE","star":3.4,"price":49.99,"sales":46,"ratings":17,"launch":"2023-12-17","sellerLoc":"CN","size":"27,8 x 23,8 x 12,4 cm","video":false,"aplus":true},{"asin":"B078JBHPJ5","brand":"Satisfyer MEN","title":"Satisfyer Men Tornado Bliss Sleeve | Austausch-Taschenmuschi für Masturbator | Hautfreundliches Silikon | Penis Masturbatoren | Für ein realistisches Gefühl | Männer Sex-Spielzeug","cat":"Realistische Masturbatoren","market":"DE","star":3.3,"price":9.99,"sales":0,"ratings":125,"launch":"2018-01-01","sellerLoc":"DE","size":"8,51 x 8,51 x 5,99 cm","video":true,"aplus":true},{"asin":"B0CQ3ZMD1M","brand":"bsqipsd","title":"Realistischer Masturbator Taschenmuschi Silikon Masturbieren Sex Spielzeug mit 5D Klitoris Doppelkanal Masturbator Groß für Mann 2 in 1 Anal Erotik Sexspielzeug für die Männer","cat":"Realistische Masturbatoren","market":"DE","star":3.4,"price":14.22,"sales":16,"ratings":2,"launch":"2023-12-12","sellerLoc":"CN","size":"18,5 x 8,3 x 8,2 cm","video":false,"aplus":false},{"asin":"B0F2FR23DD","brand":"Leyuye","title":"Masturbieren für Männer Realistische Masturbatoren Taschenmuschi Masturbator Cup Tragbar Pocket Pussy Mastrubator mit Muschi Vagina Anal Tunnel Erotisches Sexspielzeug für Männer Solo (F)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":22.71,"sales":33,"ratings":0,"launch":"2025-03-24","sellerLoc":"CN","size":"13 x 7 x 7 cm","video":false,"aplus":false},{"asin":"B000WY24MQ","brand":"You2Toys","title":"Compendium Travel Pussy - Die künstliche Vagina","cat":"Realistische Masturbatoren","market":"DE","star":2.5,"price":8.59,"sales":0,"ratings":35,"launch":"2007-10-07","sellerLoc":"","size":"5,6 x 7,8 x 2,6 cm","video":false,"aplus":false},{"asin":"B0033LVYO4","brand":"Danatoys","title":"Water Woman Masturbator 5 Stück","cat":"Realistische Masturbatoren","market":"DE","star":3.5,"price":16.48,"sales":0,"ratings":44,"launch":"2010-01-09","sellerLoc":"","size":"16,7 x 14 x 2,4 cm","video":false,"aplus":false},{"asin":"B0D73B8D4K","brand":"Qomoviso","title":"Qomoviso Masturbator Sex spielzeug für die Männer, Masturbieren für Männer Sex Toyset für Man, Mastubratoren Sextoys, Male Masturbators Sextoysets für Men, Masturbatoren Sextoysets für Ihn","cat":"Realistische Masturbatoren","market":"DE","star":2.7,"price":199.95,"sales":27,"ratings":9,"launch":"2025-11-05","sellerLoc":"CN","size":"","video":false,"aplus":false},{"asin":"B0CLZVQZNJ","brand":"Hmxseu","title":"3D Lippen Zungen Masturbator Oralsex Masturbatoren Realistischer Mundmasturbator Einkanal Muschi-Cup mit Partikel Penistasche Penis Erotik Masturbation Sexspielzeug für Männer","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":27.25,"sales":37,"ratings":0,"launch":"2023-10-27","sellerLoc":"CN","size":"17 x 12 x 9 cm","video":false,"aplus":false},{"asin":"B0G1SYXW7W","brand":"Solo Sexxy","title":"Sex Spielzeug für die Männer Solo Sexspielzeug für Mann Masturbator Masturbieren für Männer Sexspielzeug Sex Toy Taschenmuschi Sex Toyset Herren","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":39.99,"sales":0,"ratings":0,"launch":"2025-11-10","sellerLoc":"","size":"12 x 8 x 5 cm","video":false,"aplus":false},{"asin":"B0CXDD7VJN","brand":"Seckoe","title":"Realistischer Dildo und Masturbator 2 in 1 Taschenmuschi Groß Extrem Gummipuppe Sex für Männer und Frauen Sex Spielzeug Gay Sex Masturbieren Anal und Big Penis Analplug Mastrubrator Seckoe","cat":"Realistische Masturbatoren","market":"DE","star":3.2,"price":49.9,"sales":0,"ratings":6,"launch":"2024-03-06","sellerLoc":"","size":"21,9 x 21,8 x 10,8 cm","video":false,"aplus":true},{"asin":"B0CJDPJPN3","brand":"Seckoe","title":"Mastrubrator Für Männer Real Pocket Pussy Masturbatoren Silikon Taschen Muschi Masturbator Mann Vagina Anal 6 Tunnel Taschenmuschi Realistisch Groß Masturbieren Sex Spielzeug Für Die Männer","cat":"Realistische Masturbatoren","market":"DE","star":3.8,"price":34.99,"sales":0,"ratings":5,"launch":"2023-09-19","sellerLoc":"","size":"19 x 14,5 x 12,5 cm","video":false,"aplus":false},{"asin":"B0FHHDF27M","brand":"LYAMais","title":"Masturbieren für Männer mit APP Steuerung 9 Modi Penis Vibrator Trainer Eichel Stimulation Masturbator für Männer Leise Oralsex Taschenuschi für die Mäner Sexpielzeug Männer Male Masturbator","cat":"Realistische Masturbatoren","market":"DE","star":5,"price":22.19,"sales":4,"ratings":1,"launch":"2025-07-13","sellerLoc":"CN","size":"10 x 8 x 6 cm","video":true,"aplus":true},{"asin":"B0F9L7JTMX","brand":"marielove für neuen schwung.","title":"Taschenmuschi für die Männer aus TPE – Masturbator Sexspielzeug mit realistischem Pussy-Design – Sexpuppe & Mastubator Pocketpussy mit 3 Öffnungen – 17cm, 840g, Ø10cm – Sex Toy Vagina für Männer","cat":"Realistische Masturbatoren","market":"DE","star":4.9,"price":18.99,"sales":0,"ratings":18,"launch":"2025-05-21","sellerLoc":"","size":"20 x 7 x 7 cm","video":false,"aplus":false},{"asin":"B0C8D24SSB","brand":"Saamwuii","title":"950g 3 in 1 Masturbator, Taschenmuschi Mastubrator für Männer, In Japan Entworfene 3D Tragbare Taschenmuschi, Durchgangs-Masturbator aus Importierten Materialien","cat":"Realistische Masturbatoren","market":"DE","star":3.9,"price":29.99,"sales":167,"ratings":93,"launch":"2023-06-17","sellerLoc":"CN","size":"22,7 x 10,4 x 9,9 cm","video":false,"aplus":true},{"asin":"B0FXXGY9QV","brand":"Defomy","title":"Sex Toys For Men Realistische Masturbator Masturbatoren Male (DWW)","cat":"Realistische Masturbatoren","market":"DE","star":null,"price":49.99,"sales":44,"ratings":0,"launch":"2025-10-27","sellerLoc":"CN","size":"37,7 x 20,6 x 15,9 cm","video":false,"aplus":true},{"asin":"B0F32M5WYN","brand":"Riyona","title":"1KG 3 in 1 Realistische Masturbator, 3D Taschenmuschi, Sexspielzeug für Männer, Japanisches Design, Sicheres TPE-Silikon, 20x14x8,5 cm (和保まさこ)","cat":"Realistische Masturbatoren","market":"DE","star":2,"price":29.99,"sales":123,"ratings":2,"launch":"2025-03-31","sellerLoc":"CN","size":"18,9 x 14,2 x 7,9 cm","video":false,"aplus":false},{"asin":"B0BLTVZ3CJ","brand":"Gobeken","title":"700G Realistische Masturbator Sex Spielzeug für die Männer Taschenmuschi Realistisch Groß mit Vibrator 3D Vagina Klitoris Anal Erotik Pocket Pussy Muschi Masturbieren für männer Penis Sexspielzeug","cat":"Realistische Masturbatoren","market":"DE","star":4.3,"price":23.99,"sales":0,"ratings":685,"launch":"2023-01-17","sellerLoc":"","size":"17,7 x 10,3 x 8,9 cm","video":true,"aplus":true},{"asin":"B0CYX4HTLP","brand":"Hmxseu","title":"Muschi Masturbieren 2 Stile Taschenmuschi 3D Realistische Pocket Pussy Porno Manueller Cup-Masturbator Praktisches Penis Trainingsgerät Flashlight Sexspielzeug für Männer Solo (Typ B)","cat":"Realistische Masturbatoren","market":"DE","star":4,"price":28.19,"sales":46,"ratings":2,"launch":"2024-03-23","sellerLoc":"CN","size":"18 x 13 x 8 cm","video":false,"aplus":false}];
+
 var DATA = {
   // ---- 原始数据源池（你提供的 8 个，按截图1的 s 编号）----
   sources: {
@@ -2963,7 +2986,19 @@ var DATA = {
         records:747,status:'ready',hasDashboard:true,dashboard:'competitor'},
    s21:{id:'s21',name:'社媒监控品牌账号',type:'社媒',market:'全球',
         desc:'社媒监控数据库 · 50 个品牌账号 · 品牌/类目/平台/粉丝数 多维钻取看板',
-        records:50,status:'ready',hasDashboard:true,dashboard:'social'}
+        records:50,status:'ready',hasDashboard:true,dashboard:'social'},
+   s22:{id:'s22',name:'用户反馈信息合集',type:'售后/反馈',market:'全球',
+        desc:'客诉历史记录 + 用户评论与留言 + 邮件原文 · 三子看板统一检索合集',
+        records:0,status:'ready',hasDashboard:true,dashboard:'feedbackcoll'},
+   s23:{id:'s23',name:'商品销售数据 · 美亚',type:'商品销售',market:'美亚',
+        desc:'美亚站点：月度销售额 + 销售卖点 · 品牌/类目/评分/价格筛选与聚类',
+        records:0,status:'ready',hasDashboard:true,dashboard:'productsales',board:'美亚'},
+   s24:{id:'s24',name:'商品销售数据 · 日亚',type:'商品销售',market:'日亚',
+        desc:'日亚站点：月度销售额 + 销售卖点 · 品牌/类目/评分/价格筛选与聚类',
+        records:0,status:'ready',hasDashboard:true,dashboard:'productsales',board:'日亚'},
+   s25:{id:'s25',name:'商品销售数据 · 欧亚（德国+英国）',type:'商品销售',market:'欧亚',
+        desc:'欧亚站点（德国+英国合并）：德国/英国可切换 · 月度销售额 + 销售卖点',
+        records:0,status:'ready',hasDashboard:true,dashboard:'productsales',board:'欧亚（德国+英国）'}
   },
 
   // ---- 双工作区定义（截图1）----
@@ -3243,6 +3278,7 @@ var state = {
   dragOffX: 0,
   dragOffY: 0,
   drawerOpen: true,
+  toolsOpen: true,
   // ---- 三层级新增状态 ----
   sourceCache: {},        // {srcId: [rows]}  Level1 样本缓存
   sourceFilters: {},      // {srcId: {text, market, dimension, sentiment}}
@@ -3444,6 +3480,26 @@ function openFeedbackDashboard(){
   if(f) f.src=ghBase()+'vendor/feedback-intel-dashboard.html?theme='+th+'&_cb='+Date.now();
 }
 
+function openFeedbackCollDashboard(){
+  state.purposeId=null;
+  setActiveNav('src-s22');
+  $('#viewFeedbackColl').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewFeedbackColl')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var f=document.getElementById('feedbackCollFrame');
+  if(f) f.src=ghBase()+'vendor/feedback-collection.html?theme='+th+'&_cb='+Date.now();
+}
+
+function openProductSalesDashboard(board){
+  state.purposeId=null;
+  var bid = board==='日亚'?'s24':board==='欧亚（德国+英国）'?'s25':'s23';
+  setActiveNav('src-'+bid);
+  $('#viewProductSales').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewProductSales')v.classList.remove('active')});
+  var th=document.body.classList.contains('dark')?'dark':'light';
+  var b=encodeURIComponent(board||'美亚');
+  var f=document.getElementById('productSalesFrame');
+  if(f) f.src=ghBase()+'vendor/product-sales.html?board='+b+'&theme='+th+'&_cb='+Date.now();
+}
+
 function openPornhubDashboard(){
   state.purposeId=null; setActiveNav('src-s16');
   $('#viewPornhub').classList.add('active');$$('.view').forEach(function(v){if(v.id!=='viewPornhub')v.classList.remove('active')});
@@ -3519,7 +3575,7 @@ function renderNavLab(){
       '<span class="ni-name">虚拟用户压力测试</span></div>'+
     '<div class="nav-item" data-nav="nav-cap" onclick="openCapabilityIntro()">'+
       '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gear"/></svg></span>'+
-      '<span class="ni-name">能力风险引擎</span></div>'+
+      '<span class="ni-name">思考盲点扫描引擎</span></div>'+
     '<div class="nav-item" data-nav="nav-pano" onclick="openPanoIntro()">'+
       '<span class="ni-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></span>'+
       '<span class="ni-name">AI 办公全景</span></div>'+
@@ -3797,6 +3853,8 @@ function openSource(srcId){
     if(s.dashboard==='supplier'){ openSupplierDashboard(); return; }
     if(s.dashboard==='competitor'){ openCompetitorDashboard(); return; }
     if(s.dashboard==='social'){ openSocialDashboard(); return; }
+    if(s.dashboard==='feedbackcoll'){ openFeedbackCollDashboard(); return; }
+    if(s.dashboard==='productsales'){ openProductSalesDashboard(s.board); return; }
     // Level1：s8 德国商品库 → 专属完整看板（已含筛选/导出/报告）
     $('#viewDe').classList.add('active');
     $$('.view').forEach(function(v){if(v.id!=='viewDe')v.classList.remove('active');});
@@ -3812,45 +3870,135 @@ function openSource(srcId){
 var DIMS=['尺寸','质量','材质','噪音','价格','清洁','舒适'];
 var SENTS=['正面','负面','中性'];
 
-function genSampleRows(srcId){
-  if(state.sourceCache[srcId])return state.sourceCache[srcId];
-  var s=DATA.sources[srcId]; if(!s)return [];
-  var mkts=(s.market||'DE/US/JP').split('/').filter(Boolean);
-  if(mkts[0]==='—'||!mkts.length)mkts=['DE'];
-  var n = s.records>0 ? Math.min(s.records,400) : 120;
-  var rows=[];
-  for(var i=0;i<n;i++){
-    var r1=Math.abs(Math.sin(i*12.9898))*43758.5453; r1=r1-Math.floor(r1);
-    var r2=Math.abs(Math.sin(i*78.233)+1)*12543.123; r2=r2-Math.floor(r2);
-    var r3=Math.abs(Math.cos(i*3.17))*9123.7; r3=r3-Math.floor(r3);
-    var dim=DIMS[Math.floor(r1*DIMS.length)];
-    var sent=SENTS[Math.floor(r2*SENTS.length)];
-    var rating=1+Math.floor(r3*5);
-    var mk=mkts[Math.floor(r1*mkts.length)];
-    var txt=(sent==='负面'
-        ? '该商品在'+dim+'方面表现不佳，'+(dim==='噪音'?'运行时声音偏大影响体验。':dim==='尺寸'?'尺寸与描述不符偏小。':dim==='价格'?'定价偏高性价比不足。':'用户反馈需要改进。')
-        : sent==='正面'
-        ? '整体满意，'+dim+'符合预期，使用顺畅。'
-        : '中规中矩，'+dim+'没有明显问题也没有惊喜。');
-    rows.push({id:i+1,market:mk,rating:rating,dimension:dim,sentiment:sent,text:txt});
+// 真实明细数据访问：优先返回已接入的真实行（s8 = 德国站 248 款真实商品），
+// 其它数据源接入真实数据后放到 DATA.sources[id].rows 即可；未接入返回 null。
+function getSourceRows(srcId){
+  if(srcId==='s8') return DE_ROWS;
+  var s=DATA.sources[srcId];
+  if(s && s.rows && s.rows.length) return s.rows;
+  return null;
+}
+// 由标题/类目/尺寸派生评论维度（用于「评论维度」筛选的真实匹配）
+function deriveAspects(r){
+  var t=((r.title||'')+' '+(r.cat||'')).toLowerCase();
+  var sz=(r.size||'').toLowerCase();
+  var a=[];
+  if(/cm|x\s/.test(sz)||/groß|gross|klein|large|small/.test(t)) a.push('尺寸');
+  if(/silikon|tpe|material|flüssig|weich|soft|weiche/.test(t)) a.push('材质');
+  if(/3d|kanal|vibration|vibrator|mehrkanal|interaktiv|pocket/.test(t)) a.push('功能');
+  if(/preis|günstig|billig|price|cheap/.test(t)) a.push('价格');
+  if(/verpackung|discreet|diskret|unauffällig|unauffaellig/.test(t)) a.push('包装');
+  if(/fba|versand|liefer|ship|logistik/.test(t)) a.push('物流');
+  if(/qualität|quality|stabil|robust|haltbar/.test(t)) a.push('质量');
+  if(!a.length) a.push('功能');
+  return a;
+}
+// 将「富筛选条件」真正应用到真实行上，返回过滤后的真实行（不再用假公式估算）
+function applyRichFiltersToRows(s, rows, filters){
+  if(!rows||!rows.length) return [];
+  if(!filters||!Object.keys(filters).length) return rows;
+  var out=rows;
+  if(filters.star){
+    out=out.filter(function(r){
+      var v=filters.star[0]; if(v==='all'||!v) return true;
+      var st=+r.star||0;
+      if(v==='5') return st>=4.5;
+      if(v==='4') return st>=3.5&&st<4.5;
+      if(v==='3') return st>=2.5&&st<3.5;
+      if(v==='12') return st<2.5;
+      return true;
+    });
   }
-  state.sourceCache[srcId]=rows;
-  return rows;
+  if(filters.region){
+    out=out.filter(function(r){ return filters.region.indexOf(r.market)>=0; });
+  }
+  if(filters.market){
+    out=out.filter(function(r){ return filters.market.indexOf(r.market)>=0; });
+  }
+  if(filters.dimension){
+    out=out.filter(function(r){
+      var a=deriveAspects(r);
+      return filters.dimension.some(function(x){return a.indexOf(x)>=0;});
+    });
+  }
+  if(filters.sentiment && filters.sentiment.length){
+    out=out.filter(function(r){
+      var st=+r.star||0;
+      return (filters.sentiment.indexOf('正面')>=0&&st>=4)
+          || (filters.sentiment.indexOf('中性')>=0&&st>=3&&st<4)
+          || (filters.sentiment.indexOf('负面')>=0&&st<3);
+    });
+  }
+  if(filters.text){
+    var tx=String(filters.text).toLowerCase();
+    out=out.filter(function(r){
+      var hay=((r.title||'')+' '+(r.brand||'')+' '+(r.asin||'')+' '+(r.text||'')).toLowerCase();
+      return hay.indexOf(tx)>=0;
+    });
+  }
+  if(filters.aspect){
+    out=out.filter(function(r){
+      var a=deriveAspects(r);
+      return filters.aspect.some(function(x){return a.indexOf(x)>=0;});
+    });
+  }
+  if(filters.period && filters.period[0] && filters.period[0]!=='all'){
+    var times=rows.map(function(r){return r.launch?Date.parse(r.launch):0;}).filter(Boolean);
+    var maxT=times.length?Math.max.apply(null,times):0;
+    if(maxT){
+      var days={'30d':30,'90d':90,'6m':180,'7d':7}[filters.period[0]]||0;
+      var cutoff=maxT-days*86400000;
+      out=out.filter(function(r){ return r.launch && Date.parse(r.launch)>=cutoff; });
+    }
+  }
+  var inc=(filters.kw_include||[]).map(function(x){return String(x).toLowerCase();}).filter(Boolean);
+  var exc=(filters.kw_exclude||[]).map(function(x){return String(x).toLowerCase();}).filter(Boolean);
+  if(inc.length){
+    out=out.filter(function(r){
+      var hay=((r.title||'')+' '+(r.brand||'')+' '+(r.asin||'')).toLowerCase();
+      return inc.every(function(k){return hay.indexOf(k)>=0;});
+    });
+  }
+  if(exc.length){
+    out=out.filter(function(r){
+      var hay=((r.title||'')+' '+(r.brand||'')+' '+(r.asin||'')).toLowerCase();
+      return !exc.some(function(k){return hay.indexOf(k)>=0;});
+    });
+  }
+  return out;
 }
 
 function computeSourceStats(rows){
   var n=rows.length||1;
-  var neg=rows.filter(function(r){return r.sentiment==='负面'}).length;
-  var avg=rows.reduce(function(a,r){return a+(+r.rating||0)},0)/n;
+  var hasSent=rows.some(function(r){return typeof r.sentiment==='string';});
+  var hasRating=rows.some(function(r){return typeof r.rating!=='undefined';});
+  var neg=hasSent? rows.filter(function(r){return r.sentiment==='负面'}).length
+                  : rows.filter(function(r){return (+r.star||0)<3;}).length;
+  var avg=hasRating? rows.reduce(function(a,r){return a+(+r.rating||0)},0)/n
+                    : rows.reduce(function(a,r){return a+(+r.star||0)},0)/n;
   var dimCount={};
-  rows.forEach(function(r){dimCount[r.dimension]=(dimCount[r.dimension]||0)+1});
+  rows.forEach(function(r){
+    if(hasSent){ dimCount[r.dimension]=(dimCount[r.dimension]||0)+1; }
+    else { deriveAspects(r).forEach(function(d){ dimCount[d]=(dimCount[d]||0)+1; }); }
+  });
   var topDim=Object.keys(dimCount).sort(function(a,b){return dimCount[b]-dimCount[a]})[0]||'—';
   return {n:n,negPct:Math.round(neg/n*100),avg:avg.toFixed(2),topDim:topDim,dimCount:dimCount};
 }
 
 function renderSourceExplorer(srcId){
   var s=DATA.sources[srcId]; if(!s)return;
-  var rows=genSampleRows(srcId);
+  var rows=getSourceRows(srcId);
+  if(!rows){
+    setView('Source');
+    $('#viewSource').innerHTML=
+      '<div class="ws-bar"><button class="ws-back" onclick="openSourceGallery()">返回数据源</button>'+
+      '<span class="ws-title">'+escHtml(s.name)+'</span>'+
+      '<span class="ws-tag">'+(s.status==='ready'?'已接入':'待接入')+'</span></div>'+
+      '<div class="src-explorer"><div class="se-meta">'+escHtml(s.desc)+'</div>'+
+      '<div class="pv-empty" style="margin-top:18px">该数据源暂未接入明细数据（records='+(s.records||0)+'）。'+
+      '筛选与 CSV 导出将在接入真实数据后生效；当前导出方案包时该源不含明细 CSV。</div></div>';
+    return;
+  }
   state.sourceFilters[srcId]=state.sourceFilters[srcId]||{text:'',market:'',dimension:'',sentiment:''};
   var mkts=(s.market||'DE/US/JP').split('/').filter(Boolean); if(mkts[0]==='—')mkts=['DE'];
   var st=computeSourceStats(rows);
@@ -3907,34 +4055,46 @@ function toggleSourceFilter(srcId,key,val){
   renderSourceExplorer(srcId);
 }
 function filterSourceRows(srcId){
-  var f=state.sourceFilters[srcId]; if(!f)return genSampleRows(srcId);
-  return genSampleRows(srcId).filter(function(r){
-    if(f.text && (r.text+r.dimension+r.market).indexOf(f.text)<0)return false;
-    if(f.market && r.market!==f.market)return false;
-    if(f.dimension && r.dimension!==f.dimension)return false;
-    if(f.sentiment && r.sentiment!==f.sentiment)return false;
-    return true;
-  });
+  var rows=getSourceRows(srcId);
+  if(!rows) return [];
+  var p=getPurpose(state.ws,state.purposeId);
+  var f=(p&&p._srcFilters&&p._srcFilters[srcId]&&p._srcFilters[srcId].filters) || state.sourceFilters[srcId] || null;
+  return applyRichFiltersToRows(getSource(srcId), rows, f);
 }
 function applySourceFilter(srcId){
   var rows=filterSourceRows(srcId);
   var tbl=$('#seTable-'+srcId); if(!tbl)return;
-  var head='<thead><tr><th>#</th><th>市场</th><th>评分</th><th>维度</th><th>情感</th><th>内容</th></tr></thead>';
-  var body=rows.slice(0,60).map(function(r){
-    return '<tr><td>'+r.id+'</td><td>'+r.market+'</td><td>'+r.rating+'</td><td>'+escHtml(r.dimension)+
-      '</td><td><span class="se-sent s-'+r.sentiment+'">'+r.sentiment+'</span></td><td class="se-txt">'+escHtml(r.text)+'</td></tr>';
-  }).join('');
+  var isReal = rows.length && rows[0].asin;
+  var head, body;
+  if(isReal){
+    head='<thead><tr><th>ASIN</th><th>品牌</th><th>市场</th><th>星级</th><th>价格</th><th>标题</th></tr></thead>';
+    body=rows.slice(0,60).map(function(r){
+      var sc=r.star<3?'s-负面':(r.star>=4?'s-正面':'');
+      return '<tr><td>'+escHtml(r.asin)+'</td><td>'+escHtml(r.brand||'')+'</td><td>'+escHtml(r.market)+
+        '</td><td><span class="se-sent '+sc+'">'+r.star+'★</span></td><td>€'+(r.price!=null?r.price:'')+
+        '</td><td class="se-txt">'+escHtml((r.title||'').slice(0,80))+'</td></tr>';
+    }).join('');
+  } else {
+    head='<thead><tr><th>#</th><th>市场</th><th>评分</th><th>维度</th><th>情感</th><th>内容</th></tr></thead>';
+    body=rows.slice(0,60).map(function(r){
+      return '<tr><td>'+r.id+'</td><td>'+r.market+'</td><td>'+r.rating+'</td><td>'+escHtml(r.dimension)+
+        '</td><td><span class="se-sent s-'+r.sentiment+'">'+r.sentiment+'</span></td><td class="se-txt">'+escHtml(r.text)+'</td></tr>';
+    }).join('');
+  }
   tbl.innerHTML=head+'<tbody>'+(body||'<tr><td colspan="6" style="text-align:center;color:var(--muted)">无匹配记录</td></tr>')+'</tbody>';
   var st=computeSourceStats(rows);
   var kpis=$('#viewSource').querySelectorAll('.se-kpi b');
-  if(kpis.length===4){kpis[0].textContent=st.n;kpis[2].textContent=st.negPct+'%';kpis[3].textContent=st.topDim;}
+  if(kpis.length===4){kpis[0].textContent=st.n;kpis[1].textContent=st.avg;kpis[2].textContent=st.negPct+'%';kpis[3].textContent=st.topDim;}
 }
 function exportSourceData(srcId){
   var rows=filterSourceRows(srcId);
-  var header=['id','market','rating','dimension','sentiment','text'];
+  var header = (rows.length && rows[0].asin)
+    ? ['asin','brand','market','star','price','ratings','launch','title']
+    : ['id','market','rating','dimension','sentiment','text'];
   var csv=[header.join(',')].concat(rows.map(function(r){
-    return header.map(function(h){var v=(''+r[h]).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}).join(',');
+    return header.map(function(h){var v=(''+(r[h]==null?'':r[h])).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}).join(',');
   })).join('\n');
+  if(!rows.length){ toast('该数据源无明细数据可导出'); return; }
   var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=((DATA.sources[srcId]||{}).name||srcId)+'_export.csv';
   document.body.appendChild(a);a.click();document.body.removeChild(a);
@@ -3943,7 +4103,8 @@ function exportSourceData(srcId){
 function genSourceReport(srcId){
   var s=DATA.sources[srcId]; if(!s)return;
   var box=$('#seReport-'+srcId); if(!box)return;
-  var rows=genSampleRows(srcId);
+  var rows=getSourceRows(srcId);
+  if(!rows){ box.style.display='block'; box.innerHTML='<div class="pv-empty">该数据源暂未接入明细数据，综合报告待接入真实数据后生成。</div>'; box.scrollIntoView({behavior:'smooth',block:'nearest'}); return; }
   var st=computeSourceStats(rows);
   var dims=Object.keys(st.dimCount).sort(function(a,b){return st.dimCount[b]-st.dimCount[a]});
   var dimBars=dims.map(function(d){
@@ -6358,7 +6519,8 @@ function openSourceGallery(){
     s5:'用户访谈',
     s9:'外部趋势信息/数据',s10:'外部趋势信息/数据',s16:'外部趋势信息/数据',s17:'外部趋势信息/数据',s18:'外部趋势信息/数据',
     s19:'供应商/供应链情报',
-    s6:'售后反馈',s15:'售后反馈'};
+    s6:'售后反馈',s15:'售后反馈',s22:'售后反馈',
+    s23:'商品销售/卖点数据',s24:'商品销售/卖点数据',s25:'商品销售/卖点数据'};
   function card(k){
     var s=DATA.sources[k];
     var ready=s.status==='ready';
@@ -6378,10 +6540,10 @@ function openSourceGallery(){
   //       数组第一项为「主要服务阶段」，其余为「也参与」（去重时只算在主阶段一次）。
   var STAGE_MAP={
     s1:['评价','决策'], s2:['认知'], s3:['决策'], s4:['认知','决策'], s5:['评价','认知'],
-    s6:['使用','评价'], s7:['购买'], s8:['决策','评价'], s9:['认知'], s10:['认知'],
+    s6:['使用','评价'], s22:['使用','评价'], s7:['购买'], s8:['决策','评价'], s9:['认知'], s10:['认知'],
     s11:['认知','评价'], s12:['评价','决策'], s13:['评价','决策'], s14:['认知','决策'],
     s15:['评价','使用'], s16:['认知'], s17:['认知','决策'], s18:['认知','决策'],
-    s19:['购买'], s20:['认知','决策'], s21:['评价','认知']
+    s19:['购买'], s20:['认知','决策'], s21:['评价','认知'], s23:['购买','决策'], s24:['购买','决策'], s25:['购买','决策']
   };
   var JN=[{key:'认知',sub:'Awareness'},{key:'决策',sub:'Decision'},{key:'购买',sub:'Purchase'},{key:'使用',sub:'Use'},{key:'评价',sub:'Evaluate'}];
   function sectionHeader(title,count){
@@ -7004,7 +7166,7 @@ function jumpToCapability(){
 function openCapabilityIntro(){
   setActiveNav('nav-cap');
   $('#subnav').classList.remove('show');
-  $('#topbarTitle').textContent='能力风险引擎 · 通用思考引擎';
+  $('#topbarTitle').textContent='思考盲点扫描引擎 · 通用思考引擎（盲点扫描）';
   setView('Principle');
   var viz=
     '<svg viewBox="0 0 240 200" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">'+
@@ -7032,10 +7194,10 @@ function openCapabilityIntro(){
       // Hero
       '<div class="lab-hero">'+
         '<div class="lab-hero-text">'+
-          '<span class="lab-eyebrow"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-compass"/></svg> 能力风险引擎 · THINK ENGINE</span>'+
-          '<div class="lab-title">通用思考引擎</div>'+
+          '<span class="lab-eyebrow"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-compass"/></svg> 思考盲点扫描引擎 · THINK ENGINE</span>'+
+          '<div class="lab-title">通用思考引擎（盲点扫描）</div>'+
           '<div class="lab-tagline">把任何岗位，<span class="accent">套进同一套思考路径</span></div>'+
-          '<p class="lab-desc">这是一个「通用思考引擎」：无论你是运营、产品、市场还是创始人，都用同一条思考路径工作——差异只在「知识库」（岗位领域数据）与「经验」。引擎内核是固定的方法论（矛盾论 / 调查研究 / 实践论 / 实事求是 + 四步循环），岗位知识库可插拔。把一段想法、计划或素材倒进去，它做盲点扫描、压力测试、结构解构，而不是替你拍板。</p>'+
+          '<p class="lab-desc">这是一个「通用思考引擎（盲点扫描）」：无论你是运营、产品、市场还是创始人，都用同一条思考路径工作——差异只在「知识库」（岗位领域数据）与「经验」。引擎内核是固定的方法论（矛盾论 / 调查研究 / 实践论 / 实事求是 + 四步循环），岗位知识库可插拔。把一段想法、计划或素材倒进去，它做盲点扫描、压力测试、结构解构，而不是替你拍板。</p>'+
           '<div class="lab-stats">'+
             statChip('1 套','思考路径')+
             statChip('岗位','知识库可插拔')+
@@ -7057,8 +7219,8 @@ function openCapabilityIntro(){
       '</div>'+
       // CTA
       '<div class="lab-cta">'+
-        '<div class="ct-txt"><b>去试试这个通用思考引擎？</b><span>打开独立页面，输入一段想法或计划，看它怎么帮你查漏补缺。</span></div>'+
-        '<button class="lab-btn" onclick="jumpToCapability()">进入能力风险引擎 <span class="arr">↗</span></button>'+
+        '<div class="ct-txt"><b>去试试这个通用思考引擎（盲点扫描）？</b><span>打开独立页面，输入一段想法或计划，看它怎么帮你查漏补缺。</span></div>'+
+        '<button class="lab-btn" onclick="jumpToCapability()">进入思考盲点扫描引擎 <span class="arr">↗</span></button>'+
       '</div>'+
       '<div class="lab-note">纯规则 MVP · 推理机 + 知识库分离架构 · 通用思考路径 + 可插拔岗位知识库 · GitHub Pages 部署</div>'+
     '</div>';
@@ -8694,7 +8856,7 @@ var LAYER_DATA = [
    examples:[
      {t:'数字世界虚拟', d:'据评价数据生成智能体，模拟真实实际的发展与传播。'},
      {t:'虚拟用户压力测试', d:'基于真实评价 + 研究理论方法，随机生成用户，对新品 / 活动做挑刺式压力测试。'},
-     {t:'能力风险引擎', d:'获取倒模类目知识库，按逻辑方法评估想法 / 方案 / 决策的盲点、风险点。'},
+     {t:'思考盲点扫描引擎', d:'获取倒模类目知识库，按逻辑方法评估想法 / 方案 / 决策的盲点、风险点。'},
      {t:'AI 办公室', d:'同逻辑，基座=倒模类目用户知识库，按目的组合成复杂项目。'}
    ],
    note:'定位：基座之上，自定义造功能'}
@@ -9421,18 +9583,12 @@ function renderStructPanel(p){
 
   // Method chain
   var steps=p.methods.split('/').map(function(m){return m.trim()});
-  var mcHtml='<div class="struct-section"><div class="ss-head">分析方法链路'+
-    '<span class="ss-info" title="分析方法链路 vs 分析框架：\n· 分析方法链路 = 你做这件事的「先后顺序」。把分析拆成先做什么、再做什么（例如先 JTBD、再问题归类）。\n· 分析框架 = 链路每一步真正用的「分析工具 / 方法论」（VOC、需求四象限、JTBD、动机编码…）。\n· 关系：链路是骨架（顺序），框架是填充骨架的工具。链路里的每一步，通常对应一个或多个分析框架。\n下方「建议使用的分析框架」里勾选的框架，就是在为这条链路提供落地方法。">ⓘ</span>'+
-    '</div>'+
-    '<div class="ss-sub">这是本目的的「分析先后顺序」——先做什么、再做什么。</div>'+
-    '<div class="method-chain">';
+  var mcHtml='<div class="struct-section"><div class="ss-head">分析方法链路</div><div class="method-chain">';
   steps.forEach(function(st,i){
     mcHtml+='<div class="mc-step"><div class="mc-num">'+(i+1)+'</div><span>'+escHtml(st)+'</span></div>';
     if(i<steps.length-1)mcHtml+='<div class="mc-arrow">↓</div>';
   });
-  mcHtml+='</div>'+
-    '<div class="mc-rel">链路是「骨架顺序」，下方「分析框架」是填充它的工具——勾选框架即把方法挂到这条路上。</div>'+
-    '</div>';
+  mcHtml+='</div></div>';
 
   // Action list
   var actHtml='<div class="struct-section"><div class="ss-head">行动清单</div><div class="action-list">';
@@ -9490,7 +9646,7 @@ function renderStructPanel(p){
     '<div class="lf-body"></div>'+
     '</div></div>'+
     /* ===== 中栏：分析框架 + 链路 + 建议框架 + 核对引擎 ===== */
-    '<div class="struct-col struct-col-center"><div class="col-header">分析框架<span class="col-sub">本目的用来「落地」分析的工具 / 方法论</span></div>'+mcHtml+sugFwHtml+auditHtml+'</div>'+
+    '<div class="struct-col struct-col-center"><div class="col-header">分析框架</div>'+mcHtml+sugFwHtml+auditHtml+'</div>'+
     /* ===== 右栏：综合结果与导出 ===== */
     '<div class="struct-col struct-col-right"><div class="col-header">结果与导出</div>'+overviewHtml+anHtml+actHtml+expHtml+'</div>';
 
@@ -9686,10 +9842,11 @@ function renderJourney(p){
 // ============================================================
 // CANVAS ENGINE (截图2 右侧)
 // ============================================================
-var canvasEl, svgEl;
+var canvasEl, svgEl, worldEl;
 
 function renderCanvasArea(p){
   canvasEl=$('#canvasArea');
+  worldEl=$('#canvasWorld');
   svgEl=$('#canvasSvg');
 
   // Seed canvas with initial nodes
@@ -9701,6 +9858,7 @@ function renderCanvasArea(p){
   renderDrawer(p);
 
   // Setup events
+  bindCanvasDrop();
   setupCanvasEvents();
 
   // Render nodes and lines
@@ -9708,76 +9866,59 @@ function renderCanvasArea(p){
 }
 
 function seedCanvas(p){
-  // 不自动 seed —— 无限画布是「想到放什么就放什么」的自由混搭空间，
-  // 与结构化左栏内容重叠会让画面显乱。初始为空，由用户从素材面板拖入。
-  // 若本地有保存的状态则保留（loadCanvasState 已在 renderCanvasArea 之前调用）。
-  if(!state.canvasNodes.length){
-    state.canvasNodes=[];
-    saveCanvasState();
-  }
+  // 先放占位节点，再由 organizeCanvas 排成整洁布局（起始位置避开左侧素材抽屉）
+  p.sources.forEach(function(sid){
+    var s=getSource(sid);if(!s)return;
+    state.canvasNodes.push({id:'n-src-'+sid,x:0,y:0,type:'src',
+      title:s.name,sub:(s.records?s.records+' 条':'待接入'),sourceId:sid});
+  });
+  var insights=getInsights(state.purposeId);
+  insights.slice(0,4).forEach(function(ins,i){
+    state.canvasNodes.push({id:'n-ins-'+i,x:0,y:0,type:'ins',title:ins.title,body:ins.body});
+  });
+  state.canvasNodes.push({id:'n-note-1',x:0,y:0,type:'note',
+    title:'推导批注',body:'在此处记录你的推导过程和关键发现...'});
+  saveCanvasState();
+  organizeCanvas(true); // 静默整理
 }
 
 function renderDrawer(p){
   var html='';
-
-  // ① 数据源
-  html+='<div class="cd-group"><div class="cd-g-title">数据源 <span class="cd-g-hint">点击 / 拖入画布 · 可筛选</span></div>';
-  p.sources.forEach(function(sid){
-    var s=getSource(sid);if(!s)return;
-    html+='<div class="cd-item" draggable="true" data-type="src" data-id="'+sid+'" ondragstart="onDrawerDrag(event)" onclick="addDrawerItem(event,\'src\',\''+sid+'\')">'+
-      '<span class="cd-ico ico-src">'+empIcon('i-plug')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">'+escHtml(s.name)+'</div>'+
-      '<div class="cdi-sub">'+escHtml(s.type)+' · '+(s.records?s.records+'条':'待接入')+'</div></div>'+
+  // Sources in drawer (全部素材模式 = 列出 DATA.sources 所有数据源)
+  var srcIds = state.drawerAll ? Object.keys(DATA.sources) : (p.sources||[]);
+  srcIds.forEach(function(sid){
+    var s=DATA.sources[sid];if(!s)return;
+    var onCanvas = state.canvasNodes.some(function(n){return n.type==='src'&&n.sourceId===sid;});
+    var tag = onCanvas?'<span class="cd-on">已加入</span>':'';
+    html+='<div class="cd-item" draggable="true" data-type="src" data-id="'+sid+'" ondragstart="onDrawerDrag(event)">'+
+      '<div class="cdi-name">'+escHtml(s.name)+tag+'</div>'+
+      '<div class="cdi-sub">'+escHtml(s.type)+' · '+(s.records?s.records+'条':'待接入')+'</div>'+
     '</div>';
   });
-  html+='</div>';
-
-  // ② 分析框架
-  html+='<div class="cd-group"><div class="cd-g-title">分析框架 <span class="cd-g-hint">点击 / 拖入 · 看含义</span></div>';
-  (DATA.frameworks||[]).forEach(function(f){
-    html+='<div class="cd-item" draggable="true" data-type="fw" data-id="'+f.id+'" ondragstart="onDrawerDrag(event)" onclick="addDrawerItem(event,\'fw\',\''+f.id+'\')">'+
-      '<span class="cd-ico ico-fw">'+empIcon('i-layers')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">'+escHtml(f.name)+'</div>'+
-      '<div class="cdi-sub">'+(f.desc?escHtml(f.desc.slice(0,22)):'分析框架')+'</div></div>'+
-    '</div>';
-  });
-  html+='</div>';
-
-  // ③ 洞察
+  // Insights
   var insights=getInsights(state.purposeId);
-  html+='<div class="cd-group"><div class="cd-g-title">洞察 <span class="cd-g-hint">点击 / 拖入 · 看来源</span></div>';
-  if(!insights.length) html+='<div class="cd-empty">暂无关联洞察</div>';
   insights.forEach(function(ins,i){
-    html+='<div class="cd-item" draggable="true" data-type="ins" data-idx="'+i+'" ondragstart="onDrawerDrag(event)" onclick="addDrawerItem(event,\'ins\',\''+i+'\')">'+
-      '<span class="cd-ico ico-ins">'+empIcon('i-bulb')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">'+escHtml(ins.title)+'</div>'+
-      '<div class="cdi-sub">洞察 · 可拖入画布</div></div>'+
+    html+='<div class="cd-item" draggable="true" data-type="ins" data-idx="'+i+'" ondragstart="onDrawerDrag(event)">'+
+      '<div class="cdi-name">'+escHtml(ins.title)+'</div>'+
+      '<div class="cdi-sub">洞察 · 可拖入画布</div>'+
     '</div>';
   });
-  html+='</div>';
-
-  // ④ 创意（自由新建）
-  html+='<div class="cd-group"><div class="cd-g-title">创意 <span class="cd-g-hint">随手记想法</span></div>'+
-    '<div class="cd-item cd-add" onclick="addDrawerItem(event,\'idea\',\'\')">'+
-      '<span class="cd-ico ico-idea">'+empIcon('i-zap')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">+ 新建创意卡</div>'+
-      '<div class="cdi-sub">双击画布卡片可编辑文字</div></div>'+
-    '</div></div>';
-
-  // ⑤ 领先用户
-  var lfus=getRelevantLeadUsers(p,6);
-  html+='<div class="cd-group"><div class="cd-g-title">领先用户 <span class="cd-g-hint">点击 / 拖入 · 看画像</span></div>';
-  if(!lfus.length) html+='<div class="cd-empty">暂无领先用户</div>';
-  lfus.forEach(function(u){
-    html+='<div class="cd-item" draggable="true" data-type="lf" data-id="'+escHtml(u.id||u.name)+'" ondragstart="onDrawerDrag(event)" onclick="addDrawerItem(event,\'lf\',\''+escHtml(u.id||u.name)+'\')">'+
-      '<span class="cd-ico ico-lf">'+empIcon('i-users')+'</span>'+
-      '<div class="cdi-main"><div class="cdi-name">'+escHtml(u.name)+'</div>'+
-      '<div class="cdi-sub">'+(u.trait?escHtml(u.trait.slice(0,18)):'领先用户')+'</div></div>'+
-    '</div>';
-  });
-  html+='</div>';
-
+  // Blank note
+  html+='<div class="cd-item" draggable="true" data-type="note" ondragstart="onDrawerDrag(event)">'+
+    '<div class="cdi-name">空白批注</div><div class="cdi-sub">拖入画布写笔记</div>'+
+  '</div>';
   $('#drawerItems').innerHTML=html;
+  // 同步"全部素材"开关文案
+  var t=document.getElementById('drawerAllToggle');
+  if(t){ t.textContent=state.drawerAll?'仅本目的 −':'全部素材 +'; t.classList.toggle('cd-all-on',!!state.drawerAll); }
+}
+
+// 展开 / 收起「全部网站素材」
+function toggleDrawerAll(){
+  state.drawerAll=!state.drawerAll;
+  var p=getPurpose(state.ws,state.purposeId);
+  renderDrawer(p);
+  toast(state.drawerAll?'已展开全部素材，可拖入画布':'已收起，仅显示本目的素材');
 }
 
 // --- 数据源筛选弹窗 ---
@@ -10030,33 +10171,44 @@ function confirmApplyFilter(sid){
 }
 
 function buildPreviewPanel(s,filters,sid){
-  var rows=getMockSampleRows(s,5);
-  var total = s.records? parseInt(String(s.records).replace(/[^\d]/g,''))||0 : 0;
-  var baseN = total>0? total : 240;
-  var condN=Object.keys(filters).length;
-  var matchN = condN>0 ? Math.max(3, Math.round(baseN*Math.pow(0.72,condN))) : baseN;
-  var stats=buildStatBars(s,filters);
-  if(rows.length===0) return '<div class="pv-empty">该数据源暂无样例数据（接入真实数据后此处展示筛选结果）</div>';
-  var head=rows[0].map(function(c){return '<th>'+escHtml(c.k)+'</th>';}).join('');
-  var body=rows.map(function(r){
-    return '<tr>'+r.map(function(c){
-      var cls='';
-      if(typeof c.v==='string'){
-        if(c.v.indexOf('负面')>=0||c.v.indexOf('差')>=0||c.v.indexOf('骤降')>=0) cls='neg';
-        else if(c.v.indexOf('正面')>=0||c.v.indexOf('强')>=0||c.v.indexOf('飙升')>=0) cls='pos';
-      }
-      return '<td class="'+(cls?'pv-'+cls:'')+'">'+escHtml(String(c.v))+'</td>';
-    }).join('')+'</tr>';
+  var rows=getSourceRows(sid);
+  if(!rows) return '<div class="pv-empty">该数据源暂未接入明细数据（records='+(s.records||0)+'）。筛选与数据预览将在接入真实数据后生效；当前导出方案包时该源不含明细 CSV。</div>';
+  var matched=applyRichFiltersToRows(s, rows, filters);
+  var stats=buildStatBars(s,filters,matched);
+  var headCols = rows[0].asin
+    ? ['ASIN','品牌','市场','星级','价格','标题']
+    : ['评论ID','星级','市场','评论文本','维度标签'];
+  var head=headCols.map(function(c){return '<th>'+escHtml(c)+'</th>';}).join('');
+  var sample=matched.slice(0,6).map(function(r){
+    if(r.asin){
+      var sc=r.star<3?'neg':(r.star>=4?'pos':'');
+      return '<tr><td>'+escHtml(r.asin)+'</td><td>'+escHtml(r.brand||'')+'</td><td>'+escHtml(r.market)+
+        '</td><td class="'+(sc?'pv-'+sc:'')+'">'+r.star+'★</td><td>€'+(r.price!=null?r.price:'')+'</td><td>'+escHtml((r.title||'').slice(0,70))+'</td></tr>';
+    }
+    return '<tr><td>'+escHtml(r.id)+'</td><td>'+escHtml(r.rating)+'</td><td>'+escHtml(r.market)+
+      '</td><td>'+escHtml(r.text||'')+'</td><td>'+escHtml(r.dimension||'')+'</td></tr>';
   }).join('');
-  var pct = total>0? Math.round(matchN/total*100) : 0;
+  var pct = rows.length? Math.round(matched.length/rows.length*100) : 0;
   return ''
-    +'<div class="pv-match"><span class="pv-num">'+matchN.toLocaleString()+'</span><span class="pv-unit">条匹配记录</span>'+(total>0?'<span class="pv-badge">占总量 '+pct+'%</span>':'')+'</div>'
+    +'<div class="pv-match"><span class="pv-num">'+matched.length.toLocaleString()+'</span><span class="pv-unit">条匹配记录</span><span class="pv-badge">占总量 '+pct+'%（共 '+rows.length+' 条）</span></div>'
     +'<div class="pv-stats">'+stats+'</div>'
-    +'<div class="pv-table-wrap"><table class="pv-table"><thead><tr>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>'
-    +'<div class="pv-note">展示前 '+rows.length+' 条样例 · 完整数据请在对应数据源看板中查看（接入真实数据后此处为实时筛选结果）</div>';
+    +'<div class="pv-table-wrap"><table class="pv-table"><thead><tr>'+head+'</tr></thead><tbody>'+(sample||'<tr><td colspan="6" style="text-align:center;color:var(--muted)">无匹配记录</td></tr>')+'</tbody></table></div>'
+    +'<div class="pv-note">展示前 '+Math.min(6,matched.length)+' 条真实样例 · 应用筛选后，导出方案包将包含这 '+matched.length+' 条过滤后的真实 CSV</div>';
 }
 
-function buildStatBars(s,filters){
+function buildStatBars(s,filters,matched){
+  if(matched && matched.length){
+    var avgStar=(matched.reduce(function(a,r){return a+(+r.star||0)},0)/matched.length).toFixed(2);
+    var negPct=Math.round(matched.filter(function(r){return (+r.star||0)<3;}).length/matched.length*100);
+    var posPct=Math.round(matched.filter(function(r){return (+r.star||0)>=4;}).length/matched.length*100);
+    var vidPct=Math.round(matched.filter(function(r){return r.video;}).length/matched.length*100);
+    return [
+      ['平均星级',avgStar,'#00d4ff'],
+      ['正面率',posPct+'%','#34c759'],
+      ['负面率',negPct+'%','#ef4444'],
+      ['含视频率',vidPct+'%','#a855f7']
+    ].map(function(it){return '<div class="pv-stat" style="--pc:'+it[2]+'"><div class="pv-stat-v">'+escHtml(it[1])+'</div><div class="pv-stat-l">'+escHtml(it[0])+'</div></div>';}).join('');
+  }
   var t=s.type||'';
   var items=[];
   if(t.indexOf('评论')>=0||t.indexOf('VOC')>=0){
@@ -10157,16 +10309,50 @@ function closeSourceFilter(sid){
   if(el) el.parentNode.removeChild(el);
 }
 
+// 把筛选条件对象转成卡片上可读的中文摘要（如「5星 · 德国 · 含：续航」）
+function summarizeFilter(s,filters){
+  if(!filters||!Object.keys(filters).length) return '';
+  var defs=buildRichFilterDefs(s)||[];
+  var defMap={};defs.forEach(function(d){defMap[d.key]=d;});
+  var parts=[];
+  Object.keys(filters).forEach(function(key){
+    var vals=filters[key]; if(!vals||!vals.length) return;
+    if(key==='kw_include'){ parts.push('含：'+vals.join('、')); return; }
+    if(key==='kw_exclude'){ parts.push('排除：'+vals.join('、')); return; }
+    var d=defMap[key], label=d?d.label:key;
+    if(d&&d.type==='range'&&vals.length>=2){
+      parts.push(label+'：'+String(vals[0]).split(':')[1]+'~'+String(vals[1]).split(':')[1]); return;
+    }
+    var mapped=vals.map(function(v){
+      if(d&&d.options){ var o=d.options.find(function(x){return String(x.v)===String(v);}); if(o) return o.l; }
+      if(typeof v==='string'&&v.indexOf(':')>=0) return v.split(':')[1];
+      return v;
+    });
+    parts.push(label+'：'+mapped.join('、'));
+  });
+  return parts.join(' · ');
+}
+
 function confirmSourceFilter(sid){
   var p=getPurpose(state.ws,state.purposeId);
   if(!p)return;
   var filters=collectFilters(sid);
+  var has=Object.keys(filters).length>0;
   p._srcFilters=p._srcFilters||{};
-  if(Object.keys(filters).length>0){
+  if(has){
     p._srcFilters[sid]={filters:filters,ts:Date.now()};
   }else{
     delete p._srcFilters[sid];
   }
+  // 同步画布卡片上的筛选可视化
+  var s=getSource(sid);
+  state.canvasNodes.forEach(function(n){
+    if(n.type==='src'&&n.sourceId===sid){
+      if(has&&s){ n.filterSummary=summarizeFilter(s,filters); n.filterCount=Object.keys(filters).length; }
+      else { delete n.filterSummary; delete n.filterCount; }
+    }
+  });
+  if(canvasEl) renderCanvas();
   closeSourceFilter(sid);
   renderStructPanel(p);
 }
@@ -10264,10 +10450,12 @@ function addInsightToCanvas(idx){
 }
 
 function setupCanvasEvents(){
-  // Zoom with mousewheel
+  // Zoom with mousewheel (low sensitivity); drawer-internal scroll must NOT zoom
   canvasEl.addEventListener('wheel',function(e){
+    if(e.target.closest && e.target.closest('#matDrawer')) return; // 让素材框自己滚动
     e.preventDefault();
-    var factor=e.deltaY>0?.92:1.08;
+    var intensity=Math.min(Math.abs(e.deltaY)/100,1); // 单格滚轮≈1
+    var factor=e.deltaY>0 ? (1 - 0.04*intensity) : (1 + 0.04*intensity); // 每格仅约 4%
     state.canvasZoom=Math.max(.2, Math.min(5, state.canvasZoom*factor));
     renderCanvas();
   },{passive:false});
@@ -10275,7 +10463,7 @@ function setupCanvasEvents(){
   // Pan with middle-click drag or space+drag
   var panning=false,pStartX,pStartY;
   canvasEl.addEventListener('mousedown',function(e){
-    if(e.target===canvasEl||e.target===svgEl||(e.button===1)){
+    if(e.target===canvasEl||e.target===svgEl||e.target===worldEl||(e.button===1)){
       panning=true;pStartX=e.clientX-state.canvasPanX;pStartY=e.clientY-state.canvasPanY;
       canvasEl.style.cursor='grabbing';
     }
@@ -10300,7 +10488,7 @@ function setupCanvasEvents(){
   document.addEventListener('mousemove',function(e){
     if(state.isDragging&&state.dragNode){
       var cRect=canvasEl.getBoundingClientRect();
-      var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-state.dragOffY/state.canvasZoom;
+      var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-state.dragOffX/state.canvasZoom;
       var y=(e.clientY-cRect.top-state.canvasPanY)/state.canvasZoom-state.dragOffY/state.canvasZoom;
       var nid=state.dragNode.getAttribute('data-nid');
       var n=state.canvasNodes.find(function(n){return n.id===nid});
@@ -10341,50 +10529,51 @@ function setupCanvasEvents(){
 }
 
 function renderCanvas(){
-  if(!canvasEl)return;
+  if(!canvasEl||!worldEl)return;
 
-  // Update transform
-  canvasEl.style.transformOrigin='0 0';
-  canvasEl.style.transform='translate('+state.canvasPanX+'px,'+state.canvasPanY+'px) scale('+state.canvasZoom+')';
+  // 只变换「世界层」，工具栏/素材抽屉保持固定
+  worldEl.style.transformOrigin='0 0';
+  worldEl.style.transform='translate('+state.canvasPanX+'px,'+state.canvasPanY+'px) scale('+state.canvasZoom+')';
 
   // Zoom indicator
   $('#zoomIndicator').textContent=Math.round(state.canvasZoom*100)+'%';
 
   // Remove old nodes
-  $$('.cn-node').forEach(function(n){n.remove()});
-
-  // 空画布提示
-  var hint=$('#canvasHint');
-  if(hint) hint.style.display = state.canvasNodes.length? 'none':'block';
+  $$('#canvasWorld .cn-node').forEach(function(n){n.remove()});
 
   // Render nodes
   state.canvasNodes.forEach(function(n){
     var el=document.createElement('div');
-    el.className='cn-node cn-'+n.type;el.setAttribute('data-nid',n.id);
+    el.className='cn-node';el.setAttribute('data-nid',n.id);
     el.style.left=n.x+'px';el.style.top=n.y+'px';
-    var typeLabel={'src':'数据源','ins':'洞察','fw':'分析框架','lf':'领先用户','idea':'创意','note':'批注'}[n.type]||'卡片';
-    var typeClass={'src':'src','ins':'ins','fw':'fw','lf':'lf','idea':'idea','note':'note'}[n.type]||'';
+    var typeLabel={'src':'数据源','ins':'洞察','tool':'工具','note':'批注'}[n.type]||'卡片';
+    var typeClass={'src':'src','ins':'ins','tool':'tool','note':'note'}[n.type]||'';
     var bodyHtml=n.body?'<div class="cn-body">'+escHtml(n.body)+'</div>':'';
-    var subHtml=n.sub?'<div class="cn-sub">'+escHtml(n.sub)+'</div>':'';
-    var clickHint=(n.type==='idea')?'双击编辑':(n.type==='note'?'双击编辑':'点击查看');
+    var subHtml=n.sub?'<div style="font-size:10.5px;color:var(--muted)">'+escHtml(n.sub)+'</div>':'';
+    var filterHtml=(n.type==='src'&&n.filterSummary)?'<div class="cn-filter"><span class="cf-cap">已筛</span>'+escHtml(n.filterSummary)+'</div>':'';
     el.innerHTML=
+      '<div class="cn-close" title="移除该卡片">✕</div>'+
       '<div class="cn-type '+typeClass+'">'+typeLabel+'</div>'+
       '<div class="cn-title">'+escHtml(n.title)+'</div>'+
-      subHtml+bodyHtml+
-      '<div class="cn-hint">'+clickHint+'</div>'+
+      subHtml+bodyHtml+filterHtml+
       '<div class="cn-port cn-port-left" title="连线入口"></div>'+
       '<div class="cn-port" title="连线出口"></div>';
-    canvasEl.appendChild(el);
+    worldEl.appendChild(el);
 
-    // 单击：按类型打开对应弹窗
-    el.addEventListener('click',function(ev){
-      ev.stopPropagation();
-      onCanvasNodeClick(n);
+    // 移除卡片
+    el.querySelector('.cn-close').addEventListener('click',function(ev){
+      ev.stopPropagation();ev.preventDefault();
+      state.canvasNodes=state.canvasNodes.filter(function(x){return x.id!==n.id;});
+      state.canvasLines=state.canvasLines.filter(function(l){return l.from!==n.id&&l.to!==n.id;});
+      saveCanvasState();renderCanvas();
+      if(state.drawerAll) renderDrawer(getPurpose(state.ws,state.purposeId)); // 刷新"已加入"标记
     });
-    // 双击：编辑（idea / note / 自定义）
-    el.addEventListener('dblclick',function(ev){
-      ev.stopPropagation();
-      var newT=prompt('编辑标题:',n.title);if(newT&&newT.trim()){n.title=newT.trim();saveCanvasState();renderCanvas();}
+
+    // 单击：src 型 → 弹出数据源筛选；其余类型 → 弹出节点详情（介绍 / 编辑）
+    el.addEventListener('click',function(ev){
+      if(ev.target.closest('.cn-close')||ev.target.closest('.cn-port')) return;
+      if(n.type==='src' && n.sourceId){ openSourceFilter(n.sourceId); }
+      else { openNodeDetail(n); }
     });
   });
 
@@ -10392,21 +10581,62 @@ function renderCanvas(){
   renderCanvasLines();
 }
 
+// 画布节点详情弹窗：数据源→筛选（由单击直接调 openSourceFilter）；
+// 洞察/工具/框架/领先用户→只读「介绍」；批注→可编辑标题与内容
+var NODE_TYPE_LABEL={'src':'数据源','ins':'洞察','tool':'工具','note':'批注','fw':'分析框架','lf':'领先用户','idea':'创意'};
+function openNodeDetail(n){
+  var ov=document.getElementById('nodeModal');
+  if(!ov){
+    ov=document.createElement('div');ov.className='modal-overlay';ov.id='nodeModal';
+    ov.innerHTML='<div class="modal-box" id="nodeModalBox"></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.classList.remove('show'); });
+  }
+  var box=ov.querySelector('#nodeModalBox');
+  var typeLabel=NODE_TYPE_LABEL[n.type]||'卡片';
+  var editable=(n.type==='note');
+  var html='';
+  html+='<div class="mb-title">'+escHtml(n.title||'未命名卡片')+'</div>';
+  html+='<div class="mb-sub"><span class="cn-type '+n.type+'">'+typeLabel+'</span>'+(n.sub?(' · '+escHtml(n.sub)):'')+'</div>';
+  if(editable){
+    html+='<div class="mb-field"><div class="mb-label">标题</div><input class="mb-textarea" id="nmTitle" style="min-height:38px" value="'+escHtml(n.title||'')+'"></div>';
+    html+='<div class="mb-field"><div class="mb-label">内容</div><textarea class="mb-textarea" id="nmBody">'+escHtml(n.body||'')+'</textarea></div>';
+    html+='<div class="mb-actions"><button class="mb-close" onclick="closeNodeModal()">取消</button><button class="mb-copy" onclick="saveNodeDetail(\''+n.id+'\')">保存</button></div>';
+  }else{
+    // 「介绍」类素材 → 可视化卡片（不是编辑框）
+    var cardBody=n.body||'（暂无介绍内容）';
+    html+='<div class="mb-card">'
+      +'<div class="mb-card-head"><span class="cn-type '+n.type+'">'+typeLabel+'</span>'+(n.sub?'<span class="mb-card-sub">'+escHtml(n.sub)+'</span>':'')+'</div>'
+      +'<div class="mb-card-body">'+escHtml(cardBody)+'</div>'
+      +(n.sourceId?'<div class="mb-card-tag">该卡片对应一个数据源 · 可在画布中点击后「应用筛选」导出其明细数据</div>':'')
+      +'</div>';
+    html+='<div class="mb-actions"><button class="mb-copy" onclick="closeNodeModal()">知道了</button></div>';
+  }
+  box.innerHTML=html;
+  ov.classList.add('show');
+}
+function closeNodeModal(){ var ov=document.getElementById('nodeModal'); if(ov) ov.classList.remove('show'); }
+function saveNodeDetail(nid){
+  var n=state.canvasNodes.find(function(x){return x.id===nid;}); if(!n) return;
+  var t=document.getElementById('nmTitle'), b=document.getElementById('nmBody');
+  if(t) n.title=t.value.trim()||'批注';
+  if(b) n.body=b.value;
+  saveCanvasState();renderCanvas();closeNodeModal();toast('已保存');
+}
+
 function renderCanvasLines(){
-  if(!svgEl)return;
+  if(!svgEl||!worldEl)return;
   svgEl.innerHTML=''; // Clear
 
-  // Get node positions (need to account for transform)
+  // 直接在「世界坐标」里取节点锚点（节点已按 n.x/n.y 绝对定位在 world 层）
   var getNodeCenter=function(nid){
-    var el=$('.cn-node[data-nid="'+nid+'"]');
-    if(!el)return null;
-    var rect=el.getBoundingClientRect();
-    var cRect=canvasEl.getBoundingClientRect();
+    var n=state.canvasNodes.find(function(x){return x.id===nid;});
+    if(!n)return null;
+    var el=worldEl.querySelector('.cn-node[data-nid="'+nid+'"]');
+    var w=el?el.offsetWidth:200, h=el?el.offsetHeight:60;
     return{
-      rx:(rect.left+rect.width-cRect.left-state.canvasPanX)/state.canvasZoom,
-      ry:(rect.top+rect.height/2-cRect.top-state.canvasPanY)/state.canvasZoom,
-      lx:(rect.left-cRect.left-state.canvasPanX)/state.canvasZoom,
-      ly:(rect.top+rect.height/2-cRect.top-state.canvasPanY)/state.canvasZoom
+      rx:n.x+w, ry:n.y+h/2,   // 右锚点（出口）
+      lx:n.x,   ly:n.y+h/2    // 左锚点（入口）
     };
   };
 
@@ -10417,7 +10647,7 @@ function renderCanvasLines(){
     // Bezier curve: right edge of "from" -> left edge of "to"
     var dx=to.lx-from.rx;
     var cx1=from.rx+dx*.45,cy1=from.ry;
-    var cx2=to.lx-dx*.45,cy2=to.ty;
+    var cx2=to.lx-dx*.45,cy2=to.ly;
 
     var path=document.createElementNS('http://www.w3.org/2000/svg','path');
     path.setAttribute('d','M'+from.rx+','+from.ry+' C'+cx1+','+cy1+' '+cx2+','+cy2+' '+to.lx+','+to.ly);
@@ -10427,7 +10657,7 @@ function renderCanvasLines(){
     svgEl.appendChild(path);
 
     // Endpoint dots
-    [from.rx,from.ry],[to.lx,to.ty].forEach(function(pt){
+    [from.rx,from.ry],[to.lx,to.ly].forEach(function(pt){
       var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
       c.setAttribute('cx',pt[0]);c.setAttribute('cy',pt[1]);c.setAttribute('r','3.5');
       c.setAttribute('fill','#0891B2');
@@ -10453,17 +10683,65 @@ function clearCanvas(){
 function toggleDrawer(){
   var d=$('#matDrawer');state.drawerOpen=!state.drawerOpen;
   d.style.display=state.drawerOpen?'block':'none';
+  document.body.classList.toggle('fs-drawer-collapsed',!state.drawerOpen);
 }
+function toggleTools(){
+  state.toolsOpen=!state.toolsOpen;
+  document.body.classList.toggle('fs-tools-collapsed',!state.toolsOpen);
+}
+
+// 一键整理：按类型分列排成整洁网格（起始位置避开左侧素材抽屉；全屏时左留更小）
+function organizeCanvas(silent){
+  if(!state.canvasNodes.length){ if(!silent) toast('画布为空，无可整理'); return; }
+  var cols={src:[],ins:[],tool:[],note:[]};
+  state.canvasNodes.forEach(function(n){(cols[n.type]||cols.note).push(n);});
+  var order=['src','ins','tool','note'];
+  var isFs=document.body.classList.contains('canvas-fullscreen');
+  var startX=isFs?80:300, startY=70, colGap=360, rowGap=170;
+  order.forEach(function(t,ci){
+    cols[t].forEach(function(n,ri){
+      n.x=startX+ci*colGap;
+      n.y=startY+ri*rowGap;
+    });
+  });
+  state.canvasPanX=0;state.canvasPanY=0;state.canvasZoom=1;
+  saveCanvasState();renderCanvas();
+  if(!silent) toast('已整理布局');
+}
+
+// 全屏 = 整个浏览器窗口（非区域全屏），ESC 退出
 function toggleCanvasFullscreen(){
-  var ca=$('.canvas-area');
-  if(!ca)return;
-  ca.classList.toggle('fullscreen');
-  state.canvasFullscreen=ca.classList.contains('fullscreen');
-  if(state.canvasFullscreen){ toast('已进入全屏画布（按 Esc 退出）'); document.addEventListener('keydown',escFullExit); }
-  else { document.removeEventListener('keydown',escFullExit); }
-  setTimeout(function(){ renderCanvas(); },60);
+  var root=document.documentElement;
+  var req=root.requestFullscreen||root.webkitRequestFullscreen||root.mozRequestFullScreen;
+  var exit=document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen;
+  if(!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement){
+    if(req) req.call(root);
+  }else{
+    if(exit) exit.call(document);
+  }
 }
-function escFullExit(e){ if(e.key==='Escape'){ var ca=$('.canvas-area'); if(ca&&ca.classList.contains('fullscreen')){ ca.classList.remove('fullscreen'); state.canvasFullscreen=false; document.removeEventListener('keydown',escFullExit); setTimeout(function(){renderCanvas();},60);} } }
+
+// 全屏切换：进入即全沉浸（隐藏侧边栏/顶栏），仅显示画布 + 主题研究标题；退出还原
+function syncCanvasFullscreen(){
+  var fs=document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement;
+  var isFs=!!fs;
+  document.body.classList.toggle('canvas-fullscreen',isFs);
+  if(isFs){
+    var p=getPurpose(state.ws,state.purposeId);
+    var title=(p&&p.name)||state.purposeId||'未命名研究';
+    var tag=(p&&p.ws==='ops')?'运营目的':'用户洞察';
+    $('#canvasFsTitle').innerHTML='<span class="fs-tag">'+escHtml(tag)+'</span>主题研究：'+escHtml(title);
+  } else {
+    document.body.classList.remove('fs-drawer-collapsed','fs-tools-collapsed');
+    state.drawerOpen=true;state.toolsOpen=true;
+  }
+}
+if(!window.__canvasFsBound){
+  document.addEventListener('fullscreenchange',syncCanvasFullscreen);
+  document.addEventListener('webkitfullscreenchange',syncCanvasFullscreen);
+  document.addEventListener('mozfullscreenchange',syncCanvasFullscreen);
+  window.__canvasFsBound=true;
+}
 
 function saveCanvasState(){
   try{localStorage.setItem('cih_canvas_'+state.purposeId,JSON.stringify({nodes:state.canvasNodes,lines:state.canvasLines,zoom:state.canvasZoom}));}catch(e){}
@@ -10476,107 +10754,31 @@ function loadCanvasState(){
   }catch(e){}
 }
 
-// 点击素材直接加入画布（与拖拽等价）
-function addDrawerItem(ev,type,id){
-  if(ev)ev.stopPropagation();
-  var cRect=canvasEl?canvasEl.getBoundingClientRect():null;
-  var x= cRect? (200-state.canvasPanX)/state.canvasZoom : 80;
-  var y= cRect? (120-state.canvasPanY)/state.canvasZoom : 80;
-  // 简单错开，避免重叠
-  x += (state.canvasNodes.length%5)*30; y += (state.canvasNodes.length%5)*24;
-  addNodeByType(type,id,x,y);
-  saveCanvasState();renderCanvas();toast('已添加到画布');
-}
-
-function addNodeByType(type,id,x,y){
-  if(type==='src'){var s=getSource(id);if(s)state.canvasNodes.push({id:'n-src-'+id+'-'+Date.now(),x:x,y:y,type:'src',title:s.name,sub:(s.records?s.records+'条':'待接入'),sourceId:id});}
-  else if(type==='fw'){var f=(DATA.frameworks||[]).find(function(x){return x.id===id;});if(f)state.canvasNodes.push({id:'n-fw-'+id+'-'+Date.now(),x:x,y:y,type:'fw',title:f.name,sub:f.desc?f.desc.slice(0,24):'分析框架',fwId:id});}
-  else if(type==='ins'){var ins=(getInsights(state.purposeId)||[])[parseInt(id)];if(ins)state.canvasNodes.push({id:'n-ins-'+id+'-'+Date.now(),x:x,y:y,type:'ins',title:ins.title,body:ins.body});}
-  else if(type==='lf'){var u=(getRelevantLeadUsers(getPurpose(state.ws,state.purposeId),6)||[]).find(function(z){return (z.id||z.name)===id;});if(u)state.canvasNodes.push({id:'n-lf-'+id+'-'+Date.now(),x:x,y:y,type:'lf',title:u.name,sub:u.trait?u.trait.slice(0,18):'领先用户',lfId:id});}
-  else if(type==='idea'){state.canvasNodes.push({id:'n-idea-'+Date.now(),x:x,y:y,type:'idea',title:'新创意',body:'双击编辑你的想法…'});}
-}
-
-// 画布节点单击 → 按类型打开对应弹窗（与结构化侧逻辑一致）
-function onCanvasNodeClick(n){
-  if(n.type==='src'){ openSourceFilter(n.sourceId); }
-  else if(n.type==='fw'){ openFrameworkModal(n.fwId); }
-  else if(n.type==='ins'){ openCanvasInsightModal(n); }
-  else if(n.type==='lf'){ openCanvasLfModal(n); }
-  // idea / note 不弹窗，双击编辑
-}
-
-// 分析框架「这是什么」弹窗（轻量 modal，不离开画布）
-function openFrameworkModal(fwId){
-  var f=(DATA.frameworks||[]).find(function(x){return x.id===fwId;});
-  if(!f)return;
-  var secHtml=(f.sections||[]).slice(0,4).map(function(s){
-    return '<li><b>'+escHtml(s.t)+'</b>：'+escHtml((s.d||(s.items&&s.items[0]&&s.items[0].p)||'').toString().slice(0,60))+'</li>';
-  }).join('');
-  var ov=ensureCardModal();
-  ov.querySelector('.cm-title').innerHTML=empIcon('i-layers')+' '+escHtml(f.name);
-  ov.querySelector('.cm-body').innerHTML=
-    '<div class="cm-desc">'+escHtml(f.desc||'')+'</div>'+
-    (f.meta&&f.meta.length?'<div class="cm-meta">'+f.meta.map(function(m){return '<span><b>'+escHtml(m[0])+'</b>'+escHtml(m[1])+'</span>';}).join('')+'</div>':'')+
-    (secHtml?'<div class="cm-sec-title">主要分析步骤</div><ul class="cm-steps">'+secHtml+'</ul>':'')+
-    '<div class="cm-note">这是「分析框架」——本目的分析链路每一步用的方法论。勾选它即把方法挂到链路上。</div>';
-  ov.classList.add('show');
-}
-function openCanvasInsightModal(n){
-  var ov=ensureCardModal();
-  var tr=insightTrace({title:n.title,body:n.body,tags:[]});
-  ov.querySelector('.cm-title').innerHTML=empIcon('i-bulb')+' '+escHtml(n.title);
-  ov.querySelector('.cm-body').innerHTML=
-    '<div class="cm-desc">'+escHtml(n.body||'')+'</div>'+
-    (tr.labels&&tr.labels.length?'<div class="cm-sec-title">数据来源追溯</div><div class="cm-tags">'+tr.labels.map(function(l){return '<span class="cm-tag">'+escHtml(l.label)+' · '+l.n+'</span>';}).join('')+'</div>':'')+
-    (tr.quotes&&tr.quotes.length?'<blockquote class="cm-quote">'+escHtml(tr.quotes[0].text)+'</blockquote>':'')+
-    '<div class="cm-note">洞察来自真实用户反馈，点击来源可溯源。</div>';
-  ov.classList.add('show');
-}
-function openCanvasLfModal(n){
-  var u=(getRelevantLeadUsers(getPurpose(state.ws,state.purposeId),6)||[]).find(function(z){return (z.id||z.name)===n.lfId;});
-  if(!u){toast('未找到该领先用户');return;}
-  var ov=ensureCardModal();
-  ov.querySelector('.cm-title').innerHTML=empIcon('i-users')+' '+escHtml(u.name);
-  var sigs=(u.signals||[]).map(function(s){return '<span class="cm-tag">'+escHtml(LF_SIG[s]||s)+'</span>';}).join('');
-  ov.querySelector('.cm-body').innerHTML=
-    '<div class="cm-desc"><b>特质：</b>'+(u.trait||'')+'</div>'+
-    (u.said?'<div class="cm-quote">「'+escHtml(u.said)+'」</div>':'')+
-    (u.idea?'<div class="cm-desc"><b>代表性想法：</b>'+escHtml(u.idea)+'</div>':'')+
-    (sigs?'<div class="cm-sec-title">信号</div><div class="cm-tags">'+sigs+'</div>':'')+
-    '<div class="cm-note">领先用户 = 极端 / 重度使用者，其需求往往预示大众未来。</div>';
-  ov.classList.add('show');
-}
-
-// 通用卡片弹窗容器
-function ensureCardModal(){
-  var ov=document.getElementById('cardModal');
-  if(ov)return ov;
-  ov=document.createElement('div');
-  ov.id='cardModal';ov.className='cm-overlay';
-  ov.onclick=function(e){if(e.target===ov)ov.classList.remove('show');};
-  ov.innerHTML='<div class="cm-modal" role="dialog">'+
-    '<div class="cm-head"><div class="cm-title"></div><button class="cm-close" onclick="document.getElementById(\'cardModal\').classList.remove(\'show\')">✕</button></div>'+
-    '<div class="cm-body"></div></div>';
-  document.body.appendChild(ov);
-  return ov;
-}
-
 // Drawer drag -> drop onto canvas
 function onDrawerDrag(e){
   e.dataTransfer.setData('text/plain',JSON.stringify({type:e.target.dataset.type,id:e.target.dataset.id,idx:e.target.dataset.idx}));
 }
-canvasEl&&(canvasEl.addEventListener('dragover',function(e){e.preventDefault()}));
-canvasEl&&(canvasEl.addEventListener('drop',function(e){
-  e.preventDefault();
-  try{
-    var d=JSON.parse(e.dataTransfer.getData('text/plain'));
-    var cRect=canvasEl.getBoundingClientRect();
-    var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-70;
-    var y=(e.clientY-cRect.top-state.canvasPanY)/state.canvasZoom-30;
-    addNodeByType(d.type,d.id,x,y);
-    saveCanvasState();renderCanvas();toast('已添加到画布');
-  }catch(err){console.error(err);}
-}));
+
+// 绑定拖放（在 renderCanvasArea 内、canvasEl 已就绪后调用，仅绑定一次）
+function bindCanvasDrop(){
+  if(state._canvasDropBound||!canvasEl) return;
+  state._canvasDropBound=true;
+  canvasEl.addEventListener('dragover',function(e){e.preventDefault();});
+  canvasEl.addEventListener('drop',function(e){
+    e.preventDefault();
+    try{
+      var d=JSON.parse(e.dataTransfer.getData('text/plain'));
+      var cRect=canvasEl.getBoundingClientRect();
+      var x=(e.clientX-cRect.left-state.canvasPanX)/state.canvasZoom-70;
+      var y=(e.clientY-cRect.top-state.canvasPanY)/state.canvasZoom-30;
+      if(d.type==='src'){var s=getSource(d.id);if(s){state.canvasNodes.push({id:'n-src-d-'+Date.now(),x:x,y:y,type:'src',title:s.name,sub:d.id,sourceId:d.id});}}
+      else if(d.type==='ins'){var ins=(getInsights(state.purposeId)||[])[parseInt(d.idx)];if(ins){state.canvasNodes.push({id:'n-ins-d-'+Date.now(),x:x,y:y,type:'ins',title:ins.title,body:ins.body});}}
+      else if(d.type==='note'){state.canvasNodes.push({id:'n-note-d-'+Date.now(),x:x,y:y,type:'note',title:'批注',body:''});}
+      saveCanvasState();renderCanvas();toast('已添加到画布');
+      if(state.drawerAll) renderDrawer(getPurpose(state.ws,state.purposeId)); // 刷新"已加入"标记
+    }catch(err){console.error(err);}
+  });
+}
 
 // ============================================================
 // MODE TOGGLE (截图2)
@@ -10655,96 +10857,6 @@ function runVocTagger(inputId,tagsId,resultId,outputId){
     judgments.join('\n')+'\n\n结论：'+input.substring(0,60)+'...':
     '该文本未触发任何已知规则，可能属于新的维度类别。建议人工审核后补充规则。';
   toast('规则引擎执行完成');
-}
-
-// ============================================================
-// EXPORT TO AI PROMPT (截图3)
-// ============================================================
-function gatherContext(){
-  var ctx={workspace:'',purpose:'',purposeDesc:'',sources:[],nlSources:[],frameworks:[],methods:'',
-           insights:[],analysis:{},canvasSummary:''};
-
-  // Workspace & purpose
-  ctx.workspace=DATA.workspaces[state.ws].label;
-  if(state.purposeId){
-    var p=getPurpose(state.ws,state.purposeId);
-    if(p){ctx.purpose=p.name;ctx.purposeDesc=p.desc;ctx.methods=p.methods;ctx.tools=p.tools;
-      p.sources.forEach(function(s){var src=getSource(s);if(src)ctx.sources.push(src.name+'('+src.type+')');});
-    }
-    // Insights
-    var ins=getInsights(state.purposeId);
-    ins.forEach(function(i){ctx.insights.push(i.title+': '+i.body);});
-  }
-
-  // Level2：自然语言补充获取的数据源
-  state.nlAcquired.forEach(function(sid){
-    var s=getSource(sid);if(s)ctx.nlSources.push(s.name+'('+s.type+')');
-  });
-
-  // Level2：选中的分析框架
-  state.selectedFrameworks.forEach(function(fid){
-    var f=DATA.frameworks.find(function(x){return x.id===fid;});
-    if(f)ctx.frameworks.push(f.name+'：'+f.desc);
-  });
-
-  // Level2：基础分析结论
-  ctx.analysis=state.analysisSummary||{};
-
-  // Canvas context —— 把画布上的自由节点「组织」回结构化字段，导出包与结构化一致
-  if(state.canvasNodes.length){
-    var cSrcs=[],cFws=[],cIns=[],cIdea=0,cLf=0,cNote=0;
-    state.canvasNodes.forEach(function(n){
-      if(n.type==='src'){var s=getSource(n.sourceId);if(s&&ctx.sources.indexOf(s.name+'('+s.type+')')<0)ctx.sources.push(s.name+'('+s.type+')');cSrcs.push(n);}
-      else if(n.type==='fw'){var f=(DATA.frameworks||[]).find(function(x){return x.id===n.fwId;});if(f&&ctx.frameworks.indexOf(f.name+'：'+f.desc)<0)ctx.frameworks.push(f.name+'：'+f.desc);cFws.push(n);}
-      else if(n.type==='ins'){if(ctx.insights.indexOf(n.title+': '+(n.body||''))<0)ctx.insights.push(n.title+': '+(n.body||''));cIns.push(n);}
-      else if(n.type==='idea'){cIdea++;}
-      else if(n.type==='lf'){cLf++;}
-      else if(n.type==='note'){cNote++;}
-    });
-    ctx.canvasSummary='画布上有 '+state.canvasNodes.length+' 个节点（'+
-      cSrcs.length+' 数据源 / '+cFws.length+' 分析框架 / '+cIns.length+' 洞察 / '+cLf+' 领先用户 / '+cIdea+' 创意 / '+cNote+' 批注）'+
-      (state.canvasLines.length?', '+state.canvasLines.length+' 条连线':'');
-  }
-
-  return ctx;
-}
-
-function generatePrompt(ctx,question){
-  var q=question&&question.trim()?question.trim():'请帮我综合以上信息，给出深度分析和可行动的建议。';
-  var prompt=
-'# 分析任务提示词（请将以下内容完整复制给智能体）\n\n'+
-'## 角色设定\n你是一名严谨的类目用户研究分析师。请把自己当作**第一次接触我们数据**的人——'+
-'在阅读下方材料前不要做任何先验假设，所有结论都必须基于所提供的材料，并明确区分「数据已支持 / 需要验证 / 外部补充」。\n\n'+
-'## 一、当前目的（最重要）\n'+
-'- 工作方向：'+ctx.workspace+'\n'+
-'- 当前目的：'+(ctx.purpose||'全局概览')+'\n'+
-'- 目的说明：'+(ctx.purposeDesc||'—')+'\n\n'+
-'## 二、数据源（上下文）\n'+
-'- 该目的已绑定的数据源：\n'+(ctx.sources.length?ctx.sources.map(function(s){return '  · '+s}).join('\n'):'  · 无')+'\n'+
-(ctx.nlSources.length?'- 通过自然语言补充获取的数据源：\n'+ctx.nlSources.map(function(s){return '  · '+s}).join('\n')+'\n':'')+
-'## 三、使用的分析框架\n'+
-(ctx.frameworks.length?ctx.frameworks.map(function(f){return '  · '+f}).join('\n')+'\n':'  · 由你判断选用合适框架\n')+
-'## 四、已有基础分析结论（skill 简化版自动产出，供你延展，非终稿）\n'+
-'- 需求四象限：'+(ctx.analysis.quad||'未生成')+'\n'+
-'- 细分市场：'+(ctx.analysis.segments||'未生成')+'\n'+
-'- 购买旅程：'+(ctx.analysis.journey||'未生成')+'\n'+
-'## 五、关键洞察（来自数据源与交叉分析）\n'+
-(ctx.insights.length?ctx.insights.map(function(i){return '  · '+i}).join('\n'):'  · 暂无')+'\n'+
-(ctx.canvasSummary?('## 六、画布推导状态\n'+ctx.canvasSummary+'\n'):'')+
-'\n## 七、我的问题\n'+q+'\n\n'+
-'## 八、输出要求（务必遵守）\n'+
-'1. **复述理解**：先用自己的话复述你对以上数据、目的与上下文的理解，确认没有误解后再展开。\n'+
-'2. **三类结论标注**：所有结论必须归入「数据已支持 / 需要验证 / 外部补充」三类，且**每条必标出处**（注明来自哪个数据源或框架）。\n'+
-'3. **行动建议**：给出 2-3 个具体可执行的下一步行动，按优先级排列，并说明预期收益与所需验证。\n'+
-'4. **多轮深化**：如信息不足以支撑某结论，明确指出缺口并建议补充哪类数据，而非编造。';
-  return prompt;
-}
-
-function openExportModal(){
-  $('#exportModal').classList.add('show');
-  var ctx=gatherContext();
-  var q=$('#expQuestion').value.trim();
-  $('#expResult').value=generatePrompt(ctx,q);
 }
 
 // --- 目的核对引擎（目的类型识别 → 数据源/框架精准匹配 → 方案核对）---
@@ -11471,7 +11583,9 @@ function downloadPlanPackage(){
   var relInsights=getRelevantInsights(p, 5);
   var dataFiles=srcList.map(function(x){
     var rows=filterSourceRows(x.id);
-    var header=['id','market','rating','dimension','sentiment','text'];
+    var header = (rows.length && rows[0].asin)
+      ? ['asin','brand','market','star','price','ratings','launch','title']
+      : ['id','market','rating','dimension','sentiment','text'];
     var csv='\ufeff'+header.join(',')+'\n'+rows.map(function(r){
       return header.map(function(h){var v=(''+(r[h]==null?'':r[h])).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}).join(',');
     }).join('\n');
@@ -11514,15 +11628,6 @@ function copyPlanPrompt(){
   navigator.clipboard.writeText(promptText).then(
     function(){toast('提示词已复制');},
     function(){/* fallback */}
-  );
-}
-
-function closeExportModal(){$('#exportModal').classList.remove('show')}
-function copyPrompt(){
-  var t=$('#expResult').value;
-  navigator.clipboard.writeText(t).then(
-    function(){toast('提示词已复制到剪贴板')},
-    function(){/* fallback */$('#expResult').select();document.execCommand('copy');toast('已复制')}
   );
 }
 
@@ -11846,12 +11951,12 @@ if(typeof initFloatBar==='function') initFloatBar();
 </style>
 <div id="cartBackdrop"></div>
 <button id="cartFab" title="数据购物车">
-  <svg viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>
+  <svg viewBox="0 0 24 24" style="color:#fff"><use href="#w-cart"/></svg>
   <span id="cartBadge">0</span>
 </button>
 <div id="cartPanel">
   <div class="cart-head">
-    <h3><svg viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>数据购物车</h3>
+    <h3><svg viewBox="0 0 24 24" style="color:#fff"><use href="#w-cart"/></svg>数据购物车</h3>
     <button id="cartClose">✕</button>
   </div>
   <div class="cart-body" id="cartBody"></div>
@@ -11890,7 +11995,7 @@ if(typeof initFloatBar==='function') initFloatBar();
   function updateDlLabel(){ var n=get().filter(function(z){return z._sel!==false;}).length; dlLabel.textContent='下载选中（'+n+'）'; dlBtn.disabled=n===0; }
   function render(){
     var a=get();
-    if(!a.length){ body.innerHTML='<div class="cart-empty"><svg viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg><div>购物车是空的</div><div style="font-size:11px;margin-top:6px;opacity:.8">在任意数据源筛选后点「加入购物车」<br>即可跨数据源汇总，最后统一下载</div></div>';
+    if(!a.length){ body.innerHTML='<div class="cart-empty"><svg viewBox="0 0 24 24" style="color:#fff"><use href="#w-cart"/></svg><div>购物车是空的</div><div style="font-size:11px;margin-top:6px;opacity:.8">在任意数据源筛选后点「加入购物车」<br>即可跨数据源汇总，最后统一下载</div></div>';
       selAll.checked=false; updateDlLabel(); return; }
     body.innerHTML=a.map(function(x){
       var d=''; try{d=new Date(x.addedAt).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(e){}
@@ -11898,7 +12003,7 @@ if(typeof initFloatBar==='function') initFloatBar();
         '<input type="checkbox" class="cart-chk" '+(x._sel!==false?'checked':'')+' data-id="'+x.id+'">'+
         '<div class="cart-item-info"><div class="cart-item-src">'+esc(x.source)+'</div>'+
         '<div class="cart-item-filter">'+esc(x.filter||'全部')+'</div>'+
-        '<div class="cart-item-meta">'+x.count+' 条 · '+d+'</div></div>'+
+        '<div class="cart-item-meta">'+(x.docType?'文档 · ':'')+x.count+' 条 · '+d+'</div></div>'+
         '<button class="cart-item-del" data-id="'+x.id+'" title="移除">✕</button></div></div>';
     }).join('');
     body.querySelectorAll('.cart-chk').forEach(function(c){ c.addEventListener('change',function(){ var id=c.dataset.id; var arr=get(); var it=arr.find(function(z){return z.id===id;}); if(it){it._sel=c.checked; set(arr);} updateDlLabel(); selAll.checked=arr.every(function(z){return z._sel!==false;}); }); });
@@ -11910,9 +12015,21 @@ if(typeof initFloatBar==='function') initFloatBar();
     var a=get(); var sel=a.filter(function(z){return z._sel!==false;});
     if(!sel.length){ ctoast('请先勾选要下载的项'); return; }
     var ts=stamp();
-    if(fmt==='json'){ var blob=new Blob([JSON.stringify(sel,null,2)],{type:'application/json'}); saveBlob(blob,'cih_export_'+ts+'.json'); ctoast('已下载 JSON（'+sel.length+' 组）'); }
-    else if(fmt==='multi'){ sel.forEach(function(x,i){ var csv=toCSV(x.items,x.columns); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); setTimeout(function(){saveBlob(blob,safeName(x.source+'_'+x.filter)+'_'+ts+'.csv');},i*400); }); ctoast('已分批下载 '+sel.length+' 个 CSV'); }
-    else { var cols=unionCols(sel); var rows=mergeRows(sel); var csv=toCSV(rows,cols); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); saveBlob(blob,'cih_export_merge_'+ts+'.csv'); ctoast('已下载合并 CSV（'+rows.length+' 行）'); }
+    // 文档型数据源：单独导出 .md
+    var docs = sel.filter(function(z){return z.docType;});
+    var tabs = sel.filter(function(z){return !z.docType;});
+    if(docs.length){
+      docs.forEach(function(x,i){
+        var md = (x.docContent||'');
+        var blob=new Blob([md],{type:'text/markdown;charset=utf-8'});
+        setTimeout(function(){ saveBlob(blob, safeName(x.source+'_'+x.filter)+'_'+ts+'.md'); }, i*400);
+      });
+      ctoast('已下载文档 '+docs.length+' 个 .md');
+    }
+    if(!tabs.length) return;
+    if(fmt==='json'){ var blob=new Blob([JSON.stringify(tabs,null,2)],{type:'application/json'}); saveBlob(blob,'cih_export_'+ts+'.json'); ctoast('已下载 JSON（'+tabs.length+' 组）'); }
+    else if(fmt==='multi'){ tabs.forEach(function(x,i){ var csv=toCSV(x.items,x.columns); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); setTimeout(function(){saveBlob(blob,safeName(x.source+'_'+x.filter)+'_'+ts+'.csv');},i*400); }); ctoast('已分批下载 '+tabs.length+' 个 CSV'); }
+    else { var cols=unionCols(tabs); var rows=mergeRows(tabs); var csv=toCSV(rows,cols); var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); saveBlob(blob,'cih_export_merge_'+ts+'.csv'); ctoast('已下载合并 CSV（'+rows.length+' 行）'); }
   }
   fab.addEventListener('click',open);
   document.getElementById('cartClose').addEventListener('click',close);
