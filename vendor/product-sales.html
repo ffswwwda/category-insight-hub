@@ -961,8 +961,8 @@ var SALES_DATA = {"currency":{"美亚":"$","日亚":"¥","欧亚（德国+英国
       renderLabelChips(); // 刷新 active 状态
     }));
 
-    // 如果有展开的字段，渲染展开面板内容
-    if(expandedLabelKey && !panel.classList.contains('show')){
+    // 如果有展开的字段，始终随当前看板（国家/市场）刷新展开面板的数据
+    if(expandedLabelKey){
       renderExpandedPanel(expandedLabelKey);
     }
   }
