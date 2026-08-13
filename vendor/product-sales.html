@@ -151,6 +151,10 @@
   .vl-empty{color:var(--muted);font-size:11.5px;text-align:center;padding:18px 8px;line-height:1.6}
   .save-view-btn{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:5px 13px;border:1px solid var(--accent);border-radius:9px;background:var(--accent-weak);color:var(--accent);cursor:pointer;transition:all .15s;user-select:none;white-space:nowrap}
   .save-view-btn:hover{background:var(--accent);color:#fff}
+  .vl-sub{display:block;grid-column:1/-1;font-size:10.5px;color:var(--muted);margin:-2px 0 3px 18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lbl-panel-foot{display:flex;align-items:center;gap:8px;padding:8px 10px 6px;border-top:1px dashed var(--border);margin-top:6px}
+  .lbl-save-btn{display:inline-flex;align-items:center;gap:4px;margin-left:auto;font-size:11px;font-weight:700;padding:4px 11px;border:1px solid var(--accent);border-radius:8px;background:var(--accent-weak);color:var(--accent);cursor:pointer;transition:all .15s}
+  .lbl-save-btn:hover{background:var(--accent);color:#fff}
   #cartBtn.cart-added{border-color:#10b981;background:#ecfdf5;color:#059669;cursor:default;pointer-events:none;opacity:.8}
 
   .countline{font-size:13px;color:var(--ink-2);margin:0 2px 14px}
@@ -989,8 +993,13 @@ var SALES_DATA = {"currency":{"美亚":"$","日亚":"¥","欧亚（德国+英国
         <span class="lbl-panel-title">${lab?esc(lab[1]):esc(key)} · ${arr.length} 款商品${moreHint}</span>
         <span class="lbl-panel-close" id="lblClose">&times;</span>
       </div>
-      <div class="lbl-vals">${valsHtml || '<span style="font-size:11.5px;color:var(--muted)">该字段无有效值</span>'}</div>`;
+      <div class="lbl-vals">${valsHtml || '<span style="font-size:11.5px;color:var(--muted)">该字段无有效值</span>'}</div>
+      <div class="lbl-panel-foot">
+        <span style="font-size:11px;color:var(--muted)">已选标签字段条件会随「保存为视图」一并存入</span>
+        <button class="lbl-save-btn" id="lblSaveView">保存为视图</button>
+      </div>`;
     panel.classList.add('show');
+    $('#lblSaveView').addEventListener('click', saveCurrentView);
 
     // 绑定值 chip 点击 → 切换筛选
     $$('#labelExpandPanel .lbl-val').forEach(el=>el.addEventListener('click',()=>{
@@ -1001,6 +1010,7 @@ var SALES_DATA = {"currency":{"美亚":"$","日亚":"¥","欧亚（德国+英国
       const i=a.indexOf(v);
       if(i>=0) a.splice(i,1); else a.push(v);
       if(!a.length) delete state.facets.labelSel[k];
+      el.classList.toggle('on');
       renderAll(); // 重绘全部（保留展开状态）
     }));
     // 关闭按钮
@@ -1060,14 +1070,18 @@ function syncChips(){
   }
 
   // ---------- 视图图层 ----------
-  const SAVED_VIEWS = [];
+  const SAVED_VIEWS = (function(){ try{ const a=JSON.parse(localStorage.getItem('cih-saved-views')||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } })();
+  function saveSavedViews(){ try{ localStorage.setItem('cih-saved-views', JSON.stringify(SAVED_VIEWS)); }catch(e){} }
   function saveCurrentView(){
-    const name = prompt('保存当前筛选为视图名称：', (state.board)+'·'+(boardMkts(state.board).length>1?meta[state.board].mktName[state.mkt]+'·':'')+(state.view==='month'?state.month:'总表'));
+    const ft = facetsToText(state.facets);
+    const def = (state.board)+'·'+(boardMkts(state.board).length>1?meta[state.board].mktName[state.mkt]+'·':'')+(state.view==='month'?state.month:'总表') + (ft.length?(' · '+ft.join(' · ')):'');
+    const name = prompt('保存当前筛选（含标签字段筛选）为视图名称：', def.slice(0,90));
     if(!name) return;
     SAVED_VIEWS.push({
       name, board:state.board, mkt:state.mkt, view:state.view, month:state.month,
       facets:JSON.parse(JSON.stringify(state.facets)), sort:state.sort
     });
+    saveSavedViews();
     renderViewLayers();
   }
   function loadView(v){
@@ -1080,15 +1094,19 @@ function syncChips(){
   function renderViewLayers(){
     $('#vlCount').textContent = SAVED_VIEWS.length;
     if(!SAVED_VIEWS.length){ $('#vlList').innerHTML='<div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div>'; return; }
-    $('#vlList').innerHTML = SAVED_VIEWS.map((v,i)=>`
-      <div class="vl-item${state.activeView===v.name?' active':''}" data-i="${i}">
+    $('#vlList').innerHTML = SAVED_VIEWS.map((v,i)=>{
+      const ft = facetsToText(v.facets);
+      const sub = ft.length? ft.join(' · ') : '无筛选条件';
+      return `<div class="vl-item${state.activeView===v.name?' active':''}" data-i="${i}" title="${escAttr(sub)}">
         <span class="vl-dot"></span>
         <span class="vl-name">${esc(v.name)}</span>
         <span class="vl-meta">${esc(v.view==='month'?v.month:'总表')}</span>
         <span class="vl-del" data-del="${i}" title="删除">✕</span>
-      </div>`).join("");
+        <span class="vl-sub">${esc(sub.length>48?sub.slice(0,48)+'…':sub)}</span>
+      </div>`;
+    }).join("");
     $$('#vlList .vl-item').forEach(el=>el.addEventListener('click',e=>{
-      if(e.target.dataset.del!=null){ SAVED_VIEWS.splice(+e.target.dataset.del,1); renderViewLayers(); return; }
+      if(e.target.dataset.del!=null){ SAVED_VIEWS.splice(+e.target.dataset.del,1); saveSavedViews(); renderViewLayers(); return; }
       loadView(SAVED_VIEWS[+el.dataset.i]);
     }));
   }
