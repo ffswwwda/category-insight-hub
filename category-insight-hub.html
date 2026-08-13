@@ -1541,6 +1541,21 @@ body.fs-tools-collapsed #toolsReopen{display:flex}
 .se-chip:hover{border-color:var(--accent);color:var(--accent)}
 .se-chip.on{background:var(--rad-grad);color:#fff;border-color:transparent}
 .se-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.se-views{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;min-height:8px}
+.sev-empty{font-size:11px;color:var(--muted)}
+.sev-chip{display:inline-flex;align-items:center;gap:6px;background:var(--glass-bg);border:1px solid var(--border);border-radius:20px;padding:4px 6px 4px 12px;font-size:12px;color:var(--text)}
+.sev-chip .sev-apply{font-size:11px;font-weight:700;color:#00d4ff;background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:12px}
+.sev-chip .sev-apply:hover{background:rgba(0,212,255,.12)}
+.sev-chip .sev-del{font-size:13px;line-height:1;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:12px}
+.sev-chip .sev-del:hover{color:#ef4444;background:rgba(239,68,68,.12)}
+.sf-views{margin-top:16px;border-top:1px dashed var(--border);padding-top:12px}
+.sfv-title{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.sfv-empty{font-size:11px;color:var(--muted)}
+.sfv-item{display:flex;align-items:center;gap:8px;justify-content:space-between;background:var(--glass-bg);border:1px solid var(--border);border-radius:9px;padding:7px 10px;margin-bottom:6px;cursor:pointer;font-size:12.5px}
+.sfv-item:hover{border-color:var(--accent)}
+.sfv-name{flex:1;color:var(--text)}
+.sfv-del{font-size:13px;line-height:1;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:10px}
+.sfv-del:hover{color:#ef4444;background:rgba(239,68,68,.12)}
 .se-kpi{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--border);
   border-radius:14px;padding:14px 16px;text-align:center;transition:all .25s var(--rad-easing);box-shadow:var(--shadow-sm)}
 .se-kpi:hover{transform:translateY(-4px)}
@@ -1646,7 +1661,26 @@ body.fs-tools-collapsed #toolsReopen{display:flex}
 .audit-engine{background:linear-gradient(135deg,rgba(0,212,255,.04),rgba(168,85,247,.05),rgba(255,107,157,.04));border:1px solid rgba(0,212,255,.2);border-radius:14px;padding:14px 16px}
 .audit-sub{font-size:11.5px;color:var(--muted);margin-bottom:10px;line-height:1.5}
 .audit-box{display:flex;flex-direction:column;gap:8px}
-.audit-actions{display:flex;justify-content:flex-end}
+.audit-actions{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.audit-cfg{margin-top:10px;padding:12px;background:var(--glass-bg);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;gap:9px}
+.ac-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ac-row label{width:64px;flex:none;font-size:12px;font-weight:700;color:var(--muted)}
+.ac-inp{flex:1;min-width:160px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12.5px}
+.ac-hint{font-size:10.5px;color:var(--muted)}
+.ac-actions{display:flex;align-items:center;gap:8px}
+.ac-saved{font-size:11px;color:#34c759}
+.audit-cfg-btn{font-size:11.5px;font-weight:700;color:var(--muted);background:var(--glass-bg);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer}
+.ai-boost{background:linear-gradient(135deg,#00d4ff,#a855f7);border:none;color:#fff}
+.au-ai-badge{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:linear-gradient(135deg,#00d4ff,#a855f7);border-radius:8px;padding:4px 10px;margin-bottom:8px}
+.au-summary{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.55}
+.au-fw-name{font-size:12.5px;font-weight:700;color:var(--text);border:1px solid var(--border);border-radius:7px;padding:5px 8px;min-width:120px;flex:1}
+.au-fw-reason{width:100%;min-height:40px;resize:vertical;font-size:11.5px;color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:6px 8px;margin-top:6px}
+.au-custom .au-tag.custom{background:#ff6b9d;color:#fff}
+.au-loading,.au-raw{font-size:12px;color:var(--muted)}
+.au-raw{white-space:pre-wrap;max-height:200px;overflow:auto;background:var(--bg);padding:8px;border-radius:8px}
+.audit-ai-foot{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.audit-ai-foot .primary{background:linear-gradient(135deg,#00d4ff,#a855f7);border:none;color:#fff}
+.au-ai-note{font-size:10.5px;color:var(--muted)}
 .audit-result{margin-top:12px}
 .audit-report{background:var(--glass-bg);border:1px solid var(--border);border-radius:12px;padding:14px}
 .audit-score{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
@@ -4019,6 +4053,8 @@ function renderSourceExplorer(srcId){
       '<div style="margin-left:auto;display:flex;gap:6px">'+
         (srcId==='s5'?'<button class="ct-btn iv-btn" id="ivModeBtn" onclick="toggleInterviewMode()">💬 对话模式</button>':'')+
         '<button class="ct-btn" onclick="genSourceReport(\''+srcId+'\')">综合报告</button>'+
+        '<button class="ct-btn" onclick="cihAddFilteredToCart(\''+srcId+'\')">加入购物车</button>'+
+        '<button class="ct-btn" onclick="saveSEView(\''+srcId+'\')">保存视图</button>'+
         '<button class="ct-btn primary" onclick="exportSourceData(\''+srcId+'\')">导出 CSV</button>'+
       '</div>'+
     '</div>'+
@@ -4031,6 +4067,7 @@ function renderSourceExplorer(srcId){
         '<select class="se-select" onchange="setSourceFilter(\''+srcId+'\',\'sentiment\',this.value)">'+sentOpts+'</select>'+
         '<div class="se-chips">'+marketChips+'</div>'+
       '</div>'+
+      '<div class="se-views" id="seViews-'+srcId+'"></div>'+
       '<div class="se-kpis">'+
         '<div class="se-kpi"><b>'+st.n+'</b><span>样本数</span></div>'+
         '<div class="se-kpi"><b>'+st.avg+'</b><span>平均评分</span></div>'+
@@ -4041,6 +4078,7 @@ function renderSourceExplorer(srcId){
       '<div class="se-report" id="seReport-'+srcId+'" style="display:none"></div>'+
     '</div>';
   applySourceFilter(srcId);
+  renderSEViews(srcId);
 }
 
 function onSourceFilterInput(srcId){
@@ -4087,15 +4125,148 @@ function applySourceFilter(srcId){
   var kpis=$('#viewSource').querySelectorAll('.se-kpi b');
   if(kpis.length===4){kpis[0].textContent=st.n;kpis[1].textContent=st.avg;kpis[2].textContent=st.negPct+'%';kpis[3].textContent=st.topDim;}
 }
+// 动态拼装 CSV：保留筛选后结果的「全部字段」（除非筛选显式去掉字段）。
+// 列顺序：优先常用列（asin/brand/... 或 id/market/...），其余字段按首次出现顺序追加。
+function buildSourceCsv(rows){
+  if(!rows||!rows.length) return '';
+  var isSales = !!(rows[0] && ('asin' in rows[0]));
+  var pref = isSales
+    ? ['asin','brand','market','title','star','price','ratings','launch','category','semantic','zhTitle','zhSp','basis','conf','tags']
+    : ['id','market','rating','dimension','sentiment','text'];
+  var seen={}, cols=[];
+  pref.forEach(function(k){ if(rows.some(function(r){return r&&(k in r);})){ seen[k]=1; cols.push(k);} });
+  rows.forEach(function(r){ if(!r)return; Object.keys(r).forEach(function(k){ if(!seen[k]){seen[k]=1; cols.push(k);} }); });
+  var esc=function(v){
+    if(v==null) return '';
+    var s = (typeof v==='object') ? JSON.stringify(v) : (''+v);
+    s = s.replace(/"/g,'""');
+    return /[",\n\r]/.test(s)?'"'+s+'"':s;
+  };
+  return cols.join(',')+'\n'+rows.map(function(r){
+    return cols.map(function(c){return esc(r?r[c]:undefined);}).join(',');
+  }).join('\n');
+}
+// ── 加入购物车（跨看板统一逻辑）──
+// 列定义与 buildSourceCsv 一致，保证购物车合并导出时字段不丢
+function cihCollectColumns(rows){
+  if(!rows||!rows.length) return [];
+  var isSales = !!(rows[0] && ('asin' in rows[0]));
+  var pref = isSales
+    ? ['asin','brand','market','title','star','price','ratings','launch','category','semantic','zhTitle','zhSp','basis','conf','tags']
+    : ['id','market','rating','dimension','sentiment','text'];
+  var seen={}, cols=[];
+  pref.forEach(function(k){ if(rows.some(function(r){return r&&(k in r);})){ seen[k]=1; cols.push({key:k,label:k}); } });
+  rows.forEach(function(r){ if(!r)return; Object.keys(r).forEach(function(k){ if(!seen[k]){seen[k]=1; cols.push({key:k,label:k});} }); });
+  return cols;
+}
+function cihDescribeSourceFilter(srcId){
+  var f=state.sourceFilters[srcId]||{};
+  var parts=[];
+  if(f.text) parts.push('含「'+f.text+'」');
+  if(f.market) parts.push('市场='+f.market);
+  if(f.dimension) parts.push('维度='+f.dimension);
+  if(f.sentiment) parts.push('情感='+f.sentiment);
+  return parts.length? parts.join(' · ') : '全部（未筛选）';
+}
+function cihFilterDescForCart(srcId){
+  var s=getSource(srcId);
+  var p=getPurpose(state.ws,state.purposeId);
+  if(p && p._srcFilters && p._srcFilters[srcId] && Object.keys(p._srcFilters[srcId].filters).length){
+    return summarizeFilter(s, p._srcFilters[srcId].filters);
+  }
+  return cihDescribeSourceFilter(srcId);
+}
+// srcId：数据源；opts.rows：显式传入已筛选行（弹窗预览用）；opts.filterLabel：自定义筛选描述
+function cihAddFilteredToCart(srcId, opts){
+  opts=opts||{};
+  var rows = opts.rows || filterSourceRows(srcId);
+  if(!rows || !rows.length){ toast('该数据源无匹配记录，无法加入购物车'); return; }
+  var cols=cihCollectColumns(rows);
+  var items=rows.map(function(r){ var o={}; cols.forEach(function(c){ var v=r[c.key]; o[c.key]=(v&&typeof v==='object')?JSON.stringify(v):v; }); return o; });
+  var s=DATA.sources[srcId]||{name:srcId};
+  var fdesc = opts.filterLabel || cihFilterDescForCart(srcId);
+  var item={ id:srcId+'_'+Date.now(), source:s.name, filter:fdesc, sourceKey:srcId, items:items, columns:cols, count:items.length, addedAt:Date.now(), _sel:true };
+  if(window.cihCartAddItem){ window.cihCartAddItem(item); }
+  else if(window.parent && window.parent!==window){ window.parent.postMessage({type:'cih-cart-add',item:item},'*'); }
+  else { window.postMessage({type:'cih-cart-add',item:item},'*'); }
+}
+
+// ── 保存视图（跨看板统一）── 按数据源存储命名视图，可应用 / 删除
+var CIH_VIEWS_LS='cih_saved_views';
+function cihLoadViews(){ try{ return JSON.parse(localStorage.getItem(CIH_VIEWS_LS))||{}; }catch(e){ return {}; } }
+function cihSaveViews(o){ try{ localStorage.setItem(CIH_VIEWS_LS, JSON.stringify(o)); }catch(e){} }
+function cihAddView(srcId, name, filter){
+  var v=cihLoadViews(); v[srcId]=v[srcId]||[];
+  v[srcId].push({id:srcId+'_v'+Date.now(), name:name||('视图'+(v[srcId].length+1)), filter:JSON.parse(JSON.stringify(filter||{})), ts:Date.now()});
+  cihSaveViews(v); return v[srcId];
+}
+function cihDeleteView(srcId, vid){
+  var v=cihLoadViews(); if(!v[srcId])return;
+  v[srcId]=v[srcId].filter(function(x){return x.id!==vid;}); cihSaveViews(v);
+}
+function cihGetViews(srcId){ var v=cihLoadViews(); return v[srcId]||[]; }
+// 数据源浏览器：保存 / 应用 / 删除当前筛选视图
+function saveSEView(srcId){
+  var f=state.sourceFilters[srcId]||{};
+  var name=prompt('为当前筛选视图命名：', '视图 '+new Date().toLocaleString('zh-CN'));
+  if(name===null) return;
+  cihAddView(srcId, name.trim()||'视图', f);
+  renderSEViews(srcId);
+  toast('已保存视图：'+name);
+}
+function renderSEViews(srcId){
+  var box=document.getElementById('seViews-'+srcId); if(!box) return;
+  var views=cihGetViews(srcId);
+  if(!views.length){ box.innerHTML='<span class="sev-empty">暂无保存的视图</span>'; return; }
+  box.innerHTML=views.map(function(v){
+    return '<span class="sev-chip" data-vid="'+v.id+'">'+escHtml(v.name)+
+      '<button class="sev-apply" onclick="applySEView(\''+srcId+'\',\''+v.id+'\')">应用</button>'+
+      '<button class="sev-del" onclick="deleteSEView(\''+srcId+'\',\''+v.id+'\')" title="删除">×</button></span>';
+  }).join('');
+}
+function applySEView(srcId, vid){
+  var v=cihGetViews(srcId).find(function(x){return x.id===vid;}); if(!v) return;
+  state.sourceFilters[srcId]=JSON.parse(JSON.stringify(v.filter));
+  renderSourceExplorer(srcId);
+  toast('已应用视图：'+v.name);
+}
+function deleteSEView(srcId, vid){
+  cihDeleteView(srcId, vid); renderSEViews(srcId);
+  toast('已删除视图');
+}
+// 目的工作区筛选弹窗：保存 / 应用当前视图（与数据源浏览器共享同一存储）
+function saveModalView(sid){
+  var f=collectFilters(sid);
+  if(!Object.keys(f).length){ toast('当前没有筛选条件，无需保存'); return; }
+  var name=prompt('为当前筛选视图命名：', '视图 '+new Date().toLocaleString('zh-CN'));
+  if(name===null) return;
+  cihAddView(sid, name.trim()||'视图', f);
+  renderSfViews(sid);
+  toast('已保存视图：'+name);
+}
+function renderSfViews(sid){
+  var box=document.getElementById('sfViews_'+sid); if(!box) return;
+  var views=cihGetViews(sid);
+  if(!views.length){ box.innerHTML='<div class="sfv-empty">暂无保存的视图</div>'; return; }
+  box.innerHTML='<div class="sfv-title">已保存视图（点击应用）</div>'+views.map(function(v){
+    return '<div class="sfv-item" onclick="applyModalView(\''+sid+'\',\''+v.id+'\')"><span class="sfv-name">'+escHtml(v.name)+'</span>'+
+      '<button class="sfv-del" onclick="event.stopPropagation();deleteSEView(\''+sid+'\',\''+v.id+'\');renderSfViews(\''+sid+'\')" title="删除">×</button></div>';
+  }).join('');
+}
+function applyModalView(sid, vid){
+  var v=cihGetViews(sid).find(function(x){return x.id===vid;}); if(!v) return;
+  var p=getPurpose(state.ws,state.purposeId);
+  if(p){ p._srcFilters=p._srcFilters||{}; p._srcFilters[sid]={filters:JSON.parse(JSON.stringify(v.filter)),ts:Date.now()}; }
+  restoreFilterInputs(sid, v.filter);
+  applyAndPreview(sid);
+  toast('已应用视图：'+v.name);
+}
+
 function exportSourceData(srcId){
   var rows=filterSourceRows(srcId);
-  var header = (rows.length && rows[0].asin)
-    ? ['asin','brand','market','star','price','ratings','launch','title']
-    : ['id','market','rating','dimension','sentiment','text'];
-  var csv=[header.join(',')].concat(rows.map(function(r){
-    return header.map(function(h){var v=(''+(r[h]==null?'':r[h])).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}).join(',');
-  })).join('\n');
   if(!rows.length){ toast('该数据源无明细数据可导出'); return; }
+  var csv=buildSourceCsv(rows);
+  if(!csv){ toast('该数据源无明细数据可导出'); return; }
   var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=((DATA.sources[srcId]||{}).name||srcId)+'_export.csv';
   document.body.appendChild(a);a.click();document.body.removeChild(a);
@@ -9542,6 +9713,7 @@ function renderPurposeWorkspace(){
 // --- Structured Panel ---
 function renderStructPanel(p){
   var sp=$('#structPanel');
+  var acfg=loadAuditCfg();
 
   // Data source cards
   var srcHtml='<div class="struct-section"><div class="ss-head">数据源卡（调用 '+p.sources.length+' 个）</div>';
@@ -9619,7 +9791,15 @@ function renderStructPanel(p){
     '<div class="audit-box">'+
       '<textarea class="nl-input" id="auditInput" placeholder="描述你的目的，例如：我想了解德国站差评里关于噪音和尺寸的问题，看看能不能找到产品改进方向"></textarea>'+
       '<div class="audit-actions">'+
-        '<button class="export-ai" onclick="runAuditEngine()">运行核对</button>'+
+        '<button class="export-ai" onclick="runAuditEngine()">规则核对</button>'+
+        '<button class="export-ai ai-boost" onclick="runAuditEngineAI()">AI 增强核对</button>'+
+        '<button class="audit-cfg-btn" id="auditCfgBtn" onclick="toggleAuditCfg()">'+(window.__auditCfgOpen?'AI 配置 ▴':'AI 配置 ▾')+'</button>'+
+      '</div>'+
+      '<div class="audit-cfg" id="auditCfg" style="display:'+(window.__auditCfgOpen?'block':'none')+'">'+
+        '<div class="ac-row"><label>API 端点</label><input class="ac-inp" id="acBase" placeholder="https://api.deepseek.com/v1" value="'+escHtml(acfg.base)+'"></div>'+
+        '<div class="ac-row"><label>模型名</label><input class="ac-inp" id="acModel" placeholder="deepseek-v4-flash" value="'+escHtml(acfg.model)+'"><span class="ac-hint">待改为你实际可用的模型（如 deepseek-chat）</span></div>'+
+        '<div class="ac-row"><label>API Key</label><input class="ac-inp" id="acKey" type="password" placeholder="sk-...（仅存本地浏览器，不进仓库）" value="'+escHtml(acfg.key)+'"></div>'+
+        '<div class="ac-actions"><button class="ct-btn primary" onclick="saveAuditCfg()">保存配置</button><span class="ac-saved" id="acSaved"></span></div>'+
       '</div>'+
     '</div>'+
     '<div class="audit-result" id="auditResult"></div>'+
@@ -9971,18 +10151,20 @@ function openSourceFilter(sid){
         '<button class="sf-tab" data-tab="preview" onclick="switchSfTab(\''+sid+'\',\'preview\')">数据预览</button>'+
       '</div>'+
       '<div class="sf-body" id="'+fid+'_body">'+
-        '<div class="sf-pane" id="'+fid+'_pane_filter">'+filtHtml+'</div>'+
+        '<div class="sf-pane" id="'+fid+'_pane_filter">'+filtHtml+'<div class="sf-views" id="sfViews_'+sid+'"></div></div>'+
         '<div class="sf-pane" id="'+fid+'_pane_preview" style="display:none"></div>'+
       '</div>'+
       '<div class="sf-foot">'+
         '<span class="sf-sel-count">已选 <b id="'+fid+'_cnt">0</b> 项筛选条件</span>'+
         '<button class="sf-btn ghost" onclick="resetSourceFilters(\''+sid+'\')">重置</button>'+
+        '<button class="sf-btn ghost" onclick="saveModalView(\''+sid+'\')">保存当前视图</button>'+
         '<button class="sf-btn primary" onclick="confirmApplyFilter(\''+sid+'\')">应用筛选并查看结果</button>'+
       '</div>'+
     '</div>';
   document.body.appendChild(bd);
   bindFilterInputs(sid);
   updateFilterCount(sid);
+  renderSfViews(sid);
   // 若已有筛选状态 → 回填筛选项 + 自动跳到预览 tab（真筛选）
   var p=getPurpose(state.ws,state.purposeId);
   if(p && p._srcFilters && p._srcFilters[sid]){
@@ -10175,6 +10357,8 @@ function buildPreviewPanel(s,filters,sid){
   var rows=getSourceRows(sid);
   if(!rows) return '<div class="pv-empty">该数据源暂未接入明细数据（records='+(s.records||0)+'）。筛选与数据预览将在接入真实数据后生效；当前导出方案包时该源不含明细 CSV。</div>';
   var matched=applyRichFiltersToRows(s, rows, filters);
+  window.__pvMatched=window.__pvMatched||{}; window.__pvMatched[sid]=matched;
+  window.__pvFilterDesc=window.__pvFilterDesc||{}; window.__pvFilterDesc[sid]=summarizeFilter(s,filters);
   var stats=buildStatBars(s,filters,matched);
   var headCols = rows[0].asin
     ? ['ASIN','品牌','市场','星级','价格','标题']
@@ -10194,7 +10378,8 @@ function buildPreviewPanel(s,filters,sid){
     +'<div class="pv-match"><span class="pv-num">'+matched.length.toLocaleString()+'</span><span class="pv-unit">条匹配记录</span><span class="pv-badge">占总量 '+pct+'%（共 '+rows.length+' 条）</span></div>'
     +'<div class="pv-stats">'+stats+'</div>'
     +'<div class="pv-table-wrap"><table class="pv-table"><thead><tr>'+head+'</tr></thead><tbody>'+(sample||'<tr><td colspan="6" style="text-align:center;color:var(--muted)">无匹配记录</td></tr>')+'</tbody></table></div>'
-    +'<div class="pv-note">展示前 '+Math.min(6,matched.length)+' 条真实样例 · 应用筛选后，导出方案包将包含这 '+matched.length+' 条过滤后的真实 CSV</div>';
+    +'<div class="pv-note">展示前 '+Math.min(6,matched.length)+' 条真实样例 · 应用筛选后，导出方案包将包含这 '+matched.length+' 条过滤后的真实 CSV</div>'
+    +'<div class="pv-actions"><button class="ct-btn" onclick="cihAddFilteredToCart(\''+sid+'\',{rows:window.__pvMatched['+JSON.stringify(sid)+'],filterLabel:window.__pvFilterDesc['+JSON.stringify(sid)+']})">加入购物车</button></div>';
 }
 
 function buildStatBars(s,filters,matched){
@@ -11164,6 +11349,174 @@ function auditRemoveFramework(fid){
   toast('已移除分析框架');
 }
 
+// ───────────────────────────────────────────────
+// 目的核对引擎 · AI 增强核对（DeepSeek v4 flash · BYOK）
+// 配置仅存浏览器 localStorage，绝不进仓库；未配 Key 自动回退规则引擎。
+// ───────────────────────────────────────────────
+window.__auditCfgOpen=(function(){ try{ return localStorage.getItem('cih_audit_cfg_open')==='1'; }catch(e){ return false; } })();
+var DS_KEY_LS='cih_deepseek_key', DS_BASE_LS='cih_deepseek_base', DS_MODEL_LS='cih_deepseek_model', DS_OPEN_LS='cih_audit_cfg_open';
+function loadAuditCfg(){
+  try{
+    return {
+      base: localStorage.getItem(DS_BASE_LS)||'https://api.deepseek.com/v1',
+      model: localStorage.getItem(DS_MODEL_LS)||'deepseek-v4-flash',
+      key: localStorage.getItem(DS_KEY_LS)||''
+    };
+  }catch(e){ return {base:'https://api.deepseek.com/v1', model:'deepseek-v4-flash', key:''}; }
+}
+function saveAuditCfg(){
+  var b=document.getElementById('acBase').value.trim();
+  var m=document.getElementById('acModel').value.trim();
+  var k=document.getElementById('acKey').value.trim();
+  try{
+    if(b) localStorage.setItem(DS_BASE_LS,b); else localStorage.removeItem(DS_BASE_LS);
+    if(m) localStorage.setItem(DS_MODEL_LS,m); else localStorage.removeItem(DS_MODEL_LS);
+    if(k) localStorage.setItem(DS_KEY_LS,k); // 仅用户输入了 key 才覆盖，避免误清空
+  }catch(e){}
+  var s=document.getElementById('acSaved'); if(s){ s.textContent='已保存（仅本机）'; setTimeout(function(){s.textContent='';},2200); }
+  toast('AI 配置已保存');
+}
+function toggleAuditCfg(){
+  window.__auditCfgOpen=!window.__auditCfgOpen;
+  try{ localStorage.setItem(DS_OPEN_LS, window.__auditCfgOpen?'1':'0'); }catch(e){}
+  var el=document.getElementById('auditCfg'); if(el) el.style.display=window.__auditCfgOpen?'block':'none';
+  var btn=document.getElementById('auditCfgBtn'); if(btn) btn.textContent=window.__auditCfgOpen?'AI 配置 ▴':'AI 配置 ▾';
+}
+function findFrameworkId(name){
+  if(!name) return null;
+  var n=String(name).toLowerCase().trim();
+  var f=DATA.frameworks.find(function(x){ return x.id.toLowerCase()===n || (x.name&&x.name.toLowerCase()===n); });
+  if(f) return f.id;
+  f=DATA.frameworks.find(function(x){ return x.name && String(x.name).toLowerCase().indexOf(n)>=0; });
+  return f? f.id : null;
+}
+function findSourceIdByName(nm){
+  if(!nm) return null;
+  var n=String(nm).toLowerCase();
+  return Object.keys(DATA.sources).find(function(k){
+    var x=DATA.sources[k];
+    return (x.id&&x.id.toLowerCase()===n)||(x.name&&x.name.toLowerCase()===n)||(x.name&&x.name.toLowerCase().indexOf(n)>=0);
+  })||null;
+}
+function parseJsonSafe(s){
+  if(!s) return null;
+  s=String(s).trim().replace(/^```(?:json)?/i,'').replace(/```$/,'');
+  var a=s.indexOf('{'), b=s.lastIndexOf('}');
+  if(a>=0&&b>a) s=s.slice(a,b+1);
+  try{ return JSON.parse(s); }catch(e){ return null; }
+}
+function runAuditEngineAI(){
+  var el=document.getElementById('auditInput');
+  var txt=el?el.value.trim():'';
+  if(!txt){ toast('请输入你的目的或需求描述'); return; }
+  var cfg=loadAuditCfg();
+  if(!cfg.key){ toast('未配置 API Key，已用规则核对'); runAuditEngine(); return; }
+  var box=document.getElementById('auditResult'); if(!box) return;
+  box.innerHTML='<div class="audit-report"><div class="au-loading">正在调用 DeepSeek 增强核对…</div></div>';
+
+  var srcList=Object.keys(DATA.sources).map(function(sid){ var s=DATA.sources[sid]; return {id:sid,name:s.name,type:s.type,market:s.market,status:s.status}; });
+  var fwList=DATA.frameworks.map(function(f){ return {id:f.id,name:f.name,desc:f.desc}; });
+  var p=getPurpose(state.ws,state.purposeId);
+  var curSrc=(p&&p.sources)||[];
+  var curFw=state.selectedFrameworks||[];
+
+  var system='你是类目用户研究的数据分析顾问。根据用户的目的描述，从给定的「可选数据源」与「可选分析框架」中挑选最匹配项，并指出应移除的不相关项。分析框架不限于给定列表——若你的知识库有更合适的框架，可作为自定义框架给出（此时不填 id，只给 name 与 reason）。';
+  var user='用户目的描述：\n"""'+txt+'"""\n\n可选数据源（id / 名称 / 类型 / 市场 / 状态）：\n'+JSON.stringify(srcList)+
+    '\n\n可选分析框架（id / 名称 / 说明）：\n'+JSON.stringify(fwList)+
+    '\n\n当前已选数据源 id：'+JSON.stringify(curSrc)+'\n当前已选分析框架 id：'+JSON.stringify(curFw)+
+    '\n\n请严格只返回一个 JSON 对象（不要解释、不要 markdown 代码块），结构：\n'+
+    '{ "purposeType":"识别到的目的类型", "summary":"一句话判断", "recommendedSources":[{"id":"","name":"","reason":""}], "removeSources":[{"id":"","name":"","reason":""}], "recommendedFrameworks":[{"id":"","name":"","reason":""}], "removeFrameworks":[{"id":"","name":"","reason":""}], "verdict":"核对结论与下一步" }';
+
+  var messages=[{role:'system',content:system},{role:'user',content:user}];
+  fetch(cfg.base.replace(/\/$/,'')+'/chat/completions', {
+    method:'POST',
+    headers:{'content-type':'application/json','authorization':'Bearer '+cfg.key},
+    body:JSON.stringify({model:cfg.model, messages:messages, temperature:0.3})
+  }).then(function(r){ return r.json().catch(function(){ return {}; }); }).then(function(j){
+    var content = j&&j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content;
+    if(!content){ box.innerHTML='<div class="audit-report"><div class="as-empty">AI 未返回有效内容（'+(j&&j.error?escHtml(j.error.message||JSON.stringify(j.error)):'空响应')+'）。请检查 API Key / 端点 / 模型名后重试，或改用「规则核对」。</div></div>'; return; }
+    var payload=parseJsonSafe(content);
+    if(!payload){ box.innerHTML='<div class="audit-report"><div class="as-empty">AI 返回无法解析为 JSON。原始内容：<pre class="au-raw">'+escHtml(content.slice(0,800))+'</pre></div></div>'; return; }
+    renderAuditAIReport(payload, txt);
+  }).catch(function(err){
+    box.innerHTML='<div class="audit-report"><div class="as-empty">调用失败：'+escHtml(String((err&&err.message)||err))+'。请检查网络 / 端点 / API Key，或改用「规则核对」。</div></div>';
+  });
+}
+function renderAuditAIReport(pl, txt){
+  var box=document.getElementById('auditResult'); if(!box) return;
+  window.__lastAIPayload=pl;
+  var p=getPurpose(state.ws,state.purposeId);
+  var pSrcSet={}; (p&&p.sources||[]).forEach(function(s){pSrcSet[s]=1;});
+  var pFwSet={}; (state.selectedFrameworks||[]).forEach(function(f){pFwSet[f]=1;});
+  function srcRow(item, kind){
+    var sid=item.id||findSourceIdByName(item.name);
+    var s= sid?DATA.sources[sid]:null;
+    var name=item.name||(s&&s.name)||sid||'未知';
+    var inPlan=sid&&pSrcSet[sid];
+    var reason=item.reason||'';
+    if(kind==='add'){
+      var act=inPlan?'<span class="au-tag ok">已选 ✓</span>':'<button class="au-add-btn" onclick="auditAddSource(\''+(sid||'')+'\')">＋ 加入</button>';
+      return '<div class="au-item'+(inPlan?' au-inplan':'')+'"><div class="au-item-top"><span class="au-name">'+escHtml(name)+'</span>'+act+'</div><div class="au-meta">'+escHtml(reason||'AI 推荐')+'</div></div>';
+    }
+    var act2=inPlan?'<button class="au-add-btn danger" onclick="removeSourceFromPurpose(\''+(sid||'')+'\')">移除</button>':'<span class="au-tag">已不在方案中</span>';
+    return '<div class="au-item au-bad"><div class="au-item-top"><span class="au-name">'+escHtml(name)+'</span>'+act2+'</div><div class="au-meta">'+escHtml(reason||'AI 建议移除')+'</div></div>';
+  }
+  function fwRow(item){
+    var fid=item.id||findFrameworkId(item.name);
+    var f= fid?DATA.frameworks.find(function(x){return x.id===fid;}):null;
+    var known=!!f;
+    var inPlan=fid&&pFwSet[fid];
+    return '<div class="au-item'+(known?(inPlan?' au-inplan':''):' au-custom')+'">'+
+      '<div class="au-item-top"><input class="au-fw-name" value="'+escHtml(item.name||(f&&f.name)||'')+'">'+
+        (known?'<span class="au-tag">已知框架</span>':'<span class="au-tag custom">自定义</span>')+
+        (inPlan?'<span class="au-tag ok">已选 ✓</span>':'<button class="au-add-btn" onclick="aiApplyOneFramework(this)">应用</button>')+
+      '</div>'+
+      '<textarea class="au-fw-reason" placeholder="可编辑 AI 给出的理由 / 你的备注">'+escHtml(item.reason||'')+'</textarea>'+
+    '</div>';
+  }
+  var recSrc=(pl.recommendedSources||[]).map(function(x){return srcRow(x,'add');}).join('');
+  var rmSrc=(pl.removeSources||[]).map(function(x){return srcRow(x,'rm');}).join('');
+  var recFw=(pl.recommendedFrameworks||[]).map(function(x){return fwRow(x);}).join('');
+  var rmFw=(pl.removeFrameworks||[]).map(function(x){return fwRow(x);}).join('');
+  box.innerHTML='<div class="audit-report au-ai">'+
+    '<div class="au-ai-badge">DeepSeek 增强核对 · '+(pl.purposeType?escHtml(pl.purposeType):'')+'</div>'+
+    (pl.summary?'<div class="au-summary">'+escHtml(pl.summary)+'</div>':'')+
+    '<div class="audit-sec"><div class="as-title">AI 推荐数据源（点击加入 / 移除）</div>'+(recSrc||'<div class="as-empty">无</div>')+'</div>'+
+    (rmSrc?'<div class="audit-sec"><div class="as-title">AI 建议移除的数据源</div>'+rmSrc+'</div>':'')+
+    '<div class="audit-sec"><div class="as-title">AI 推荐分析框架（名称 / 理由可编辑，点击加入）</div>'+(recFw||'<div class="as-empty">无</div>')+'</div>'+
+    (rmFw?'<div class="audit-sec"><div class="as-title">AI 建议移除的分析框架</div>'+rmFw+'</div>':'')+
+    '<div class="audit-sec"><div class="as-title">核对结论</div><div class="as-verdict"><div class="au-verdict-item">'+escHtml(pl.verdict||'')+'</div></div></div>'+
+    '<div class="audit-ai-foot"><button class="export-ai primary" onclick="aiApplyAll()">一键应用 AI 建议</button><span class="au-ai-note">应用 = 加入推荐项 + 移除建议项，并保存自定义框架备注</span></div>'+
+  '</div>';
+}
+function aiApplyOneFramework(btn){
+  var row=btn.closest('.au-item'); if(!row) return;
+  var name=row.querySelector('.au-fw-name').value.trim();
+  var fid=findFrameworkId(name);
+  if(fid){ auditAddFramework(fid); return; }
+  var p=getPurpose(state.ws,state.purposeId); if(!p) return;
+  p.aiCustomFrameworks=p.aiCustomFrameworks||[];
+  p.aiCustomFrameworks.push({name:name, reason:row.querySelector('.au-fw-reason').value.trim()});
+  var txt=document.getElementById('auditInput')?document.getElementById('auditInput').value.trim():'';
+  renderStructPanel(p);
+  if(txt&&document.getElementById('auditInput')) document.getElementById('auditInput').value=txt;
+  toast('已记录自定义框架：'+name);
+}
+function aiApplyAll(){
+  var pl=window.__lastAIPayload; if(!pl){ toast('没有可应用的 AI 建议'); return; }
+  var p=getPurpose(state.ws,state.purposeId); if(!p) return;
+  var added=0, removed=0, custom=0;
+  (pl.recommendedSources||[]).forEach(function(x){ var sid=x.id||findSourceIdByName(x.name); if(sid && p.sources.indexOf(sid)<0){ p.sources.push(sid); added++; } });
+  (pl.removeSources||[]).forEach(function(x){ var sid=x.id||findSourceIdByName(x.name); if(sid){ var i=p.sources.indexOf(sid); if(i>=0){p.sources.splice(i,1);removed++;} } });
+  (pl.recommendedFrameworks||[]).forEach(function(x){ var fid=x.id||findFrameworkId(x.name); if(fid && (state.selectedFrameworks||[]).indexOf(fid)<0){ state.selectedFrameworks.push(fid); added++; } });
+  (pl.removeFrameworks||[]).forEach(function(x){ var fid=x.id||findFrameworkId(x.name); if(fid){ var i=(state.selectedFrameworks||[]).indexOf(fid); if(i>=0){state.selectedFrameworks.splice(i,1);removed++;} } });
+  (pl.recommendedFrameworks||[]).concat(pl.removeFrameworks||[]).forEach(function(x){ if(!x.id && !findFrameworkId(x.name)){ p.aiCustomFrameworks=p.aiCustomFrameworks||[]; p.aiCustomFrameworks.push({name:x.name,reason:x.reason}); custom++; } });
+  var txt=document.getElementById('auditInput')?document.getElementById('auditInput').value.trim():'';
+  renderStructPanel(p);
+  if(txt&&document.getElementById('auditInput')) document.getElementById('auditInput').value=txt;
+  toast('已应用 AI 建议：加入 '+added+' · 移除 '+removed+(custom?(' · 自定义 '+custom):''));
+}
+
 // --- 右栏综合概览面板 ---
 function renderExportOverview(p){
   var panel=$('#exportOverview');
@@ -11584,12 +11937,7 @@ function downloadPlanPackage(){
   var relInsights=getRelevantInsights(p, 5);
   var dataFiles=srcList.map(function(x){
     var rows=filterSourceRows(x.id);
-    var header = (rows.length && rows[0].asin)
-      ? ['asin','brand','market','star','price','ratings','launch','title']
-      : ['id','market','rating','dimension','sentiment','text'];
-    var csv='\ufeff'+header.join(',')+'\n'+rows.map(function(r){
-      return header.map(function(h){var v=(''+(r[h]==null?'':r[h])).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}).join(',');
-    }).join('\n');
+    var csv = rows.length ? ('\ufeff'+buildSourceCsv(rows)) : '# 该数据源经当前目的筛选后无匹配记录，未导出明细数据。\n';
     return {name:base+'02-数据包/'+x.id+'-'+x.s.name+'.csv', content:csv, n:rows.length};
   });
   var files=[
@@ -11943,6 +12291,7 @@ if(typeof initFloatBar==='function') initFloatBar();
 .pv-table td.pv-neg{color:#ef4444;font-weight:700}
 .pv-table td.pv-pos{color:#34c759;font-weight:700}
 .pv-note{font-size:11px;color:var(--muted);margin-top:11px;line-height:1.5}
+.pv-actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
 .pv-actions{margin-top:16px;display:flex;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--border)}
 .pv-empty{padding:30px;text-align:center;color:var(--muted);font-size:13px}
 
@@ -12076,6 +12425,17 @@ if(typeof initFloatBar==='function') initFloatBar();
   document.querySelectorAll('.cart-fmt button').forEach(function(b){ b.addEventListener('click',function(){ document.querySelectorAll('.cart-fmt button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); fmt=b.dataset.fmt; }); });
   window.addEventListener('message',function(e){ var d=e.data; if(d&&d.type==='cih-cart-add'&&d.item){ var arr=get(); var dup=arr.find(function(x){return x.source===d.item.source&&x.filter===d.item.filter&&x.sourceKey===d.item.sourceKey;}); if(dup){ dup.items=d.item.items; dup.count=d.item.count; dup.addedAt=d.item.addedAt; dup.columns=d.item.columns; dup._sel=true; } else { arr.push(d.item); } set(arr); badgeUpdate(); render(); ctoast('已加入购物车：'+d.item.source+'（'+d.item.count+' 条）'); } if(d&&(d.type==='cih-go-back'||d==='hub:back')){ goBackToSourceGallery(); } });
   badgeUpdate(); render();
+  // 暴露给同窗口内的看板直接调用（避免同窗口 postMessage 不可靠）；iframe 仍走 postMessage
+  function cihCartAddItem(item){
+    if(!item) return;
+    var arr=get();
+    var dup=arr.find(function(x){return x.source===item.source&&x.filter===item.filter&&x.sourceKey===item.sourceKey;});
+    if(dup){ dup.items=item.items; dup.count=item.count; dup.addedAt=item.addedAt; dup.columns=item.columns; dup._sel=true; }
+    else { arr.push(item); }
+    set(arr); badgeUpdate(); render();
+    ctoast('已加入购物车：'+item.source+'（'+item.count+' 条）');
+  }
+  window.cihCartAddItem = cihCartAddItem;
 })();
 </script>
 <script>
