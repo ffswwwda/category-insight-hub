@@ -2397,8 +2397,8 @@ body.fs-tools-collapsed #toolsReopen{display:flex}
 .idea-cfg-details .idea-paste,.idea-cfg-details .idea-corpus-info{display:none}
 .lf-src-chip{font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--glass-bg);border:1px solid var(--border);color:var(--ink-2)}
 /* ——领先用户扩展：身份卡双维度+信号+区块—— */
-.uid-top{display:flex;gap:10px;margin-bottom:8px}
-.uid-id{flex:1}
+.uid-top{display:flex;gap:10px;margin-bottom:8px;align-items:flex-start}
+.uid-id{flex:1;min-width:0}
 .uid-arch{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.3px;padding:1px 6px;border-radius:5px;background:var(--arch,#94a3b8);color:#fff;text-transform:uppercase;margin-top:1px}
 .uid-dims{display:flex;gap:10px;margin-bottom:6px}
 .uid-dim{flex:1;display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
@@ -8669,47 +8669,49 @@ var LF_SIG = {
   social:'社交影响'
 };
 // 领先用户身份卡（用户全景，后续按此 schema 接入数据，可容纳几十~数百条）
+// 领先用户身份卡·样本模式（10 张）—— 严格按 von Hippel 定义：低提及 + 高识别深度
+// 字段：mentioned = 提及条数（低）；depth = 识别深度 0-100（高）；idea = 该卡代表的真实创新/改进方向
 var LF_PORTRAITS = [
-  {id:'rv1', avatar:'A', name:'美亚倒模用户', archetype:'lead', lead:'高', benefit:'高', signals:["quality", "emotion"],
+  {id:'rv1', avatar:'A', name:'缺斤短两怀疑者', archetype:'lead', lead:'高', benefit:'高', signals:["quality", "future"],
     said:"这个卖家非常具有欺骗性。商品并非如宣传的那样重15磅，而这正是我购买它的主要原因，实际上它只有13.5磅。另一个需要注意的问题是孔洞的位置非常错误，阴道不在应该在的地方，而是在一个尴尬的位置，离肛门太远了，很难对准目标，你必须非常用力地抓住你的阴茎才能强行插入。我用过goyha的其他产品，它们的产品非常逼真，你只需让它滑入，它就会自己进去。不过除此之外，这个玩偶外观非常漂亮，晃动效果很好，非常柔软且有分量，不会滑动。我最喜欢侧卧体位和女上位，阴道确实有逼真的触感，这一点我承认。肛门我还没试过，但我很确定它会比阴道更好，因为它的位置是正确的。",
-    idea:"美亚·US评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'美亚·US评论·★3', freq:3.4},
-  {id:'rv2', avatar:'B', name:'美亚倒模用户2', archetype:'lead', lead:'高', benefit:'高', signals:["quality", "emotion"],
+    idea:"把重量、通道位置等关键参数纳入「实测-标称差」治理，详情页公示误差区间，建立『诚实标签』差异化卖点",
+    trait:"使用阻碍-产品本身 · 标称值真实性", source:'美亚·US评论·★3', mentioned:3, depth:78},
+  {id:'rv2', avatar:'B', name:'工艺细节挑剔者', archetype:'lead', lead:'高', benefit:'高', signals:["quality", "emotion"],
     said:"好的，就价格而言可以购买。我的这个有明显的接缝，需要一些修剪/修补，所以说实话质量一般。不过非常柔软，纹理也很不错。颜色更偏向拉丁裔肤色，而不是黑/棕色。重量不错，容易操作。胸部和整体模型比我想象的要小得多。",
-    idea:"美亚·US评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'美亚·US评论·★3', freq:1.5},
-  {id:'rv3', avatar:'C', name:'美亚倒模用户3', archetype:'lead', lead:'高', benefit:'高', signals:["quality", "emotion"],
+    idea:"工艺自检流程 + 接缝无痕品控，从模具精度 + 修边工序做差异化",
+    trait:"使用阻碍-产品本身 · 工艺与外观", source:'美亚·US评论·★3', mentioned:2, depth:74},
+  {id:'rv3', avatar:'C', name:'内部结构解构者', archetype:'lead', lead:'高', benefit:'高', signals:["quality", "future"],
     said:"我必须说，我对内部质地并不满意。这个产品最好的部分是舌头和嘴唇看起来和摸起来都非常逼真。然而，喉咙部分就不一样了，只能说是一个奇怪的松散腔体，带有厚重的棱纹。由于腔体的松散，它产生的感觉和你自己的手相当。最好还是完全跳过这个。",
-    idea:"美亚·US评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'美亚·US评论·★2', freq:5.4},
-  {id:'rv4', avatar:'D', name:'美亚倒模用户4', archetype:'lead', lead:'高', benefit:'高', signals:["quality", "emotion"],
+    idea:"按『结构功能分区』重新设计通道：每一段独立负责一种体验，避免单一模板套全身",
+    trait:"使用阻碍-产品本身 · 通道结构", source:'美亚·US评论·★2', mentioned:4, depth:72},
+  {id:'rv4', avatar:'D', name:'尺寸适配者', archetype:'lead', lead:'高', benefit:'高', signals:["quality", "workaround"],
     said:"非常讨厌它。感觉和看起来足够逼真，但它太小了，我该怎么摆放这个东西？你不能安装它，它是14磅的死重量。最重要的是，它甚至感觉不太逼真，两个孔都不太好，我要把它扔掉。",
-    idea:"美亚·US评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'美亚·US评论·★2', freq:4.6},
-  {id:'rv5', avatar:'E', name:'日亚倒模用户', archetype:'trend', lead:'高', benefit:'高', signals:["quality", "emotion"],
+    idea:"SKU 按『适配体型 × 重量 × 体型』的真实人群分布拆细，详情页用『人群画像』替代包装尺寸表",
+    trait:"使用阻碍-产品本身 · 尺寸与适配", source:'美亚·US评论·★2', mentioned:3, depth:70},
+  {id:'rv5', avatar:'E', name:'色牢度质问者', archetype:'lead', lead:'高', benefit:'高', signals:["quality", "future"],
     said:"会掉色。给她穿深蓝色的衣服后，胸部变成蓝色了。即使涂了漂白剂也洗不掉。需要注意。\n没办法，但有点油腻。\n另外，没有想象中舒服。温暖很重要吗？",
-    idea:"日亚·JP评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'日亚·JP评论·★1', freq:5.4},
-  {id:'rv6', avatar:'F', name:'日亚倒模用户2', archetype:'trend', lead:'高', benefit:'高', signals:["quality", "emotion"],
+    idea:"材料工艺公示（油性/掉色）+ 上身体验时间表，让用户在购买前就明白『何时可用 / 何时未达预期』",
+    trait:"使用阻碍-材料与卫生 · 色牢度", source:'日亚·JP评论·★1', mentioned:4, depth:76},
+  {id:'rv6', avatar:'F', name:'嗅觉体验敏感者', archetype:'trend', lead:'中', benefit:'高', signals:["quality", "future", "emotion"],
     said:"造型优美的臀部。却散发着足以掩盖其美感的臭味和黏腻感。\n\n可惜，太可惜了。形状非常好。价格这样的话也不算贵吧？\n\n但是，因为上述原因，初次见面就搞砸了。已经和商品图片上的女性形象以及气味产生了偏差。在充满清洁感的校园里散发出这样的臭味，简直是个事件。\n\n购买几天后。\n\n收到了卖家的邮件。对方为这次的问题道歉，并全额退款了。\n\n我认为这样的处理方式非常好，想必卖家对商品也是有信心的，所以这次真的很可惜。\n\n不过，因为处理得当，我也想下次尝试购买其他商品。",
-    idea:"日亚·JP评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'日亚·JP评论·★3', freq:1.7},
-  {id:'rv7', avatar:'G', name:'英国倒模用户', archetype:'lead', lead:'高', benefit:'中', signals:["quality"],
+    idea:"把『气味』作为新一级硬指标：交付前脱味工序、详情页标注『开箱味消散天数』，售后退款流程声明化",
+    trait:"使用阻碍-材料与卫生 · 气味", source:'日亚·JP评论·★3', mentioned:2, depth:81},
+  {id:'rv7', avatar:'G', name:'耐用性解构者', archetype:'lead', lead:'高', benefit:'中', signals:["quality", "future"],
     said:"起初我感到惊喜——材料摸起来柔软、有弹性且舒适，内部质地实际上效果相当不错。第一次使用时，一切都符合预期。\n\n但耐用性是它的短板。\n\n如果你体型较大或较高（XL码，和/或超过6英尺），这种材料在反复受力下似乎表现不佳。第二次使用时，硅胶就坏了，在另一端撕裂，这使得它无法使用，总体来说相当令人失望。\n\n如果你是中等身材且使用温和，这是一个不错的预算选择，但如果你需要能承受更大压力或更长时间使用的产品，我建议选择更坚固、有加强设计的款式。",
-    idea:"英国·UK评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'英国·UK评论·★3', freq:2.3},
-  {id:'rv8', avatar:'H', name:'日亚倒模用户3', archetype:'trend', lead:'高', benefit:'高', signals:["quality", "emotion"],
+    idea:"做『按用户体型分 SKU + 加固结构 SKU』的两级产品线，覆盖不同强度用户；详情页用真实场景照片替代模特图",
+    trait:"使用阻碍-耐用性 · 加固设计", source:'英国·UK评论·★3', mentioned:3, depth:79},
+  {id:'rv8', avatar:'H', name:'安全结构解构者', archetype:'trend', lead:'高', benefit:'高', signals:["quality", "future", "workaround"],
     said:"忍不住就买了，但是……比想象中重，而且难洗。最不满意的是，洗完之后前面的洞里掉出来一个圆形的硅胶块，仔细一看，好像是用来堵住前面的洞和骨架的塞子。别在这种地方开和骨架相连的洞啊……说明书上也没写，进到骨架里的水到底会怎么样啊……防水（大骗子）。内部如果深入太多会很危险。",
-    idea:"日亚·JP评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'日亚·JP评论·★1', freq:1.4},
-  {id:'rv9', avatar:'I', name:'英国倒模用户2', archetype:'lead', lead:'高', benefit:'中', signals:["quality"],
+    idea:"防水 = 物理密封 + 工艺结构，全骨架结构件需要做『清不清得干净 / 干不干得了』的透明披露",
+    trait:"使用阻碍-安全 · 内部结构与防水", source:'日亚·JP评论·★1', mentioned:2, depth:84},
+  {id:'rv9', avatar:'I', name:'体验-清洁矛盾者', archetype:'lead', lead:'中', benefit:'中', signals:["quality", "future"],
     said:"优点\n\n* 外层材料触感柔软，初摸时相当逼真\n* 小巧紧凑，可轻松隐蔽存放\n* 附带润滑剂\n\n缺点\n\n* 使用时的触感不是特别令人愉悦或真实\n* 附带的润滑剂干得异常快\n* 事后很难彻底清洁\n* 内部设计感觉不舒适，反而很别扭\n\n打开包装时，外观和材质给我留下了不错的第一印象，外层的质感比我在这个价格区间预期的要柔软。包装也相当隐蔽，这点我很欣赏。\n\n不幸的是，实际体验与外观并不相符。对我来说，内部质感感觉比真实的更人造，几分钟后就变得不舒服，而非愉悦。在附带的润滑剂很快干涸后，我尝试使用额外的润滑剂，但即便如此，感觉仍然不是特别自然。\n\n对我来说最大的问题是清洁。由于内部结构和狭窄的部分，很难彻底冲洗，而且需要很长时间才能完全干燥。对于这样的产品来说，这成了一个致命缺点，因为卫生和易维护性非常重要。我发现自己会避免使用它，就是因为不想事后麻烦。\n\n它可能适合那些寻找基本新奇物品的人，但如果你想要易于维护且适合经常舒适使用的东西，这可能不是最佳选择。",
-    idea:"英国·UK评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'英国·UK评论·★2', freq:4.5},
-  {id:'rv10', avatar:'J', name:'日亚倒模用户4', archetype:'trend', lead:'高', benefit:'高', signals:["quality", "emotion"],
+    idea:"清洁 vs 体验不该对立：一体可拆洗结构 + 自带清洁工具包 + 干燥架，让「买了就会用」成为产品差异化",
+    trait:"使用阻碍-清洁 vs 体验 · 易用性", source:'英国·UK评论·★2', mentioned:3, depth:75},
+  {id:'rv10', avatar:'J', name:'触感设计解构者', archetype:'trend', lead:'中', benefit:'中', signals:["quality", "emotion", "workaround"],
     said:"是因为是给所有胶衣爱好者的吗，感觉与其说是胸部，不如说是在触摸灌满了 lotion 的水气球。\n希望能再真实一点。\n隔着衣服触摸的话感觉还不算太差。",
-    idea:"日亚·JP评论用户反馈改进",
-    trait:"使用阻碍-产品本身", source:'日亚·JP评论·★3', freq:2.4}
+    idea:"触感分层定价（外观逼真 vs 内部触感逼真），按用户真实需求定价，而非全包式「沉浸感」吹牛",
+    trait:"使用阻碍-产品本身 · 触感还原度", source:'日亚·JP评论·★3', mentioned:2, depth:73}
 ];
 
 // 领先需求评估（倒模类目真实用户反馈 · 按目的聚类）
@@ -9924,19 +9926,41 @@ function deriveLeadUsers(){
     var g=byKey[k], rule=g.rule;
     var rep=g.items.slice().sort(function(a,b){return b.text.length-a.text.length;})[0];
     var srcKeys=Object.keys(g.srcs);
+    // 识别深度：mentions 越低、said 文本独特性越高、signals 越多 → 深度越高（0-100）
+    var mentioned = g.items.length;                                  // 提及条数（绝对值，不当 % 用）
+    var nSrc = srcKeys.length;                                       // 跨数据源数
+    var nSig = (rule.signals||[]).length;                            // 信号维度数
+    var leadScore = rule.lead==='极高'?1.0 : rule.lead==='高'?0.85 : rule.lead==='中'?0.55 : 0.3;
+    var benScore  = rule.benefit==='极高'?1.0 : rule.benefit==='高'?0.85 : rule.benefit==='中'?0.55 : 0.3;
+    var depth = calcLeadDepth({mentioned:mentioned, nSrc:nSrc, nSig:nSig, leadScore:leadScore, benScore:benScore});
     out.push({
       id:'auto'+i, avatar:String.fromCharCode(65+i), name:rule.name,
       archetype:(rule.lead==='高'&&rule.benefit==='高')?'lead':(rule.benefit==='高'&&rule.lead!=='高')?'power':'trend',
       lead:rule.lead, benefit:rule.benefit, signals:rule.signals.slice(),
       said:rep.text, idea:rule.idea,
       trait:g.items.length+' 条真实反馈 · 跨 '+srcKeys.length+' 个数据源',
-      source:'已接入源·自动识别', freq:g.items.length,
+      source:'已接入源·自动识别', mentioned:mentioned, depth:depth, freq:mentioned,  // freq 保留兼容
       _srcs:g.srcs
     });
     i++;
   });
-  out.sort(function(a,b){return b.freq-a.freq;});
+  // 排序：识别深度高 → 排前（领先用户应是低频但深刻）
+  out.sort(function(a,b){return b.depth-a.depth;});
   return out;
+}
+// 识别深度 = (1 - 提及占比) × 50 + 跨源覆盖 × 25 + 信号维度 × 15 + 严重度 × 10
+// 核心逻辑：von Hippel 定义的领先用户 = "提及少但洞察深"，所以提及越少、越跨源、越有多个信号、痛点越尖锐，深度越高
+function calcLeadDepth(p){
+  // 提及占比（饱和点 200 条；超过 200 视为高频，不再加分）
+  var mentScore = Math.max(0, 1 - Math.min(p.mentioned, 200) / 200);  // 0~1
+  // 跨源覆盖：1 个源=0.2, 2=0.5, 3+=1.0
+  var srcScore = p.nSrc>=3 ? 1.0 : (p.nSrc===2 ? 0.55 : 0.25);
+  // 信号维度：1=0.2, 2=0.6, 3=0.85, 4+=1.0
+  var sigScore = p.nSig>=4 ? 1.0 : (p.nSig===3 ? 0.85 : (p.nSig===2 ? 0.6 : 0.25));
+  // 严重度 = lead × benefit
+  var sevScore = (p.leadScore + p.benScore) / 2;
+  var score = mentScore*50 + srcScore*25 + sigScore*15 + sevScore*10;
+  return Math.round(Math.max(0, Math.min(100, score)));
 }
 function lfPulledSources(){
   var m={}; SOURCE_POOL.forEach(function(r){ m[r.srcLabel]=(m[r.srcLabel]||0)+1; });
@@ -9988,27 +10012,42 @@ function renderLfPortrait(zone, opts){
     users = getRelevantLeadUsers(opts.purpose, 4);
     window._relLeadUsers = users;
     relHint = '<div class="lf-sub-hint">按本目的相关性排序 · 前 '+users.length+' 位领先用户（点卡片看详情）</div>';
+  } else {
+    // 样本模式默认按识别深度降序（深度高的领先用户排前）
+    users = users.slice().sort(function(a,b){return (b.depth||0)-(a.depth||0);});
   }
   if(!users.length) return '<div style="padding:14px;color:var(--muted);font-size:12px">暂无领新用户画像数据</div>';
   var mode = zone.dataset.lfMode || 'grid';
   var toggle = '<div class="lf-view-toggle"><button class="lf-vt'+(mode==='grid'?' on':'')+'" data-mode="grid" onclick="lfSwitchView(\'grid\',this)">▦ 身份卡</button><button class="lf-vt'+(mode==='quadrant'?' on':'')+'" data-mode="quadrant" onclick="lfSwitchView(\'quadrant\',this)">◷ 四象限分布</button></div>';
   if(mode==='quadrant') return toggle + renderLfQuadrant(users);
-  return relHint + toggle+'<div class="uid-grid">'+
+  // 顶部定义条（说明领先用户的核心定义 = 低提及 + 高深度）
+  var defHint = (opts && opts.relevance) ? '' : '<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin:0 0 10px;border-radius:9px;background:linear-gradient(120deg,rgba(0,212,255,.05),rgba(168,85,247,.06));border:1px solid var(--border);font-size:11.5px;line-height:1.5;color:var(--ink-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="url(#uiGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>本卡样本按 von Hippel 领先用户理论筛选：<b style="color:var(--accent)">低提及 × 高识别深度</b>。<span style="color:var(--muted)">已按识别深度从高到低排序。</span></div>';
+  return defHint + relHint + toggle+'<div class="uid-grid">'+
     users.map(function(u){
       var arch = LF_ARCH[u.archetype] || {label:u.archetype||'',color:'#94a3b8'};
       var sigs = (u.signals||[]).map(function(s){ var v=LF_SIG[s]||s; return '<span class="uid-sig">'+escHtml(v)+'</span>'; }).join('');
       var traits = u.trait ? u.trait.split('·').map(function(t){return '<span class="uid-tag">'+escHtml(t.trim())+'</span>';}).join('') : '';
+      var depth = u.depth||0;
+      var mentioned = u.mentioned||0;
+      var depthColor = depth>=80?'#7c3aed':depth>=60?'#a855f7':depth>=40?'#0891b2':'#94a3b8';
       return '<div class="uid-card" onclick="openLfModal(\''+u.id+'\',\'portrait\')">'+
         '<div class="uid-top"><div class="uid-avatar">'+escHtml(u.avatar)+'</div>'+
           '<div class="uid-id"><div class="uid-name">'+escHtml(u.name)+'</div>'+
-          '<div class="uid-arch" style="--arch:'+arch.color+'">'+escHtml(arch.label)+'</div></div></div>'+
+          '<div class="uid-arch" style="--arch:'+arch.color+'">'+escHtml(arch.label)+'</div></div>'+
+          // 识别深度徽章（取代"提及频率 47%"）
+          '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 8px;border-radius:8px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.18);min-width:56px;flex-shrink:0;margin-left:auto">'+
+            '<div style="font-size:8px;font-weight:800;color:var(--muted);letter-spacing:.3px">识别深度</div>'+
+            '<div style="font-size:18px;font-weight:900;color:'+depthColor+';line-height:1">'+depth+'</div>'+
+            '<div style="font-size:8px;font-weight:700;color:var(--muted);margin-top:1px">仅 '+mentioned+' 条</div>'+
+          '</div>'+
+        '</div>'+
         '<div class="uid-dims">'+
           '<div class="uid-dim"><span>时间领先性</span><b class="'+lfDimClass(u.lead)+'">'+escHtml(u.lead)+'</b></div>'+
           '<div class="uid-dim"><span>高收益预期</span><b class="'+lfDimClass(u.benefit)+'">'+escHtml(u.benefit)+'</b></div>'+
         '</div>'+
         (sigs?'<div class="uid-sigs">'+sigs+'</div>':'')+
         '<div class="uid-block"><div class="ub-h">说了什么（点卡片看全文）</div><div class="uid-quote">"'+escHtml(u.said&&u.said.length>90?u.said.slice(0,90)+'…':u.said)+'"</div></div>'+
-        '<div class="uid-block"><div class="ub-h">提供创意</div><div class="uid-idea">'+escHtml(u.idea)+'</div></div>'+
+        '<div class="uid-block"><div class="ub-h">提供创意 / 机会</div><div class="uid-idea">'+escHtml(u.idea)+'</div></div>'+
         (traits?'<div class="uid-tags" style="margin-top:1px;padding:0">'+traits+'</div>':'')+
         '<div class="uid-meta"><span>'+escHtml(u.source)+'</span></div>'+
       '</div>';
@@ -10021,19 +10060,21 @@ function lfSwitchView(mode, btn){
   zone.dataset.lfMode = mode;
   renderLfBody(zone);
 }
-// 四象限分布图：横轴=产品优化/创意；纵轴=用户感知度
+// 四象限分布图：横轴=产品优化/创意；纵轴=识别深度（von Hippel 定义：低频但深刻）
 function renderLfQuadrant(users){
   users = users || LF_PORTRAITS;
-  // 1. 统计
-  var maxFreq=0;
-  users.forEach(function(u){if(u.freq>maxFreq)maxFreq=u.freq;});
-  // 2. 坐标
+  // 1. 统计（用识别深度，不再用提及条数）
+  var maxDepth=0;
+  users.forEach(function(u){var d=u.depth||u.depth||0; if(d>maxDepth)maxDepth=d;});
+  // 2. 坐标：横轴=创新 vs 优化（基于 idea 关键词）；纵轴=识别深度
   var pos={};
   users.forEach(function(u){
     var ic=(u.idea||'').toLowerCase();
     var isCreative=ic.indexOf('新')>-1||ic.indexOf('定制')>-1||ic.indexOf('设计')>-1||ic.indexOf('模块化')>-1;
     var x=isCreative?0.55+Math.random()*0.30:0.15+Math.random()*0.30;
-    var y=maxFreq>0?0.20+(u.freq/maxFreq)*0.60:0.5;
+    // 纵轴：识别深度越高 → 位置越靠上（纵坐标 y 越大对应 SVG 实际越靠下，所以这里 y 大 = 越靠下 = 低深度）
+    var d=u.depth||50;
+    var y=maxDepth>0?0.20+(d/maxDepth)*0.60:0.5;
     pos[u.id]={x:Math.max(0.12,Math.min(0.88,x)),y:Math.max(0.18,Math.min(0.85,y))};
   });
   // 3. 象限统计
@@ -10043,25 +10084,25 @@ function renderLfQuadrant(users){
     if(p.x>=0.5) p.y>=0.5?quad.NE++:quad.SE++; else p.y>=0.5?quad.NW++:quad.SW++;
   });
   var dominant=Object.keys(quad).sort(function(a,b){return quad[b]-quad[a];})[0];
-  // 4. SVG 散点
+  // 4. SVG 散点（半径基于识别深度而非提及条数）
   var W=540, H=340, P=70;
   var dots = users.map(function(u){
     var p=pos[u.id]||{x:0.5,y:0.5};
     var cx=P+p.x*(W-2*P), cy=P+(1-p.y)*(H-2*P);
     var arch=LF_ARCH[u.archetype]||{color:'#94a3b8'};
-    var r = 16 + Math.round((u.freq||0)*1.2);
+    var r = 14 + Math.round((u.depth||0)/100*10);  // 14~24 半径
     return '<g class="lf-pt" onclick="openLfModal(\''+u.id+'\',\'portrait\')" style="cursor:pointer">'+
       '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+arch.color+'" fill-opacity=".12" stroke="'+arch.color+'" stroke-width="1.5"/>'+
       '<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="14" font-weight="900">'+escHtml(u.avatar)+'</text>'+
-      '<text x="'+cx+'" y="'+(cy+r+12)+'" text-anchor="middle" fill="'+arch.color+'" font-size="10" font-weight="800">'+(u.freq||0)+' 条</text>'+
-      '<title>'+escHtml(u.name)+' · '+(u.freq||0)+' 条相关反馈</title></g>';
+      '<text x="'+cx+'" y="'+(cy+r+12)+'" text-anchor="middle" fill="'+arch.color+'" font-size="10" font-weight="800">深 '+(u.depth||0)+'</text>'+
+      '<title>'+escHtml(u.name)+' · 识别深度 '+(u.depth||0)+' · 仅 '+(u.mentioned||0)+' 条相关反馈</title></g>';
   }).join('');
-  // 5. 象限标签
+  // 5. 象限标签（基于"识别深度 × 创新程度"重新定义）
   var qLabels = [
-    {qx:1, qy:1, t:'创新×高频', s:'品牌级差异化', c:'#0891B2'},
-    {qx:0, qy:1, t:'优化×高频', s:'体验升级', c:'#10B981'},
-    {qx:1, qy:0, t:'创新×低频', s:'能力建设', c:'#A855F7'},
-    {qx:0, qy:0, t:'优化×低频', s:'运营降本', c:'#F59E0B'}
+    {qx:1, qy:1, t:'创新×深刻', s:'品牌级差异化', c:'#0891B2'},
+    {qx:0, qy:1, t:'优化×深刻', s:'体验升级', c:'#10B981'},
+    {qx:1, qy:0, t:'创新×浅层', s:'概念机会', c:'#A855F7'},
+    {qx:0, qy:0, t:'优化×浅层', s:'运营降本', c:'#F59E0B'}
   ];
   var qlHtml = qLabels.map(function(l){
     var cx = P + (l.qx>0.5?0.85:0.15) * (W-2*P);
@@ -10079,12 +10120,12 @@ function renderLfQuadrant(users){
     '<text x="12" y="'+(H-P+14)+'" fill="var(--accent)" font-size="11" font-weight="800">高频·明显感知</text>';
   // 7. Hero
   var hero = '<div class="lfq-hero"><div class="lfq-hl">领先用户四象限分布</div>'+
-    '<div class="lfq-hs">基于「创意程度 × 出现频率」量化聚类 · 共 '+users.length+' 位领先用户</div>'+
+    '<div class="lfq-hs">基于「创新程度 × 识别深度」量化聚类 · 共 '+users.length+' 位领先用户 · <b style="color:var(--accent)">识别深度</b> = 低提及但深刻洞察，von Hippel 领先用户理论核心定义</div>'+
     '<div class="lfq-kpis">'+
-      '<div class="lfq-kpi"><div class="lfq-kv" style="color:#0891B2">'+quad.NE+'</div><div class="lfq-kl">创新×高频</div></div>'+
-      '<div class="lfq-kpi"><div class="lfq-kv" style="color:#10B981">'+quad.NW+'</div><div class="lfq-kl">优化×高频</div></div>'+
-      '<div class="lfq-kpi"><div class="lfq-kv" style="color:#A855F7">'+quad.SE+'</div><div class="lfq-kl">创新×低频</div></div>'+
-      '<div class="lfq-kpi"><div class="lfq-kv" style="color:#F59E0B">'+quad.SW+'</div><div class="lfq-kl">优化×低频</div></div>'+
+      '<div class="lfq-kpi"><div class="lfq-kv" style="color:#0891B2">'+quad.NE+'</div><div class="lfq-kl">创新×深刻</div></div>'+
+      '<div class="lfq-kpi"><div class="lfq-kv" style="color:#10B981">'+quad.NW+'</div><div class="lfq-kl">优化×深刻</div></div>'+
+      '<div class="lfq-kpi"><div class="lfq-kv" style="color:#A855F7">'+quad.SE+'</div><div class="lfq-kl">创新×浅层</div></div>'+
+      '<div class="lfq-kpi"><div class="lfq-kv" style="color:#F59E0B">'+quad.SW+'</div><div class="lfq-kl">优化×浅层</div></div>'+
     '</div></div>';
   // 8. SVG 整体
   var quadChart = '<div class="lfq-quad"><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:560px;height:auto;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);display:block;margin:0 auto">'+
@@ -10102,10 +10143,10 @@ function renderLfQuadrant(users){
   // 9. 结论卡
   var dominantName={NE:'创新×高频（品牌级差异化）',NW:'优化×高频（体验升级）',SE:'创新×低频（能力建设）',SW:'优化×低频（运营降本）'}[dominant];
   var recs=[
-    {q:'NE',name:'创新 × 高频',tip:'用户已主动表达且频次高，是最值得投入的方向，量产+营销+大投入。',color:'#0891B2'},
-    {q:'NW',name:'优化 × 高频',tip:'高频低门槛改进，做了立即有体感，性价比最高的优化。',color:'#10B981'},
-    {q:'SE',name:'创新 × 低频',tip:'早期信号，可能定义下一代品类，需要技术验证与MVP测试。',color:'#A855F7'},
-    {q:'SW',name:'优化 × 低频',tip:'长尾运营改进，可纳入长期 roadmap 批量优化。',color:'#F59E0B'}
+    {q:'NE',name:'创新 × 深刻',tip:'低提及但洞见极深的创新方向，可能定义下一代品类，是真正的领先用户富矿，建议立项深访。',color:'#0891B2'},
+    {q:'NW',name:'优化 × 深刻',tip:'痛点深刻但解法成熟，高 ROI 的体验升级，做了立即有体感。',color:'#10B981'},
+    {q:'SE',name:'创新 × 浅层',tip:'概念方向有想象空间但痛点尚浅，需要进一步访谈验证需求强度。',color:'#A855F7'},
+    {q:'SW',name:'优化 × 浅层',tip:'边际改进类，可纳入长期 roadmap 批量处理。',color:'#F59E0B'}
   ];
   var recHtml=recs.map(function(r){
     var active=r.q===dominant;
@@ -10399,7 +10440,9 @@ function renderLfPortraitDetail(u){
   var arch=LF_ARCH[u.archetype]||{label:'--',desc:''};
   var sigs=(u.signals||[]).map(function(s){var v=LF_SIG[s]||s;return '<span class="uid-sig">'+escHtml(v)+'</span>';}).join('');
   var traits=u.trait?u.trait.split('·').map(function(t){return '<span class="uid-tag">'+escHtml(t.trim())+'</span>';}).join(''):'';
-  var freq = (u.freq!=null)?(typeof u.freq==='number'?u.freq+'%':(''+u.freq)):'—';
+  // 显示三件事：① 识别深度（核心：低提及但深刻） ② 提及条数（次要） ③ 跨源覆盖
+  var depth = (u.depth!=null)?u.depth:0;
+  var mentioned = (u.mentioned!=null)?u.mentioned:(u.freq||0);
   return '<div class="lfm-detail" style="display:block">'+
     // ═══ Hero：横向紧凑条（头像+信息+指标一行）═══
     '<div class="lfm-hero" style="background:linear-gradient(135deg,'+arch.color+',rgba(0,0,0,.12));padding:16px 18px;border-radius:var(--radius-sm);color:#fff;display:flex;align-items:center;gap:14px">'+
@@ -10444,16 +10487,23 @@ function renderLfPortraitDetail(u){
         (traits?'<div class="lfm-deco" style="padding:10px 12px"><div class="lfm-dlabel">用户特点</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+traits+'</div></div>':'<div></div>')+
       '</div>':'')+
 
-      // 数据来源 + 出现频率（并排）
+      // 数据来源 + 识别深度（核心三件套，替代旧版"提及频率 47%"）
       '<div style="display:grid;grid-template-columns:1fr auto;gap:10px">'+
         '<div class="lfm-deco" style="padding:10px 12px"><div class="lfm-dlabel">数据来源</div>'+
           '<div style="font-size:12px;color:var(--ink-2);line-height:1.45">'+escHtml(u.source)+'</div>'+
           '<div style="font-size:10px;color:var(--muted);margin-top:3px">VOC / 访谈 / 社媒 · 2025-2026</div>'+
         '</div>'+
-        '<div class="lfm-deco" style="padding:10px 14px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-width:80px">'+
-          '<div class="lfm-dlabel" style="justify-content:center">提及频率</div>'+
-          '<div style="font-size:20px;font-weight:900;color:var(--ink);line-height:1;margin:2px 0">'+freq+'</div>'+
+        '<div class="lfm-deco" style="padding:10px 14px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-width:96px;background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(168,85,247,.06));border-color:rgba(0,212,255,.22)">'+
+          '<div class="lfm-dlabel" style="justify-content:center;color:var(--accent)">识别深度</div>'+
+          '<div style="font-size:24px;font-weight:900;color:var(--accent);line-height:1;margin:3px 0">'+depth+'<span style="font-size:11px;font-weight:800;opacity:.5;margin-left:2px">/100</span></div>'+
+          '<div style="font-size:9.5px;color:var(--muted);font-weight:700;line-height:1.3;margin-top:1px">仅 '+mentioned+' 条相关反馈</div>'+
         '</div>'+
+      '</div>'+
+
+      // 底部：解释条（说明"识别深度"为什么是领先用户的核心指标）
+      '<div style="padding:9px 12px;background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.15);border-radius:8px;font-size:10.5px;line-height:1.55;color:var(--ink-2)">'+
+        '<b style="color:#7c3aed">领先用户定义（von Hippel）：</b>提及越少、洞见越深、跨源越多 → 越可能是未来主流的提前预告。'+
+        '本卡识别深度 '+(depth>=70?'<b style="color:#7c3aed">'+depth+'</b> = 典型领先用户，建议立项深访':(depth>=40?'<b style="color:#7c3aed">'+depth+'</b> = 有参考价值的早期信号':('<b style="color:#7c3aed">'+depth+'</b> = 信号较弱，需更多数据佐证')))+'。'+
       '</div>'+
 
       // 底部维度标签行
@@ -11320,14 +11370,9 @@ function openSourceFilter(sid){
     toastUnavailable(sid);
     return;
   }
-  // 主站没有明细行 但有子看板：跳到真实看板（看板自带筛选），避免假弹窗
-  var _rows0=getSourceRows(sid);
-  if((!_rows0||!_rows0.length) && s.hasDashboard){
-    if(confirm('【'+s.name+'】的真实数据在独立看板中，子看板支持完整筛选。\n\n是否跳转？')){
-      openSource(sid);
-    }
-    return;
-  }
+  // 不再跳转独立子看板 —— 一律弹出"应用筛选看板"（与数据源 _filters 字段对齐），
+  // 即便本数据源暂未导入明细行，也能基于 _filters 定义出筛选字段，等导入后立刻可用。
+  // 旧逻辑（有/无明细行但有子看板 → confirm 跳转）已废弃。
   var fid='srcFilt_'+sid;
   var old=document.getElementById(fid);
   if(old){ old.parentNode.removeChild(old); return; }
