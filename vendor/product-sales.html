@@ -1143,10 +1143,13 @@ function syncChips(){
     setTimeout(()=>{ btn.classList.remove('cart-added'); btn.innerHTML=_psCartIcon(); }, 1500);
   }
   function describeFilter(){
-    const f=state.facets||{}, parts=[];
-    if(state.text) parts.push('搜索「'+state.text+'」');
-    Object.keys(f).forEach(k=>{ if(f[k]&&f[k].length) parts.push(k+':'+f[k].join('/')); });
-    return parts.length? parts.join(' · ') : '全部（未筛选）';
+    // 复用现有 facetsToText，覆盖所有筛选字段（价格/星级/销量/FBA/标签字段/类目等）
+    const text = facetsToText(state.facets || {});
+    const q = document.getElementById('nl-input');
+    const nl = (q && q.value) ? q.value.trim() : '';
+    const parts = text.slice();
+    if(nl) parts.push('搜索「'+nl+'」');
+    return parts.length ? parts.join(' · ') : '全部（未筛选）';
   }
 
   // ---------- 语言按钮 ----------
