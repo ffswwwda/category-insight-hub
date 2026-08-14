@@ -9,3 +9,10 @@ probe_xlsx3.py
 probe_tags.py
 canvas_preview.png
 layer5-forge.html
+# 正常版本备份（不推送，仅本地安全副本）
+category-insight-hub.normal.html
+vendor/product-reviews.normal.html
+vendor/shot*_us_*.png
+# 本地探查/验证脚本与产物（不入仓）
+test_round*/
+test_*/
