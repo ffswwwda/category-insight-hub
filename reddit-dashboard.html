@@ -102,6 +102,24 @@ tbody tr:hover{background:var(--panel2)}
 .modal .row{display:flex;gap:8px;justify-content:flex-end}
 .modal .row button{padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);cursor:pointer}
 .modal .row .ok{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* ===== 视图图层（多视图堆叠 + 批量加购） ===== */
+.vl-section{margin:0 0 14px;padding:12px 16px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.22);border-radius:12px}
+.vl-section .vl-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.vl-section .vl-title{font-weight:800;color:var(--accent);font-size:13px;letter-spacing:.3px}
+.vl-section .vl-hint{font-size:11.5px;color:var(--sub);flex:1;min-width:200px}
+.vl-batch-btn{padding:6px 12px;background:var(--accent);color:#fff;border:none;border-radius:9px;cursor:pointer;font-size:12px;font-weight:600}
+.vl-batch-btn:hover{opacity:.92}
+.vl-batch-btn:disabled{opacity:.4;cursor:not-allowed}
+.vl-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.vl-list .vl-empty{padding:10px 14px;font-size:12px;color:var(--sub);background:var(--panel2);border-radius:9px;border:1px dashed var(--line);grid-column:1/-1}
+.vl-item{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:6px}
+.vl-item:hover{border-color:var(--accent)}
+.vl-item input[type=checkbox]{width:14px;height:14px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+.vl-item .vl-name{flex:1;min-width:0;font-size:12px;font-weight:600;color:var(--txt);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vl-item .vl-name:hover{color:var(--accent)}
+.vl-item .vl-sub{font-size:10px;color:var(--sub);font-weight:400;display:block;margin-top:1px}
+.vl-item .vl-del{background:none;border:none;color:var(--sub);cursor:pointer;font-size:13px;padding:0 2px;flex-shrink:0}
+.vl-item .vl-del:hover{color:var(--danger)}
 </style>
 </head>
 <body>
@@ -161,9 +179,19 @@ tbody tr:hover{background:var(--panel2)}
           <option value="time_asc">时间 ↑</option>
         </select>
         <button class="save-btn" id="saveViewBtn" onclick="saveView()">保存视图</button>
+        <button class="save-btn" id="vlToggleBtn" onclick="toggleViewLayers()" title="展开/收起视图图层（多视图堆叠 · 可批量加入购物车）">视图图层 <span id="vlCount">0</span></button>
         <button class="ghost-btn" onclick="clearAll()">清除筛选</button>
       </div>
     </div>
+    <!-- 视图图层（多视图保存/应用/删除/批量加入购物车） -->
+    <section class="vl-section" id="vlSection" style="display:none">
+      <div class="vl-head">
+        <span class="vl-title">视图图层</span>
+        <span class="vl-hint">筛选后点「保存视图」即可在此堆叠多组筛选条件 · 点应用切换 · 可勾选批量加入购物车</span>
+        <button class="vl-batch-btn" id="vlBatchBtn" onclick="vlBatchAddToCart()">批量加入购物车 (<span id="vlSelCount">0</span>)</button>
+      </div>
+      <div class="vl-list" id="vlList"><div class="vl-empty">暂无视图，先点「保存视图」即可在此堆叠</div></div>
+    </section>
     <section class="kpis" id="kpis"></section>
     <section class="dist" id="dist"></section>
     <section class="table-wrap">
@@ -293,6 +321,7 @@ function buildFilters(){
     cont.appendChild(g);
   });
   renderSavedViews();
+  renderViewLayers();
 }
 function countField(rows,f){ const m={}; rows.forEach(r=>{ const v=(r[f]||'').trim(); if(v) m[v]=(m[v]||0)+1; }); return m; }
 function buildTagTree(rows,f){
@@ -418,7 +447,70 @@ function renderSavedViews(){
   box.innerHTML=SAVED.map((v,i)=>'<span class="chip" style="cursor:pointer" onclick="applyView('+i+')" title="套用">'+esc(v.name)+' <span class="n" onclick="event.stopPropagation();delView('+i+')">✕</span></span>').join('');
 }
 function applyView(i){ const v=SAVED[i]; if(!v||v.board!==state.board){ toast('该视图属于「'+(BOARDS[v.board]?BOARDS[v.board].label:'')+'」板，请先切换到对应板'); return; } state.filters=JSON.parse(JSON.stringify(v.filters)); state.search=v.search||''; state.sort=v.sort||'votes_desc'; state.page=0; document.getElementById('search').value=state.search; renderFilters(); applyAndRender(); }
-function delView(i){ SAVED.splice(i,1); localStorage.setItem('reddit_views',JSON.stringify(SAVED)); renderSavedViews(); }
+function delView(i){ SAVED.splice(i,1); localStorage.setItem('reddit_views',JSON.stringify(SAVED)); renderSavedViews(); renderViewLayers(); }
+
+/* ===================== 视图图层（多视图堆叠 + 批量加购） ===================== */
+function toggleViewLayers(){
+  const sec=document.getElementById('vlSection');
+  if(!sec) return;
+  sec.style.display=(sec.style.display==='none'||!sec.style.display)?'block':'none';
+  if(sec.style.display==='block') renderViewLayers();
+}
+function renderViewLayers(){
+  const list=document.getElementById('vlList'), cnt=document.getElementById('vlCount'), sel=document.getElementById('vlSelCount'), btn=document.getElementById('vlBatchBtn');
+  if(!list) return;
+  if(cnt) cnt.textContent=SAVED.length;
+  if(!SAVED.length){
+    list.innerHTML='<div class="vl-empty">暂无视图，先点「保存视图」即可在此堆叠</div>';
+    if(sel) sel.textContent='0';
+    if(btn) btn.disabled=true;
+    return;
+  }
+  list.innerHTML=SAVED.map((v,i)=>{
+    const d=v.at?new Date(v.at).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    return '<div class="vl-item" data-i="'+i+'">'+
+      '<input type="checkbox" class="vl-chk" data-i="'+i+'" checked>'+
+      '<div class="vl-name" onclick="applyView('+i+')" title="点击应用此视图">'+esc(v.name)+'<span class="vl-sub">'+esc((BOARDS[v.board]&&BOARDS[v.board].label)||v.board||'')+' · '+d+'</span></div>'+
+      '<button class="vl-del" onclick="delView('+i+')" title="删除视图">✕</button>'+
+      '</div>';
+  }).join('');
+  list.querySelectorAll('.vl-chk').forEach(c=>c.addEventListener('change',updateVlSel));
+  updateVlSel();
+}
+function updateVlSel(){
+  const sel=document.getElementById('vlSelCount'), btn=document.getElementById('vlBatchBtn');
+  if(!sel||!btn) return;
+  const n=document.querySelectorAll('.vl-chk:checked').length;
+  sel.textContent=n;
+  btn.disabled=n===0;
+}
+function vlBatchAddToCart(){
+  const ids=[...document.querySelectorAll('.vl-chk:checked')].map(c=>Number(c.dataset.i));
+  if(!ids.length){ toast('请先勾选要加入购物车的视图'); return; }
+  let total=0, sent=0;
+  ids.forEach(i=>{
+    const v=SAVED[i]; if(!v) return;
+    // 模拟应用此视图的筛选，再走 addFilteredToCart 的 item 构造
+    const cfg=BOARDS[v.board]; if(!cfg) return;
+    const tmpFilters=JSON.parse(JSON.stringify(state.filters));
+    const tmpSearch=state.search, tmpSort=state.sort, tmpBoard=state.board;
+    state.board=v.board; state.filters=JSON.parse(JSON.stringify(v.filters||{})); state.search=v.search||''; state.sort=v.sort||'votes_desc';
+    // 重新计算该视图的 filtered
+    applyAndRender();
+    const rows=state.filtered;
+    const columns=cfg.cols.map(c=>({key:c.k,label:c.l}));
+    const desc=Object.keys(state.filters).map(f=>{ const x=state.filters[f]; if(x instanceof Set) return f+':'+[...x].join('/'); const ds=[]; for(const d in x) ds.push(dimLabel(d)+'('+Object.keys(x[d]).join('/')+')'); return f+'['+ds.join(',')+']'; }).join('; ')+(state.search?' 搜索:'+state.search:'');
+    const item={ id:'reddit-view-'+i+'-'+Date.now(), source:'Reddit·'+cfg.label+'·视图「'+v.name+'」', filter:desc||'全部', sourceKey:'reddit-'+v.board, items:rows, columns:columns, count:rows.length, addedAt:Date.now(), _sel:true };
+    total+=rows.length;
+    if(window.parent&&window.parent!==window&&window.parent.cihCartAddItem){ window.parent.cihCartAddItem(item); sent++; }
+    else if(window.cihCartAddItem){ window.cihCartAddItem(item); sent++; }
+    // 恢复原 state
+    state.board=tmpBoard; state.filters=tmpFilters; state.search=tmpSearch; state.sort=tmpSort;
+    applyAndRender();
+  });
+  if(sent) toast('已批量加入购物车：'+sent+' 个视图 · 共 '+total+' 条');
+  else toast('未检测到主站购物车');
+}
 
 /* ===================== 工具 ===================== */
 function esc(s){ return (''+s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }

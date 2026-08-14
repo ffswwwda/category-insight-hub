@@ -16,3 +16,4 @@ vendor/shot*_us_*.png
 # 本地探查/验证脚本与产物（不入仓）
 test_round*/
 test_*/
+_backup_r10_20260814_131855/

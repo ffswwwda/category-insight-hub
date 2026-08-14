@@ -93,14 +93,13 @@ body.dark .filterbar{background:rgba(20,28,48,.5)}
 .filter-chip.on{background:var(--accent-weak);color:var(--accent);border-color:var(--accent)}
 .filter-label{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.4px}
 
-/* ===== VOC 筛选右抽屉 ===== */
-.filter-overlay{position:fixed;inset:0;background:rgba(8,12,24,.55);backdrop-filter:blur(3px);z-index:100;display:none;align-items:stretch;justify-content:flex-end}
-.filter-overlay.open{display:flex;animation:fpFadeIn .22s ease}
-.filter-panel{width:520px;max-width:96vw;background:var(--bg);display:flex;flex-direction:column;height:100vh;box-shadow:-8px 0 40px rgba(0,0,0,.18);animation:fpSlideIn .26s cubic-bezier(.2,.8,.3,1);overflow:hidden}
-body.dark .filter-panel{background:#0e1424}
-@keyframes fpFadeIn{from{opacity:0}to{opacity:1}}
-@keyframes fpSlideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
-.fp-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;background:var(--panel);flex-shrink:0}
+/* ===== VOC 筛选区（常驻区块，可收起） ===== */
+.filter-overlay{position:static;inset:auto;background:transparent;backdrop-filter:none;z-index:auto;display:block;align-items:stretch;justify-content:stretch;border-bottom:1px solid var(--border);flex-shrink:0}
+.filter-overlay.open{display:block;animation:none}
+.filter-panel{width:100%;max-width:100%;background:var(--panel);display:flex;flex-direction:column;height:auto;box-shadow:none;animation:none;overflow:hidden;max-height:58vh;transition:max-height .3s ease,opacity .25s ease;opacity:1}
+body.dark .filter-panel{background:rgba(20,28,48,.5)}
+.filter-panel.collapsed{max-height:0;opacity:0}
+.fp-head{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;background:var(--panel);flex-shrink:0}
 body.dark .fp-head{background:rgba(20,28,48,.7)}
 .fp-title{font-size:16px;font-weight:700;color:var(--ink)}
 .fp-sub{font-size:11.5px;color:var(--muted);margin-top:4px}
@@ -125,6 +124,46 @@ body.dark .fp-group{background:rgba(20,28,48,.5)}
 .fp-input{border:1px solid var(--border);background:var(--panel);border-radius:8px;padding:8px 12px;font-size:12.5px;color:var(--ink);width:100%;font-family:var(--font);margin-top:6px}
 .fp-input:focus{outline:none;border-color:var(--accent)}
 .fp-kw-box{margin-top:4px}
+
+/* ===== 评价源数据表格 ===== */
+.rt-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;background:var(--panel);margin-bottom:14px}
+.rt-table{width:100%;border-collapse:collapse;font-size:12px;min-width:980px}
+.rt-table th{position:sticky;top:0;text-align:left;padding:10px 12px;background:color-mix(in srgb,var(--accent) 8%,var(--panel));color:var(--ink);font-weight:700;border-bottom:1px solid var(--border);white-space:nowrap;z-index:1}
+.rt-table td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink-2);vertical-align:top}
+.rt-table tr:last-child td{border-bottom:none}
+.rt-table tr:hover td{background:color-mix(in srgb,var(--accent) 4%,transparent)}
+.rt-cell-text{max-width:340px;white-space:normal;line-height:1.45;min-width:200px}
+.rt-cell-nowrap{white-space:nowrap}
+.rt-stars{color:var(--star);font-weight:700;letter-spacing:1px}
+.rt-att{font-weight:600;padding:1px 8px;border-radius:8px;font-size:10.5px;display:inline-block}
+.rt-att.负面{background:rgba(224,86,86,.12);color:var(--danger)}
+.rt-att.正面{background:rgba(31,157,107,.14);color:var(--ok)}
+.rt-att.中性{background:rgba(136,147,168,.14);color:var(--muted)}
+.rt-tags{font-size:10.5px;color:var(--muted);font-family:var(--mono);line-height:1.4;max-width:300px;min-width:140px}
+
+/* ===== 视图图层（多视图保存 / 应用 / 删除） ===== */
+.view-layers{flex-shrink:0;background:rgba(168,85,247,.06);border-bottom:1px solid var(--border);padding:8px 26px 10px}
+.view-layers.vl-open .vl-list{display:grid}
+.view-layers:not(.vl-open) .vl-list{display:none}
+.vl-head{display:flex;align-items:center;gap:8px}
+.vl-head .vl-toggle{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:var(--accent-2);font-size:12px;font-weight:700;cursor:pointer;padding:2px 0;font-family:var(--font)}
+.vl-count{font-size:11px;color:var(--muted);font-weight:600}
+.vl-list{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin-top:8px}
+.vl-item{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 11px;display:flex;align-items:center;gap:8px}
+.vl-item:hover{border-color:rgba(168,85,247,.4)}
+.vl-item .vl-name{flex:1;min-width:0;font-size:12px;font-weight:600;color:var(--ink);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vl-item .vl-name:hover{color:var(--accent-2)}
+.vl-item .vl-sub{font-size:10px;color:var(--muted);font-weight:400;display:block;margin-top:1px}
+.vl-item .vl-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0 2px;flex-shrink:0}
+.vl-item .vl-del:hover{color:var(--danger)}
+.vl-empty{font-size:11.5px;color:var(--muted);line-height:1.7;padding:4px 0}
+
+/* ===== 加入购物车反馈 ===== */
+.btn.cart-added{background:var(--ok);color:#fff;border-color:transparent}
+.save-view-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);background:var(--panel);border-radius:8px;padding:6px 12px;font-size:12.5px;color:var(--ink-2);cursor:pointer;transition:all .15s;font-family:var(--font)}
+.save-view-btn:hover{border-color:var(--accent);color:var(--accent)}
+.save-view-btn.cart-added{background:var(--ok);color:#fff;border-color:transparent}
+
 
 /* 顶部条上已筛选 badges */
 .applied-row{display:flex;flex-wrap:wrap;gap:5px;padding:6px 26px 10px;background:rgba(0,195,243,.06);border-bottom:1px solid var(--border);flex-shrink:0}
@@ -206,18 +245,21 @@ body.dark .applied-row{background:rgba(0,195,243,.1)}
       <input class="filter-input" id="searchInput" placeholder="评论原文/标签/标题关键词..." oninput="onSearchInput()">
       <span style="flex:1"></span>
       <span class="filter-label">已选 <b id="filterCount" style="color:var(--accent)">0</b> 项</span>
-      <button class="btn" onclick="openFilterPanel()">打开筛选面板</button>
+      <button class="btn" onclick="toggleFilterPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span id="fpToggleLabel">收起筛选</span></button>
+      <button class="save-view-btn" id="saveViewBtn" title="将当前筛选条件保存为一个新视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存为新视图</button>
+      <button class="save-view-btn" id="vlToggleBtn" title="展开 / 收起已保存的视图图层"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>视图图层</button>
+      <button class="save-view-btn" id="cartBtn" title="把当前筛选结果加入跨数据源购物车，统一下载"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>加入购物车</button>
     </div>
 
-    <!-- ===== VOC 筛选面板（右抽屉） ===== -->
-    <div class="filter-overlay" id="filterOverlay" onclick="if(event.target===this) closeFilterPanel()">
+    <!-- ===== VOC 筛选区（常驻区块，可收起） ===== -->
+    <div class="filter-overlay open" id="filterOverlay">
       <div class="filter-panel" id="filterPanel">
         <div class="fp-head">
           <div>
             <div class="fp-title">商品评价筛选</div>
             <div class="fp-sub">按 VOC 标签 + 评价字段筛 · 多选OR · 已选 <b id="fpCount">0</b> 项</div>
           </div>
-          <button class="fp-close" onclick="closeFilterPanel()">×</button>
+          <button class="fp-close" onclick="toggleFilterPanel()">收起 ▴</button>
         </div>
         <div class="fp-body" id="fpBody"><!-- 动态注入筛选组 --></div>
         <div class="fp-foot">
@@ -228,6 +270,14 @@ body.dark .applied-row{background:rgba(0,195,243,.1)}
           <button class="btn primary" onclick="applyFilterPanel()">应用筛选并查看结果</button>
         </div>
       </div>
+    </div>
+
+    <!-- ===== 视图图层（多视图保存 / 应用 / 删除） ===== -->
+    <div class="view-layers" id="viewLayers">
+      <div class="vl-head">
+        <button class="vl-toggle" id="vlToggle" type="button">▾ 视图图层 <span class="vl-count" id="vlCount">0</span></button>
+      </div>
+      <div class="vl-list" id="vlList"><div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div></div>
     </div>
 
     <div class="applied-row" id="appliedRow"></div>
@@ -6058,12 +6108,23 @@ window.PR_EU_RAW=[
     renderDimList();
     updateLangBtn();
     render();
+    renderFilterPanel();   // 常驻筛选区初始填充
+    renderViewLayers();    // 视图图层初始渲染
+    syncFpToggleLabel();
     var si = document.getElementById('searchInput');
     if(si) si.addEventListener('input', function(e){
       state.f.text = e.target.value;
       state.page = 1;
       render();
     });
+    // 视图图层展开 / 收起
+    var vl=document.getElementById('viewLayers'), vlBtn=document.getElementById('vlToggle'), vlBtn2=document.getElementById('vlToggleBtn');
+    function toggleVl(){ if(vl) vl.classList.toggle('vl-open'); }
+    if(vlBtn) vlBtn.addEventListener('click', toggleVl);
+    if(vlBtn2) vlBtn2.addEventListener('click', toggleVl);
+    // 保存视图 / 加入购物车按钮
+    var sv=document.getElementById('saveViewBtn'); if(sv) sv.addEventListener('click', saveFilterView);
+    var cb=document.getElementById('cartBtn'); if(cb) cb.addEventListener('click', addToCart);
   }
 
   // ---------- 侧栏：市场切换 ----------
@@ -6082,10 +6143,13 @@ window.PR_EU_RAW=[
       el.onclick = function(){
         state.board = el.getAttribute('data-board');
         state.page = 1;
-        // 切换市场时清空与原数据耦合的字段，避免跨市场错位
-        state.f.countries = [];
+        // 切换市场时清空全部筛选，避免跨市场残留导致整板"无数据"
+        state.f.text=''; state.f.stars=[]; state.f.atts=[]; state.f.countries=[];
+        state.f.aspects=[]; state.f.aspectSubs=[]; state.f.tags1=[]; state.f.tagKeyword='';
+        var si=document.getElementById('searchInput'); if(si) si.value='';
         renderBoards();
         renderDimList();
+        renderFilterPanel();
         render();
       };
     });
@@ -6173,7 +6237,7 @@ window.PR_EU_RAW=[
       // 基础
       if(!hitArrEq(r, f.stars, function(x){return x.star;})) return false;
       if(!hitArrEq(r, f.atts,  function(x){return x.attitude;})) return false;
-      if(!hitArrEq(r, f.countries, function(x){return x.country;})) return false;
+      if(!hitArrEq(r, f.countries, function(x){return x.market;})) return false;
       // aspect 顶级（一级）
       if(f.aspects && f.aspects.length){
         var segs = String(r.aspect||'').split(/[ 　，,丨]+/).filter(Boolean);
@@ -6226,18 +6290,30 @@ window.PR_EU_RAW=[
   }
 
   // ---------- 筛选面板（VOC 右抽屉） ----------
-  window.openFilterPanel = function(){
-    var ov = document.getElementById('filterOverlay');
-    if(!ov) return;
+  function syncFpToggleLabel(){
+    var lbl=document.getElementById('fpToggleLabel');
+    var p=document.getElementById('filterPanel');
+    if(lbl && p) lbl.textContent = p.classList.contains('collapsed') ? '展开筛选' : '收起筛选';
+  }
+  window.toggleFilterPanel = function(){
+    var ov=document.getElementById('filterOverlay'), p=document.getElementById('filterPanel');
+    if(!ov||!p) return;
     ov.classList.add('open');
-    document.body.style.overflow='hidden';
+    p.classList.toggle('collapsed');
+    if(!p.classList.contains('collapsed')) renderFilterPanel();
+    syncFpToggleLabel();
+  };
+  window.openFilterPanel = function(){
+    var ov=document.getElementById('filterOverlay'), p=document.getElementById('filterPanel');
+    if(!ov||!p) return;
+    ov.classList.add('open');
+    p.classList.remove('collapsed');
+    syncFpToggleLabel();
     renderFilterPanel();
   };
   window.closeFilterPanel = function(){
-    var ov = document.getElementById('filterOverlay');
-    if(!ov) return;
-    ov.classList.remove('open');
-    document.body.style.overflow='';
+    var p=document.getElementById('filterPanel');
+    if(p){ p.classList.add('collapsed'); syncFpToggleLabel(); }
   };
   // 多选 chip 切换 helper（mutate array 不重引用）
   function toggleArr(arr, val){
@@ -6337,22 +6413,100 @@ window.PR_EU_RAW=[
     state.page = 1;
     renderFilterPanel();
     render();
-    closeFilterPanel();
+    openFilterPanel();
   };
-  // 保存当前视图到 localStorage
+  // ===== 视图图层：保存 / 应用 / 删除多组筛选视图（localStorage） =====
+  var PRV_LS='cih-pr-saved-views';
+  function prvGet(){ try{ return JSON.parse(localStorage.getItem(PRV_LS)||'[]'); }catch(e){ return []; } }
+  function prvSet(a){ try{ localStorage.setItem(PRV_LS, JSON.stringify(a)); }catch(e){} }
+  function describeFilter(){
+    var f=state.f, parts=[];
+    if(f.text) parts.push('搜索「'+f.text+'」');
+    if(f.stars&&f.stars.length) parts.push(f.stars.join('★')+'★');
+    if(f.atts&&f.atts.length) parts.push('态度:'+f.atts.join('/'));
+    if(f.countries&&f.countries.length) parts.push('市场:'+f.countries.join('/'));
+    if(f.aspects&&f.aspects.length) parts.push('维度:'+f.aspects.join('/'));
+    if(f.aspectSubs&&f.aspectSubs.length) parts.push('细分:'+f.aspectSubs.join('/'));
+    if(f.tags1&&f.tags1.length) parts.push(f.tags1.join('/'));
+    if(f.tagKeyword) parts.push('标签:'+f.tagKeyword);
+    return parts.length? parts.join(' · ') : '全部（未筛选）';
+  }
+  function describeViewFilter(v){
+    var f=v.f||{}, parts=[];
+    if(f.text) parts.push('搜索'+f.text);
+    if((f.stars||[]).length) parts.push(f.stars.join('★')+'★');
+    if((f.aspects||[]).length) parts.push(f.aspects.join('/'));
+    if((f.tags1||[]).length) parts.push(f.tags1.join('/'));
+    return parts.length? parts.join(' · ') : '全部';
+  }
   window.saveFilterView = function(){
     try{
-      var key = 'cih-pr-view-'+state.board;
-      var payload = {
-        ts: Date.now(),
-        board: state.board,
-        f: JSON.parse(JSON.stringify(state.f))
-      };
-      localStorage.setItem(key, JSON.stringify(payload));
+      var views=prvGet();
+      var name=prompt('为当前筛选视图命名：', '视图 '+(views.length+1));
+      if(name===null) return;
+      views.push({id:'prv'+Date.now(), name:name.trim()||('视图'+(views.length+1)), board:state.board, f:JSON.parse(JSON.stringify(state.f)), ts:Date.now()});
+      prvSet(views);
+      renderViewLayers();
       var msg = document.getElementById('fpFootnote');
-      if(msg){ var old = msg.innerHTML; msg.innerHTML = '已保存 · '+new Date().toLocaleTimeString(); setTimeout(function(){msg.innerHTML=old;}, 1600); }
+      if(msg){ var old = msg.innerHTML; msg.innerHTML = '已保存视图 · '+new Date().toLocaleTimeString(); setTimeout(function(){msg.innerHTML=old;}, 1600); }
     }catch(e){ console.warn('saveFilterView fail:', e); }
   };
+  window.prvLoad = function(id){
+    var v=prvGet().find(function(x){return x.id===id;}); if(!v) return;
+    state.board=v.board;
+    state.f=JSON.parse(JSON.stringify(v.f||{}));
+    state.page=1;
+    var si=document.getElementById('searchInput'); if(si) si.value=state.f.text||'';
+    renderBoards(); renderDimList(); renderFilterPanel(); renderAppliedRow();
+    renderViewLayers(); render(); syncFpToggleLabel();
+  };
+  window.prvDel = function(id){ prvSet(prvGet().filter(function(x){return x.id!==id;})); renderViewLayers(); };
+  function renderViewLayers(){
+    var list=document.getElementById('vlList'), count=document.getElementById('vlCount');
+    if(!list) return;
+    var views=prvGet();
+    if(count) count.textContent=views.length.toString();
+    if(!views.length){ list.innerHTML='<div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div>'; return; }
+    list.innerHTML=views.map(function(v){
+      var d=''; try{ d=new Date(v.ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){}
+      return '<div class="vl-item">'+
+        '<div class="vl-name" onclick="prvLoad(\''+v.id+'\')" title="'+esc(describeViewFilter(v))+'">'+esc(v.name)+'<span class="vl-sub">'+esc(v.board||'')+' · '+d+'</span></div>'+
+        '<button class="vl-del" onclick="prvDel(\''+v.id+'\')" title="删除视图">✕</button></div>';
+    }).join('');
+  }
+  // 加入购物车：把当前筛选结果发给主站（hub）全局购物车，跨数据源统一下载
+  function cartBtnIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>加入购物车'; }
+  window.addToCart = function(){
+    var rows=applyFilter();
+    if(!rows.length){ _prToast('当前筛选无匹配评价'); return; }
+    var cols=['market','asin','star','attitude','title','text','aspect','tags','evidence','time','country'];
+    var items=rows.map(function(r){ var o={}; cols.forEach(function(c){ o[c]=r[c]; }); return o; });
+    var item={ id:'pr'+Date.now(), source:'商品评价·'+state.board, filter:describeFilter(), sourceKey:'product-reviews-'+state.board,
+      items:items, columns:cols.map(function(c){return {key:c,label:c};}), count:items.length, addedAt:Date.now(), _sel:true };
+    var btn=document.getElementById('cartBtn');
+    var sent=false;
+    if(window.parent && window.parent!==window){
+      window.parent.postMessage({type:'cih-cart-add', item:item}, '*'); sent=true;
+    } else if(window.parent && window.parent.cihCartAddItem){
+      window.parent.cihCartAddItem(item); sent=true;
+    }
+    if(sent){
+      if(btn){ btn.classList.add('cart-added'); btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M20 6 9 17l-5-5"/></svg>已加入 ('+items.length+')'; setTimeout(function(){ btn.classList.remove('cart-added'); btn.innerHTML=cartBtnIcon(); },1600); }
+      _prToast('已加入购物车：'+item.source+'（'+items.length+' 条）');
+    } else {
+      alert('未检测到主站购物车容器，请从主站打开本看板后再加入购物车');
+    }
+  };
+  // 轻量 toast（自包含，不依赖主站）
+  function _prToast(msg){
+    try{
+      var d=document.createElement('div');
+      d.textContent=msg;
+      d.style.cssText='position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:10px 18px;border-radius:22px;font-size:13px;z-index:99999;box-shadow:0 6px 24px rgba(0,0,0,.25);font-family:inherit';
+      document.body.appendChild(d);
+      setTimeout(function(){ d.style.transition='opacity .35s'; d.style.opacity='0'; setTimeout(function(){d.remove();},380); },1800);
+    }catch(e){ console.log('[prToast]',msg); }
+  }
   window.applyFilterPanel = function(){
     state.page = 1;
     closeFilterPanel();
@@ -6423,29 +6577,25 @@ window.PR_EU_RAW=[
     }
     var start = (state.page-1)*state.pageSize;
     var pageRows = rows.slice(start, start+state.pageSize);
-    var html = pageRows.map(function(r){
-      var aspectArr = (r.aspect||'').split(/[\n,，丨|]/).filter(function(x){return x.trim();}).slice(0,3);
+    var html = '<div class="rt-wrap"><table class="rt-table"><thead><tr>'+
+      '<th>市场</th><th>星级</th><th>态度</th><th>ASIN</th><th>标题</th><th>评价原文</th><th>维度(拆解)</th><th>VOC 标签</th><th>时间</th>'+
+      '</tr></thead><tbody>';
+    html += pageRows.map(function(r){
+      var aspectArr = (r.aspect||'').split(/[\n,，丨|]/).filter(function(x){return x.trim();}).slice(0,4);
       var aspectsHtml = aspectArr.map(function(a){return '<span class="r-aspects">'+esc(a)+'</span>';}).join('');
-      return '<div class="review-card">'+
-        '<div class="r-head">'+
-          '<div class="r-meta">'+
-            '<div class="r-title">'+esc(r.title||'—')+'</div>'+
-            '<div class="r-info">'+
-              '<span class="r-stars">'+starStr(r.star)+'</span>'+
-              '<span class="r-att '+esc(r.attitude||'')+'">'+esc(r.attitude||'—')+'</span>'+
-              '<span>ASIN: '+esc(r.asin||'—')+'</span>'+
-              '<span>市场: '+esc(r.market||'')+'</span>'+
-              (r.country&&r.country!==r.market?'<span>国家: '+esc(r.country)+'</span>':'')+
-              (r.time?'<span>时间: '+esc(r.time)+'</span>':'')+
-            '</div>'+
-          '</div>'+
-        '</div>'+
-        '<div class="r-text">'+esc(r.text||'(无原文)')+'</div>'+
-        (aspectsHtml? '<div style="margin-top:6px">'+aspectsHtml+'</div>' : '')+
-        (r.evidence? '<div class="r-evidence">原文证据 · '+esc(r.evidence)+'</div>' : '')+
-        (r.tags? '<div class="r-tags">'+esc(r.tags)+'</div>' : '')+
-        '</div>';
+      return '<tr data-asin="'+esc(r.asin||'')+'">'+
+        '<td class="rt-cell-nowrap">'+esc(r.market||'')+(r.country&&r.country!==r.market?(' / '+esc(r.country)):'')+'</td>'+
+        '<td class="rt-cell-nowrap"><span class="rt-stars">'+starStr(r.star)+'</span></td>'+
+        '<td class="rt-cell-nowrap"><span class="rt-att '+esc(r.attitude||'')+'">'+esc(r.attitude||'—')+'</span></td>'+
+        '<td class="rt-cell-nowrap">'+esc(r.asin||'—')+'</td>'+
+        '<td class="rt-cell-text">'+esc(r.title||'—')+'</td>'+
+        '<td class="rt-cell-text">'+esc(r.text||'(无原文)')+'</td>'+
+        '<td style="max-width:230px;min-width:140px">'+(aspectsHtml||'<span style="color:var(--muted)">—</span>')+'</td>'+
+        '<td class="rt-tags">'+esc(r.tags||'—')+'</td>'+
+        '<td class="rt-cell-nowrap">'+esc(r.time||'—')+'</td>'+
+        '</tr>';
     }).join('');
+    html += '</tbody></table></div>';
     // 分页
     var total = rows.length;
     var pages = Math.max(1, Math.ceil(total/state.pageSize));
