@@ -3332,7 +3332,7 @@ function toast(msg){
   t.textContent=msg;t.classList.add('show');
   clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove('show')},1800);
 }
-function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function escHtml(s){ s=(s==null?'':String(s)); return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function csvCell(s){
   s=(s==null?'':String(s));
   if(/[",\n\r]/.test(s)) s='"'+s.replace(/"/g,'""')+'"';
