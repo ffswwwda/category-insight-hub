@@ -58,7 +58,7 @@ body.dark .sidebar{background:rgba(20,28,48,.6)}
 .brand-sub{font-size:11px;color:var(--muted);letter-spacing:.6px;margin-top:1px}
 .side-label{font-size:10.5px;font-weight:800;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;padding:14px 18px 8px}
 
-.board-list{overflow-y:auto;flex:1;padding:0 14px 14px}
+.board-list{overflow-y:auto;flex:0 0 auto;max-height:34vh;padding:0 14px 14px}
 .src-card{margin-bottom:8px;background:var(--panel-2);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
   border:1px solid var(--border);border-radius:12px;padding:13px 14px;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
 .src-card:hover{border-color:rgba(0,195,243,.35)}
@@ -103,8 +103,9 @@ body.dark .filter-panel{background:rgba(20,28,48,.5)}
 body.dark .fp-head{background:rgba(20,28,48,.7)}
 .fp-title{font-size:16px;font-weight:700;color:var(--ink)}
 .fp-sub{font-size:11.5px;color:var(--muted);margin-top:4px}
-.fp-close{background:transparent;border:1px solid var(--border);width:32px;height:32px;border-radius:10px;font-size:18px;cursor:pointer;color:var(--ink-2);transition:all .15s}
+.fp-close{background:transparent;border:1px solid var(--border);width:34px;height:34px;border-radius:10px;font-size:18px;cursor:pointer;color:var(--ink-2);transition:all .15s;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;white-space:nowrap}
 .fp-close:hover{background:var(--accent-weak);border-color:var(--accent);color:var(--accent)}
+.fp-close svg{width:14px;height:14px}
 .fp-body{flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:18px}
 .fp-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--panel);flex-shrink:0}
 body.dark .fp-foot{background:rgba(20,28,48,.7)}
@@ -141,22 +142,41 @@ body.dark .fp-group{background:rgba(20,28,48,.5)}
 .rt-att.中性{background:rgba(136,147,168,.14);color:var(--muted)}
 .rt-tags{font-size:10.5px;color:var(--muted);font-family:var(--mono);line-height:1.4;max-width:300px;min-width:140px}
 
-/* ===== 视图图层（多视图保存 / 应用 / 删除） ===== */
-.view-layers{flex-shrink:0;background:rgba(168,85,247,.06);border-bottom:1px solid var(--border);padding:8px 26px 10px}
-.view-layers.vl-open .vl-list{display:grid}
+/* ===== 视图图层（多视图保存 / 应用 / 删除） —— 模仿 product-sales 的侧栏卡片式 ===== */
+.view-layers{margin:14px 14px 8px;border:1px solid var(--border);border-radius:12px;background:var(--panel-2);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);overflow:hidden;flex:0 0 auto;max-height:42vh;display:flex;flex-direction:column}
+body.dark .view-layers{background:rgba(20,28,48,.55)}
+.view-layers.vl-open .vl-list{display:flex}
 .view-layers:not(.vl-open) .vl-list{display:none}
-.vl-head{display:flex;align-items:center;gap:8px}
-.vl-head .vl-toggle{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:var(--accent-2);font-size:12px;font-weight:700;cursor:pointer;padding:2px 0;font-family:var(--font)}
-.vl-count{font-size:11px;color:var(--muted);font-weight:600}
-.vl-list{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin-top:8px}
-.vl-item{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 11px;display:flex;align-items:center;gap:8px}
-.vl-item:hover{border-color:rgba(168,85,247,.4)}
-.vl-item .vl-name{flex:1;min-width:0;font-size:12px;font-weight:600;color:var(--ink);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.vl-item .vl-name:hover{color:var(--accent-2)}
-.vl-item .vl-sub{font-size:10px;color:var(--muted);font-weight:400;display:block;margin-top:1px}
-.vl-item .vl-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0 2px;flex-shrink:0}
+.vl-head{padding:9px 12px;display:flex;align-items:center;gap:8px;background:transparent}
+.vl-head .vl-title{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--ink);letter-spacing:.3px;flex:1;min-width:0}
+.vl-head .vl-icon{width:14px;height:14px;color:var(--accent);flex-shrink:0}
+.vl-head .vl-toggle{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;transition:.15s;flex-shrink:0;padding:0}
+.vl-head .vl-toggle:hover{background:var(--accent-weak);color:var(--accent)}
+.vl-head .vl-toggle svg{width:13px;height:13px;transition:transform .2s}
+.view-layers:not(.vl-open) .vl-head{border-bottom:0}
+.view-layers:not(.vl-open) .vl-head .vl-toggle svg{transform:rotate(180deg)}
+.vl-count{font-size:10.5px;color:var(--accent-2);font-weight:800;background:var(--accent-weak);padding:1px 7px;border-radius:8px;flex-shrink:0}
+.vl-list{flex-direction:column;padding:4px 8px 8px;gap:5px;max-height:200px;overflow-y:auto}
+.vl-item{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:7px 9px;display:flex;align-items:center;gap:7px;cursor:pointer;transition:.15s}
+.vl-item:hover{border-color:rgba(168,85,247,.4);background:color-mix(in srgb,var(--accent) 4%,var(--panel))}
+.vl-item .vl-chk{width:13px;height:13px;flex-shrink:0;accent-color:var(--accent)}
+.vl-item .vl-name{flex:1;min-width:0;font-size:11.5px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vl-item .vl-sub{font-size:9.5px;color:var(--muted);font-weight:400;display:block;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vl-item .vl-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px;flex-shrink:0;line-height:1}
 .vl-item .vl-del:hover{color:var(--danger)}
-.vl-empty{font-size:11.5px;color:var(--muted);line-height:1.7;padding:4px 0}
+.vl-empty{font-size:11px;color:var(--muted);line-height:1.7;padding:8px 4px;text-align:center}
+
+/* 视图图层批量操作（仿 product-sales 侧栏底部操作面板） */
+.vl-batch{margin:8px 14px 14px;border:1px solid var(--border);border-radius:10px;background:var(--panel-2);padding:8px 10px;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
+body.dark .vl-batch{background:rgba(20,28,48,.55)}
+.vl-batch-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.vl-batch-info{font-size:11px;color:var(--ink-2);font-weight:700}
+.vl-batch-info b{color:var(--accent);font-weight:900}
+.vl-batch-cancel{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;padding:2px 6px;border-radius:5px}
+.vl-batch-cancel:hover{color:var(--ink-2);background:var(--accent-weak)}
+.vl-batch-primary{width:100%;padding:7px 10px;border-radius:8px;border:0;background:var(--rad-grad);color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;box-shadow:0 4px 12px rgba(168,85,247,.22);font-family:var(--font)}
+.vl-batch-primary:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(168,85,247,.32)}
+.vl-batch-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
 /* ===== 加入购物车反馈 ===== */
 .btn.cart-added{background:var(--ok);color:#fff;border-color:transparent}
@@ -225,6 +245,29 @@ body.dark .applied-row{background:rgba(0,195,243,.1)}
     <div class="board-list" id="boardList"></div>
     <div class="side-label">评价维度</div>
     <div class="board-list" id="dimList" style="max-height:26vh;flex:0"></div>
+
+    <!-- ===== 视图图层（多视图保存 / 应用 / 删除） ===== -->
+    <div class="view-layers vl-open" id="viewLayers">
+      <div class="vl-head" id="vlHead">
+        <span class="vl-title">
+          <svg class="vl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          视图图层
+        </span>
+        <button type="button" class="vl-toggle" id="vlToggle" title="收起/展开" aria-label="收起">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+        </button>
+        <span class="vl-count" id="vlCount">0</span>
+      </div>
+      <div class="vl-list" id="vlList"><div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div></div>
+    </div>
+
+    <div class="vl-batch" id="vlBatch" style="display:none">
+      <div class="vl-batch-head">
+        <div class="vl-batch-info">已选 <b id="vlSelCount">0</b> 个视图</div>
+        <button type="button" id="vlBatchClear" class="vl-batch-cancel" onclick="[].forEach.call(document.querySelectorAll('#vlList .vl-chk'),function(c){c.checked=false;});prvUpdateSel();">取消</button>
+      </div>
+      <button type="button" id="vlBatchAdd" class="vl-batch-primary" onclick="prvBatchAdd()">批量加入购物车</button>
+    </div>
   </aside>
 
   <div class="main">
@@ -245,9 +288,8 @@ body.dark .applied-row{background:rgba(0,195,243,.1)}
       <input class="filter-input" id="searchInput" placeholder="评论原文/标签/标题关键词..." oninput="onSearchInput()">
       <span style="flex:1"></span>
       <span class="filter-label">已选 <b id="filterCount" style="color:var(--accent)">0</b> 项</span>
-      <button class="btn" onclick="toggleFilterPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span id="fpToggleLabel">收起筛选</span></button>
+      <button class="btn" onclick="toggleFilterPanel()" title="展开 / 收起筛选条件面板"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span id="fpToggleLabel">收起筛选</span></button>
       <button class="save-view-btn" id="saveViewBtn" title="将当前筛选条件保存为一个新视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>保存为新视图</button>
-      <button class="save-view-btn" id="vlToggleBtn" title="展开 / 收起已保存的视图图层"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>视图图层</button>
       <button class="save-view-btn" id="cartBtn" title="把当前筛选结果加入跨数据源购物车，统一下载"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>加入购物车</button>
     </div>
 
@@ -259,7 +301,7 @@ body.dark .applied-row{background:rgba(0,195,243,.1)}
             <div class="fp-title">商品评价筛选</div>
             <div class="fp-sub">按 VOC 标签 + 评价字段筛 · 多选OR · 已选 <b id="fpCount">0</b> 项</div>
           </div>
-          <button class="fp-close" onclick="toggleFilterPanel()">收起 ▴</button>
+          <button class="fp-close" onclick="toggleFilterPanel()" title="收起筛选" aria-label="收起筛选"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></button>
         </div>
         <div class="fp-body" id="fpBody"><!-- 动态注入筛选组 --></div>
         <div class="fp-foot">
@@ -272,13 +314,7 @@ body.dark .applied-row{background:rgba(0,195,243,.1)}
       </div>
     </div>
 
-    <!-- ===== 视图图层（多视图保存 / 应用 / 删除） ===== -->
-    <div class="view-layers" id="viewLayers">
-      <div class="vl-head">
-        <button class="vl-toggle" id="vlToggle" type="button">▾ 视图图层 <span class="vl-count" id="vlCount">0</span></button>
-      </div>
-      <div class="vl-list" id="vlList"><div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div></div>
-    </div>
+    <!-- ===== 视图图层（多视图保存 / 应用 / 删除） —— 移到 sidebar 之后由下方独立插入 ===== -->
 
     <div class="applied-row" id="appliedRow"></div>
 
@@ -6466,13 +6502,70 @@ window.PR_EU_RAW=[
     if(!list) return;
     var views=prvGet();
     if(count) count.textContent=views.length.toString();
-    if(!views.length){ list.innerHTML='<div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div>'; return; }
+    if(!views.length){ list.innerHTML='<div class="vl-empty">筛选后点「保存为新视图」<br>即可在此保存多组筛选条件</div>';
+      var batch=document.getElementById('vlBatch'); if(batch) batch.style.display='none';
+      return;
+    }
     list.innerHTML=views.map(function(v){
       var d=''; try{ d=new Date(v.ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){}
-      return '<div class="vl-item">'+
-        '<div class="vl-name" onclick="prvLoad(\''+v.id+'\')" title="'+esc(describeViewFilter(v))+'">'+esc(v.name)+'<span class="vl-sub">'+esc(v.board||'')+' · '+d+'</span></div>'+
-        '<button class="vl-del" onclick="prvDel(\''+v.id+'\')" title="删除视图">✕</button></div>';
+      return '<label class="vl-item" title="'+esc(describeViewFilter(v))+'">'+
+        '<input type="checkbox" class="vl-chk" data-vid="'+esc(v.id)+'" onchange="prvUpdateSel()">'+
+        '<div class="vl-name" onclick="event.preventDefault();prvLoad(\''+v.id+'\')">'+esc(v.name)+
+          '<span class="vl-sub">'+esc(v.board||'')+' · '+d+'</span>'+
+        '</div>'+
+        '<button class="vl-del" onclick="event.preventDefault();event.stopPropagation();prvDel(\''+v.id+'\')" title="删除视图">✕</button>'+
+      '</label>';
     }).join('');
+    prvUpdateSel();
+  }
+  // 视图图层批量加购：把勾选视图按各自保存的 f 跑一遍，模拟当时的筛选结果，加为多条 item
+  function prvUpdateSel(){
+    var checks=document.querySelectorAll('#vlList .vl-chk');
+    var cnt=[].filter.call(checks, function(c){return c.checked;}).length;
+    var b=document.getElementById('vlBatch'), c=document.getElementById('vlSelCount'), addBtn=document.getElementById('vlBatchAdd');
+    if(b){ b.style.display = cnt>0 ? 'block' : 'none'; }
+    if(c) c.textContent=cnt.toString();
+    if(addBtn){ addBtn.disabled = cnt===0; addBtn.textContent = cnt>0 ? ('批量加入购物车 ('+cnt+')') : '批量加入购物车'; }
+  }
+  window.prvBatchAdd = function(){
+    var checks=[].filter.call(document.querySelectorAll('#vlList .vl-chk'), function(c){return c.checked;});
+    if(!checks.length){ _prToast('请先勾选要加入购物车的视图'); return; }
+    var sent=0;
+    checks.forEach(function(c){
+      var v=prvGet().find(function(x){return x.id===c.getAttribute('data-vid');});
+      if(!v) return;
+      // 用保存的 f 模拟还原当时筛选，构造 item
+      var fakeF=JSON.parse(JSON.stringify(v.f||{}));
+      var rows=applyFilterBy(fakeF, v.board);
+      if(!rows.length) return;
+      var cols=['market','asin','star','attitude','title','text','aspect','tags','evidence','time','country'];
+      var items=rows.map(function(r){ var o={}; cols.forEach(function(c){ o[c]=r[c]; }); return o; });
+      var item={ id:'prv-'+v.id, source:'商品评价·'+(v.board||state.board), filter:describeViewFilter(v), sourceKey:'product-reviews-'+(v.board||state.board),
+        items:items, columns:cols.map(function(c){return {key:c,label:c};}), count:items.length, addedAt:Date.now(), _sel:true };
+      if(window.parent && window.parent!==window && window.parent.postMessage){
+        window.parent.postMessage({type:'cih-cart-add', item:item}, '*'); sent++;
+      }
+    });
+    if(sent>0){ _prToast('已加入 '+sent+' 个视图到购物车'); }
+    // 清除勾选
+    checks.forEach(function(c){ c.checked=false; });
+    prvUpdateSel();
+  };
+  // 仅按筛选条件跑匹配（不修改 state），返回当前 board（或指定 board）的命中行
+  function applyFilterBy(f, board){
+    var rows = (window['PR_'+(board==='美亚'?'US':board==='日亚'?'JP':'EU')+'_RAW']) || [];
+    var tagSep = /[,，;；|｜丨]/;
+    return rows.filter(function(r){
+      if(f.text){ var q=f.text.toLowerCase(); if((r.text||'').toLowerCase().indexOf(q)<0 && (r.title||'').toLowerCase().indexOf(q)<0 && (r.tags||'').toLowerCase().indexOf(q)<0) return false; }
+      if((f.stars||[]).length && f.stars.indexOf(r.star)<0) return false;
+      if((f.atts||[]).length && f.atts.indexOf(r.attitude)<0) return false;
+      if((f.countries||[]).length && f.countries.indexOf(r.market)<0 && f.countries.indexOf(r.country)<0) return false;
+      if((f.aspects||[]).length){ var asp=(r.aspect||'').split(tagSep).map(function(s){return s.trim();}); var hit=f.aspects.some(function(a){return asp.some(function(x){return x.indexOf(a)>=0;});}); if(!hit) return false; }
+      if((f.aspectSubs||[]).length){ var sub=(r.aspect||'').split(tagSep).map(function(s){return s.trim();}); var hit2=f.aspectSubs.some(function(a){return sub.some(function(x){return x.indexOf(a)>=0;});}); if(!hit2) return false; }
+      if((f.tags1||[]).length){ var t1=(r.tags||'').split(tagSep).map(function(s){return s.trim().split('-')[0];}); var hit3=f.tags1.some(function(a){return t1.some(function(x){return x===a;});}); if(!hit3) return false; }
+      if(f.tagKeyword && (r.tags||'').toLowerCase().indexOf(f.tagKeyword.toLowerCase())<0) return false;
+      return true;
+    });
   }
   // 加入购物车：把当前筛选结果发给主站（hub）全局购物车，跨数据源统一下载
   function cartBtnIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:4px"><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M2 3h2.4l2.1 12.3a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H5.4"/></svg>加入购物车'; }
