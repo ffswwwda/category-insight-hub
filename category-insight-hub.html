@@ -1673,8 +1673,8 @@ body.fs-tools-collapsed #toolsReopen{display:flex}
 .ai-boost{background:linear-gradient(135deg,#00d4ff,#a855f7);border:none;color:#fff}
 .au-ai-badge{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:linear-gradient(135deg,#00d4ff,#a855f7);border-radius:8px;padding:4px 10px;margin-bottom:8px}
 .au-summary{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.55}
-.au-fw-name{font-size:12.5px;font-weight:700;color:var(--text);border:1px solid var(--border);border-radius:7px;padding:5px 8px;min-width:120px;flex:1}
-.au-fw-reason{width:100%;min-height:40px;resize:vertical;font-size:11.5px;color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:6px 8px;margin-top:6px}
+.au-fw-name{font-size:12.5px;font-weight:700;color:var(--ink);background:var(--panel-2);border:1px solid var(--border);border-radius:7px;padding:5px 8px;min-width:120px;flex:1}
+.au-fw-reason{width:100%;min-height:40px;resize:vertical;font-size:11.5px;color:var(--ink-2);background:var(--panel-2);border:1px solid var(--border);border-radius:7px;padding:6px 8px;margin-top:6px}
 .au-custom .au-tag.custom{background:#ff6b9d;color:#fff}
 .au-loading,.au-raw{font-size:12px;color:var(--muted)}
 .au-raw{white-space:pre-wrap;max-height:200px;overflow:auto;background:var(--bg);padding:8px;border-radius:8px}
@@ -3054,16 +3054,16 @@ var DATA = {
       dotClass:'a',
       purposes:[
         {id:'market-seg',name:'市场细分',
-         sources:['s2','s5','s9','s11'],methods:'动机编码 / 场景聚类',tools:'语料',
+         sources:['e1','e2','e3','s12','s15','s21','s8'],methods:'动机编码 / 场景聚类',tools:'语料',
          desc:'从购买动机、用户画像、使用场景切分市场，识别高价值细分群体及其规模。'},
         {id:'user-problem',name:'用户问题研究',
-         sources:['e1','e2','e3','s2','s4','s5','s6','s8','s10'],methods:'JTBD / 问题归类',tools:'语料',
+         sources:['e1','e2','e3','s8','s15','s22'],methods:'JTBD / 问题归类',tools:'语料',
          desc:'从用户视角出发，识别真实待解决的问题（Jobs to Be Done），按严重度/频次排序。'},
         {id:'category-opp',name:'品类机会发现',
-         sources:['e1','e2','e3','s8'],methods:'需求矩阵 / 空白识别',tools:'VOC',
+         sources:['e1','e2','e3','s8','s12','s14','s20'],methods:'需求矩阵 / 空白识别',tools:'VOC',
          desc:'在需求四象限中定位空白机会点——高重要低满意度 = 创新突破口。'},
         {id:'new-concept',name:'新品概念孵化',
-         sources:['e1','e2','e3','s2','s8'],methods:'机会→概念卡',tools:'VOC',
+         sources:['e1','e2','e3','s8','s12','s15','s20'],methods:'机会→概念卡',tools:'VOC',
          desc:'将机会点转化为可验证的产品概念卡（痛点→解决方案→差异化主张）。'}
       ]
     },
@@ -3073,28 +3073,28 @@ var DATA = {
       dotClass:'b',
       purposes:[
         {id:'category-plan',name:'类目规划',
-         sources:['s9','s7','s8','s3'],methods:'类目树 / 缺口识别',tools:'社媒',
+         sources:['s8','s12','s14','s20','s23','s24','s25'],methods:'类目树 / 缺口识别',tools:'社媒',
          desc:'梳理类目结构与发展脉络，识别供给缺口与高潜细分，指导长期选品与资源倾斜。'},
         {id:'product-opt',name:'产品优化',
-         sources:['e1','e2','e3'],methods:'差评归因 / 优先级',tools:'VOC',
+         sources:['e1','e2','e3','s8','s15','s20'],methods:'差评归因 / 优先级',tools:'VOC',
          desc:'从差评中提取归因维度（尺寸/质量/材质/噪音…），按影响面×严重度排优先级。'},
         {id:'marketing',name:'营销建议',
-         sources:['s5','s10','s4'],methods:'情感词 / 场景内容',tools:'社媒',
+         sources:['s12','s15','s17','s18','s21','s20'],methods:'情感词 / 场景内容',tools:'社媒',
          desc:'从社媒和搜索中提炼用户情感关键词和使用场景，反推营销话术与内容方向。'},
         {id:'price-strategy',name:'价格策略',
-         sources:['e1','e2','e3','s8'],methods:'价格带 / 弹性',tools:'VOC',
+         sources:['e1','e2','e3','s8','s20','s23','s24','s25'],methods:'价格带 / 弹性',tools:'VOC',
          desc:'结合销量、竞品价位与投放成本，定位最优价格带与促销节奏，提升毛利与转化。'},
         {id:'campaign',name:'活动运营',
-         sources:['s10','s11','s5','s2'],methods:'节奏 / 触点',tools:'社媒',
+         sources:['s12','s15','s17','s20','s21'],methods:'节奏 / 触点',tools:'社媒',
          desc:'围绕大促与节日窗口规划活动节奏、素材与渠道触点，放大流量转化效率。'},
         {id:'new-plan',name:'新品规划',
-         sources:['s8','s6','s2'],methods:'SKU梯度 / 排期',tools:'VOC',
+         sources:['s8','e1','e2','e3','s12','s14','s20','s23','s24','s25'],methods:'SKU梯度 / 排期',tools:'VOC',
          desc:'基于现有 SKU 表现和市场需求缺口，规划新品线梯度（入门/进阶/旗舰）和上市节奏。'},
         {id:'new-build',name:'新品打造',
-         sources:['e1','e2','e3','s8'],methods:'痛点→卖点',tools:'VOC',
+         sources:['e1','e2','e3','s8','s12','s15','s20','s21'],methods:'痛点→卖点',tools:'VOC',
          desc:'从核心痛点出发反向推导产品卖点组合，形成 FABE 文案和差异化定位。'},
         {id:'competitor',name:'竞品对标',
-         sources:['e1','e2','e3','s8'],methods:'卖点矩阵 / 差距',tools:'VOC',
+         sources:['e1','e2','e3','s8','s14','s20','s23','s24','s25'],methods:'卖点矩阵 / 差距',tools:'VOC',
          desc:'系统拆解竞品功能、卖点与价格，定位自身差距与可攻击的薄弱点。'}
       ]
     }
@@ -8235,10 +8235,10 @@ var PS_EXAMPLE = '我上了一款倒模（半身倒模），60美元左右，产
 
 // 每个子维度对应的相关数据源（用于追溯与置信度）
 var DIM_SRC = {
-  demand_heat:['e1','e2','e3','s8'], user_pain:['e1','e2','e3','s8'], trend:['s9','s2','s11','s8'],
-  market_size:['s9','s7','s8'], margin:['s7','s3'], price_band:['s3','s9'],
-  sales_potential:['s7','s9'], lifecycle:['s7'], diff_level:['e1','e2','e3','s8'],
-  barrier:['s3'], fantasy_value:['e1','e2','e3','s8'], usp_unique:['e1','e2','e3','s8']
+  demand_heat:['e1','e2','e3','s8'], user_pain:['e1','e2','e3','s8'], trend:['s12','s21','s8'],
+  market_size:['s12','s14','s8'], margin:['s8','s20'], price_band:['s20','s14'],
+  sales_potential:['s8','s12'], lifecycle:['s8'], diff_level:['e1','e2','e3','s8'],
+  barrier:['s20'], fantasy_value:['e1','e2','e3','s8'], usp_unique:['e1','e2','e3','s8']
 };
 
 function decomposeInput(text){
@@ -8265,10 +8265,10 @@ function matchSources(decomp){
   function add(id,w){ hits[id]=(hits[id]||0)+w; }
   decomp.categoryHit.forEach(function(id){ add(id,3); });
   decomp.features.forEach(function(f){ (PS_TAXONOMY.feature[f]||[]).forEach(function(id){ add(id,2); }); });
-  if(decomp.price!=null){ add('s3',2); add('s7',2); add('s9',1); }
+  if(decomp.price!=null){ add('s20',2); add('s8',2); add('s12',1); }
   if(decomp.appearance.length){ add('e1',1); add('e2',1); add('e3',1); add('s8',1); }
-  if(decomp.audience.length){ add('s5',2); add('e1',1); add('e2',1); add('e3',1); }
-  if(decomp.scene.length){ add('e1',1); add('e2',1); add('e3',1); add('s6',1); add('s5',1); }
+  if(decomp.audience.length){ add('s15',2); add('e1',1); add('e2',1); add('e3',1); }
+  if(decomp.scene.length){ add('e1',1); add('e2',1); add('e3',1); add('s15',2); }
   add('e1',1); add('e2',1); add('e3',1); add('s8',1); // VOC 基底始终计入
   return Object.keys(hits).map(function(id){
     var s = DATA.sources[id];
@@ -12339,75 +12339,75 @@ var PURPOSE_RULES=[
   {id:'new-product-dev',name:'新品开发 / 创新孵化',
    triggers:['新品','新概念','创新','概念','孵化','研发','造','未满足','机会点','空白','突破','痛点','需求挖掘','产品概念'],
    coreQuestion:'用户还有哪些未被满足的需求？我该造什么新产品 / 新概念？',
-   sources:['e1','e2','e3','s15','s20','s8','s14','s12','s3','s9'],
+   sources:['e1','e2','e3','s15','s20','s8','s14','s12'],
    frameworks:['quad','compass','triz','extreme','jtbd','needs'],
-   rationale:'以「用户未满足需求」为起点：评论(e1/e2/e3)与反馈情报(s15)挖痛点；KOL合作(s20)、竞品(s3)与商品库(s8)看卖点差异；搜索量(s14)与类目趋势(s9)验证机会规模；Reddit标签(s12)定位极端/领先用户。框架上需求四象限定位空白、创意罗盘/TRIZ/领先用户生成方案。'},
+   rationale:'以「用户未满足需求」为起点：评论(e1/e2/e3)与反馈情报(s15)挖痛点；KOL合作(s20)与商品库(s8)看卖点差异；搜索量(s14)与Reddit标签(s12)验证机会规模与定位极端/领先用户。框架上需求四象限定位空白、创意罗盘/TRIZ/领先用户生成方案。'},
   {id:'new-product-marketing',name:'新品营销 / 内容种草',
    triggers:['营销','种草','内容','卖点','话术','文案','推广','宣发','传播','品牌故事','卖点提炼','新媒体'],
    coreQuestion:'怎么把新品讲给用户听？用什么内容 / 话术 / 渠道打动他们？',
-   sources:['s12','s15','e1','e2','e3','s20','s8','s17','s18','s16','s21','s2','s11'],
+   sources:['s12','s15','e1','e2','e3','s20','s8','s17','s18','s16','s21'],
    frameworks:['motivation','needs','journey','plutchik'],
-   rationale:'营销先懂用户情感与场景：Reddit标签(s12)、反馈情报(s15)、评论(e1/e2/e3)提炼动机/情感；KOL合作(s20)、商品库(s8)、外部测评(s17 YouTube/s18 Bedbible/s16 P站)找内容角度；社媒声量(s21/s2/s11)定渠道。框架上动机编码与需求层次定价值主张、购买旅程定触点、Plutchik定沟通基调。'},
+   rationale:'营销先懂用户情感与场景：Reddit标签(s12)、反馈情报(s15)、评论(e1/e2/e3)提炼动机/情感；KOL合作(s20)、商品库(s8)、外部测评(s17 YouTube/s18 Bedbible/s16 P站)找内容角度；社媒声量(s21)定渠道。框架上动机编码与需求层次定价值主张、购买旅程定触点、Plutchik定沟通基调。'},
   {id:'campaign',name:'活动运营 / 大促节奏',
    triggers:['活动','大促','促销','节日','节奏','排期','触点','投放节奏','campaign','转化放大','流量','大促'],
    coreQuestion:'大促 / 节日窗口怎么排节奏、选素材、铺触点，放大转化？',
-   sources:['s10','s20','s21','s11','s12','s15','s9','s8','s2'],
+   sources:['s20','s21','s12','s15','s8'],
    frameworks:['journey','motivation','plutchik'],
-   rationale:'活动运营看投放与触点效率：广告投放(s10)测效果、KOL合作(s20)与社媒账号(s21/s11)铺内容、Reddit标签(s12)/反馈(s15)找话题、类目趋势(s9)定节奏、商品库(s8)看承接。框架上购买旅程排触点节奏、动机编码定素材方向、Plutchik定情绪钩子。'},
+   rationale:'活动运营看投放与触点效率：KOL合作(s20)与社媒账号(s21)铺内容、Reddit标签(s12)/反馈(s15)找话题、商品库(s8)看承接。框架上购买旅程排触点节奏、动机编码定素材方向、Plutchik定情绪钩子。'},
   {id:'market-seg',name:'市场细分 / 用户分群',
    triggers:['细分','分群','人群','画像','切分','客群','聚类','规模','高价值群体','用户分层'],
    coreQuestion:'市场能切成哪些高价值细分？每个细分规模多大、特征是什么？',
-   sources:['s12','s15','e1','e2','e3','s9','s21','s11','s2','s8'],
+   sources:['s12','s15','e1','e2','e3','s14','s21','s8'],
    frameworks:['motivation','quad','jtbd'],
-   rationale:'细分依赖画像/动机/规模数据：Reddit标签(s12)、反馈情报(s15)、评论(e1/e2/e3)做画像与动机编码；访谈(s5)深挖；类目趋势(s9)看规模；社媒(s21/s11/s2)看声量分布；商品库(s8)看实际购买人群。框架上动机编码聚类、需求四象限定位价值、JTBD理解任务。'},
+   rationale:'细分依赖画像/动机/规模数据：Reddit标签(s12)、反馈情报(s15)、评论(e1/e2/e3)做画像与动机编码；搜索量(s14)看规模；社媒(s21)看声量分布；商品库(s8)看实际购买人群。框架上动机编码聚类、需求四象限定位价值、JTBD理解任务。'},
   {id:'user-problem',name:'用户问题研究 / JTBD',
    triggers:['问题','待解决','任务','jtbd','雇用','痛点','抱怨','麻烦','卡点','待办'],
    coreQuestion:'用户真正要完成的任务是什么？哪些问题最痛、最高频？',
-   sources:['e1','e2','e3','s8','s15','s20','s3','s14','s4','s5','s6'],
+   sources:['e1','e2','e3','s8','s15','s20','s14'],
    frameworks:['jtbd','quad','needs'],
-   rationale:'问题研究从真实反馈出发：差评/痛点来自评论(e1/e2/e3)、商品库(s8)、反馈情报(s15)；竞品(s20/s3)与搜索(s14/s4)看替代方案；访谈(s5)、客服工单(s6)挖深层任务。框架上 JTBD 识别真实任务、需求四象限排优先级、需求层次看深层驱动。'},
+   rationale:'问题研究从真实反馈出发：差评/痛点来自评论(e1/e2/e3)、商品库(s8)、反馈情报(s15)；KOL合作(s20)与搜索量(s14)看替代方案。框架上 JTBD 识别真实任务、需求四象限排优先级、需求层次看深层驱动。'},
   {id:'category-opp',name:'品类机会发现',
    triggers:['品类机会','机会','空白点','需求缺口','创新突破口','蓝海','未覆盖','机会点'],
    coreQuestion:'需求四象限里哪里是空白机会？哪些需求高重要低满意？',
-sources:['e1','e2','e3','s8','s3','s20','s9','s14'],
+   sources:['e1','e2','e3','s8','s20','s12','s14'],
    frameworks:['quad','needs','compass'],
-   rationale:'机会发现聚焦高低满意象限：评论(e1/e2/e3)、商品库(s8)打需求标签；竞品(s3/s20)看竞品满足度；类目趋势(s9)、搜索量(s14)看市场体量。框架上需求四象限定位空白、需求层次看价值、创意罗盘生成机会方向。'},
+   rationale:'机会发现聚焦高低满意象限：评论(e1/e2/e3)、商品库(s8)打需求标签；KOL合作(s20)看竞品满足度；Reddit标签(s12)、搜索量(s14)看市场体量。框架上需求四象限定位空白、需求层次看价值、创意罗盘生成机会方向。'},
    {id:'product-opt',name:'产品优化 / 差评归因',
    triggers:['优化','差评','改进','归因','迭代','质量','短板','体验提升','升级'],
    coreQuestion:'产品哪里要改？按影响面 × 严重度怎么排优先级？',
-   sources:['e1','e2','e3','s8','s3','s20'],
+   sources:['e1','e2','e3','s8','s20'],
    frameworks:['quad','jtbd','needs'],
-   rationale:'优化以差评归因为核心：评论(e1/e2/e3)、商品库(s8)提取尺寸/质量/材质等归因维度；竞品(s3/s20)看差距；销量(s7)看影响面。框架上需求四象限排优先级、JTBD看任务断层、需求层次看深层体验。'},
+   rationale:'优化以差评归因为核心：评论(e1/e2/e3)、商品库(s8)提取尺寸/质量/材质等归因维度；KOL合作(s20)看差距。框架上需求四象限排优先级、JTBD看任务断层、需求层次看深层体验。'},
   {id:'price-strategy',name:'价格策略',
    triggers:['价格','定价','价位','促销','毛利','弹性','价格带','acos','定价策略'],
    coreQuestion:'最优价格带与促销节奏在哪？怎么平衡毛利与转化？',
-sources:['s7','s3','s20','s10','e1','e2','e3','s8'],
+   sources:['e1','e2','e3','s8','s20'],
    frameworks:['quad','needs'],
-   rationale:'定价结合成本与竞争：销量(s7)看价格弹性、竞品价位(s3/s20)看锚点、广告(s10)看获客成本、评论(e1/e2/e3/s8)看价格敏感度。框架上需求四象限看价值-价格匹配、需求层次看价格背后的价值感。'},
+   rationale:'定价结合成本与竞争：商品库(s8)看价格梯度、KOL合作(s20)看竞品锚点、评论(e1/e2/e3)看价格敏感度。框架上需求四象限看价值-价格匹配、需求层次看价格背后的价值感。'},
    {id:'competitor',name:'竞品对标',
    triggers:['竞品','对标','对手','差距','卖点矩阵','攻击点','benchmark','竞争'],
    coreQuestion:'竞品强在哪、弱在哪？我能攻击哪个薄弱点？',
-   sources:['s3','s20','s8','e1','e2','e3','s7','s14'],
+   sources:['s20','s8','e1','e2','e3','s14'],
    frameworks:['quad','needs','jtbd'],
-   rationale:'对标系统拆竞品：竞品分析(s3)、KOL合作(s20)看卖点与内容、商品库(s8)与评论(e1/e2/e3)看用户真实评价、销量(s7)看表现、搜索量(s14)看流量来源。框架上需求四象限定位竞品薄弱象限、需求层次看差异化、JTBD看可替代性。'},
+   rationale:'对标系统拆竞品：KOL合作(s20)看卖点与内容、商品库(s8)与评论(e1/e2/e3)看用户真实评价、搜索量(s14)看流量来源。框架上需求四象限定位竞品薄弱象限、需求层次看差异化、JTBD看可替代性。'},
   {id:'category-plan',name:'类目规划',
    triggers:['类目规划','类目结构','选品','供给缺口','分层','资源倾斜','长期选品','品类'],
    coreQuestion:'类目怎么分层？哪里有供给缺口与高潜细分？',
-   sources:['s9','s7','s8','s3','s20','s14'],
+   sources:['s12','s8','s20','s14'],
    frameworks:['quad','needs'],
-   rationale:'类目规划看趋势与供给：类目趋势(s9)看增长与季节、销量(s7)看表现、商品库(s8)看现有结构、竞品(s3/s20)看供给缺口、搜索量(s14)看需求。框架上需求四象限定位高潜、需求层次看价值分布。'},
+   rationale:'类目规划看趋势与供给：Reddit标签(s12)看增长与季节、商品库(s8)看现有结构、KOL合作(s20)看供给缺口、搜索量(s14)看需求。框架上需求四象限定位高潜、需求层次看价值分布。'},
   {id:'new-plan',name:'新品规划 / SKU 梯度',
    triggers:['新品规划','sku','梯度','上市节奏','产品线','入门','旗舰','排期','铺货'],
    coreQuestion:'新品线梯度（入门/进阶/旗舰）怎么排？何时上市？',
-sources:['s8','e1','e2','e3','s15','s9','s21','s2','s12'],
+   sources:['s8','e1','e2','e3','s15','s21','s12'],
    frameworks:['quad','needs','compass'],
-   rationale:'新品规划基于现有 SKU 与需求缺口：商品库(s8)看 SKU 表现梯度、评论(e1/e2/e3)/反馈(s15)看缺口、类目趋势(s9)看时机、社媒(s21/s2)/Reddit(s12)看话题热度。框架上需求四象限定位梯度、需求层次看层级、创意罗盘想方向。'},
+   rationale:'新品规划基于现有 SKU 与需求缺口：商品库(s8)看 SKU 表现梯度、评论(e1/e2/e3)/反馈(s15)看缺口、社媒(s21)/Reddit(s12)看话题热度。框架上需求四象限定位梯度、需求层次看层级、创意罗盘想方向。'},
    {id:'new-build',name:'新品打造 / 卖点推导',
    triggers:['新品打造','卖点','fabe','差异化','痛点→卖点','定位','打造'],
    coreQuestion:'从核心痛点反推卖点组合，形成 FABE 与差异化定位？',
-   sources:['e1','e2','e3','s8','s15','s20','s3','s12','s21'],
+   sources:['e1','e2','e3','s8','s15','s20','s12','s21'],
    frameworks:['jtbd','needs','quad','motivation'],
-   rationale:'新品打造从痛点反推卖点：评论(s1/s13)、商品库(s8)、反馈(s15)挖痛点；KOL(s20)/竞品(s3)看可差异化点；Reddit(s12)/社媒(s21)看情感钩子。框架上 JTBD 连接痛点-任务、需求层次定价值、需求四象限排卖点优先级、动机编码定沟通。'}
+   rationale:'新品打造从痛点反推卖点：评论(e1/e2/e3)、商品库(s8)、反馈(s15)挖痛点；KOL合作(s20)看可差异化点；Reddit(s12)/社媒(s21)看情感钩子。框架上 JTBD 连接痛点-任务、需求层次定价值、需求四象限排卖点优先级、动机编码定沟通。'}
 ];
 
 function runAuditEngine(){
@@ -12421,17 +12421,17 @@ function runAuditEngine(){
   var SRC_KW={
     '评论':['e1','e2','e3'],'评价':['e1','e2','e3'],'voc':['e1','e2','e3'],'差评':['e1','e2','e3'],'好评':['e1','e2','e3'],'星级':['e1','e2','e3'],'尺寸':['e1','e2','e3'],'质量':['e1','e2','e3'],'材质':['e1','e2','e3'],'耐用':['e1','e2','e3'],
     '德国':['s8'],'德站':['s8'],'德国站':['s8'],'亚马逊德国':['s8'],'在售商品':['s8'],
-    '社媒':['s2','s11','s12','s21'],'红人':['s11','s21','s20'],'kol':['s20','s21'],'instagram':['s2','s11'],'tiktok':['s2','s11'],'twitter':['s2'],'推特':['s2'],'reddit':['s12'],'讨论':['s2','s11','s12','s21'],'舆情':['s2','s11','s21'],'品牌声量':['s2','s11'],'声量':['s2','s11','s21'],'品牌监测':['s11','s21'],
-    '竞品':['s3','s20'],'竞争对手':['s3','s20'],'对标':['s3','s20'],'bsr':['s3'],'竞品分析':['s3','s20'],'kol合作':['s20'],
-    '搜索':['s4','s14'],'关键词':['s4','s14'],'搜索量':['s14'],'需供比':['s14'],'亚马逊搜索':['s14'],'长尾词':['s14'],
-    '访谈':['s5'],'深访':['s5'],'问卷':['s15'],'调研':['s5','s15'],'反馈':['s15','s6'],'情报':['s15'],'用户反馈':['s15'],'风评':['s15'],
-    '客服':['s6'],'工单':['s6'],'售后':['s6','s15'],'退换货':['s6'],'退货':['s6'],'退款':['s6'],'faq':['s6'],
-    '销售':['s7'],'销量':['s7'],'gmv':['s7'],'复购':['s7'],'转化':['s7'],'运营':['s7','s6'],'转化率':['s7'],'客单':['s7'],
-    '趋势':['s9','s16','s17','s18'],'类目':['s9'],'行业':['s9'],'大盘':['s9'],'季节性':['s9'],'品类':['s9'],'新进入者':['s9'],
-    '广告':['s10'],'ppc':['s10'],'投放':['s10'],'acos':['s10'],'竞价':['s10'],'广告投放':['s10'],
+    '社媒':['s12','s21'],'红人':['s21','s20'],'kol':['s20','s21'],'instagram':['s21'],'tiktok':['s21'],'twitter':['s21'],'推特':['s21'],'reddit':['s12'],'讨论':['s12','s21'],'舆情':['s12','s21'],'品牌声量':['s21'],'声量':['s21'],'品牌监测':['s21'],
+    '竞品':['s20'],'竞争对手':['s20'],'对标':['s20'],'bsr':['s20'],'竞品分析':['s20'],'kol合作':['s20'],
+    '搜索':['s14'],'关键词':['s14'],'搜索量':['s14'],'需供比':['s14'],'亚马逊搜索':['s14'],'长尾词':['s14'],
+    '访谈':['s15'],'深访':['s15'],'问卷':['s15'],'调研':['s15'],'反馈':['s15'],'情报':['s15'],'用户反馈':['s15'],'风评':['s15'],
+    '客服':['s15'],'工单':['s15'],'售后':['s15'],'退换货':['s15'],'退货':['s15'],'退款':['s15'],'faq':['s15'],
+    '销售':['s8'],'销量':['s8'],'gmv':['s8'],'复购':['s8'],'转化':['s8'],'运营':['s8'],'转化率':['s8'],'客单':['s8'],
+    '趋势':['s12','s16','s17','s18'],'类目':['s12','s14'],'行业':['s12','s14'],'大盘':['s12','s14'],'季节性':['s12'],'品类':['s12','s14'],'新进入者':['s12'],
+    '广告':['s20'],'ppc':['s20'],'投放':['s20'],'acos':['s20'],'竞价':['s20'],'广告投放':['s20'],
     '供应商':['s19'],'供应链':['s19'],'工厂':['s19'],'oem':['s19'],'代工':['s19'],
     'pornhub':['s16'],'p站':['s16'],'成人站':['s16'],'youtube':['s17'],'测评':['s17','s18','s20'],'评测':['s17','s18','s20'],'bedbible':['s18'],'成人':['s16','s17','s18'],'教程':['s17','s18'],
-    '使用':['s6','s15'],'体验':['s6','s15'],'使用场景':['s12','s15'],'场景':['s12','s15','s20'],'动机':['s12','s15'],'画像':['s12'],'用户标签':['s12'],'人群':['s12','s15'],'用户群':['s12']
+    '使用':['s15'],'体验':['s15'],'使用场景':['s12','s15'],'场景':['s12','s15','s20'],'动机':['s12','s15'],'画像':['s12'],'用户标签':['s12'],'人群':['s12','s15'],'用户群':['s12']
   };
   // ===== 关键词 → 分析框架 映射 =====
   var FW_KW={
@@ -12706,10 +12706,10 @@ function runAuditEngineAI(){
   var srcList=Object.keys(DATA.sources).map(function(sid){ var s=DATA.sources[sid]; return {id:sid,name:s.name,type:s.type,market:s.market,status:s.status}; });
   var fwList=DATA.frameworks.map(function(f){ return {id:f.id,name:f.name,desc:f.desc}; });
   var p=getPurpose(state.ws,state.purposeId);
-  var curSrc=(p&&p.sources)||[];
-  var curFw=state.selectedFrameworks||[];
+  var curSrc=((p&&p.sources)||[]).filter(function(sid){ return !!DATA.sources[sid]; });
+  var curFw=(state.selectedFrameworks||[]).filter(function(fid){ return DATA.frameworks.some(function(f){ return f.id===fid; }); });
 
-  var system='你是类目用户研究的数据分析顾问。根据用户的目的描述，从给定的「可选数据源」与「可选分析框架」中挑选最匹配项，并指出应移除的不相关项。分析框架不限于给定列表——若你的知识库有更合适的框架，可作为自定义框架给出（此时不填 id，只给 name 与 reason）。';
+  var system='你是类目用户研究的数据分析顾问。根据用户的目的描述，从给定的「可选数据源」与「可选分析框架」中挑选最匹配项，并指出应移除的不相关项。\n\n重要约束：你只能使用「可选数据源」列表中给出的 id，禁止编造列表中不存在的数据源 id。分析框架不限于给定列表——若你的知识库有更合适的框架，可作为自定义框架给出（此时不填 id，只给 name 与 reason）。';
   var user='用户目的描述：\n"""'+txt+'"""\n\n可选数据源（id / 名称 / 类型 / 市场 / 状态）：\n'+JSON.stringify(srcList)+
     '\n\n可选分析框架（id / 名称 / 说明）：\n'+JSON.stringify(fwList)+
     '\n\n当前已选数据源 id：'+JSON.stringify(curSrc)+'\n当前已选分析框架 id：'+JSON.stringify(curFw)+
@@ -12734,6 +12734,13 @@ function runAuditEngineAI(){
 function renderAuditAIReport(pl, txt){
   var box=document.getElementById('auditResult'); if(!box) return;
   window.__lastAIPayload=pl;
+  // 过滤掉 AI 返回的不存在数据源 / 框架，避免显示 "(不存在于可选数据源)" 幽灵项
+  var validSrcIds=Object.keys(DATA.sources);
+  var validFwIds=DATA.frameworks.map(function(f){return f.id;});
+  pl.recommendedSources=(pl.recommendedSources||[]).filter(function(x){ return x && (x.id?validSrcIds.indexOf(x.id)>=0:true); });
+  pl.removeSources=(pl.removeSources||[]).filter(function(x){ return x && (x.id?validSrcIds.indexOf(x.id)>=0:true); });
+  pl.recommendedFrameworks=(pl.recommendedFrameworks||[]).filter(function(x){ return x && (x.id?validFwIds.indexOf(x.id)>=0:true); });
+  pl.removeFrameworks=(pl.removeFrameworks||[]).filter(function(x){ return x && (x.id?validFwIds.indexOf(x.id)>=0:true); });
   var p=getPurpose(state.ws,state.purposeId);
   var pSrcSet={}; (p&&p.sources||[]).forEach(function(s){pSrcSet[s]=1;});
   var pFwSet={}; (state.selectedFrameworks||[]).forEach(function(f){pFwSet[f]=1;});
